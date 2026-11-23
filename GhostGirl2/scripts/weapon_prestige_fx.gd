@@ -192,6 +192,15 @@ func _axial_span() -> PackedVector2Array:
 					Vector2(float(line[2]), float(line[3]))])
 		# Explicit fallback only if the new guides have not imported yet.
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
+	if style == "dual_sword":
+		var crossed: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
+		if crossed != null and crossed.has_method("get_blade_spans"):
+			var sword_spans: Array = crossed.call("get_blade_spans", animation, body.frame)
+			if sword_spans.size() == 2:
+				var first_sword: PackedVector2Array = sword_spans[0]
+				if first_sword.size() == 2:
+					return first_sword
+		return PackedVector2Array([grip, _fallback_tip(grip, face, 67.0)])
 	if style == "dual_dagger":
 		var paired: Node = player.get_node_or_null("Ghost/DualDaggersV173") if player != null else null
 		if paired != null and paired.has_method("get_blade_spans"):
@@ -359,6 +368,13 @@ func _draw() -> void:
 	if visual_signature_level >= 4:
 		intensity *= 1.22
 	var style: String = item.weapon_style()
+	if style == "dual_sword":
+		# Glow is applied to BOTH physical sword blades, never across the grips.
+		var paired_swords: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
+		if paired_swords != null and paired_swords.has_method("get_blade_spans"):
+			var twin_swords: Array = paired_swords.call("get_blade_spans", animation, body.frame)
+			_draw_v174_dual_sword_fx(twin_swords, intensity, attacking)
+		return
 	if style == "dual_dagger":
 		var paired_rig: Node = player.get_node_or_null("Ghost/DualDaggersV173") if player != null else null
 		if paired_rig != null and paired_rig.has_method("get_blade_spans"):
@@ -450,6 +466,72 @@ func _draw() -> void:
 
 # v1.72.3 - blade-region maps are normalized segments along the authored grip-to-tip
 # axis. Never brighten a twinblade's central wrapped handle.
+
+
+func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) -> void:
+	# Two independent moving metal edge masks, each tied to its own authored
+	# grip-to-point span. The original handle/guard is never treated as emissive.
+	if item == null or blades.size() != 2:
+		return
+	var mythic: bool = visual_signature_level in [4, 5]
+	var seed_phase: float = float(posmod(item.visual_seed(), 1009)) / 1009.0
+	var variant: int = item.mythic_layer_variant()
+	var pulse: float = 1.0 + 0.31 * sin(elapsed * 2.17 + seed_phase * TAU)
+	var power: float = clampf(intensity * (1.47 if mythic else 0.61) * (1.12 if attacking else 1.0), 0.15, 3.6)
+	for hand_index in range(2):
+		var span: PackedVector2Array = blades[hand_index]
+		if span.size() != 2:
+			continue
+		var grip: Vector2 = span[0]
+		var tip: Vector2 = span[1]
+		# Start on the lower steel, past the dark hilt and crossguard.
+		var blade_root: Vector2 = grip.lerp(tip, 0.25)
+		var blade_axis: Vector2 = tip - blade_root
+		if blade_axis.length_squared() < 64.0:
+			continue
+		var blade_dir: Vector2 = blade_axis.normalized()
+		var blade_normal: Vector2 = Vector2(-blade_dir.y, blade_dir.x)
+		var hand_phase: float = float(hand_index) * 0.38
+		# More luminous in Mythic but still following the cutting edge.
+		for section_i in range(16):
+			var u: float = float(section_i) / 15.0
+			var at: Vector2 = blade_root.lerp(tip, u)
+			var taper: float = maxf(0.14, sin((0.11 + u * 0.87) * PI))
+			var chroma: float = fposmod(u * 0.59 + elapsed * (0.095 if mythic else 0.014) + seed_phase + hand_phase, 1.0)
+			var ink: Color = _gradient_at(chroma)
+			var brightness: float = (0.115 if mythic else 0.040) * power * pulse * taper
+			draw_circle(at, (7.4 if mythic else 3.6) * taper, Color(ink.r, ink.g, ink.b, brightness))
+			draw_circle(at, 2.5 * taper, Color(ink.r, ink.g, ink.b, brightness * 1.85))
+		var shine: Color = _gradient_at(fposmod(0.67 + seed_phase + elapsed * 0.11 + hand_phase, 1.0))
+		var edge_offset: float = -1.3 if hand_index == 0 else 1.3
+		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.16) * power * pulse), 1.45, true)
+		if not mythic:
+			continue
+		# Seven four-point glitters per blade; always reproducible from cosmetic
+		# seed and time, with no non-cosmetic RandomNumberGenerator calls.
+		for glitter_i in range(7):
+			var n: float = float(glitter_i)
+			var u: float = fposmod(0.10 + n * 0.13 + seed_phase * 0.13 + elapsed * 0.052 + hand_phase, 0.96)
+			var flash: float = pow(maxf(0.0, sin(elapsed * (2.4 + n * 0.10) + seed_phase * TAU + n * 1.89 + hand_phase)), 2.0)
+			if flash < 0.12:
+				continue
+			var sparkle: Vector2 = blade_root.lerp(tip, u) + blade_normal * (2.0 * sin(elapsed * 1.5 + n))
+			var color: Color = _gradient_at(fposmod(u + elapsed * 0.13 + seed_phase + hand_phase, 1.0)).lerp(Color.WHITE, 0.45)
+			var alpha: float = 0.55 * power * flash
+			var width: float = 1.5 + flash * (1.4 + float(variant % 2))
+			draw_line(sparkle - blade_normal * width, sparkle + blade_normal * width, Color(color.r, color.g, color.b, alpha), 1.1, true)
+			draw_line(sparkle - blade_dir * width * 0.72, sparkle + blade_dir * width * 0.72, Color(1.0, 1.0, 1.0, alpha * 0.78), 1.0, true)
+			draw_circle(sparkle, 1.1, Color(1.0, 1.0, 1.0, alpha * 0.78))
+		match variant:
+			0:
+				var comet: Vector2 = blade_root.lerp(tip, fposmod(elapsed * 0.25 + seed_phase + hand_phase, 1.0))
+				draw_circle(comet, 2.3, Color(shine.r, shine.g, shine.b, 0.28 * power))
+			1:
+				draw_circle(tip + blade_normal * sin(elapsed * 2.0 + hand_phase) * 2.5, 1.85, Color(1.0, 0.94, 1.0, 0.36 * power))
+			2:
+				draw_line(blade_root.lerp(tip, 0.27) + blade_normal * 2.1, tip + blade_normal * 0.5, Color(shine.r, shine.g, shine.b, 0.32 * power), 0.9, true)
+			_:
+				draw_line(tip - blade_normal * 3.1, tip + blade_normal * 3.1, Color(shine.r, shine.g, shine.b, 0.39 * power), 1.0, true)
 
 func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool) -> void:
 	# Two separate blade-only gradients, one per hand, taken from the SAME
