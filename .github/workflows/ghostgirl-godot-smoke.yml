@@ -1,0 +1,42 @@
+name: Ghost Girl Godot 4.7 smoke
+
+on:
+  pull_request:
+    paths:
+      - 'GhostGirl2/**'
+      - '.github/workflows/ghostgirl-godot-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  parse-and-boot:
+    name: Godot 4.7 headless import, script parse and boot
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout game
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          lfs: true
+
+      - name: Install Godot (no .NET required)
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: '4.7.2'
+          use-dotnet: false
+          include-templates: false
+
+      - name: Engine version
+        run: godot --version
+
+      - name: Import project resources
+        run: godot --headless --editor --path GhostGirl2 --import
+
+      - name: Compile weapon prestige FX script
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/weapon_prestige_fx.gd
+
+      - name: Load main scene for ten frames
+        run: godot --headless --path GhostGirl2 --quit-after 10
