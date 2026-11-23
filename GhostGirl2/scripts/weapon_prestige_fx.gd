@@ -416,6 +416,48 @@ func _draw() -> void:
 		_draw_wand_hold_cosmetics(grip, tip, tangent, normal, attacking, minf(intensity, 1.7))
 	if visual_signature_level > 0:
 		_draw_signature(grip, tip, tangent, normal, attacking, minf(intensity, 1.6))
+	_draw_v172_named_weapon_fx(grip, tip, tangent, normal, attacking, minf(intensity, 1.55))
+
+func _draw_v172_named_weapon_fx(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2, attacking: bool, power: float) -> void:
+	# Item-specific cosmetic additions. This routine draws no hitboxes and does
+	# not alter rolls or the saved UID; all motion derives from existing seeds.
+	if item == null or item.definition == null:
+		return
+	var weapon_id: String = str(item.definition.item_id)
+	if weapon_id not in ["nocturne_stiletto_v171", "briarwake_trident_v171"]:
+		return
+	var mythic: bool = visual_signature_level in [4, 5]
+	var seed_phase: float = float(posmod(item.visual_seed(), 997)) / 997.0 * TAU
+	var shimmer: float = 0.70 + 0.30 * sin(elapsed * 1.65 + seed_phase)
+	if weapon_id == "nocturne_stiletto_v171":
+		# Nightglass: a thin cold edge, kept close to the SHORT dagger blade.
+		var ink: Color = Color("a7a2f2").lerp(_gradient_at(0.8), 0.34)
+		var a: Vector2 = grip.lerp(tip, 0.58)
+		draw_line(a, tip, Color(ink.r, ink.g, ink.b, 0.18 * power * shimmer), 1.15, true)
+		_soft_orb(tip, 2.1, ink, power * 0.40)
+		if mythic:
+			var phase: float = fposmod(elapsed + seed_phase, 3.1)
+			if phase < (0.56 if attacking else 0.26):
+				var shift: float = 2.0 + float(item.mythic_layer_variant()) * 0.6
+				var ghost_edge: Vector2 = normal * shift
+				draw_line(a + ghost_edge, tip + ghost_edge, Color(ink.r, ink.g, ink.b, 0.29 * power), 1.1, true)
+				draw_line(tip - tangent * 4.0, tip + normal * (2.0 + shift), Color(0.92, 0.92, 1.0, 0.25 * power), 0.9, true)
+	else:
+		# Briarwake: light runs up the haft toward its garnet three-pronged head.
+		var garnet: Color = Color("ef9bad").lerp(_gradient_at(0.86), 0.27)
+		var run: float = fposmod(elapsed * 0.23 + seed_phase / TAU, 1.0)
+		var shaft_point: Vector2 = grip.lerp(tip, 0.36 + 0.54 * run)
+		draw_line(grip.lerp(tip, 0.42), tip, Color(garnet.r, garnet.g, garnet.b, 0.10 * power), 1.1, true)
+		draw_circle(shaft_point, 1.3, Color(garnet.r, garnet.g, garnet.b, 0.22 * power))
+		_soft_orb(tip, 3.1, garnet, power * 0.53)
+		if mythic:
+			for prong in [-1.0, 0.0, 1.0]:
+				var head_a: Vector2 = tip - tangent * 5.0 + normal * prong * 2.2
+				var head_b: Vector2 = tip + normal * prong * (3.5 + float(item.mythic_layer_variant()) * 0.28)
+				draw_line(head_a, head_b, Color(garnet.r, garnet.g, garnet.b, 0.22 * power * shimmer), 0.9, true)
+			if attacking:
+				var petal_at: Vector2 = tip - tangent * 1.5 + normal * sin(elapsed * 2.3 + seed_phase) * 3.5
+				draw_circle(petal_at, 1.5, Color(1.0, 0.87, 0.94, 0.42 * power))
 
 func _bow_string_at(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
