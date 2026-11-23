@@ -7,6 +7,7 @@ const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const V172_POSE_SCRIPT = preload("res://scripts/v172_weapon_pose.gd")
+const V173_DUAL_DAGGER_SCRIPT = preload("res://scripts/v173_dual_daggers.gd")
 const SWING_SFX: AudioStream = preload("res://assets/audio/melee_swing.wav")
 const HIT_SFX: AudioStream = preload("res://assets/audio/melee_hit.wav")
 const ROSE_SLASH_FX: SpriteFrames = preload("res://resources/rose_slash_fx.tres")
@@ -142,6 +143,7 @@ func _ready() -> void:
 	# Replace only two malformed baked-weapon ATTACKS with the untouched, approved
 	# body action frames; the v172 pose layer supplies the weapon per frame.
 	V172_POSE_SCRIPT.install_attack_frames(body_art)
+	V173_DUAL_DAGGER_SCRIPT.install_animations(body_art)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
@@ -601,7 +603,7 @@ func _weapon_motion_prefix(moving: bool) -> String:
 	if world.inventory.get_equipped("wand") != null:
 		return "wand_walk_" if moving else "wand_idle_"
 	var style: String = _weapon_style()
-	if style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade"]:
+	if style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger"]:
 		return _weapon_art_style() + ("_walk_" if moving else "_idle_")
 	if style == "blade":
 		return "sword_walk_" if moving else "sword_idle_"
@@ -613,6 +615,7 @@ func _melee_cost(heavy: bool) -> float:
 		"scythe": return base * 1.05
 		"halberd": return base * 1.13
 		"dagger": return base * 0.79
+		"dual_dagger": return base * 0.88
 		"spear": return base * 1.09
 		"maul": return base * 1.25
 		"twinblade": return base * 0.90
@@ -865,7 +868,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	var attack_animation: String = ""
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
 	if holding_sword:
-		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade"]:
+		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger"]:
 			attack_animation = "attack_" + _weapon_art_style() + "_heavy_" + facing_name
 		else:
 			attack_animation = "attack_sword_heavy_" + facing_name
@@ -1167,6 +1170,10 @@ func _begin_attack(heavy: bool) -> void:
 		"dagger":
 			attack_duration = 0.66 if heavy else [0.31, 0.34, 0.36][combo_step]
 			attack_hit_threshold = 0.55
+		"dual_dagger":
+			# Three alternating cuts, one confirmed strike per animation.
+			attack_duration = 0.72 if heavy else [0.32, 0.35, 0.38][combo_step]
+			attack_hit_threshold = 0.56
 		"spear":
 			attack_duration = 0.96 if heavy else [0.53, 0.56, 0.60][combo_step]
 			attack_hit_threshold = 0.57
@@ -1188,11 +1195,14 @@ func _begin_attack(heavy: bool) -> void:
 	# Swords use a separate atlas; counter frames remain available for both.
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
 	var attack_animation: String = ""
-	if counter_window > 0.0 and active_attack_style not in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade"]:
+	if counter_window > 0.0 and active_attack_style not in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger"]:
 		attack_animation = "attack_counter_" + facing_name
 	elif holding_sword:
-		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade"]:
-			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_" if heavy else "_light_") + facing_name
+		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger"]:
+			if active_attack_style == "dual_dagger" and not heavy:
+				attack_animation = "attack_dual_dagger_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
+			else:
+				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_" if heavy else "_light_") + facing_name
 		else:
 			attack_animation = ("attack_sword_heavy_" if heavy else "attack_sword_light_") + facing_name
 	else:
@@ -1253,6 +1263,11 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 			power *= 0.90 if heavy_attack else 0.77
 			attack_arc = 0.16 if heavy_attack else 0.21
 			poise_bonus = 0.70
+		"dual_dagger":
+			reach = 153.0 if heavy_attack else 122.0
+			power *= 0.96 if heavy_attack else 0.80
+			attack_arc = 0.14 if heavy_attack else 0.15
+			poise_bonus = 0.73
 		"spear":
 			reach = 252.0 if heavy_attack else 213.0
 			power *= 1.18 if heavy_attack else 0.96
