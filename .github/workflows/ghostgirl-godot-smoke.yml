@@ -41,6 +41,9 @@ jobs:
       - name: Validate v1.73 dual daggers
         run: python3 GhostGirl2/tests/validate_v173.py
 
+      - name: Validate v1.74 dual-sword equipment and animation references
+        run: python3 GhostGirl2/tests/validate_v174.py
+
       - name: Import project resources
         run: godot --headless --editor --path GhostGirl2 --import
 
@@ -52,6 +55,15 @@ jobs:
 
       - name: Compile both dual-dagger blade layers
         run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v173_dual_dagger_blade.gd
+
+      - name: Compile dual-sword animation rig
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v174_dual_swords.gd
+
+      - name: Compile both dual-sword blade layers
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v174_dual_sword_blade.gd
+
+      - name: Verify dual-sword animations on a real Godot player scene
+        run: godot --headless --path GhostGirl2 --script res://tests/v174_animation_smoke.gd
 
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
