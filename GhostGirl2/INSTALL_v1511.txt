@@ -1,0 +1,30 @@
+Ghost Girl v1.51.1 — Inventory Swatch Scene HOTFIX
+====================================================
+Requires: v1.51 Visible Blades & ALT Item Tooltips installed.
+
+FIXES
+-----
+Godot error: "Trying to assign value of type 'Label' to a variable of type 'TextureRect'"
+  inventory_panel.gd:20, SeedDisplay
+
+Root cause: the earlier v1.51 ZIP updated inventory_panel.gd but omitted
+scenes/inventory_panel.tscn. Older installations kept the v1.46.3 Label node.
+This hotfix restores the v1.46.4+ TextureRect cosmetic swatch node.
+
+INSTALL
+-------
+1. Close Godot.
+2. Extract this ZIP into the GhostGirl2 folder containing project.godot.
+3. Allow overwrite of: scenes/inventory_panel.tscn
+4. Reopen Godot and select a weapon in the inventory.
+5. Verify the color-gradient swatch, REROLL, SAVE and FAVORITES controls.
+
+No scripts, saves, gameplay statistics, cosmetics, equipment, or artwork
+are changed. It is only the scene resource fix; no reinstallation needed.
+
+CHECK
+-----
+- Scene node exists: Layout/DetailsWell/DetailsVBox/SeedRow/SeedDisplay
+- Node type matches v1.51 script: TextureRect
+- Checked all 11 typed @onready references in inventory_panel.gd
+- Godot runtime testing unavailable in this environment.

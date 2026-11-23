@@ -1,0 +1,39 @@
+GHOST GIRL — COLLECTED UPDATES UP TO v1.46
+=============================================
+
+Recommended archive: GhostGirl_v1.24_to_v1.46_ALL_IN_ONE_CUMULATIVE_PATCH.zip
+
+WHAT THIS IS
+- ONE merged patch that takes a *complete* Ghost Girl v1.24 project to the
+  latest v1.46 source, without having to extract 22 incremental patch ZIPs.
+- Includes the cumulative v1.40 missing-dependency and procedural-palette fixes.
+- Includes res://scripts/player.gd from the latest v1.42+ update.
+- Does NOT include a complete standalone project or all original world art.
+
+INSTALLATION
+1. Back up your entire existing Godot project folder AND your game saves.
+2. Close Godot.
+3. Open your existing v1.24 (or newer) project folder containing project.godot.
+4. Extract the contents of this ZIP directly into that folder, merging
+   scripts/, scenes/, items/, resources/, assets/, etc., and overwriting files.
+   Do not create an extra nested folder.
+5. Open Godot, allow the editor to reimport project resources, and test the
+   starting room, Hollow Veil Moor, bow charge/release, and controls.
+6. If there are missing dependency errors, your base project may not contain
+   all earlier assets: restore a complete v1.24 installation and reapply this ZIP.
+
+BE CAREFUL
+- This replaces modified scene scripts and rooms where their files changed.
+  If you have your own work in those scenes, keep a backup to merge by hand.
+- It does not remove old files; older unused assets may remain in your folder.
+- It does not alter actual saved-character files.
+- Exact Godot runtime behavior has NOT been verified in this environment.
+
+DETAILS
+- v1.25 through v1.46, plus v1.40 cumulative repair.
+- 197 merged source, scene, resource, script, and documentation files.
+- Patched files match the latest available v1.46 development source.
+- All source ZIP archives were checked for corruption during assembly.
+
+The separate original-patches collection contains the history if you prefer
+incremental installation or want to inspect a specific update.

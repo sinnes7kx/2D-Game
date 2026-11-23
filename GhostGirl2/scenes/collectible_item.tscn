@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/collectible_item.gd" id="1_item"]
+[ext_resource type="Resource" path="res://items/moon_rose_key.tres" id="2_data"]
+[ext_resource type="Texture2D" path="res://assets/props/moon_rose_key.png" id="3_art"]
+
+[node name="MoonRoseKey" type="Node2D"]
+script = ExtResource("1_item")
+item_data = ExtResource("2_data")
+interaction_name = "Collect Moon Rose Key"
+pickup_id = "crypt_moon_rose_key"
+item_seed = 101
+
+[node name="KeyArt" type="Sprite2D" parent="."]
+texture = ExtResource("3_art")
+scale = Vector2(0.38, 0.38)

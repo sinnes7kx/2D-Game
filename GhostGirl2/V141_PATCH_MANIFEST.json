@@ -1,0 +1,46 @@
+{
+  "version": "1.41",
+  "base": "v1.40",
+  "files": [
+    {
+      "path": "scripts/weapon_prestige_fx.gd",
+      "size": 7987,
+      "sha256": "3bdd7ee661492e73449cab6be347288c1060f8fab79db58720fce0ed90311816"
+    },
+    {
+      "path": "scripts/weapon_animation_layers.gd",
+      "size": 3795,
+      "sha256": "c1f7e6b93fad86bab232cd82781b5ac5253ed987da22fa1c2f2682e452974b53"
+    },
+    {
+      "path": "scripts/wand_idle_glimmer.gd",
+      "size": 2747,
+      "sha256": "9a45b927dc78b6f4c1b04cd7254fc9c4e2dc2152b7f7294a36fa6b81e3bcae95"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "size": 10115,
+      "sha256": "3dcf5bc601f32db78d14ba6dbafd4bda9c97c11469cac82cfacbce6d3be92038"
+    },
+    {
+      "path": "scenes/hud.tscn",
+      "size": 6897,
+      "sha256": "e7999c16b36c8c240c297a1c0568e31e98f4091f228338aedf4dea0bd095c73e"
+    },
+    {
+      "path": "project.godot",
+      "size": 9209,
+      "sha256": "07bca77848a5ede5bcd7ad316f82e98259781787d8a1a990367c420ee22bc3b6"
+    },
+    {
+      "path": "tests/validate_v141.py",
+      "size": 2840,
+      "sha256": "03b610ec9348d91f4e5ebb943b335ebd4e2bfb90b88db076ee803687fb4ceabb"
+    },
+    {
+      "path": "V141_RELEASE_NOTES.md",
+      "size": 1588,
+      "sha256": "4a0c34a5abcb0a33e7a98d3cb204db26fc2f1470e64d70b1fb35d593f03fb2c3"
+    }
+  ]
+}

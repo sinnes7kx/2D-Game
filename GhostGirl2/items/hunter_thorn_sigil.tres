@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://4cmp7h31wpau"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://c2gsrx5me5chj" path="res://assets/ui/reliquary/rose_cube.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "hunter_thorn_sigil"
+display_name = "Thorn Vigil Sigil"
+description = "A dark knot of iron roses that helps a heavy weapon fracture enemy poise."
+icon = ExtResource("2_icon")
+equip_slot = "charm"
+stat_id = "poise_power_pct"
+min_stat = 10.0
+max_stat = 20.0
+max_sockets = 1
+item_level = 9

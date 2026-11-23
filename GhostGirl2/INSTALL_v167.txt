@@ -1,0 +1,16 @@
+Ghost Girl v1.67 — Mythic Variants, Bow Hold, Tiara
+Apply over v1.66.
+
+Changes
+- bow carry pose now rotates/offsets the bow into a clearer one-hand horizontal hold during idle/walk
+- fixed mythic inventory/equipment icons turning white by keeping authored icons in slot views
+- mythic weapons gain seeded sporadic overlay variants (lightning sparks, embers, star pulse, wisps)
+- mythic swords use a softer tapered laser edge instead of a square-ended blocky beam
+- wings slot now presents as a tiara/headpiece placement above the hair
+
+Files changed
+- scripts/bow_palette_overlay_v139.gd
+- scripts/inventory_grid.gd
+- scripts/equipment_panel.gd
+- scripts/weapon_prestige_fx.gd
+- scripts/equipment_visuals.gd

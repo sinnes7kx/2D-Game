@@ -1,0 +1,62 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="SpriteFrames" path="res://resources/ghost_girl_frames.tres" id="1_frames"]
+
+[node name="GhostGirlAnimationPreview" type="Node2D"]
+
+[node name="Backdrop" type="ColorRect" parent="."]
+offset_right = 1100.0
+offset_bottom = 400.0
+color = Color(0.09, 0.08, 0.14, 1)
+
+[node name="Front" type="AnimatedSprite2D" parent="."]
+position = Vector2(160, 240)
+sprite_frames = ExtResource("1_frames")
+animation = &"walk_front"
+autoplay = "walk_front"
+
+[node name="FrontLabel" type="Label" parent="."]
+offset_left = 105
+offset_top = 360.0
+offset_right = 235
+offset_bottom = 390.0
+text = "FRONT"
+
+[node name="Back" type="AnimatedSprite2D" parent="."]
+position = Vector2(420, 240)
+sprite_frames = ExtResource("1_frames")
+animation = &"walk_back"
+autoplay = "walk_back"
+
+[node name="BackLabel" type="Label" parent="."]
+offset_left = 365
+offset_top = 360.0
+offset_right = 495
+offset_bottom = 390.0
+text = "BACK"
+
+[node name="Left" type="AnimatedSprite2D" parent="."]
+position = Vector2(680, 240)
+sprite_frames = ExtResource("1_frames")
+animation = &"walk_left"
+autoplay = "walk_left"
+
+[node name="LeftLabel" type="Label" parent="."]
+offset_left = 625
+offset_top = 360.0
+offset_right = 755
+offset_bottom = 390.0
+text = "LEFT"
+
+[node name="Right" type="AnimatedSprite2D" parent="."]
+position = Vector2(940, 240)
+sprite_frames = ExtResource("1_frames")
+animation = &"walk_right"
+autoplay = "walk_right"
+
+[node name="RightLabel" type="Label" parent="."]
+offset_left = 885
+offset_top = 360.0
+offset_right = 1015
+offset_bottom = 390.0
+text = "RIGHT"

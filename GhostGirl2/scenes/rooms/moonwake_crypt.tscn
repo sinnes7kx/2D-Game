@@ -1,0 +1,556 @@
+[gd_scene format=3 uid="uid://c41xnvk4053yv"]
+
+[ext_resource type="Texture2D" uid="uid://btvpmrycu160t" path="res://assets/world/moonwake_crypt.png" id="1_bg"]
+[ext_resource type="Texture2D" uid="uid://dvgpmhodq3wou" path="res://assets/world/layers/moonwake_crypt_foreground.png" id="2_fg"]
+[ext_resource type="Script" uid="uid://ce3362xitjjtv" path="res://scripts/portal.gd" id="3_portal"]
+[ext_resource type="PackedScene" path="res://scenes/collectible_item.tscn" id="4_key"]
+[ext_resource type="Script" uid="uid://dlocpkb2wktxo" path="res://scripts/atmosphere.gd" id="5_atmos"]
+[ext_resource type="PackedScene" uid="uid://cnrdey1gtjuvo" path="res://scenes/ambience/firefly_ambience.tscn" id="act_firefly"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/flame_ambience.tscn" id="act_flame"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/petal_ambience.tscn" id="act_petal"]
+[ext_resource type="Resource" uid="uid://oflh1uxdrfrs" path="res://items/ashbound_wand.tres" id="v123_ashbound_wand"]
+[ext_resource type="Script" uid="uid://bxfo41y3s3174" path="res://scripts/low_thorn_barrier.gd" id="v123_barrier"]
+[ext_resource type="Resource" uid="uid://cnhwh1n3x7pdw" path="res://items/bloodrose_falchion.tres" id="v123_bloodrose_falchion"]
+[ext_resource type="Resource" uid="uid://b5cedp22xiwqt" path="res://items/briar_wand.tres" id="v123_briar_wand"]
+[ext_resource type="Resource" uid="uid://c6yxuo8md4et2" path="res://items/dusk_needle.tres" id="v123_dusk_needle"]
+[ext_resource type="Resource" uid="uid://g5wxxe7u5i8x" path="res://items/hunter_censer_wand.tres" id="v123_hunter_censer_wand"]
+[ext_resource type="Resource" path="res://items/lunar_vigil_halberd.tres" id="v123_lunar_vigil_halberd"]
+[ext_resource type="Script" uid="uid://l6b04oyr87ru" path="res://scripts/moonstep_trial.gd" id="v123_moonstep"]
+[ext_resource type="Resource" uid="uid://btna76nox80r7" path="res://items/moonveil_grandblade.tres" id="v123_moonveil_grandblade"]
+[ext_resource type="Resource" uid="uid://bwj36c8yedu1g" path="res://items/mourning_longsword.tres" id="v123_mourning_longsword"]
+[ext_resource type="Script" uid="uid://cjqpyr70ke3ue" path="res://scripts/weapon_showcase.gd" id="v123_rack"]
+[ext_resource type="Resource" path="res://items/rose_reaper_scythe.tres" id="v123_rose_reaper_scythe"]
+[ext_resource type="Resource" uid="uid://dlw6s3xrvb8bk" path="res://items/vesper_rapier.tres" id="v123_vesper_rapier"]
+[ext_resource type="Script" uid="uid://b5l0ofvyl5sq0" path="res://scripts/moonfall_shrine.gd" id="v125_shrine"]
+[ext_resource type="Resource" path="res://items/moonveil_bow.tres" id="v126_moonveil"]
+[ext_resource type="Resource" path="res://items/thornrose_bow.tres" id="v126_thornrose"]
+[ext_resource type="Script" uid="uid://2bk3p3r2xxib" path="res://scripts/spell_reliquary_v127.gd" id="v127_spells"]
+[ext_resource type="Script" uid="uid://dyw8ee118ybnn" path="res://scripts/relic_attunement_v132.gd" id="v132_attune"]
+[ext_resource type="Script" uid="uid://dqdkc7fdupgch" path="res://scripts/bow_practice_v142.gd" id="v142_practice"]
+[ext_resource type="Script" uid="uid://bdf3t32retxmi" path="res://scripts/v147_rose_bell.gd" id="v147_bell"]
+[ext_resource type="Script" uid="uid://brtmy15hb4qgr" path="res://scripts/lantern_shrine.gd" id="v147_rest"]
+[ext_resource type="Script" uid="uid://dridbwc3dq61j" path="res://scripts/v147_echo_trial.gd" id="v147_trial"]
+[ext_resource type="Resource" uid="uid://yivt5603hjru" path="res://items/thornwake_sabre.tres" id="v147_trial_reward"]
+[ext_resource type="Script" uid="uid://cb3landul6m8h" path="res://scripts/breakable_cover_v136.gd" id="v150_cover"]
+[ext_resource type="Script" uid="uid://bljk2wueglh14" path="res://scripts/floor_breach_v1464.gd" id="v1464_breach"]
+[ext_resource type="Script" uid="uid://bif2jcgnjgxwp" path="res://scripts/collapse_support_v135.gd" id="v1464_support"]
+
+[sub_resource type="RectangleShape2D" id="Col_00"]
+size = Vector2(104, 1590)
+
+[sub_resource type="RectangleShape2D" id="Col_01"]
+size = Vector2(104, 1590)
+
+[sub_resource type="RectangleShape2D" id="Col_02"]
+size = Vector2(2389, 136)
+
+[sub_resource type="RectangleShape2D" id="Col_03"]
+size = Vector2(2389, 64)
+
+[sub_resource type="RectangleShape2D" id="Col_04"]
+size = Vector2(475, 244)
+
+[sub_resource type="RectangleShape2D" id="Col_05"]
+size = Vector2(330, 345)
+
+[sub_resource type="RectangleShape2D" id="Col_06"]
+size = Vector2(168, 188)
+
+[sub_resource type="RectangleShape2D" id="Col_07"]
+size = Vector2(258, 146)
+
+[sub_resource type="RectangleShape2D" id="Col_08"]
+size = Vector2(210, 270)
+
+[sub_resource type="RectangleShape2D" id="Col_09"]
+size = Vector2(210, 270)
+
+[sub_resource type="CircleShape2D" id="v1464_support_circle"]
+radius = 38.0
+
+[sub_resource type="CircleShape2D" id="v147_ring_shape"]
+radius = 23.0
+
+[sub_resource type="CircleShape2D" id="v150_cover_circle"]
+radius = 46.0
+
+[node name="MoonwakeCrypt" type="Node2D" unique_id=613703578]
+
+[node name="PaintedRoom" type="Sprite2D" parent="." unique_id=1355823747]
+z_index = -50
+texture = ExtResource("1_bg")
+centered = false
+
+[node name="ForegroundCanopy" type="Sprite2D" parent="." unique_id=1147151080]
+z_index = 49
+texture = ExtResource("2_fg")
+centered = false
+
+[node name="WestWall" type="StaticBody2D" parent="." unique_id=979070342]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WestWall" unique_id=1596979572]
+position = Vector2(52, 796)
+shape = SubResource("Col_00")
+
+[node name="EastWall" type="StaticBody2D" parent="." unique_id=518457757]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EastWall" unique_id=1652848578]
+position = Vector2(2334, 796)
+shape = SubResource("Col_01")
+
+[node name="NorthWall" type="StaticBody2D" parent="." unique_id=1760806956]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NorthWall" unique_id=2013560598]
+position = Vector2(1195, 68)
+shape = SubResource("Col_02")
+
+[node name="SouthWall" type="StaticBody2D" parent="." unique_id=1483626662]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SouthWall" unique_id=2037369402]
+position = Vector2(1195, 1561)
+shape = SubResource("Col_03")
+
+[node name="Sarcophagus" type="StaticBody2D" parent="." unique_id=1816764123]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sarcophagus" unique_id=1562242156]
+position = Vector2(1187, 470)
+shape = SubResource("Col_04")
+
+[node name="AngelMemorial" type="StaticBody2D" parent="." unique_id=1504247042]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AngelMemorial" unique_id=2047360722]
+position = Vector2(326, 390)
+shape = SubResource("Col_05")
+
+[node name="KeyPedestal" type="StaticBody2D" parent="." unique_id=495222162]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KeyPedestal" unique_id=1273551655]
+position = Vector2(2042, 1002)
+shape = SubResource("Col_06")
+
+[node name="LeftBench" type="StaticBody2D" parent="." unique_id=1275281813]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftBench" unique_id=605709780]
+position = Vector2(225, 922)
+shape = SubResource("Col_07")
+
+[node name="RearShelfLeft" type="StaticBody2D" parent="." unique_id=1819077604]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RearShelfLeft" unique_id=753425084]
+position = Vector2(670, 300)
+shape = SubResource("Col_08")
+
+[node name="RearShelfRight" type="StaticBody2D" parent="." unique_id=1540979555]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RearShelfRight" unique_id=2131398807]
+position = Vector2(1728, 300)
+shape = SubResource("Col_09")
+
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=1421528864]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints" unique_id=1129362321]
+position = Vector2(1194, 1190)
+
+[node name="From_garden" type="Marker2D" parent="SpawnPoints" unique_id=560308626]
+position = Vector2(1940, 580)
+
+[node name="From_crypt_gallery" type="Marker2D" parent="SpawnPoints" unique_id=2136345091]
+position = Vector2(710, 807)
+
+[node name="From_hollow_veil_moor" type="Marker2D" parent="SpawnPoints" unique_id=1600152113]
+position = Vector2(1880, 1220)
+
+[node name="Gameplay" type="Node2D" parent="." unique_id=559020987]
+
+[node name="Portals" type="Node2D" parent="Gameplay" unique_id=121952276]
+
+[node name="garden" type="Node2D" parent="Gameplay/Portals" unique_id=1958078027]
+position = Vector2(2060, 468)
+script = ExtResource("3_portal")
+interaction_name = "Step into the moonlit garden"
+opened = true
+
+[node name="gallery" type="Node2D" parent="Gameplay/Portals" unique_id=984587292]
+position = Vector2(505, 750)
+script = ExtResource("3_portal")
+interaction_name = "Enter the side memorial gallery"
+destination = "crypt_gallery"
+opened = true
+
+[node name="hollow_veil_moor" type="Node2D" parent="Gameplay/Portals" unique_id=1319169274]
+position = Vector2(1615, 1018)
+script = ExtResource("3_portal")
+interaction_name = "Teleport to Hollow Veil Moor"
+destination = "hollow_veil_moor"
+opened = true
+
+[node name="Collectibles" type="Node2D" parent="Gameplay" unique_id=1166832510]
+
+[node name="MoonRoseKey" parent="Gameplay/Collectibles" unique_id=1498715488 instance=ExtResource("4_key")]
+position = Vector2(1914, 991)
+
+[node name="Carryables" type="Node2D" parent="Gameplay" unique_id=823185984]
+
+[node name="Plates" type="Node2D" parent="Gameplay" unique_id=2131423995]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay" unique_id=1235260804]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay" unique_id=395610543]
+
+[node name="Memories" type="Node2D" parent="Gameplay" unique_id=979531858]
+
+[node name="Effects" type="Node2D" parent="Gameplay" unique_id=3200838]
+
+[node name="DustInMoonlight" type="Node2D" parent="Gameplay/Effects" unique_id=1794488503]
+z_index = 12
+script = ExtResource("5_atmos")
+
+[node name="AnimatedDetails" type="Node2D" parent="Gameplay/Effects" unique_id=835026268]
+
+[node name="CandlesAtSarcophagus" parent="Gameplay/Effects/AnimatedDetails" unique_id=2130188309 instance=ExtResource("act_flame")]
+position = Vector2(1574, 470)
+scale = Vector2(1.2, 1.2)
+
+[node name="AngelMemorialCandles" parent="Gameplay/Effects/AnimatedDetails" unique_id=729927560 instance=ExtResource("act_flame")]
+position = Vector2(477, 470)
+
+[node name="DustUnderMoonbeam" parent="Gameplay/Effects/AnimatedDetails" unique_id=1335685482 instance=ExtResource("act_firefly")]
+position = Vector2(1230, 670)
+scale = Vector2(1.4, 1.4)
+
+[node name="FlowerPetals" parent="Gameplay/Effects/AnimatedDetails" unique_id=1837730444 instance=ExtResource("act_petal")]
+position = Vector2(1900, 1090)
+scale = Vector2(1.5, 1.5)
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay" unique_id=1726303416]
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay" unique_id=1996409330]
+
+[node name="AngelInscription" type="Marker2D" parent="Gameplay/FutureSecrets" unique_id=1664640810]
+position = Vector2(380, 520)
+
+[node name="BehindSarcophagus" type="Marker2D" parent="Gameplay/FutureSecrets" unique_id=1781105517]
+position = Vector2(1320, 340)
+
+[node name="WeaponShowcases" type="Node2D" parent="Gameplay" unique_id=2059464719]
+
+[node name="Showcase_thornrose_bow" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=659890616]
+position = Vector2(1745, 1235)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v126_thornrose")
+pickup_id = "v126_showcase_thornrose"
+item_seed = 126026
+
+[node name="Showcase_moonveil_bow2" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=206068052]
+position = Vector2(3940, 2502)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v126_moonveil")
+pickup_id = "v126_showcase_moonveil"
+item_seed = 126027
+guaranteed_quality = "unique"
+
+[node name="Showcase_moonveil_bow" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=727233276]
+position = Vector2(1970, 1235)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v126_moonveil")
+pickup_id = "v126_showcase_moonveil"
+item_seed = 126027
+guaranteed_quality = "unique"
+
+[node name="Showcase_dusk_needle" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=912350488]
+position = Vector2(595, 885)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_dusk_needle")
+pickup_id = "v123_showcase_dusk_needle"
+item_seed = 231100
+guaranteed_quality = "normal"
+
+[node name="Showcase_thornwake_sabre" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=1245635826]
+position = Vector2(813, 885)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v147_trial_reward")
+pickup_id = "v123_showcase_thornwake_sabre"
+item_seed = 231311
+guaranteed_quality = "magic"
+
+[node name="Showcase_vesper_rapier" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=4617326]
+position = Vector2(1031, 885)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_vesper_rapier")
+pickup_id = "v123_showcase_vesper_rapier"
+item_seed = 231522
+
+[node name="Showcase_mourning_longsword" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=1986876799]
+position = Vector2(1249, 885)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_mourning_longsword")
+pickup_id = "v123_showcase_mourning_longsword"
+item_seed = 231733
+
+[node name="Showcase_bloodrose_falchion" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=1658412485]
+position = Vector2(1467, 885)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_bloodrose_falchion")
+pickup_id = "v123_showcase_bloodrose_falchion"
+item_seed = 231944
+guaranteed_quality = "set"
+
+[node name="Showcase_moonveil_grandblade" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=1446419208]
+position = Vector2(1685, 885)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_moonveil_grandblade")
+pickup_id = "v123_showcase_moonveil_grandblade"
+item_seed = 232155
+guaranteed_quality = "unique"
+
+[node name="Showcase_rose_reaper_scythe" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=1639072041]
+position = Vector2(620, 1235)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_rose_reaper_scythe")
+pickup_id = "v123_showcase_rose_reaper_scythe"
+item_seed = 232366
+guaranteed_quality = "set"
+
+[node name="Showcase_lunar_vigil_halberd" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=1609125704]
+position = Vector2(845, 1235)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_lunar_vigil_halberd")
+pickup_id = "v123_showcase_lunar_vigil_halberd"
+item_seed = 232577
+guaranteed_quality = "unique"
+
+[node name="Showcase_briar_wand" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=1221299828]
+position = Vector2(1070, 1235)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_briar_wand")
+pickup_id = "v123_showcase_briar_wand"
+item_seed = 232788
+guaranteed_quality = "magic"
+
+[node name="Showcase_ashbound_wand" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=822552521]
+position = Vector2(1295, 1235)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_ashbound_wand")
+pickup_id = "v123_showcase_ashbound_wand"
+item_seed = 232999
+guaranteed_quality = "set"
+
+[node name="Showcase_hunter_censer_wand" type="Node2D" parent="Gameplay/WeaponShowcases" unique_id=78872875]
+position = Vector2(1520, 1235)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v123_hunter_censer_wand")
+pickup_id = "v123_showcase_hunter_censer_wand"
+item_seed = 233210
+guaranteed_quality = "unique"
+
+[node name="MoonstepBarrier" type="StaticBody2D" parent="Gameplay" unique_id=1611132867]
+position = Vector2(1663, 1170)
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("v123_barrier")
+barrier_size = Vector2(28, 165)
+
+[node name="MoonstepLandingSeal" type="Node2D" parent="Gameplay" unique_id=219347121]
+position = Vector2(1732, 1170)
+script = ExtResource("v123_moonstep")
+reward_data = ExtResource("v123_rose_reaper_scythe")
+
+[node name="MoonfallReliquary" type="Node2D" parent="Gameplay" unique_id=1174502096]
+position = Vector2(1185, 1035)
+script = ExtResource("v125_shrine")
+
+[node name="V127SpellReliquaries" type="Node2D" parent="Gameplay" unique_id=633404174]
+
+[node name="AstralRainReliquary" type="Node2D" parent="Gameplay/V127SpellReliquaries" unique_id=510419611]
+position = Vector2(980, 1060)
+script = ExtResource("v127_spells")
+
+[node name="GraspingRosesReliquary" type="Node2D" parent="Gameplay/V127SpellReliquaries" unique_id=1451617409]
+position = Vector2(1400, 1060)
+script = ExtResource("v127_spells")
+spell_kind = "roses"
+unlock_id = "v127_grasping_roses_unlocked"
+key_hint = "T"
+
+[node name="V132Attunements" type="Node2D" parent="Gameplay" unique_id=1963949517]
+
+[node name="V132MoonwakeRelicAttunement" type="Node2D" parent="Gameplay/V132Attunements" unique_id=1803459167]
+position = Vector2(1811, 1077)
+script = ExtResource("v132_attune")
+attunement_id = "v132_moonwake_attunement_used"
+infusion_salt = 132221
+
+[node name="V138FletcherShowcase" type="Node2D" parent="Gameplay" unique_id=1627229641]
+
+[node name="V138EmberBow" type="Node2D" parent="Gameplay/V138FletcherShowcase" unique_id=695514245]
+position = Vector2(403, 1367)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v126_thornrose")
+pickup_id = "v138_demo_fire"
+item_seed = 138204
+
+[node name="V138FrostBow" type="Node2D" parent="Gameplay/V138FletcherShowcase" unique_id=226422976]
+position = Vector2(640, 1400)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v126_moonveil")
+pickup_id = "v138_demo_ice"
+item_seed = 138205
+
+[node name="V138LightBow" type="Node2D" parent="Gameplay/V138FletcherShowcase" unique_id=1776953192]
+position = Vector2(860, 1400)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v126_moonveil")
+pickup_id = "v138_demo_light"
+item_seed = 138210
+
+[node name="V138ThreefoldBow" type="Node2D" parent="Gameplay/V138FletcherShowcase" unique_id=1085497558]
+position = Vector2(1080, 1400)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v126_thornrose")
+pickup_id = "v138_demo_triple"
+item_seed = 138203
+guaranteed_quality = "unique"
+
+[node name="V142FletcherPractice" type="Node2D" parent="Gameplay" unique_id=836819761]
+
+[node name="V142EveryArrowVane" type="Node2D" parent="Gameplay/V142FletcherPractice" unique_id=2139843901]
+position = Vector2(500, 830)
+script = ExtResource("v142_practice")
+
+[node name="V142MoonshotVane" type="Node2D" parent="Gameplay/V142FletcherPractice" unique_id=1268272505]
+position = Vector2(1810, 830)
+script = ExtResource("v142_practice")
+interaction_name = "Moonstep archery vane"
+require_full_draw = true
+require_airborne = true
+
+[node name="V1464EarlyPuzzles" type="Node2D" parent="Gameplay" unique_id=1536391567]
+
+[node name="CryptBeam" type="Node2D" parent="Gameplay/V1464EarlyPuzzles" unique_id=1201540491]
+position = Vector2(1070, 1110)
+script = ExtResource("v1464_support")
+site_id = "v1464_crypt_beam"
+aftermath_path = NodePath("../FloorBreach")
+display_name = "cracked crypt beam"
+material_kind = "masonry"
+landing_offset = Vector2(-190, -110)
+collapse_radius = 75.0
+damage = 24.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V1464EarlyPuzzles/CryptBeam" unique_id=2109369194]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V1464EarlyPuzzles/CryptBeam/HookBody" unique_id=897828764]
+shape = SubResource("v1464_support_circle")
+
+[node name="FloorBreach" type="Node2D" parent="Gameplay/V1464EarlyPuzzles" unique_id=216456352]
+position = Vector2(880, 1000)
+script = ExtResource("v1464_breach")
+
+[node name="V147Trials" type="Node2D" parent="Gameplay" unique_id=1755807638]
+
+[node name="MOONWAKEECHOES" type="Node2D" parent="Gameplay/V147Trials" unique_id=1869447860]
+position = Vector2(1180, 680)
+script = ExtResource("v147_trial")
+trial_id = "v147_moonwake_echoes"
+first_clear_reward = ExtResource("v147_trial_reward")
+reward_seed = 147101
+
+[node name="SpawnWaves" type="Node2D" parent="Gameplay/V147Trials/MOONWAKEECHOES" unique_id=365944539]
+
+[node name="Wave1" type="Node2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves" unique_id=1725004663]
+
+[node name="WraithA" type="Marker2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves/Wave1" unique_id=1660408017]
+position = Vector2(-230, 65)
+
+[node name="WraithB" type="Marker2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves/Wave1" unique_id=675819979]
+position = Vector2(300, 10)
+
+[node name="Wave2" type="Node2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves" unique_id=299629781]
+
+[node name="MournerA" type="Marker2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves/Wave2" unique_id=853868847]
+position = Vector2(-310, 110)
+
+[node name="WraithA" type="Marker2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves/Wave2" unique_id=470360837]
+position = Vector2(400, 110)
+
+[node name="Wave3" type="Node2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves" unique_id=633581015]
+
+[node name="BladeHunterA" type="Marker2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves/Wave3" unique_id=1053814341]
+position = Vector2(-240, 65)
+
+[node name="WraithB" type="Marker2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves/Wave3" unique_id=1072453373]
+position = Vector2(380, 55)
+
+[node name="WraithC" type="Marker2D" parent="Gameplay/V147Trials/MOONWAKEECHOES/SpawnWaves/Wave3" unique_id=1616897033]
+position = Vector2(560, 340)
+
+[node name="RoseBell" type="Node2D" parent="Gameplay/V147Trials" unique_id=2008927842]
+position = Vector2(1380, 790)
+script = ExtResource("v147_bell")
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V147Trials/RoseBell" unique_id=171145738]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V147Trials/RoseBell/HookBody" unique_id=1606777779]
+shape = SubResource("v147_ring_shape")
+
+[node name="RestShrines" type="Node2D" parent="Gameplay" unique_id=509155193]
+
+[node name="EchoTrialEmber" type="Node2D" parent="Gameplay/RestShrines" unique_id=1522627925]
+position = Vector2(990, 620)
+script = ExtResource("v147_rest")
+interaction_name = "Rest and prepare for the echo trial"
+shrine_id = "v147_moonwake_trial_ember"
+
+[node name="V150CombatBreakables" type="Node2D" parent="Gameplay" unique_id=671213185]
+
+[node name="CryptTimberWest" type="StaticBody2D" parent="Gameplay/V150CombatBreakables" unique_id=400698397]
+position = Vector2(610, 1100)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v150_cover")
+display_name = "Rotten timber"
+durability = 26.0
+announce_break = false
+blast_radius = 82.0
+blast_damage = 7.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V150CombatBreakables/CryptTimberWest" unique_id=624323767]
+shape = SubResource("v150_cover_circle")
+
+[node name="CryptTimberSoutheast" type="StaticBody2D" parent="Gameplay/V150CombatBreakables" unique_id=742824497]
+position = Vector2(1580, 1320)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v150_cover")
+display_name = "Rotten timber"
+durability = 26.0
+announce_break = false
+blast_radius = 82.0
+blast_damage = 7.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V150CombatBreakables/CryptTimberSoutheast" unique_id=555443385]
+shape = SubResource("v150_cover_circle")

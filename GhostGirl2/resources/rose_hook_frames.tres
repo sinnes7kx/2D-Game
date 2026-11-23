@@ -1,0 +1,16 @@
+[gd_resource type="SpriteFrames" load_steps=9 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_00.png" id="vfx_hook_00"]
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_01.png" id="vfx_hook_01"]
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_02.png" id="vfx_hook_02"]
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_03.png" id="vfx_hook_03"]
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_04.png" id="vfx_hook_04"]
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_05.png" id="vfx_hook_05"]
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_06.png" id="vfx_hook_06"]
+[ext_resource type="Texture2D" path="res://assets/vfx/rose_hook_07.png" id="vfx_hook_07"]
+
+[resource]
+animations = [
+{"frames": [{"duration": 1.0, "texture": ExtResource("vfx_hook_00")}, {"duration": 1.0, "texture": ExtResource("vfx_hook_01")}, {"duration": 1.0, "texture": ExtResource("vfx_hook_02")}, {"duration": 1.0, "texture": ExtResource("vfx_hook_03")}, {"duration": 1.0, "texture": ExtResource("vfx_hook_04")}], "loop": false, "name": &"cast", "speed": 19.0},
+{"frames": [{"duration": 1.0, "texture": ExtResource("vfx_hook_04")}, {"duration": 1.0, "texture": ExtResource("vfx_hook_05")}], "loop": true, "name": &"latch", "speed": 5.0},
+{"frames": [{"duration": 1.0, "texture": ExtResource("vfx_hook_06")}, {"duration": 1.0, "texture": ExtResource("vfx_hook_07")}], "loop": false, "name": &"retract", "speed": 10.0}]

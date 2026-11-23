@@ -1,0 +1,206 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory_panel.gd" id="1_controller"]
+[ext_resource type="Script" path="res://scripts/inventory_grid.gd" id="2_grid"]
+
+[sub_resource type="StyleBoxFlat" id="GothicFrame"]
+shadow_color = Color(0.0, 0.0, 0.0, 0.45)
+shadow_size = 12
+bg_color = Color(0.056, 0.047, 0.060, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63, 0.45, 0.32, 0.96)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+content_margin_left = 23.0
+content_margin_top = 16.0
+content_margin_right = 23.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="ItemWell"]
+bg_color = Color(0.065, 0.06, 0.07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.34, 0.26, 0.26, 0.88)
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[node name="InventoryPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(654, 645)
+mouse_filter = 0
+script = ExtResource("1_controller")
+theme_override_styles/panel = SubResource("GothicFrame")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.82, 0.69, 0.53, 1)
+theme_override_font_sizes/font_size = 21
+text = "INVENTORY"
+
+[node name="PreviousPage" type="Button" parent="Layout/Header"]
+layout_mode = 2
+text = "‹"
+
+[node name="PageNumber" type="Label" parent="Layout/Header"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+horizontal_alignment = 1
+text = "1 / 8"
+
+[node name="NextPage" type="Button" parent="Layout/Header"]
+layout_mode = 2
+text = "›"
+
+[node name="SortBackpack" type="Button" parent="Layout/Header"]
+layout_mode = 2
+text = "SORT"
+tooltip_text = "Compact backpack contents, keeping equipped item references intact"
+
+[node name="Subheading" type="Label" parent="Layout"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.60, 0.54, 0.59, 1)
+theme_override_font_sizes/font_size = 12
+text = "10 × 4 CELLS   ·   CLICK TO LIFT   ·   CLICK TO PLACE"
+
+[node name="SlotsWell" type="PanelContainer" parent="Layout"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("ItemWell")
+
+[node name="Slots" type="Control" parent="Layout/SlotsWell"]
+custom_minimum_size = Vector2(460, 276)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 0
+script = ExtResource("2_grid")
+
+[node name="DetailsHeader" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="DetailsLabel" type="Label" parent="Layout/DetailsHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.82, 0.69, 0.53, 1)
+text = "SELECTED ITEM"
+
+[node name="ComparisonLabel" type="Label" parent="Layout/DetailsHeader"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.67, 0.60, 0.72, 1)
+text = "HOVER TO COMPARE"
+
+[node name="TestMythic" type="Button" parent="Layout/DetailsHeader"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "PLAYTEST  ·  MYTHIC"
+tooltip_text = "Debug build only: preview Mythic visuals. Does not change item stats, real cosmetic rarity or saves."
+
+[node name="DetailsWell" type="PanelContainer" parent="Layout"]
+custom_minimum_size = Vector2(0, 142)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("ItemWell")
+
+[node name="DetailsVBox" type="VBoxContainer" parent="Layout/DetailsWell"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ItemDescription" type="RichTextLabel" parent="Layout/DetailsWell/DetailsVBox"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+size_flags_vertical = 3
+scroll_active = true
+fit_content = false
+bbcode_enabled = true
+theme_override_font_sizes/normal_font_size = 15
+selection_enabled = true
+text = "Select a treasure to inspect."
+
+[node name="SeedRow" type="HBoxContainer" parent="Layout/DetailsWell/DetailsVBox"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SeedDisplay" type="TextureRect" parent="Layout/DetailsWell/DetailsVBox/SeedRow"]
+custom_minimum_size = Vector2(54, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+expand_mode = 1
+stretch_mode = 5
+tooltip_text = "Current cosmetic colors"
+
+[node name="RerollSeed" type="Button" parent="Layout/DetailsWell/DetailsVBox/SeedRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "REROLL"
+tooltip_text = "Roll a fresh color and effect combination without changing stats"
+
+[node name="SaveSeed" type="Button" parent="Layout/DetailsWell/DetailsVBox/SeedRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "SAVE ★"
+tooltip_text = "Save these exact colors and effects (up to 16 per item)"
+
+[node name="SavedSeeds" type="OptionButton" parent="Layout/DetailsWell/DetailsVBox/SeedRow"]
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "FAVORITES"
+tooltip_text = "Restore a color swatch without rerolling stats"
+
+[node name="Actions" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 11
+
+[node name="EquipSelected" type="Button" parent="Layout/Actions"]
+visible = false
+layout_mode = 2
+text = "EQUIP"
+
+[node name="SocketSelected" type="Button" parent="Layout/Actions"]
+visible = false
+layout_mode = 2
+text = "SOCKET GEM / RUNE"
+
+[node name="DropSelected" type="Button" parent="Layout/Actions"]
+visible = false
+layout_mode = 2
+text = "DROP TO GROUND"
+tooltip_text = "Place the selected treasure next to Ghost Girl"
+
+[node name="DestroySelected" type="Button" parent="Layout/Actions"]
+visible = false
+layout_mode = 2
+text = "DESTROY ITEM"
+
+[node name="InventoryNotice" type="Label" parent="Layout"]
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.62, 0.56, 0.58, 1)
+text = "ALT details  ·  CTRL compare  ·  Right-click equip  ·  ESC cancel"
+
+[node name="DestroyConfirm" type="ConfirmationDialog" parent="."]
+title = "Destroy treasure?"
+dialog_text = "This item will be permanently deleted from the backpack. This action cannot be undone."
+ok_button_text = "Destroy"

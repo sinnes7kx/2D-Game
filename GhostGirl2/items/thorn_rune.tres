@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://cmcg0qmiclk0"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://81tbx5irnf5e" path="res://assets/ui/reliquary/moon_grimoire.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "thorn_rune"
+display_name = "Thorn Rune"
+description = "An etched petal-rune of gentle magical strength."
+icon = ExtResource("2_icon")
+item_class = "rune"
+socket_bonus_id = "hook_range_pct"
+socket_bonus_value = 6.0

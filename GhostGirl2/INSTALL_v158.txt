@@ -1,0 +1,21 @@
+Ghost Girl v1.58 — Mythic Radiance & Dress Aura
+Apply over v1.57.
+
+What this patch adds:
+- New hidden super-rare cosmetic modifier driven by the 128-bit appearance UID.
+- Weapons with this modifier render a laser-sword style beam edge.
+- Dresses with this modifier give Ghost Girl a soft luminous aura.
+- Inventory cosmetics UI marks mythic appearances with a horizontally flipped item icon.
+- Visual only: no stats, damage, or loot affixes change.
+
+Files changed:
+- scripts/item_instance.gd
+- scripts/weapon_prestige_fx.gd
+- scripts/equipment_visuals.gd
+- scripts/inventory_panel.gd
+
+Install:
+1. Close Godot.
+2. Extract into the GhostGirl2 project folder containing project.godot.
+3. Overwrite matching files.
+4. Reopen Godot and test rerolls / saved looks.

@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/moor_creature_v129.gd" id="creature"]
+
+[sub_resource type="CircleShape2D" id="feet"]
+radius = 20.0
+
+[sub_resource type="CapsuleShape2D" id="hurt"]
+radius = 27.0
+height = 70.0
+
+[node name="MoorCreature" type="CharacterBody2D"]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("creature")
+
+[node name="FeetCollision" type="CollisionShape2D" parent="."]
+position = Vector2(0, -15)
+shape = SubResource("feet")
+
+[node name="SpellHurtbox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 0
+monitorable = true
+
+[node name="Body" type="CollisionShape2D" parent="SpellHurtbox"]
+position = Vector2(0, -28)
+shape = SubResource("hurt")

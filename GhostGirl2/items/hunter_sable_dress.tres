@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://n31tutk8fb8u"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://bnkb3gqji7o00" path="res://assets/ui/reliquary/moonlace_dress.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "hunter_sable_dress"
+display_name = "Sable Hunter Dress"
+description = "A black-stitched travelling dress. Every careful movement demands less effort."
+icon = ExtResource("2_icon")
+equip_slot = "dress"
+stat_id = "stamina_efficiency_pct"
+min_stat = 7.0
+max_stat = 12.0
+max_sockets = 2
+item_level = 7

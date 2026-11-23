@@ -1,0 +1,11 @@
+{
+  "version": "1.56",
+  "base": "v1.55.2",
+  "files": {
+    "INSTALL_v156.txt": "a9db197b0396196e09e8a5232c3e2477ed5e69a3b4e81159d549066995cfc8fc",
+    "scripts/game.gd": "e4971f1c2c0b19f1def233680b99fad70079308acd1e7ecfa5c26dc7fd6e8ed4",
+    "scripts/moon_spell.gd": "ef8bb6e8cd516a6f1e8925cc3a6f623802d5ca416740f1f96613fd7610c0cbbc",
+    "scripts/wand_release_fx_v156.gd": "6b7f0da492a197b563698638d519ee7e2d20941704c52e629dccdb373b08d064",
+    "tests/validate_v156.py": "cc56ce58301106e1288b166e8962d4169089b3e8f0262b65d65edac84f3adeaf"
+  }
+}

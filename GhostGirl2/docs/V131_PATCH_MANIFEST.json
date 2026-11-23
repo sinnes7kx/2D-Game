@@ -1,0 +1,56 @@
+{
+  "patch_version": "v1.31",
+  "base_version": "v1.30",
+  "files": [
+    {
+      "path": "docs/V131_ECLIPSE_WAKE_PATCH_NOTES.md",
+      "sha256": "c4d45648f80d4d09e60e4075788e9e21d05b58801dbcc26d0547ea31a67f779d",
+      "bytes": 2057
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "sha256": "c4107a9a619dabdbdbc56a61601b97f417ddf06e1be6ae4bec7499c362b71e17",
+      "bytes": 76143
+    },
+    {
+      "path": "scripts/enemy_death_burst_v131.gd",
+      "sha256": "fe5073ff92aa882ad9567f5b8affa2bb2d487ae5f3f9534bb98d2eeab819a76e",
+      "bytes": 3475
+    },
+    {
+      "path": "scripts/game.gd",
+      "sha256": "c436f00c55d0406ae7807878774b9939781dd0d2ebeb3b822c3e9d0c3e77096d",
+      "bytes": 41146
+    },
+    {
+      "path": "scripts/gothic_hunter.gd",
+      "sha256": "f50f4a29e55bb9c582242e4f7f3f2ed4cb85f56afd1747caff155340435dfd57",
+      "bytes": 17602
+    },
+    {
+      "path": "scripts/moonshot_bloom_v131.gd",
+      "sha256": "15f80268b741aaab730f8dfaf1d4bfd7cb766d2db088b2691d14e3c3e11b296d",
+      "bytes": 3979
+    },
+    {
+      "path": "scripts/moor_creature_v129.gd",
+      "sha256": "08a8f43f3675d639e809769f0dd423f307ddc9ab9c73da76caf08122c5d4e3ef",
+      "bytes": 8383
+    },
+    {
+      "path": "scripts/rose_wraith.gd",
+      "sha256": "eaaefe1ce6354c742061e2abf62dc677d50894741d013dadde5916603227ba7c",
+      "bytes": 7389
+    },
+    {
+      "path": "scripts/world_drop.gd",
+      "sha256": "c78f5ca9ff2e7b3fc924e42a7e73fdc85727e2af2844706ceb25d277f6ffd583",
+      "bytes": 7462
+    },
+    {
+      "path": "tests/validate_v131.py",
+      "sha256": "0bdeebd1ada1f57289a2a5b85b92b487492f33e00e66889149e5951e8ddd89c2",
+      "bytes": 5786
+    }
+  ]
+}

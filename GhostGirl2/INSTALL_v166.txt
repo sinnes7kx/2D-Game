@@ -1,0 +1,24 @@
+Ghost Girl v1.66 — One-Hand Bow Artwork & Jewel Echoes
+Applies directly over assembled v1.65 (not an older patch).
+
+What's new:
+- Both Thornrose and Moonveil now draw *actual painted bow-only sprites*
+  while using the empty-hand body idle/walk art. Back faces render behind her.
+- Left-facing carry mirrors the right-facing bow and the matching glow axes.
+- All old shooting/draw/release animations are preserved without modification.
+- Malady, Delirium and Exile get three unique 96x96 jewel icons, gold inventory
+  borders, and an immediate brief confirmation when socketed.
+- Socketed named jewels show their names in compact tooltips. On weapons they
+  contribute tiny distinct drifting light motes, visual only. Dresses and
+  accessories with named jewels also gain tiny matching fireflies.
+
+Install:
+1. Back up your GhostGirl2 project and existing saves.
+2. Close Godot.
+3. Extract this ZIP inside the GhostGirl2 project folder (project.godot root),
+   overwriting matching scripts, scenes/player.tscn, and jewel item definitions.
+4. Reopen Godot to import the two bow atlases and jewel icons.
+5. Test idle/walk in all four directions, then shoot left; socket a named jewel.
+
+No item stat/loot probability/save schema changes. Jewel drop odds remain as v1.65.
+No Godot F5/engine runtime available here, so alignment and feel must be tested.

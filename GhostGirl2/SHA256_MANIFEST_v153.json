@@ -1,0 +1,14 @@
+{
+  "version": "1.53",
+  "base": "1.52",
+  "files": {
+    "scripts/cosmetic_rng_v152.gd": "f69f3d6945790aed34ef1a9b830233de6e8fea7427b3302653bc29cc30e22957",
+    "scripts/item_instance.gd": "a7de71f9a1d1627fa67e8b7eac9b1315f8e1b98204a8376801750a90d7e81d04",
+    "scripts/weapon_prestige_fx.gd": "71a2a03c81e55f43ec37e7a3e37c3851294dd6a94b657192df7466b906f703a5",
+    "scripts/item_rich_text.gd": "9c27059cec7a8b3a76239ebc0d7e81c09111677b62ef46cd0ba4d9b645060aed",
+    "scripts/inventory_panel.gd": "060564d16bb004152868c6dad81f5811a854891301ce72d3452f71dee2e610d5",
+    "scenes/player.tscn": "10fb5e1a1526936636c656f939cb75d111e17f6f827db16d15ede38a330140cd",
+    "INSTALL_v153.txt": "f69eee2337bd2330f4bcccce3ad58238cc628019fdf9bd1064a83507c41dc0e4",
+    "tests/validate_v153.py": "3b530f10bf265b177c06148dff0ba8348ebdd967d8dad1b3731454bb26326dba"
+  }
+}

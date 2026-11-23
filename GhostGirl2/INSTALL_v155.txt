@@ -1,0 +1,20 @@
+Ghost Girl v1.55 — Held Wand Cosmetics Patch
+Apply over v1.54.
+
+Changes:
+- Adds held-wand cosmetic visuals while idle, walking, and casting.
+- Keeps the effects close to the wand silhouette: soft crystal bloom, tiny charm,
+  drifting motes, compact halos/threads/sigils.
+- Uses the equipped wand's saved full-spectrum gradient and existing cosmetic rolls.
+- Rare and better wands receive extra runic dust, visual only.
+
+Install:
+1. Close Godot.
+2. Extract into the GhostGirl2 project folder containing project.godot.
+3. Overwrite matching files.
+4. Reopen Godot.
+
+Notes:
+- No save reset required.
+- No item stats changed.
+- This patch edits only scripts/weapon_prestige_fx.gd.

@@ -1,0 +1,10 @@
+{
+  "version": "1.55.2",
+  "base": "1.55",
+  "files": {
+    "scripts/item_instance.gd": "660b9f183b9da70914ffbd44549f3408fd5cd63ca19bb92ea2b78d0b50dc3e2a",
+    "scripts/weapon_prestige_fx.gd": "5aa7605903fe4e630e84c7fd8d2f8ec82b43e125ad197d005566fcf602046bdf",
+    "tests/validate_v1552.py": "840c292d7cb2ec14c41ac34718deff1ab6be6d3b75790ebe40ef387025dcd657",
+    "INSTALL_v1552.txt": "2b9252d3ea6486ce4daea74adcb830a3cb9b3ddfabbee43739cbd552ec0725c1"
+  }
+}

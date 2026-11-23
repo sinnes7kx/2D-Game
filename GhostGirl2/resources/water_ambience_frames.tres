@@ -1,0 +1,26 @@
+[gd_resource type="SpriteFrames" load_steps=9 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animated/water_00.png" id="f0"]
+[ext_resource type="Texture2D" path="res://assets/animated/water_01.png" id="f1"]
+[ext_resource type="Texture2D" path="res://assets/animated/water_02.png" id="f2"]
+[ext_resource type="Texture2D" path="res://assets/animated/water_03.png" id="f3"]
+[ext_resource type="Texture2D" path="res://assets/animated/water_04.png" id="f4"]
+[ext_resource type="Texture2D" path="res://assets/animated/water_05.png" id="f5"]
+[ext_resource type="Texture2D" path="res://assets/animated/water_06.png" id="f6"]
+[ext_resource type="Texture2D" path="res://assets/animated/water_07.png" id="f7"]
+
+[resource]
+animations = [{
+"frames": [
+{"duration": 1.0, "texture": ExtResource("f0")},
+{"duration": 1.0, "texture": ExtResource("f1")},
+{"duration": 1.0, "texture": ExtResource("f2")},
+{"duration": 1.0, "texture": ExtResource("f3")},
+{"duration": 1.0, "texture": ExtResource("f4")},
+{"duration": 1.0, "texture": ExtResource("f5")},
+{"duration": 1.0, "texture": ExtResource("f6")},
+{"duration": 1.0, "texture": ExtResource("f7")}],
+"loop": true,
+"name": &"water",
+"speed": 8.0
+}]

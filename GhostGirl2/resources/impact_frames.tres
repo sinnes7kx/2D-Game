@@ -1,0 +1,14 @@
+[gd_resource type="SpriteFrames" load_steps=9 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_00.png" id="vfx_impact_00"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_01.png" id="vfx_impact_01"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_02.png" id="vfx_impact_02"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_03.png" id="vfx_impact_03"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_04.png" id="vfx_impact_04"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_05.png" id="vfx_impact_05"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_06.png" id="vfx_impact_06"]
+[ext_resource type="Texture2D" path="res://assets/vfx/impact_bloom_07.png" id="vfx_impact_07"]
+
+[resource]
+animations = [
+{"frames": [{"duration": 1.0, "texture": ExtResource("vfx_impact_00")}, {"duration": 1.0, "texture": ExtResource("vfx_impact_01")}, {"duration": 1.0, "texture": ExtResource("vfx_impact_02")}, {"duration": 1.0, "texture": ExtResource("vfx_impact_03")}, {"duration": 1.0, "texture": ExtResource("vfx_impact_04")}, {"duration": 1.0, "texture": ExtResource("vfx_impact_05")}, {"duration": 1.0, "texture": ExtResource("vfx_impact_06")}, {"duration": 1.0, "texture": ExtResource("vfx_impact_07")}], "loop": false, "name": &"impact", "speed": 17.0}]

@@ -1,0 +1,21 @@
+Ghost Girl v1.64.3 — Bow Carry & Mythic Bow Visual Fix
+Apply over v1.64.2.
+
+Changes:
+- bow locomotion now reuses the approved empty-hand idle/walk body animations
+- bow is carried in one hand during locomotion via the existing overlay layer
+- left-facing locomotion bow art now flips on the X axis
+- bow attack / draw / release animations remain unchanged
+- mythic bow effect no longer forms detached floating rings; it now hugs the bow with a luminous string, rails and nock flare
+- bow prestige glow axes now resolve correctly during unarmed-body locomotion
+
+Files changed:
+- scripts/player.gd
+- scripts/bow_palette_overlay_v139.gd
+- scripts/weapon_prestige_fx.gd
+
+Install:
+1. Close Godot.
+2. Extract into the GhostGirl2 project folder.
+3. Overwrite matching files.
+4. Reopen Godot and playtest with a bow equipped.

@@ -1,0 +1,21 @@
+Ghost Girl v1.60 — Wand Art, Alignment & Rare Icon Indicator
+Apply over v1.59.
+
+Adds:
+- new hand-held wand overlay art (res://assets/equipment/wand_hand_overlay.png)
+- visible wand overlay enabled while a wand is equipped
+- wand glow alignment tuned to the visible held wand
+- horizontally flipped icon indicator now appears on the actual inventory / equipped item icon for the highest cosmetic tiers (signature 4 and 5)
+
+Files changed:
+- scripts/weapon_prestige_fx.gd
+- scripts/equipment_visuals.gd
+- scripts/inventory_grid.gd
+- scripts/equipment_panel.gd
+- assets/equipment/wand_hand_overlay.png
+
+Install:
+1. Close Godot.
+2. Extract into the GhostGirl2 project folder containing project.godot.
+3. Overwrite matching files.
+4. Reopen Godot so the new texture imports.

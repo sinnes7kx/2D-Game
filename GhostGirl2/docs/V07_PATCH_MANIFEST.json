@@ -1,0 +1,28 @@
+{
+  "version": "0.7",
+  "source_version": "0.6",
+  "changed_and_new_files": [
+	"README.md",
+	"docs/V07_STATIC_VALIDATION.json",
+	"docs/V07_THE_HUNTERS_RHYTHM.md",
+	"items/hunter_censer_wand.tres",
+	"items/hunter_duelist_rosary.tres",
+	"items/hunter_sable_dress.tres",
+	"items/hunter_thorn_sigil.tres",
+	"project.godot",
+	"scenes/enemy_hex_bolt.tscn",
+	"scenes/rooms/ashen_causeway.tscn",
+	"scenes/rooms/ashglass_vault.tscn",
+	"scenes/rooms/bellwether_court.tscn",
+	"scripts/enemy_hex_bolt.gd",
+	"scripts/game.gd",
+	"scripts/gothic_hunter.gd",
+	"scripts/inventory_panel.gd",
+	"scripts/item_generator.gd",
+	"scripts/palette_library.gd",
+	"scripts/player.gd",
+	"scripts/rose_wraith.gd",
+    "docs/V07_PATCH_INSTRUCTIONS.md"
+  ],
+  "total_changed": 21
+}

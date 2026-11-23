@@ -1,0 +1,17 @@
+{
+  "area": "Bellwether Court",
+  "rooms": 20,
+  "images": 338,
+  "new_area_reachability": {
+    "west portal": true,
+    "south portal": true,
+    "north chest": true,
+    "west chest": true,
+    "east chest": true,
+    "secret sigil": true,
+    "boss": true,
+    "shrine": true
+  },
+  "protected_art_changes": [],
+  "issues": []
+}

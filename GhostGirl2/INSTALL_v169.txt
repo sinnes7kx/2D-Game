@@ -1,0 +1,68 @@
+GHOST GIRL v1.69 — BOW ORIENTATION, STRING GLOW & NEW WEAPON FAMILIES
+Applies over v1.68.1 (v1.68 plus the missing BowCarry-node hotfix).
+
+INSTALL
+1. Close the Godot editor and game.
+2. Back up the entire GhostGirl2 project and user://ghost_girl_treasures_v2.json.
+3. Extract this ZIP into the project folder containing project.godot.
+   Merge scripts/, resources/, items/, and assets/ and replace matching files.
+4. Reopen Godot; let it import the newly generated PNG textures.
+
+BOW FIXES
+- Thornrose and Moonveil left-facing idle and walk frames now combine the
+  original, approved left-facing character body with a newly retargeted,
+  NON-mirrored right-hand bow silhouette in the correct left-hand location.
+- Bow recolor masks now match the left-facing physical bow. The bow overlay no
+  longer applies a redundant flip_h or uses right animations on left-facing art.
+- Bowstring illumination follows an additional 5px rearward offset from the
+  main bow-limb axis, with a separate continuous string filament.
+- Mythic bowstring highlights are offset the same way. Limb and string colors
+  remain independent deterministic full-spectrum gradients.
+- Bow combat/shot animations and damage remain untouched.
+
+NEW WEAPON TYPES / AUTHORED FRAME POSES
+- ROSEGLASS DAGGER: fast close-range weapon (new "dagger" weapon_style).
+- MOONWARDEN SPEAR: long reach / deliberate thrust (new "spear" weapon_style).
+- Each has independent 8-frame, 4-direction idle, walk, light, and heavy attack
+  animations (32 animation names total; 256 total frame cells).
+- Original approved Ghost Girl body and motion poses are retained. The newly
+  drawn dagger/spear artwork is layered per frame with phase-specific pose
+  shifts and weapon angles; these are newly COMPOSITED directional weapon
+  animations, not fully re-painted character-body action frames.
+- Attack family routing, stamina usage, timing, reach, and poise values are
+  specific to dagger and spear. The original weapons keep their old values.
+- Both new types can appear in normal sword-equipment monster drops.
+- Sword stats, old loot seeds/saves, existing bow/wand spell behavior unaffected.
+
+PLAYTEST
+- Walk and idle left with Thornrose then Moonveil: bow should no longer be
+  mirrored or offset from the left hand. Check the recolor and white string FX.
+- Enable Mythic playtest on a bow: the line of light should sit on the string,
+  not the solid bow limb. String and limb gradients should remain different.
+- Obtain Roseglass Dagger / Moonwarden Spear from normal monster equipment
+  rolls, equip them, test idle, walk, light, heavy, jump attack in all 4 faces.
+- Confirm save/reload with new items and older inventory / cosmetic seeds.
+
+CHANGED / NEW FILES
+ scripts/player.gd
+ scripts/item_data.gd
+ scripts/item_instance.gd
+ scripts/game.gd
+ scripts/bow_palette_overlay_v139.gd
+ scripts/weapon_prestige_fx.gd
+ resources/ghost_extra_animations.json
+ resources/new_weapon_axes_v169.json
+ resources/weapon_glow_axes_v142.json
+ items/roseglass_dagger_v169.tres
+ items/moonwarden_spear_v169.tres
+ assets/ui/weapons_v169/dagger.png
+ assets/ui/weapons_v169/spear.png
+ assets/equipment/weapons_v169/{dagger,spear}_{locomotion,combat}_2048x1760.png
+ assets/ghost/bows_v126/{thornrose,moonveil}_locomotion_2048x1760.png
+ assets/ghost/bows_v139/{thornrose,moonveil}_locomotion_mask_2048x1760.png
+
+VALIDATION
+Offline checks only (Godot 4 engine executable unavailable in the container).
+No live F5 testing or native parser validation was possible. In-game timing,
+weapon-body grip and the left-facing bow are a best-effort illustrated patch and
+may require minor retouch after screenshots.

@@ -1,0 +1,256 @@
+[gd_scene format=3 uid="uid://dcc45sh82ckf3"]
+
+[ext_resource type="Script" uid="uid://cpp8skfqy6tt" path="res://scripts/hook_anchor.gd" id="anchor"]
+[ext_resource type="Texture2D" uid="uid://cpnfqo2ue0cl0" path="res://assets/world/forgotten_reliquary_path.png" id="background"]
+[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="chest"]
+[ext_resource type="Script" uid="uid://dlocpkb2wktxo" path="res://scripts/atmosphere.gd" id="dust"]
+[ext_resource type="PackedScene" path="res://scenes/rose_wraith.tscn" id="enemy"]
+[ext_resource type="PackedScene" uid="uid://cnrdey1gtjuvo" path="res://scenes/ambience/firefly_ambience.tscn" id="firefly"]
+[ext_resource type="Resource" uid="uid://b5cedp22xiwqt" path="res://items/briar_wand.tres" id="item_briar_wand"]
+[ext_resource type="Resource" uid="uid://eul7wx2jaw7w" path="res://items/sylvan_charm.tres" id="item_sylvan_charm"]
+[ext_resource type="Resource" uid="uid://d2tvr7pp3sy3" path="res://items/thornlace_dress.tres" id="item_thornlace_dress"]
+[ext_resource type="Resource" uid="uid://cmcg0qmiclk0" path="res://items/thorn_rune.tres" id="item_thorn_rune"]
+[ext_resource type="Resource" uid="uid://cn1jr053x8i6a" path="res://items/velvet_reliquary.tres" id="item_velvet_reliquary"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/petal_ambience.tscn" id="petal"]
+[ext_resource type="Script" uid="uid://ce3362xitjjtv" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" uid="uid://di0swja2bifru" path="res://scripts/water_body.gd" id="water"]
+[ext_resource type="Script" uid="uid://0kncwcemobi7" path="res://scripts/wilderness_ambience.gd" id="wind"]
+
+[sub_resource type="RectangleShape2D" id="col0"]
+size = Vector2(3072, 140)
+
+[sub_resource type="RectangleShape2D" id="col1"]
+size = Vector2(110, 2048)
+
+[sub_resource type="RectangleShape2D" id="col2"]
+size = Vector2(110, 2048)
+
+[sub_resource type="RectangleShape2D" id="col3"]
+size = Vector2(3072, 90)
+
+[sub_resource type="RectangleShape2D" id="col4"]
+size = Vector2(400, 360)
+
+[sub_resource type="RectangleShape2D" id="col5"]
+size = Vector2(300, 330)
+
+[sub_resource type="RectangleShape2D" id="col6"]
+size = Vector2(290, 340)
+
+[sub_resource type="RectangleShape2D" id="col7"]
+size = Vector2(260, 380)
+
+[node name="ReliquaryPath" type="Node2D" unique_id=1521140931]
+
+[node name="PaintedRoom" type="Sprite2D" parent="." unique_id=437058607]
+z_index = -50
+texture = ExtResource("background")
+centered = false
+
+[node name="Collisions" type="Node2D" parent="." unique_id=937185877]
+
+[node name="North map limit" type="StaticBody2D" parent="Collisions" unique_id=692621567]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/North map limit" unique_id=1738556895]
+position = Vector2(1536, 70)
+shape = SubResource("col0")
+
+[node name="West map limit" type="StaticBody2D" parent="Collisions" unique_id=1885664479]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/West map limit" unique_id=2128612316]
+position = Vector2(55, 1024)
+shape = SubResource("col1")
+
+[node name="East map limit" type="StaticBody2D" parent="Collisions" unique_id=470287859]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/East map limit" unique_id=1809716276]
+position = Vector2(3017, 1024)
+shape = SubResource("col2")
+
+[node name="South map limit" type="StaticBody2D" parent="Collisions" unique_id=1206245260]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/South map limit" unique_id=1271480963]
+position = Vector2(1536, 2003)
+shape = SubResource("col3")
+
+[node name="West sanctuary wall" type="StaticBody2D" parent="Collisions" unique_id=223035124]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/West sanctuary wall" unique_id=2020103222]
+position = Vector2(300, 360)
+shape = SubResource("col4")
+
+[node name="Far east cloister" type="StaticBody2D" parent="Collisions" unique_id=731132940]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Far east cloister" unique_id=1247471676]
+position = Vector2(2860, 650)
+shape = SubResource("col5")
+
+[node name="Central pool northwest" type="StaticBody2D" parent="Collisions" unique_id=859713437]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Central pool northwest" unique_id=159517916]
+position = Vector2(1330, 1000)
+shape = SubResource("col6")
+
+[node name="Central pool southeast" type="StaticBody2D" parent="Collisions" unique_id=2011866389]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Central pool southeast" unique_id=928016402]
+position = Vector2(1760, 1060)
+shape = SubResource("col7")
+
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=156931624]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints" unique_id=530798776]
+position = Vector2(750, 1500)
+
+[node name="From_briar_hollow" type="Marker2D" parent="SpawnPoints" unique_id=1656401296]
+position = Vector2(730, 1550)
+
+[node name="From_weeping_brook" type="Marker2D" parent="SpawnPoints" unique_id=1583983739]
+position = Vector2(2480, 530)
+
+[node name="Gameplay" type="Node2D" parent="." unique_id=637373408]
+
+[node name="Portals" type="Node2D" parent="Gameplay" unique_id=420181932]
+
+[node name="briar_hollow" type="Node2D" parent="Gameplay/Portals" unique_id=1908428028]
+position = Vector2(590, 1690)
+script = ExtResource("portal")
+interaction_name = "Return to Briar Hollow"
+destination = "briar_hollow"
+opened = true
+
+[node name="weeping_brook" type="Node2D" parent="Gameplay/Portals" unique_id=452190479]
+position = Vector2(2460, 450)
+script = ExtResource("portal")
+interaction_name = "Follow the Brook Path"
+destination = "weeping_brook"
+opened = true
+
+[node name="Carryables" type="Node2D" parent="Gameplay" unique_id=263042599]
+
+[node name="Plates" type="Node2D" parent="Gameplay" unique_id=825242233]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay" unique_id=1806686204]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay" unique_id=1345636224]
+
+[node name="Memories" type="Node2D" parent="Gameplay" unique_id=798713666]
+
+[node name="Collectibles" type="Node2D" parent="Gameplay" unique_id=1020588371]
+
+[node name="TreasureChests" type="Node2D" parent="Gameplay" unique_id=393700159]
+
+[node name="ReliquaryTrove" parent="Gameplay/TreasureChests" unique_id=1055173411 instance=ExtResource("chest")]
+position = Vector2(2340, 1300)
+chest_id = "reliquary_path_reliquarytrove"
+loot_data = ExtResource("item_sylvan_charm")
+loot_seed = 47788
+guaranteed_quality = "set"
+
+[node name="AncientOrnateCoffer" parent="Gameplay/TreasureChests" unique_id=1224413904 instance=ExtResource("chest")]
+position = Vector2(672, 840)
+chest_id = "reliquary_path_ancientornatecoffer"
+loot_data = ExtResource("item_briar_wand")
+loot_seed = 773311
+guaranteed_quality = "unique"
+
+[node name="RuneCache" parent="Gameplay/TreasureChests" unique_id=684888615 instance=ExtResource("chest")]
+position = Vector2(2630, 860)
+chest_id = "reliquary_path_runecache"
+loot_data = ExtResource("item_thorn_rune")
+loot_seed = 62021
+
+[node name="Enemies" type="Node2D" parent="Gameplay" unique_id=1532520096]
+
+[node name="PoolWraith" parent="Gameplay/Enemies" unique_id=174709689 instance=ExtResource("enemy")]
+position = Vector2(2130, 970)
+drop_data = ExtResource("item_thornlace_dress")
+drop_seed = 68002
+drop_quality = "rare"
+
+[node name="MossWraith" parent="Gameplay/Enemies" unique_id=77796285 instance=ExtResource("enemy")]
+position = Vector2(930, 760)
+drop_data = ExtResource("item_velvet_reliquary")
+drop_seed = 13548
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay" unique_id=1677424011]
+
+[node name="RoseAnchor0" type="Node2D" parent="Gameplay/HookAnchors" unique_id=1982587963]
+position = Vector2(1240, 820)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor1" type="Node2D" parent="Gameplay/HookAnchors" unique_id=251458831]
+position = Vector2(1750, 820)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor2" type="Node2D" parent="Gameplay/HookAnchors" unique_id=338865970]
+position = Vector2(2400, 1140)
+script = ExtResource("anchor")
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay" unique_id=361222339]
+
+[node name="HalfSunkenGrotto" type="Marker2D" parent="Gameplay/FutureSecrets" unique_id=203281297]
+position = Vector2(1640, 1460)
+
+[node name="HiddenStatue" type="Marker2D" parent="Gameplay/FutureSecrets" unique_id=1383859326]
+position = Vector2(370, 1100)
+
+[node name="SilverLilyTerrace" type="Marker2D" parent="Gameplay/FutureSecrets" unique_id=479321954]
+position = Vector2(2650, 1250)
+
+[node name="WaterBodies" type="Node2D" parent="Gameplay" unique_id=1553400519]
+
+[node name="ReliquaryPool" type="Area2D" parent="Gameplay/WaterBodies" unique_id=1985183830]
+position = Vector2(1530, 1010)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("water")
+water_kind = "pond"
+future_loot_profile = "reliquary_pool"
+
+[node name="WaterPolygon" type="CollisionPolygon2D" parent="Gameplay/WaterBodies/ReliquaryPool" unique_id=1257703847]
+polygon = PackedVector2Array(-385, -250, 310, -240, 350, 195, -320, 230)
+
+[node name="Effects" type="Node2D" parent="Gameplay" unique_id=1981426301]
+
+[node name="MoonlitDust" type="Node2D" parent="Gameplay/Effects" unique_id=1842656234]
+z_index = 12
+script = ExtResource("dust")
+
+[node name="OutdoorMotes" type="Node2D" parent="Gameplay/Effects" unique_id=1182131532]
+z_index = 9
+script = ExtResource("wind")
+style = "brook"
+
+[node name="firefly0" parent="Gameplay/Effects" unique_id=1124892050 instance=ExtResource("firefly")]
+position = Vector2(776, 568)
+scale = Vector2(1.5, 1.5)
+
+[node name="petal1" parent="Gameplay/Effects" unique_id=2004773763 instance=ExtResource("petal")]
+position = Vector2(1180, 1140)
+scale = Vector2(1.5, 1.5)
+
+[node name="firefly2" parent="Gameplay/Effects" unique_id=1845533893 instance=ExtResource("firefly")]
+position = Vector2(2620, 1340)
+scale = Vector2(1.5, 1.5)
+
+[node name="petal3" parent="Gameplay/Effects" unique_id=464240027 instance=ExtResource("petal")]
+position = Vector2(2400, 650)
+scale = Vector2(1.5, 1.5)

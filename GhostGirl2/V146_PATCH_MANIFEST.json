@@ -1,0 +1,82 @@
+{
+  "version": "1.46",
+  "base": "1.45",
+  "changed_files": [
+    {
+      "path": "scripts/environment_navigation_v146.gd",
+      "size": 1863,
+      "sha256": "cef4c2c5606953c78ff8221651c4b55797a64ab6a09d9452df2d8812fee3197e"
+    },
+    {
+      "path": "scripts/ashglass_gate_v146.gd",
+      "size": 2315,
+      "sha256": "a9ebea9e2ddcd62905f455e43a5aa2093ff35d9fca8171d5d70bb0c6cc0f96cf"
+    },
+    {
+      "path": "scripts/ashglass_signal_v146.gd",
+      "size": 6398,
+      "sha256": "84660478385ae16495fe602d0ab1c364714326e54af7f1230f92129d8d98403d"
+    },
+    {
+      "path": "scripts/moor_world_response_v145.gd",
+      "size": 3247,
+      "sha256": "807c16c47df43431f2b87314e7cdaf50f7ff405312152e7fb76648ecde092eb7"
+    },
+    {
+      "path": "scripts/elemental_flammable_v139.gd",
+      "size": 4263,
+      "sha256": "39361f087932720492dbbdf7531d26fb31f29aae70b99446e598bf879fe26a35"
+    },
+    {
+      "path": "scripts/elemental_kindling_v140.gd",
+      "size": 3894,
+      "sha256": "31547d3b52815d85921233775c2ba1740e05e3273f76f550b7bfc990ca6e982b"
+    },
+    {
+      "path": "scripts/breakable_cover_v136.gd",
+      "size": 4652,
+      "sha256": "c1b741f82ee993a700dc315229de76286d77e2e672f03fdbe7fd3ecde88045aa"
+    },
+    {
+      "path": "scripts/moonroot_lattice_v144.gd",
+      "size": 9891,
+      "sha256": "fd079587fa7dd018e20ab60640636099a36a711f9ea25c4c06526058320404ee"
+    },
+    {
+      "path": "scripts/moor_creature_v129.gd",
+      "size": 9777,
+      "sha256": "3b691908d276eef81f1fdedbd5743274d88a54f2d7e9de95e2f26ad434707974"
+    },
+    {
+      "path": "scripts/gothic_hunter.gd",
+      "size": 18897,
+      "sha256": "7fee20fbef357bbadfdce20e1e46405519ccaed858797c9f7dec4d415212fb31"
+    },
+    {
+      "path": "scripts/rose_wraith.gd",
+      "size": 8731,
+      "sha256": "7fe0a4393293d8a55e7dc34f26a2fe33aedf37be7215d3a16c5abc8e713607ef"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 47945,
+      "sha256": "1ae121b8fd7cfe28384f1df835487005dd0ab7409d39765bbdeea8071bcb8ed0"
+    },
+    {
+      "path": "scenes/rooms/blackbrick_court.tscn",
+      "size": 17392,
+      "sha256": "0ae43362d50b6ab3a0dfae03d56acedc422725fa5a20ed657cb5bda69e4fd9f8"
+    },
+    {
+      "path": "tests/validate_v146.py",
+      "size": 7232,
+      "sha256": "644764c1f2b411fb223472353bc0732501fc7048060fc32132b3a345d35e5cd5"
+    },
+    {
+      "path": "V146_RELEASE_NOTES.md",
+      "size": 3646,
+      "sha256": "f0bf1239b06d41ca033fdda851e8e97e9c1941a629a92525ca9bcc4d33dddfb9"
+    }
+  ],
+  "engine_runtime": "not available"
+}

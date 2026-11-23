@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://kifa5vuytyg0"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://cuo6s8wew4p8t" path="res://assets/ui/jewels_v166/exile.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "exile_jewel"
+display_name = "Exile"
+description = "A wandering relic-jewel that hardens the soul and steadies a hunted heart."
+icon = ExtResource("2_icon")
+unique = true
+item_class = "rune"
+socket_bonus_id = "vitality_pct"
+socket_bonus_value = 8.0

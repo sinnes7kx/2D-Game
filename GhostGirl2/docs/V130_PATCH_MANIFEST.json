@@ -1,0 +1,51 @@
+{
+  "base_version": "v1.29",
+  "new_version": "v1.30",
+  "changed_files": [
+    {
+      "path": "assets/enemies/hush_moth_v130_4frames.png",
+      "size": 100667,
+      "sha256": "147e87dc08d7d9d5091ca5437bc6a59b682e46e95df4b99212657477c71c8020"
+    },
+    {
+      "path": "assets/enemies/gloom_lantern_v130_4frames.png",
+      "size": 96376,
+      "sha256": "6db53e017fa6aa021227467e24711e8909fbb30727bd526587cf3104dc7c7de5"
+    },
+    {
+      "path": "scripts/moor_creature_v129.gd",
+      "size": 7721,
+      "sha256": "264567ff886a4a8ed30e8daaf326367123488f767640b07593662eb35a031c53"
+    },
+    {
+      "path": "scripts/moonfall_blizzard.gd",
+      "size": 8838,
+      "sha256": "af83245e12e65597ca3493f641f64023999db3bea6dbb025bcf16923044cc9ee"
+    },
+    {
+      "path": "scripts/triune_reliquary_v130.gd",
+      "size": 3973,
+      "sha256": "6c2aa280d8e60483ec7436071954ba30b3b03cd2c2b948a9d18291d900f93068"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 73376,
+      "sha256": "74cb0b540fb37d158e3b9f16fc8149feb57fc81529967d43b9b5552bcd5e6877"
+    },
+    {
+      "path": "tools/build_moor_creature_art_v130.py",
+      "size": 6618,
+      "sha256": "cb006a84a364c2a3c2fcc16f69c67e332cc0f8f77e95c1532c756805cb3a29a6"
+    },
+    {
+      "path": "tests/validate_v130.py",
+      "size": 5147,
+      "sha256": "fd93d59c33528318e4e20c10d36dce8b02870f48a3ac4612c2ec0c0ed7514292"
+    },
+    {
+      "path": "docs/V130_README.md",
+      "size": 2148,
+      "sha256": "91b70e8647fa8bec7fb8e6aed28ce9e5892274e9796cd2934abc746b6dc434c6"
+    }
+  ]
+}

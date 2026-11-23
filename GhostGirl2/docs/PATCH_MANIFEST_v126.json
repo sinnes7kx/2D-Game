@@ -1,0 +1,116 @@
+{
+  "version": "1.26",
+  "base": "v1.25",
+  "files": [
+    {
+      "path": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+      "size": 2766525,
+      "sha256": "9cb198ff2e57e4f0d92b74b36fb75f71a2879e0217a3bb3f8c458ca2622c776e"
+    },
+    {
+      "path": "assets/ghost/bows_v126/thornrose_combat_2048x1760.png",
+      "size": 2613046,
+      "sha256": "1e9b03d9744c15d3861761d0fd445204ef5203497976748a67678d372f75f6e9"
+    },
+    {
+      "path": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+      "size": 2757446,
+      "sha256": "94af9b9be26bb5d76d1d90a131b2049464ec2574855d6916b15e75ad5f01cd2d"
+    },
+    {
+      "path": "assets/ghost/bows_v126/moonveil_combat_2048x1760.png",
+      "size": 2597386,
+      "sha256": "dee38942f611fbd3bf18c3b70c268a5ad90a6ea9a02cd6bd18c3271af4e67244"
+    },
+    {
+      "path": "assets/ghost/bows_v126/thornrose_icon.png",
+      "size": 6961,
+      "sha256": "61e9813e8aeb84c3d83c0de3273be73c3a9fdb95b31b60a72c7a3e9874cb29e4"
+    },
+    {
+      "path": "assets/ghost/bows_v126/moonveil_icon.png",
+      "size": 6636,
+      "sha256": "e1a0823f54f619f2cb8d48a9ff95b1af50f2c2b0447fcaa8e980c737e3877bac"
+    },
+    {
+      "path": "items/thornrose_bow.tres",
+      "size": 691,
+      "sha256": "7ac3746cb338233f4ff673654e7dd2ab34b254aef978dc7ccfe618d40f7ca705"
+    },
+    {
+      "path": "items/moonveil_bow.tres",
+      "size": 693,
+      "sha256": "2628ac35c0d5970b307a774fec7e56787f37c1fd2e3784c15d51607aee3266c8"
+    },
+    {
+      "path": "scenes/bow_arrow_v126.tscn",
+      "size": 185,
+      "sha256": "99ac5421efedf65e98967aca809651e4dbd47d626a9008cef9dc0f3e8e476a05"
+    },
+    {
+      "path": "scenes/rooms/moonwake_crypt.tscn",
+      "size": 13517,
+      "sha256": "66c0e0198d5b64b592b7a1caba45783c593243ce7e2b79cfc3ebc6ba179a0f67"
+    },
+    {
+      "path": "scripts/bow_arrow_v126.gd",
+      "size": 5117,
+      "sha256": "07eaba9d4ce538fd712df533a216baf2336d1260d0fc376795af972d847d6c89"
+    },
+    {
+      "path": "scripts/player.gd",
+      "size": 51340,
+      "sha256": "79b3360d8d4c56fc19a9bf4a5d634ae6f769702133c264024bc98bb458573507"
+    },
+    {
+      "path": "scripts/item_data.gd",
+      "size": 1219,
+      "sha256": "695d3f8d9d623be9c5c80cd3da36594d95f7ea98c81a39cfc9fcb02e9d5655bc"
+    },
+    {
+      "path": "scripts/item_instance.gd",
+      "size": 8279,
+      "sha256": "d4510c4dcd301ac0ba9d32ee01194776b52264278ac46974089bbc59344be3cf"
+    },
+    {
+      "path": "scripts/item_rich_text.gd",
+      "size": 6865,
+      "sha256": "8650e111de633e0359b3c7ba2368863713cb4e47d3eabe22c447c78a13efa1f2"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 37742,
+      "sha256": "4cd18a9709cd722ea0c5421a25d043d05fab03deb02a982e97fbb077dbe15e5c"
+    },
+    {
+      "path": "scripts/weapon_prestige_fx.gd",
+      "size": 9432,
+      "sha256": "202524eba738a2d41f6109136588951ef6e588523e42e947d1018a88c63e3c03"
+    },
+    {
+      "path": "resources/bow_animations_v126.json",
+      "size": 7643,
+      "sha256": "da7ee698f2241af7517e39b731abe8a87aa67f3445098a2dc7e705a92009ddf4"
+    },
+    {
+      "path": "resources/ghost_extra_animations.json",
+      "size": 51274,
+      "sha256": "6878d980db25495072526a7b95a5392468f61002a7daecd234495ee1e2157f8a"
+    },
+    {
+      "path": "tools/build_bows_v126.py",
+      "size": 6209,
+      "sha256": "e0e58eadc6d43b326e69b44330210dda15ddc37db4c0c396bfaeffafa1444954"
+    },
+    {
+      "path": "tests/validate_v126.py",
+      "size": 4485,
+      "sha256": "b82ee1d7b0f717641761ff84a98ddf4492228b28b8ffad9b938b55964934ebdb"
+    },
+    {
+      "path": "docs/V126_BOWS.md",
+      "size": 1703,
+      "sha256": "8454a8775d9b491b3f06d1186b5963397df7d7c35f8f821efdf8647e07cd1474"
+    }
+  ]
+}

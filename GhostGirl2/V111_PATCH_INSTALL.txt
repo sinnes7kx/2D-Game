@@ -1,0 +1,27 @@
+Ghost Girl v1.11 — Moonrose Materials
+Incremental patch for Ghost Girl v1.10 Clean Hands (NOT v1.9).
+
+1. Back up the Godot project folder AND your save file.
+2. Extract this ZIP into the existing v1.10 folder containing project.godot.
+3. Allow overwriting matching files and opening/importing the new assets.
+4. In Godot 4, press F5 to run the game. Open I for inventory; equip a
+   scythe or halberd (F7 in development mode gives test weapons).
+5. The colors/gradient/2 detail surface rolls follow the item seed. Compare
+   scythe and halberd items to see unique appearances and the new tooltip names.
+6. Full-frame static preview artwork is included in docs/v111_previews.
+
+WHAT'S NEW:
+ - Hook-free packed v1.11 body atlas, used by all 16 idle/walk animations.
+ - 8 corrected front/back weapon overlay sheets with safe 4px gutters.
+ - Four visual appearance rolls on scythe and halberd drops:
+   base color, gradient, material texture A, ornament texture B.
+ - In-world weapon shader uses the art texture detail masks; inventory shows
+   base/gradient swatches and four appearance labels.
+ - New cosmetic keys are saved in the existing save file; older saves load
+   using deterministic seed-derived defaults. Core stats/drops unchanged.
+
+Known limitation: no Godot 4 binary was installed on the build machine,
+so the shader and player visuals were NOT F5-playtested. The approved
+original heavy-attack character sources contain some top-edge head cropping;
+those source poses are not repainted by this patch. Dodge frames still have
+their older painted-in dagger and will need a separately authored cleanup.

@@ -1,0 +1,33 @@
+{
+  "version": "v1.48",
+  "base_version": "v1.47",
+  "patch_type": "incremental_overwrite",
+  "changes": [
+    "scenes/rooms/garden_bridge.tscn",
+    "scripts/game.gd",
+    "scripts/hud.gd",
+    "scripts/v147_echo_trial.gd",
+    "scripts/v147_rose_bell.gd",
+    "scripts/v148_rose_lantern.gd",
+    "scripts/v148_rose_run.gd"
+  ],
+  "save_compatibility": "retains inventory and world format; new optional sidecar file",
+  "total_files": 11,
+  "sha256": {
+    "INSTALL_v148.txt": "be9a06e5318e5a687f956dd2d7134669a94a2b28fb274e02cb0bdabe8183eb4c",
+    "docs/V148_PLAYTEST.md": "4ee25de595866074f30d637304a79d3a92693ebe2892ea8ebbd550c8964842c8",
+    "scenes/rooms/garden_bridge.tscn": "10ffcfbe0b19e64025387b0161d280ad9e966158e9b5eeac86886f0d0b2463bf",
+    "scripts/game.gd": "141c038ce2f5fa355a4cc38883ae976e74eb9dc3768633ed94db40262e510658",
+    "scripts/hud.gd": "d6e3cf4daaf2339ae3b6a9e517545c90ccf62a91b4d99d4c89fad47600116534",
+    "scripts/v147_echo_trial.gd": "d006acd994fbe10be100e10b39923e8d35a78971e7c9eea3a8d8fd2527d73d77",
+    "scripts/v147_rose_bell.gd": "343a9f81153f3ab4d9d4a8c10a71357c2a79272dd777a55ecff1200cff0f9a39",
+    "scripts/v148_rose_lantern.gd": "c3512b579780f66eb89b789f03822d790813d97a1ffede46d07370b6c54c4f2e",
+    "scripts/v148_rose_run.gd": "725dd09b78c5a0e22ea108754e66c42f36bd1d3db363931d8f5ca79ad46dc43b",
+    "tests/validate_v148.py": "46ed55ca0f74fffc7d6043b8f4c4dd3ee73136503a66ae190678061686cf0c9f"
+  },
+  "checks": [
+    "tests/validate_v148.py",
+    "v1.47 backwards validation 689/689",
+    "v1.46.4 backwards validation 164/164"
+  ]
+}

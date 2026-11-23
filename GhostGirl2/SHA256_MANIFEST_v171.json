@@ -1,0 +1,15 @@
+{
+  "INSTALL_v171.txt": "0d25066287e696ff5d265697f4812c7281c6d28357e466849ab700b2d2d62e48",
+  "scripts/game.gd": "f400817c8798b7391009c2ff756a6b32d4665f056115200680120aca533347c6",
+  "scripts/player.gd": "9e4e783a53ebb395fee8745e31ff81d8cedc112a0bff1a124fe84c95d8b29def",
+  "items/nocturne_stiletto_v171.tres": "db856a92a3c4d0950a78de4c1cda39710eb4600d182f216cdf905d6aa39c16c1",
+  "items/briarwake_trident_v171.tres": "fcbee018c943b5c5c3c0369add889627907b450264213f4d9af1bfde1dc314f1",
+  "resources/new_weapon_axes_v169.json": "5d55810e12440c336cc4e674f0c13c28eb95b18dea33af3842ffa9867319b2cb",
+  "resources/ghost_extra_animations.json": "efb35a1d5408f3d174f10acae855d6e04bbfef2889139767bb0100c86a6e3efe",
+  "assets/ui/weapons_v171/briarwake_spear.png": "69641984731d4ab4803dfe466a3476e85a5b4d7e98393746616b232471df49d7",
+  "assets/ui/weapons_v171/nocturne_dagger.png": "5c1482d265b05804ba1227ac00809fd2b29ad8ef8ea5fb2cf50668b05b5684aa",
+  "assets/equipment/weapons_v171/briarwake_spear_locomotion_2048x1760.png": "31f9d44ba3149372995553b4b5d65ef58ca731ab669d7a3c309429c4a78d6127",
+  "assets/equipment/weapons_v171/nocturne_dagger_locomotion_2048x1760.png": "af4fcbf7b090b659cc1ee01a41e6b9c2cf7daaa7b05044e12adfc2ac26369110",
+  "assets/equipment/weapons_v171/briarwake_spear_combat_2048x1760.png": "446504c1a859f5178cae38f045a51c8d01b54cab7621ef1b9e6aeb9504385daf",
+  "assets/equipment/weapons_v171/nocturne_dagger_combat_2048x1760.png": "c5a2688339b7e3f4630144fc8821888b8079aede0d086f8f260f49647563f6fa"
+}

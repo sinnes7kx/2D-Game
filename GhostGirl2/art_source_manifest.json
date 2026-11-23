@@ -1,0 +1,30 @@
+{
+  "art_rule": "Every room must use a distinct original painting. No mirroring/recoloring one room to fake another; palette refinements of reusable tile sheets are allowed.",
+  "expanded_dimensions": [
+    2389,
+    1792
+  ],
+  "source_original_dimensions": [
+    1448,
+    1086
+  ],
+  "room_art": {
+    "garden": "moonlit_gothic_waking_garden.png",
+    "chapel": "chapel_of_soft_echoes.png",
+    "cloister": "moonlit_gothic_rose_cloister.png",
+    "sanctum": "moonlit_sanctum_memorial_garden.png",
+    "lily_pond": "moonlit_lily_mirror_garden.png",
+    "glasshouse": "glasshouse_of_wishes_at_moonrise.png",
+    "observatory": "the_starfall_observatory.png"
+  },
+  "exploration_expansion": {
+    "moonwake_crypt": "Original crypt painting from previous Act I build, unchanged",
+    "crypt_gallery": "User-supplied image(20261115-000621).png, enlarged to game-world resolution without reflection or palette shift",
+    "garden": "Original waking garden painting from previous Act I build, unchanged",
+    "garden_arbor": "User-supplied image(20261115-000701).png, enlarged to game-world resolution without reflection or palette shift",
+    "garden_bridge": "Independently generated original gothic bridge painting, enlarged to game-world resolution",
+    "future_secrets": "Marker2D placeholders only; no hidden rewards added yet",
+    "darker_tilesets": "Two darker palette variants of supplied tileset sprites, stored under assets/tilesets; they are not used as duplicate room backgrounds",
+    "animated_scenes": "flame, water, petal, firefly SpriteFrames and room nodes"
+  }
+}

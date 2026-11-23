@@ -1,0 +1,23 @@
+{
+  "name": "Ghost Girl v1.7 Moonrose Resonance",
+  "version": "1.7",
+  "requires": "1.6",
+  "type": "incremental_overlay",
+  "install": "Extract into the directory containing project.godot; overwrite matching files.",
+  "includes_original_png_or_audio": false,
+  "godot_runtime_tested": false,
+  "files": {
+    "project.godot": "15722af84a1313d2051e09e600b9700d77df9dd723dcd53ce27fa0d941cc1078",
+    "scripts/rose_hook.gd": "c24e01b1aba9d787f1828ca02143f4dddbca2e2a8394e50191db726ddcbca503",
+    "scripts/rose_switch.gd": "abe8b543c54e3027ea58ef2d7db2f6740b23f2b0d017d1839348708aadf73b3f",
+    "scripts/game.gd": "604bb628137e4830b8cd0882de05c31935abbd9ea6045fe5393df2e9b09b06a5",
+    "scripts/player.gd": "444b9bb6c62955461ccd89a6ed13a9a1b5ef5ffe8100312735a55b6bfe98067b",
+    "scripts/rose_wraith.gd": "e701cc07f1b4a46004d88f64d9d1cbbcf7a309bf8a54199f61a687b2ec85c743",
+    "scripts/item_instance.gd": "ce90fb7c605b0c9b7fe9ec36326c1a3e466320b78b345368bd9987c8ebb651cc",
+    "scripts/item_rich_text.gd": "cdc4505fed465fa7bddeb504fc02c13199e871d7825f82bb9528c0fdc81914c8",
+    "scenes/rooms/ashglass_vault.tscn": "21d8b20775d23f8cab8d312670696d569388ecf5f88f2aa95c065f47f01da963",
+    "scenes/rooms/bellwether_court.tscn": "d5bc0c4cf57551b24533c087ae1f1ffad0357ea267ea8176d339fd5b19721635",
+    "tests/validate_v17.py": "fb6e7cb862e51970770d3e9642f53ff0af46e2a25c0c2b7bc833b24828c43778",
+    "docs/V17_MOONROSE_RESONANCE.md": "596228b5e9b2ac0d2d0f52a9725e72966bda7e463dd59269f91166683b565f56"
+  }
+}

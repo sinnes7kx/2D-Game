@@ -1,0 +1,8 @@
+{
+  "INSTALL_v157.txt": "2e0a2cc9837c2a8c31deeaa09caeaac7b906bfad7d8856d34a4a152e9cc8eddd",
+  "scripts/player.gd": "be2b630d3b8c754fbbc2829dbc3762143b0b023f951dd198bf3bc89f025d29d5",
+  "scripts/combat_response_v157.gd": "3f2a58978b5cbe8d084f5a23fdf54c177d0421d0f304e2891ceb4c5177fbd9bf",
+  "scripts/enemy_hex_bolt.gd": "badfa83b71c735f1f317a50f6e47cab50b0eacb30ef8854cf6adcad56732e0c3",
+  "scripts/gothic_hunter.gd": "adbf0c8c69926046900dfc5a36d1ee99b3f9dc1b4e5bcb82e23c96905afce588",
+  "tests/validate_v157.py": "2c0124828cde2809eb8011c4c764476cd6ef09e419261cecb36895d115dca81f"
+}

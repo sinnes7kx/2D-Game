@@ -1,0 +1,82 @@
+{
+  "release": "1.32",
+  "patch_base": "1.31",
+  "type": "incremental major gameplay patch",
+  "files": [
+    {
+      "path": "scripts/game.gd",
+      "size": 43039,
+      "sha256": "92e38a4cb841d5d60112878aef9596c9f23fd9c051bc75f980279233558b0811"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "size": 9669,
+      "sha256": "1fa483fe1e6ca799409e5394d5a5ddef740ce268df259573215fa4702b1b0e93"
+    },
+    {
+      "path": "scripts/moor_vigil_memory_v132.gd",
+      "size": 2848,
+      "sha256": "ce3edbd8067c9e101f5ede6f3ac80e99ac01a2fc0d14f4e0278ebfad7bb203fa"
+    },
+    {
+      "path": "scripts/moor_vigil_altar_v132.gd",
+      "size": 4129,
+      "sha256": "41be55796a7a8574ce5abc74bab7c65c0a19a29dce88be66c9196212b5a4d719"
+    },
+    {
+      "path": "scripts/moor_warden_v132.gd",
+      "size": 12905,
+      "sha256": "89a9451f40decb99eea725231927baabb71cb9cbbf5c6bba0b016e8eb2875c30"
+    },
+    {
+      "path": "scripts/relic_attunement_v132.gd",
+      "size": 3997,
+      "sha256": "16b0b79f657889566e52bbc195ac703b34759cfca2e5fc335465216bd0c58702"
+    },
+    {
+      "path": "scenes/hud.tscn",
+      "size": 6834,
+      "sha256": "d53df80b20034b562f5a059945a3e0e4d51c48c1affcd7f078de1d3855c7a39f"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 85203,
+      "sha256": "87f34dc8449c868e9bbd03fd12b9add76f8384565181d3f00afc75d7d96f8d7c"
+    },
+    {
+      "path": "scenes/rooms/moonwake_crypt.tscn",
+      "size": 14687,
+      "sha256": "aa547d80d2a7ebb777da57620b81a1c00d4e252afaa2c0e58fb8cdef76a04904"
+    },
+    {
+      "path": "scenes/moor_warden_v132.tscn",
+      "size": 738,
+      "sha256": "178f79e7c640baf97fe7dfbc2c85e85f977ce1fc852da39c540554749e4aac43"
+    },
+    {
+      "path": "items/v132/veilkeeper_reaper.tres",
+      "size": 730,
+      "sha256": "aeff2b92b7fdc080d635000bedc8f979dd35c6ab9dbff409c1603c5c5a10bd64"
+    },
+    {
+      "path": "items/v132/lament_moonbow.tres",
+      "size": 730,
+      "sha256": "fff9b2b60350449ed2733ae697ce945d1f268769f30c2764067da0035e83bd76"
+    },
+    {
+      "path": "items/v132/censer_of_the_fourth_bell.tres",
+      "size": 657,
+      "sha256": "575a353130dab8a73e5adab4ff5dea6f536332aa61f934a1e26a766baf184214"
+    },
+    {
+      "path": "tests/validate_v132.py",
+      "size": 7316,
+      "sha256": "ee4c6482e8f41cc17779ea155e3c995067e1af2a1849bcbd9e55780f7f5a3ce5"
+    },
+    {
+      "path": "docs/V132_MOOR_VIGIL_MAJOR_RELEASE.md",
+      "size": 3908,
+      "sha256": "0a6545245c5a2b2b2d488c67baa3dd76915eb2765274228174a3c32955396569"
+    }
+  ]
+}

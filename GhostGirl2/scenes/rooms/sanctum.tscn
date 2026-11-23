@@ -1,0 +1,151 @@
+[gd_scene format=3 uid="uid://bcsrst0h8gir6"]
+
+[ext_resource type="Texture2D" uid="uid://efk07j37iu7d" path="res://assets/world/sanctum.png" id="1_background"]
+[ext_resource type="Texture2D" uid="uid://dhxrwxa7cbays" path="res://assets/world/layers/sanctum_foreground.png" id="1_foreground"]
+[ext_resource type="Script" uid="uid://dlocpkb2wktxo" path="res://scripts/atmosphere.gd" id="act_atmosphere"]
+[ext_resource type="Script" uid="uid://cghiperffjqvo" path="res://scripts/memory_point.gd" id="act_memory"]
+[ext_resource type="Script" uid="uid://ce3362xitjjtv" path="res://scripts/portal.gd" id="act_portal"]
+
+[sub_resource type="RectangleShape2D" id="shape_0"]
+size = Vector2(2389, 248)
+
+[sub_resource type="RectangleShape2D" id="shape_1"]
+size = Vector2(144, 1792)
+
+[sub_resource type="RectangleShape2D" id="shape_2"]
+size = Vector2(132, 1792)
+
+[sub_resource type="RectangleShape2D" id="shape_3"]
+size = Vector2(2389, 69)
+
+[sub_resource type="RectangleShape2D" id="shape_4"]
+size = Vector2(1744, 264)
+
+[sub_resource type="ConvexPolygonShape2D" id="shape_5"]
+points = PackedVector2Array(255.75, 0, 243.23, 76.48, 206.91, 145.48, 150.33, 200.23, 79.03, 235.39, 0, 247.5, -79.03, 235.39, -150.33, 200.23, -206.91, 145.48, -243.23, 76.48, -255.75, 0, -243.23, -76.48, -206.91, -145.48, -150.33, -200.23, -79.03, -235.39, 0, -247.5, 79.03, -235.39, 150.33, -200.23, 206.91, -145.48, 243.23, -76.48)
+
+[sub_resource type="RectangleShape2D" id="shape_6"]
+size = Vector2(496, 300)
+
+[node name="Sanctum" type="Node2D" unique_id=563789129]
+
+[node name="PaintedRoom" type="Sprite2D" parent="." unique_id=1214342316]
+z_index = -50
+texture = ExtResource("1_background")
+centered = false
+
+[node name="ForegroundCanopy" type="Sprite2D" parent="." unique_id=129695680]
+z_index = 49
+texture = ExtResource("1_foreground")
+centered = false
+
+[node name="Northern boundary" type="StaticBody2D" parent="." unique_id=268423560]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Northern boundary" unique_id=54430598]
+position = Vector2(1195, 124)
+shape = SubResource("shape_0")
+
+[node name="Western boundary" type="StaticBody2D" parent="." unique_id=706399436]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Western boundary" unique_id=333776956]
+position = Vector2(72, 898)
+shape = SubResource("shape_1")
+
+[node name="Eastern boundary" type="StaticBody2D" parent="." unique_id=1237078528]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Eastern boundary" unique_id=1437631499]
+position = Vector2(2323, 898)
+shape = SubResource("shape_2")
+
+[node name="Southern boundary" type="StaticBody2D" parent="." unique_id=44645596]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Southern boundary" unique_id=1409017461]
+position = Vector2(1195, 1769)
+shape = SubResource("shape_3")
+
+[node name="Flower altar" type="StaticBody2D" parent="." unique_id=119895499]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Flower altar" unique_id=1818263804]
+position = Vector2(1016, 569)
+shape = SubResource("shape_4")
+
+[node name="Western lily pool" type="StaticBody2D" parent="." unique_id=373048433]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Western lily pool" unique_id=23199025]
+position = Vector2(464, 1208)
+shape = SubResource("shape_5")
+
+[node name="Northeast memorial" type="StaticBody2D" parent="." unique_id=710854501]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Northeast memorial" unique_id=429632937]
+position = Vector2(2136, 538)
+shape = SubResource("shape_6")
+
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=1056537221]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints" unique_id=200610673]
+position = Vector2(1175, 1358)
+
+[node name="From_cloister" type="Marker2D" parent="SpawnPoints" unique_id=1773299430]
+position = Vector2(1172, 1358)
+
+[node name="From_lily_pond" type="Marker2D" parent="SpawnPoints" unique_id=287997023]
+position = Vector2(1864, 1079)
+
+[node name="Gameplay" type="Node2D" parent="." unique_id=598952081]
+
+[node name="Portals" type="Node2D" parent="Gameplay" unique_id=102441236]
+
+[node name="cloister" type="Node2D" parent="Gameplay/Portals" unique_id=1446633220]
+position = Vector2(1184.0001, 1456)
+scale = Vector2(4.9542227, 2.8996165)
+script = ExtResource("act_portal")
+interaction_name = "Return to cloister"
+destination = "cloister"
+
+[node name="lily_pond" type="Node2D" parent="Gameplay/Portals" unique_id=1364687015]
+position = Vector2(2168, 736.00006)
+rotation = 0.04633511
+scale = Vector2(2.0340233, 2.918264)
+script = ExtResource("act_portal")
+interaction_name = "Follow the silver water"
+destination = "lily_pond"
+opened = true
+
+[node name="Carryables" type="Node2D" parent="Gameplay" unique_id=1039290100]
+
+[node name="Plates" type="Node2D" parent="Gameplay" unique_id=849304567]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay" unique_id=2102548076]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay" unique_id=1969227538]
+
+[node name="Memories" type="Node2D" parent="Gameplay" unique_id=1465254789]
+
+[node name="LostMemory" type="Node2D" parent="Gameplay/Memories" unique_id=1740555449]
+position = Vector2(1187.0001, 768.00006)
+scale = Vector2(1.6, 1.6)
+script = ExtResource("act_memory")
+
+[node name="Effects" type="Node2D" parent="Gameplay" unique_id=1503385350]
+
+[node name="MoonlitDust" type="Node2D" parent="Gameplay/Effects" unique_id=1621085567]
+z_index = 12
+scale = Vector2(1.65, 1.65)
+script = ExtResource("act_atmosphere")
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay" unique_id=1002779568]

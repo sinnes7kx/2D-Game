@@ -1,0 +1,18 @@
+Ghost Girl v1.64 — Rare Item Fireflies
+Apply over v1.63.
+
+Adds subtle firefly-like ambient particles for equipped rare/cosmetic-seeded items.
+- weapons: tiny motes around the glow span
+- dress/accessories: soft drifting motes near the body and equipped accessories
+- visual only, inspired by the environment fireflies
+- no stat or save changes
+
+Files changed:
+- scripts/equipment_visuals.gd
+- scripts/weapon_prestige_fx.gd
+
+Install:
+1. Close Godot.
+2. Extract into the GhostGirl2 project folder.
+3. Overwrite matching files.
+4. Reopen Godot and playtest.

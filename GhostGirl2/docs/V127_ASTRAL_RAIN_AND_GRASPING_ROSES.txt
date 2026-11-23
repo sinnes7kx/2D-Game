@@ -1,0 +1,43 @@
+GHOST GIRL v1.27 — ASTRAL RAIN & GRASPING ROSES
+==============================================
+Requires: v1.26 (Thornrose & Moonveil Bows).
+
+NEW SPELLS
+----------
+Learn at two new relic altars near the starting room in Moonwake Crypt:
+- Astral Rain Reliquary (near x=980, y=1060): press E to learn permanently.
+  Equip a wand and press V to cast at the mouse cursor.
+  40 stamina, 7.8-second cooldown, ~3.45-second area storm.
+  Repeated, timed damage pulses. Decorative star particles never deal extra hits.
+- Grasping Roses Reliquary (near x=1400, y=1060): press E to learn.
+  Equip a wand and press T to cast.
+  32 stamina, 7.1-second cooldown, ~3.1-second thorn-snare field.
+  Each enemy can take one hit per cast; slow refreshes while inside.
+  Elites keep their existing slow resistance.
+
+Both spell effects inherit your equipped wand's two visual colors and rarity.
+More dramatic ornaments are cosmetic and reserved for rare, set or unique wands.
+Both spells respect stone walls and cannot be cast through solid cover.
+Unlocks use the existing collected_pickups save dictionary; old saves remain valid.
+
+BOW POLISH
+----------
+- Distinct release flare, brighter for charged shots.
+- Four rare-only cosmetic arrow trails: Rose Comet, Crescent Halo,
+  Frost Star Needles, Dusk Helix.
+- Arrow collisions, normal single-hit and charged two-target pierce remain unchanged.
+- No new weapon slots, damage projectiles or save fields.
+
+INSTALL
+-------
+1. Back up your existing v1.26 Godot project.
+2. Extract this patch directly into the folder with project.godot.
+3. Overwrite matching files; open the game in Godot 4.7.
+4. Study both reliquaries in Moonwake Crypt; equip a wand and try V and T.
+5. Equip Thornrose or Moonveil to test bow release flares and rare arrows.
+
+VALIDATION STATUS
+-----------------
+Static validation for v1.24, v1.25, v1.26, v1.27 passed.
+Older v1.23 showroom test expects 11 pedestals, but the v1.26 base now has 13.
+No Godot executable was available for a real engine parse or F5 playtest.

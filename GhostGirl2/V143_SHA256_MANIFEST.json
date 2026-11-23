@@ -1,0 +1,14 @@
+{
+  "base_version": "1.42",
+  "version": "1.43",
+  "files": {
+    "V143_RELEASE_NOTES.md": "8385568b8aa8e3dea64505a71d86b0210ea8acd92d382b27036c7c8e4d8d9394",
+    "resources/long_weapon_glow_axes_v143.json": "03911c8cc9a50dc053085aa3548e2c29fbe6e144cda09ef3a3bd3ecd52f0e6a2",
+    "tests/validate_v143.py": "ff9060655380943d22220185b097bef135c72376d346e70814588f5e3ac1fb65",
+    "scripts/moonthread_waylight_v143.gd": "a60c5025180c8cd75827aa9774c69d89a31894415387913e3c9d0c753ec00c53",
+    "scripts/weapon_prestige_fx.gd": "7cbb237c5973a1eb70eedafc1c22da7c4e606de2a3d2dec95056f07660b2da18",
+    "scripts/wand_idle_glimmer.gd": "1a971150afef0db2de29a9e9d170bb0909880ca879b280c59cdf361d7e44fbf0",
+    "tools/build_long_weapon_axes_v143.py": "80362e20ecc12c13a8fda25bfb4d273c7763da4d17f8e65da381bd825755554b",
+    "scenes/rooms/hollow_veil_moor.tscn": "c4d22ac78c0249363c07b2cc99225bdfe4a151de6196355fe9d894da10a1e50c"
+  }
+}

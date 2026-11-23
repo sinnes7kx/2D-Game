@@ -1,0 +1,1218 @@
+{
+  "package": "Ghost Girl cumulative update for an existing v1.24 project",
+  "target_version": "v1.46",
+  "required_baseline": "a complete, working Ghost Girl v1.24 project (or newer)",
+  "description": "File overlay, not a complete standalone Godot project. Preserve existing assets and saves.",
+  "application": "Extract into folder containing project.godot, overwrite files after backing up.",
+  "versions_included": [
+    "1.25",
+    "1.26",
+    "1.27",
+    "1.28",
+    "1.29",
+    "1.30",
+    "1.31",
+    "1.32",
+    "1.33",
+    "1.34",
+    "1.35",
+    "1.36",
+    "1.37",
+    "1.38",
+    "1.39",
+    "1.40",
+    "1.41",
+    "1.42",
+    "1.43",
+    "1.44",
+    "1.45",
+    "1.46"
+  ],
+  "compatibility_repair_included": "v1.40 cumulative dependency/palette repair",
+  "verification": "All overlapping patched files are byte-identical to v1.46 development worktree; no in-engine playtest performed.",
+  "file_count": 197,
+  "files": [
+    {
+      "path": "PATCH_MANIFEST_v125.json",
+      "size": 2335,
+      "sha256": "bf2c279a57a6e8a24242a178742fcda16e5e215022b80b3eec2cba000769e0f7",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "PATCH_MANIFEST_v127.json",
+      "size": 2148,
+      "sha256": "791b6e9a9f01b953dc74307e4b0b43cdbf4d371cfe6013d70dcbe18955adb347",
+      "latest_source": "GhostGirl_v1.27_Astral_Rain_Grasping_Roses_PATCH_for_v1.26.zip"
+    },
+    {
+      "path": "README_v133.txt",
+      "size": 832,
+      "sha256": "d396c71acbc74ad3a27620342d42f0dc1073c8484bc5ba7308c47b3657dfe00d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V125_PATCH_INSTALL.txt",
+      "size": 542,
+      "sha256": "39304301e596a8236a274fa62ab69bcc33074782929138a879dd1ea2a3d91e5d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V134_PATCH_MANIFEST.json",
+      "size": 1589,
+      "sha256": "63253af1c6dd2da38813308f22f59c4c8681e3a155d4609aa887f63ab5d1cb24",
+      "latest_source": "GhostGirl_v1.34_The_Last_Vigil_PATCH_for_v1.33.zip"
+    },
+    {
+      "path": "V137_PATCH_HASHES.json",
+      "size": 925,
+      "sha256": "66306c73a690b74c6329641c222d3cfd5c4e475ba7125df0c28fb532fa082ba3",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V137_RELEASE_NOTES.md",
+      "size": 2263,
+      "sha256": "b89ed91af4d9e38c6aa50a2b925d6f82d48281e37633efa8c5a342b0dda96fec",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V138_PATCH_MANIFEST.json",
+      "size": 3878,
+      "sha256": "a9981133f60228b091d2b3de2eef44bf93fcc686bbc2d1224e1c15f7af041dd4",
+      "latest_source": "GhostGirl_v1.38_Elemental_Fletching_PATCH_for_v1.37.zip"
+    },
+    {
+      "path": "V139_PATCH_MANIFEST.json",
+      "size": 4188,
+      "sha256": "defbe41d9e7bb4d6e9ca41bc0907fc4b197b0583786c3ec0bbebb6bea4a08259",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V139_RELEASE_NOTES.md",
+      "size": 2848,
+      "sha256": "83ff0be3fe8fe33921cc351c2ea189fb5df5d77e329b72c948dbe85b03840f43",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V140_CUMULATIVE_AUDIT.json",
+      "size": 471,
+      "sha256": "22d29f8dd0d33b5e8b5b1e262d682fbfb59a80dff563abd79d7157d2e8f76607",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V140_CUMULATIVE_REPAIR_README.txt",
+      "size": 1253,
+      "sha256": "618b9806decac7b2e959dbc52211eaa165dfa591ecc492f2d23c3b19811b91e7",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V140_RELEASE_NOTES.md",
+      "size": 3011,
+      "sha256": "0002e8d9e52849bb94d67ed4a92c4c4c1820b0d8c21a7cee232426ca27c03c18",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "V141_PATCH_MANIFEST.json",
+      "size": 1308,
+      "sha256": "4847ae690d99d798486c8005a0e9a988bda98164cbdf1e4a60c24594018f202e",
+      "latest_source": "GhostGirl_v1.41_Quiet_Relic_Light_Control_Fix_PATCH_for_v1.40.zip"
+    },
+    {
+      "path": "V141_RELEASE_NOTES.md",
+      "size": 1588,
+      "sha256": "4a0c34a5abcb0a33e7a98d3cb204db26fc2f1470e64d70b1fb35d593f03fb2c3",
+      "latest_source": "GhostGirl_v1.41_Quiet_Relic_Light_Control_Fix_PATCH_for_v1.40.zip"
+    },
+    {
+      "path": "V142_PATCH_MANIFEST.json",
+      "size": 1450,
+      "sha256": "17d03a8901f74a2319b508e06f299b444a939912299c431131b366d38fa36ddd",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "V142_RELEASE_NOTES.md",
+      "size": 1476,
+      "sha256": "f140b52a59b8344dfdc24ec0e4fa2b673dc85ddee365e7f68bc91b5c70a59336",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "V143_RELEASE_NOTES.md",
+      "size": 1988,
+      "sha256": "8385568b8aa8e3dea64505a71d86b0210ea8acd92d382b27036c7c8e4d8d9394",
+      "latest_source": "GhostGirl_v1.43_Moonthread_Weapon_Alignment_PATCH_for_v1.42.zip"
+    },
+    {
+      "path": "V143_SHA256_MANIFEST.json",
+      "size": 921,
+      "sha256": "a97846ba600516a121ad5b8374e361a95a790531f350787c537fe87faef5833c",
+      "latest_source": "GhostGirl_v1.43_Moonthread_Weapon_Alignment_PATCH_for_v1.42.zip"
+    },
+    {
+      "path": "V144_PATCH_SHA256_MANIFEST.json",
+      "size": 1221,
+      "sha256": "0c44a18472063f3d267fa97684463dd0cbb61f80451b77ab18631a15e71e04b2",
+      "latest_source": "GhostGirl_v1.44_Moonroot_Causeways_Quiet_Glows_PATCH_for_v1.43.zip"
+    },
+    {
+      "path": "V144_RELEASE_NOTES.md",
+      "size": 2375,
+      "sha256": "7818b6f97e89da44a46452352b1c3d01185bdd59666512292eec1b71185d5887",
+      "latest_source": "GhostGirl_v1.44_Moonroot_Causeways_Quiet_Glows_PATCH_for_v1.43.zip"
+    },
+    {
+      "path": "V145_PATCH_SHA256.json",
+      "size": 1310,
+      "sha256": "5cfae6f86b4d9f65944d5631f40ae2b6067239c49f26a084afa0a06f2512b8b7",
+      "latest_source": "GhostGirl_v1.45_The_Listening_Moor_PATCH_for_v1.44.zip"
+    },
+    {
+      "path": "V145_RELEASE_NOTES.md",
+      "size": 2671,
+      "sha256": "0ca82163c3d06068c5b9622fbf0982e5c387c98ceb02039d6c5bd273612460f7",
+      "latest_source": "GhostGirl_v1.45_The_Listening_Moor_PATCH_for_v1.44.zip"
+    },
+    {
+      "path": "V146_PATCH_MANIFEST.json",
+      "size": 2548,
+      "sha256": "73ee09d3ffe2e7ee572caaf3efde789c1e5154fbe5282f37e7be29cf723f7e7b",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "V146_RELEASE_NOTES.md",
+      "size": 3646,
+      "sha256": "f0bf1239b06d41ca033fdda851e8e97e9c1941a629a92525ca9bcc4d33dddfb9",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "assets/audio/v135_beam_creak.wav",
+      "size": 24740,
+      "sha256": "6c5040ee7c4bc8e4f1020089f10ebbde11d0a3231dcc8c83aa8c7c62d566446c",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/audio/v135_debris_impact.wav",
+      "size": 39734,
+      "sha256": "0e202ad29e3872568ff3a2123827c76ae36151fa8db3b55d805d1d57e17070f3",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/audio/v137_bellroot_chime.wav",
+      "size": 59578,
+      "sha256": "5257d4752ad05596c0cf06600a9ee334ced9de813c8f7dd731736f3ef5e9f858",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/enemies/gloom_lantern_v130_4frames.png",
+      "size": 96376,
+      "sha256": "6db53e017fa6aa021227467e24711e8909fbb30727bd526587cf3104dc7c7de5",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/enemies/hush_moth_v130_4frames.png",
+      "size": 100667,
+      "sha256": "147e87dc08d7d9d5091ca5437bc6a59b682e46e95df4b99212657477c71c8020",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/equipment/bow_palette_v139.gdshader",
+      "size": 981,
+      "sha256": "386d8ed77c0f14a6a65de14db64b02d06fbb499705257e36640d2a08f2fec34d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v126/moonveil_combat_2048x1760.png",
+      "size": 2597386,
+      "sha256": "dee38942f611fbd3bf18c3b70c268a5ad90a6ea9a02cd6bd18c3271af4e67244",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v126/moonveil_icon.png",
+      "size": 6636,
+      "sha256": "e1a0823f54f619f2cb8d48a9ff95b1af50f2c2b0447fcaa8e980c737e3877bac",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+      "size": 2757446,
+      "sha256": "94af9b9be26bb5d76d1d90a131b2049464ec2574855d6916b15e75ad5f01cd2d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v126/thornrose_combat_2048x1760.png",
+      "size": 2613046,
+      "sha256": "1e9b03d9744c15d3861761d0fd445204ef5203497976748a67678d372f75f6e9",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v126/thornrose_icon.png",
+      "size": 6961,
+      "sha256": "61e9813e8aeb84c3d83c0de3273be73c3a9fdb95b31b60a72c7a3e9874cb29e4",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+      "size": 2766525,
+      "sha256": "9cb198ff2e57e4f0d92b74b36fb75f71a2879e0217a3bb3f8c458ca2622c776e",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+      "size": 2693147,
+      "sha256": "de027c7099f8adf0136f4db377221228dfab6d601ae9c1469de34f4bf483452e",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+      "size": 2707326,
+      "sha256": "007ba0016b59aff96e5598026289deef09c4548182bab27f9190aee5b8613c58",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v139/moonveil_combat_2048x1760.png",
+      "size": 2278289,
+      "sha256": "867c7d61aee46a11e6fbb92610de3bfd3365f75490370e35955b6857d7e59d9a",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v139/moonveil_combat_mask_2048x1760.png",
+      "size": 179729,
+      "sha256": "7b98cad85c211847d70e766ccd3e8fb21757d03a3551e34ae275918fb8582364",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v139/moonveil_locomotion_mask_2048x1760.png",
+      "size": 251074,
+      "sha256": "4407dd0368b80d530ab1b20f51ea5b707d6a918ceb7b035de794c7cbc3c37975",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v139/thornrose_combat_2048x1760.png",
+      "size": 2278893,
+      "sha256": "230c1594d8c94cefa6439447c48c8f9eb97d47ed667b03ac0d55749efea86d0f",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v139/thornrose_combat_mask_2048x1760.png",
+      "size": 180370,
+      "sha256": "aba0d7a9b6479c4f23fb6f1dfd51c55af24083c8f72de0b12e0e0a80ab4e6a93",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "assets/ghost/bows_v139/thornrose_locomotion_mask_2048x1760.png",
+      "size": 267152,
+      "sha256": "77749937436954e6538e04602116154e5bb1c7f58913b4acdf2b195a3e5c1ca2",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/PATCH_MANIFEST_v126.json",
+      "size": 3714,
+      "sha256": "861dfcae8341b90fc1f56947434e461fdc3ebd38222cf518d312c68ad316b0fd",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V125_MOONFALL_BLIZZARD.md",
+      "size": 2240,
+      "sha256": "af4ff3772a7c1df6631051df7b967939c08c4fb8216efeb72257671401a2720a",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V126_BOWS.md",
+      "size": 1703,
+      "sha256": "8454a8775d9b491b3f06d1186b5963397df7d7c35f8f821efdf8647e07cd1474",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V127_ASTRAL_RAIN_AND_GRASPING_ROSES.txt",
+      "size": 2018,
+      "sha256": "75abacb3d8b77859b4a89c6354482fe8b23dd6c3d594a58a82fa8d2ae6b27598",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V128_FROZEN_MIRE_MOONSHOT.md",
+      "size": 1817,
+      "sha256": "81dcbc5ee472f74b3bd828027b25f0c4acaafafe5ceaf99a0c0f53f3614359e7",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V129_MOOR_CREATURES_AND_FX.md",
+      "size": 2151,
+      "sha256": "00e6b4fd23401004353ac6e97272b861d64c7e4bc3eebeb5564014ae655803c0",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V129_PATCH_MANIFEST.json",
+      "size": 1883,
+      "sha256": "c6b0e5564a8d7d6f49d2f895f95a69de24be9ad92bc5839b2e8da6ece85b79d8",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V130_PATCH_MANIFEST.json",
+      "size": 1577,
+      "sha256": "504eecf827f54af086ff99442c7c9c334f223c6533cd4663c1c88bea33ecc9d9",
+      "latest_source": "GhostGirl_v1.30_Veilbound_Reliquaries_PATCH_for_v1.29.zip"
+    },
+    {
+      "path": "docs/V130_README.md",
+      "size": 2148,
+      "sha256": "91b70e8647fa8bec7fb8e6aed28ce9e5892274e9796cd2934abc746b6dc434c6",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V131_ECLIPSE_WAKE_PATCH_NOTES.md",
+      "size": 2057,
+      "sha256": "c4d45648f80d4d09e60e4075788e9e21d05b58801dbcc26d0547ea31a67f779d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V131_PATCH_MANIFEST.json",
+      "size": 1695,
+      "sha256": "b28163bc58474546dd2f303d378713d928145439fa1f8926a769892666606f0c",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V132_MOOR_VIGIL_MAJOR_RELEASE.md",
+      "size": 3908,
+      "sha256": "0a6545245c5a2b2b2d488c67baa3dd76915eb2765274228174a3c32955396569",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V132_PATCH_MANIFEST.json",
+      "size": 2545,
+      "sha256": "11b3d4f7ca3735dc355c2e751bbf3671bd1a928de159b17023cc0300d4f86d95",
+      "latest_source": "GhostGirl_v1.32_Four_Laments_Major_PATCH_for_v1.31.zip"
+    },
+    {
+      "path": "docs/V133_BELLGLASS_ECHOES.md",
+      "size": 2014,
+      "sha256": "7cda32f51c6d44c5cae8d8a2d565642f329a7a460769dcfbdc6d343fd5a0c15d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V133_PATCH_MANIFEST.json",
+      "size": 1667,
+      "sha256": "39d2d844c13720f216b17bc28a55cb38d92fbd92bc8119dd945d5b898417cfbb",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V134_LAST_VIGIL.md",
+      "size": 1772,
+      "sha256": "c2d355b372fb051a9b7634fb8f1f42695a811a14afec83900bb8e7df8cddbf8d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V135_FALLING_WORLD_GUIDE.md",
+      "size": 3684,
+      "sha256": "4e8554ca35f896f38005e1e77e9cd96ad780aaa0d6e5e8389b0a155a8473e49a",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V135_FILE_HASHES.json",
+      "size": 2360,
+      "sha256": "25400a3445a938eb40fc71719b05f1a70795116a7ebd284b2f67edaf47bf8a84",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V136_CHAINFALL_RELEASE.md",
+      "size": 2559,
+      "sha256": "b0a810ffbeb5ab546bc54525ba0593f7347ee3d018b6b6d9051b66ea26c7128a",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V136_PATCH_SHA256.json",
+      "size": 1134,
+      "sha256": "25e0145436f0b7bb4246f5b309f8d15dd23504333f3ae4f29e14d81a2f001979",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/V138_RELEASE_NOTES.md",
+      "size": 2619,
+      "sha256": "d1fd9b456e9f6c98c7ad4c47c761106baf602199198d5987c372cf1adcf5da7a",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "docs/v138_bow_combat_review.jpg",
+      "size": 162552,
+      "sha256": "13e3fd7b6199099353d8edb34d7d86f6f8a7f44b225129eb62f6ffafadc5c4e3",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/moonveil_bow.tres",
+      "size": 693,
+      "sha256": "2628ac35c0d5970b307a774fec7e56787f37c1fd2e3784c15d51607aee3266c8",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/thornrose_bow.tres",
+      "size": 691,
+      "sha256": "7ac3746cb338233f4ff673654e7dd2ab34b254aef978dc7ccfe618d40f7ca705",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v132/censer_of_the_fourth_bell.tres",
+      "size": 657,
+      "sha256": "575a353130dab8a73e5adab4ff5dea6f536332aa61f934a1e26a766baf184214",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v132/lament_moonbow.tres",
+      "size": 730,
+      "sha256": "fff9b2b60350449ed2733ae697ce945d1f268769f30c2764067da0035e83bd76",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v132/veilkeeper_reaper.tres",
+      "size": 730,
+      "sha256": "aeff2b92b7fdc080d635000bedc8f979dd35c6ab9dbff409c1603c5c5a10bd64",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v133/bellglass_reliquary.tres",
+      "size": 685,
+      "sha256": "b1d66d6001f05e7fe076e9677707f2b0488616c7f10a54200d02b1ddff136ca8",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v134/vesperglass_wand.tres",
+      "size": 665,
+      "sha256": "3df9e7f0fce4f92a7490133fef335ffe9febbaaa262575a88d43fe90f97e7173",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v135/rafterfall_moonbow.tres",
+      "size": 748,
+      "sha256": "e78f0eb57b61f2955237e710d64694be6f6ca62603be9a69d4bdd8a954e05324",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v135/widows_knot.tres",
+      "size": 644,
+      "sha256": "b0027d409dd6e25704a52c2e773165919f76d4df9c259fe8597069e7c1e7d0a7",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v136/chainwake_amulet.tres",
+      "size": 683,
+      "sha256": "3ae89fef3183154d95f3e818c47799c5bba1c3cacd0557ac159c0519c3718a0c",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v136/mourning_girder_bow.tres",
+      "size": 762,
+      "sha256": "c995ae730ec8aa1d27293d626556fd026c16f750ac44b6a73c7e155d7f5f7666",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v137/chimekeeper_rosary.tres",
+      "size": 673,
+      "sha256": "28b35f5234fe7d01140dc1f64c2150ad41fc9526909fa101a7155bd1a8483d7d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v137/choral_moonbow.tres",
+      "size": 738,
+      "sha256": "6543796dc651f112a57deb1af271124726bba1cab82b4fc331532b0ae9612996",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v138/emberfrost_stave.tres",
+      "size": 740,
+      "sha256": "3d965503c7d4ecb2bd3c172e673fa156c4344433be39f47ae3980d25f86bd415",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "items/v138/sunlace_longbow.tres",
+      "size": 719,
+      "sha256": "85700c865d29da0b86ac99dcd1b8c064b2634b743dcd746f6ac9f252051b7e84",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "project.godot",
+      "size": 9209,
+      "sha256": "07bca77848a5ede5bcd7ad316f82e98259781787d8a1a990367c420ee22bc3b6",
+      "latest_source": "GhostGirl_v1.41_Quiet_Relic_Light_Control_Fix_PATCH_for_v1.40.zip"
+    },
+    {
+      "path": "resources/bow_animations_v126.json",
+      "size": 7643,
+      "sha256": "982010996e0e1528be965e78f43b944d3ee7904f7ca7965c8c9edd893dcba7ea",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "resources/ghost_extra_animations.json",
+      "size": 51306,
+      "sha256": "fe93e7b2f755d60b0ba663776ff12e299457d13a75954242d21560a13abb9729",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "resources/long_weapon_glow_axes_v143.json",
+      "size": 12593,
+      "sha256": "03911c8cc9a50dc053085aa3548e2c29fbe6e144cda09ef3a3bd3ecd52f0e6a2",
+      "latest_source": "GhostGirl_v1.43_Moonthread_Weapon_Alignment_PATCH_for_v1.42.zip"
+    },
+    {
+      "path": "resources/weapon_glow_axes_v142.json",
+      "size": 12690,
+      "sha256": "02af45dcee50440ec10dd9c5190db97308afde1ad1d49ec5acc659227814f390",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "scenes/astral_rain_v127.tscn",
+      "size": 177,
+      "sha256": "7f95b723d5a2670cdbbf660e9377c33da0b20b39729afc4e38b713b76bac65f0",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/bow_arrow_v126.tscn",
+      "size": 185,
+      "sha256": "99ac5421efedf65e98967aca809651e4dbd47d626a9008cef9dc0f3e8e476a05",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/grasping_roses_v127.tscn",
+      "size": 183,
+      "sha256": "ccfd3831e87f2332942f21d489d6db525abffeda4340ab8bac6ef5efdfcf7dd8",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/hud.tscn",
+      "size": 6897,
+      "sha256": "e7999c16b36c8c240c297a1c0568e31e98f4091f228338aedf4dea0bd095c73e",
+      "latest_source": "GhostGirl_v1.41_Quiet_Relic_Light_Control_Fix_PATCH_for_v1.40.zip"
+    },
+    {
+      "path": "scenes/moonfall_blizzard.tscn",
+      "size": 209,
+      "sha256": "4ec0cc1de293b6c5bd5be005fe4db4ff0f4524f481c92b67a5556500eee3c225",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/moor_creature_v129.tscn",
+      "size": 733,
+      "sha256": "37427e9a8444643008140d5661aa3baed29bdb3d72de8cd97577943c548a0b48",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/moor_warden_v132.tscn",
+      "size": 738,
+      "sha256": "178f79e7c640baf97fe7dfbc2c85e85f977ce1fc852da39c540554749e4aac43",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/player.tscn",
+      "size": 3628,
+      "sha256": "8ad07e1dbd7109279492bb8a436b99311b1efba61fd4343eadb3ab1b1de3f9e0",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/rooms/blackbrick_court.tscn",
+      "size": 17392,
+      "sha256": "0ae43362d50b6ab3a0dfae03d56acedc422725fa5a20ed657cb5bda69e4fd9f8",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 152895,
+      "sha256": "32de01a187cd8be779c419c20ec4bfe9182fe7a7423dbdddef9ad3cc58492049",
+      "latest_source": "GhostGirl_v1.45_The_Listening_Moor_PATCH_for_v1.44.zip"
+    },
+    {
+      "path": "scenes/rooms/moonthorn_woods.tscn",
+      "size": 10667,
+      "sha256": "8ba1e3523898690c4cb3183c09f3d2406eb4449636ee1ef18b3bd9b33a109969",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scenes/rooms/moonwake_crypt.tscn",
+      "size": 16720,
+      "sha256": "444f41c67e159dc19ed7686c12cdb72339e442da81a84cfe759c0dfd0451ed3f",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "scripts/ashglass_gate_v146.gd",
+      "size": 2315,
+      "sha256": "a9ebea9e2ddcd62905f455e43a5aa2093ff35d9fca8171d5d70bb0c6cc0f96cf",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/ashglass_signal_v146.gd",
+      "size": 6398,
+      "sha256": "84660478385ae16495fe602d0ab1c364714326e54af7f1230f92129d8d98403d",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/astral_rain_v127.gd",
+      "size": 3826,
+      "sha256": "55c8cd234d37e1ef5a9af5fe1aa6b582d70de3184236800df570be1a683dc376",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bellglass_echo_v133.gd",
+      "size": 5058,
+      "sha256": "7c581e759cb7bcff28ca9b34f9cd45bc21734730c5a7849a86721466d49e2956",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bellglass_vault_v133.gd",
+      "size": 1941,
+      "sha256": "2a4f3d5aa629af01f9dd6828895b9b461674853a071c273c0e7b15f9a348357e",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bellroot_chorus_v137.gd",
+      "size": 2395,
+      "sha256": "bd6017a6721c2789ae42726b09c4d8b3ffe96950c23679c90e7c08349ab4aee4",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bellroot_resonance_v137.gd",
+      "size": 7469,
+      "sha256": "a1111e17b2db54d84a9fb4cd67cb960ccf70d731e427b84d614d87a189c5d74d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bow_arrow_v126.gd",
+      "size": 14785,
+      "sha256": "bc3ccc8de99a28f2954027aef04cfb0fb6dd7c193abaf018aa89243778cacfa1",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bow_impact_v129.gd",
+      "size": 4688,
+      "sha256": "345bc988157ded384540f8d0cc3a28a92203cbd8b4ecf0690f73ea99c5e8a049",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bow_imprints_v138.gd",
+      "size": 1835,
+      "sha256": "a935d2c2c230249d7bc7db3b3e8e2f388811b6a04bd3e43aade02f8ee3832084",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bow_palette_overlay_v139.gd",
+      "size": 3752,
+      "sha256": "28feae462e933d1a3f589798b053ea26fb64fd70a2147318f81d8d20795a32e0",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/bow_practice_v142.gd",
+      "size": 3155,
+      "sha256": "5931d993283ffae9e4f5090e5dc929b0bc7dce13284c4d7376080fef4b151d7c",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "scripts/bow_release_v127.gd",
+      "size": 1631,
+      "sha256": "444d181b148ba8aecd7feba97e004ccbab108182beaee2b973154008c22a99e2",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/breakable_cover_v136.gd",
+      "size": 4652,
+      "sha256": "c1b741f82ee993a700dc315229de76286d77e2e672f03fdbe7fd3ecde88045aa",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/chain_support_v136.gd",
+      "size": 2651,
+      "sha256": "7e53026b8d0f19b55dd3d208d352e0fb02fcc1fe2463b3c9c79b6a6ad803b738",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/collapse_support_hitbox_v135.gd",
+      "size": 333,
+      "sha256": "c256f12a0b53bdad309f56874d65e431d5b481d77b465c9040c96f0377fdaf78",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/collapse_support_v135.gd",
+      "size": 8710,
+      "sha256": "32eeb9fc5a70ed935d48c6ad9488a1b9d4e9b3c1e999a0d64993046562a782c7",
+      "latest_source": "GhostGirl_v1.45_The_Listening_Moor_PATCH_for_v1.44.zip"
+    },
+    {
+      "path": "scripts/elemental_bow_target_v138.gd",
+      "size": 3451,
+      "sha256": "f028419180edcd88794de48827bd07e53d84999f40322e0d95768267d92a690a",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/elemental_bow_vault_v138.gd",
+      "size": 1589,
+      "sha256": "3109d3fcd40627b83bb44923b0099dccefc5464a53904822de7f94e18d81680b",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/elemental_flammable_v139.gd",
+      "size": 4263,
+      "sha256": "39361f087932720492dbbdf7531d26fb31f29aae70b99446e598bf879fe26a35",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/elemental_hidden_relic_v140.gd",
+      "size": 3095,
+      "sha256": "fb466507e5ba7f7ecaad70c37c86336696f5798e144dcc941ceaa3f7ae529826",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/elemental_ice_bridge_v139.gd",
+      "size": 3207,
+      "sha256": "8d18a24d8ae44d6fc65fe755f1eee840e4d2ed5c006da8175a2b805fad388ee5",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/elemental_kindling_v140.gd",
+      "size": 3894,
+      "sha256": "31547d3b52815d85921233775c2ba1740e05e3273f76f550b7bfc990ca6e982b",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/elemental_light_secret_v139.gd",
+      "size": 2354,
+      "sha256": "6858b6f3abaecc25c45eefcb66455dbf5d17c2fe4bbbd4c2fcf5a19e5efa15b4",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/enemy_death_burst_v131.gd",
+      "size": 3475,
+      "sha256": "fe5073ff92aa882ad9567f5b8affa2bb2d487ae5f3f9534bb98d2eeab819a76e",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/environment_navigation_v146.gd",
+      "size": 1863,
+      "sha256": "cef4c2c5606953c78ff8221651c4b55797a64ab6a09d9452df2d8812fee3197e",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/falling_debris_v135.gd",
+      "size": 4321,
+      "sha256": "1b37bbe3a402d78216f8551f7222b30e70eb276e33317d1b0d565c926af9576e",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 47945,
+      "sha256": "1ae121b8fd7cfe28384f1df835487005dd0ab7409d39765bbdeea8071bcb8ed0",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/gothic_hunter.gd",
+      "size": 18897,
+      "sha256": "7fee20fbef357bbadfdce20e1e46405519ccaed858797c9f7dec4d415212fb31",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/grasping_roses_v127.gd",
+      "size": 5013,
+      "sha256": "00a67517bc3385f9841880cafb06f804b0a48e3a9f24c77672ea2c4586e33737",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "size": 10115,
+      "sha256": "3dcf5bc601f32db78d14ba6dbafd4bda9c97c11469cac82cfacbce6d3be92038",
+      "latest_source": "GhostGirl_v1.41_Quiet_Relic_Light_Control_Fix_PATCH_for_v1.40.zip"
+    },
+    {
+      "path": "scripts/inventory.gd",
+      "size": 17611,
+      "sha256": "0392da3483faea221cc1fd81d6e88adcdf981ed5f965dcb350a3393a825a01c4",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/item_data.gd",
+      "size": 1219,
+      "sha256": "695d3f8d9d623be9c5c80cd3da36594d95f7ea98c81a39cfc9fcb02e9d5655bc",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/item_generator.gd",
+      "size": 6644,
+      "sha256": "f8a8372ef7e39a7012bf1b0955550a31a3d72cdbfbc479fc67461196f5fbde34",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/item_instance.gd",
+      "size": 9949,
+      "sha256": "895ba81c58dc4be336b742512a286efa5b7af3b5dd69e3b67448b67379482ac0",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/item_rich_text.gd",
+      "size": 7593,
+      "sha256": "1ce5637aaf174fc2b8353153b7253d5626bbdba30a44d3784baf493073cb1540",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/jump_landing_cue.gd",
+      "size": 2076,
+      "sha256": "038b90fea09f8ad6ff295c66f7493f45521c491a7afa452250f44d31e4ab0d8e",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moon_archery_target_v128.gd",
+      "size": 2419,
+      "sha256": "dd1d116e680a730ee3aa9e29fdafb8e6be3444a84f4f693d77cc289eb2693ade",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moonfall_blizzard.gd",
+      "size": 9170,
+      "sha256": "91eb55df42669d2e20244a6b6a9aceca87238198db9757db280fda552ce4e496",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moonfall_shrine.gd",
+      "size": 1532,
+      "sha256": "55d97a98f69586e98c27b70abecf7a98b22d40cfc84bdf240dcfd5c704e0387f",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moonroot_hitbox_v144.gd",
+      "size": 530,
+      "sha256": "f107ce5f328d8f479af4981e44b74d33b7bb91f9128ecbe35c34d3b4c2737fb8",
+      "latest_source": "GhostGirl_v1.44_Moonroot_Causeways_Quiet_Glows_PATCH_for_v1.43.zip"
+    },
+    {
+      "path": "scripts/moonroot_lattice_v144.gd",
+      "size": 9891,
+      "sha256": "fd079587fa7dd018e20ab60640636099a36a711f9ea25c4c06526058320404ee",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/moonshot_bloom_v131.gd",
+      "size": 3979,
+      "sha256": "15f80268b741aaab730f8dfaf1d4bfd7cb766d2db088b2691d14e3c3e11b296d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moonthread_waylight_v143.gd",
+      "size": 2834,
+      "sha256": "a60c5025180c8cd75827aa9774c69d89a31894415387913e3c9d0c753ec00c53",
+      "latest_source": "GhostGirl_v1.43_Moonthread_Weapon_Alignment_PATCH_for_v1.42.zip"
+    },
+    {
+      "path": "scripts/moor_aftershock_memory_v145.gd",
+      "size": 3767,
+      "sha256": "345b9e199dd51bc65c95ded49d49c27e61304076acf95c35b0205f179cc87e8d",
+      "latest_source": "GhostGirl_v1.45_The_Listening_Moor_PATCH_for_v1.44.zip"
+    },
+    {
+      "path": "scripts/moor_creature_v129.gd",
+      "size": 9777,
+      "sha256": "3b691908d276eef81f1fdedbd5743274d88a54f2d7e9de95e2f26ad434707974",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/moor_salvage_seal_v135.gd",
+      "size": 1795,
+      "sha256": "3e328a975ef4c33cea87ab0a69358336c7fbfec1dca4978ff2670fb47243d962",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moor_story_slab_v134.gd",
+      "size": 1212,
+      "sha256": "7f1c0458fc2c6520100cdd562b04ae7488def3bebe0cdfcb7e64cd76950c592e",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moor_vigil_altar_v132.gd",
+      "size": 4129,
+      "sha256": "41be55796a7a8574ce5abc74bab7c65c0a19a29dce88be66c9196212b5a4d719",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moor_vigil_memory_v132.gd",
+      "size": 2848,
+      "sha256": "ce3edbd8067c9e101f5ede6f3ac80e99ac01a2fc0d14f4e0278ebfad7bb203fa",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moor_warden_v132.gd",
+      "size": 13840,
+      "sha256": "044c43d154dff30747ad2bc3f1bc6aa1881e90e2dcae1e370f2b189fe5b3160a",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/moor_world_response_v145.gd",
+      "size": 3247,
+      "sha256": "807c16c47df43431f2b87314e7cdaf50f7ff405312152e7fb76648ecde092eb7",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/player.gd",
+      "size": 58680,
+      "sha256": "f6209c88305e71233eb8a613dcd25dddcb709d4586193ba86d5a600104fe0080",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "scripts/procedural_relic_palette_v139.gd",
+      "size": 2434,
+      "sha256": "4fbf5a518f9dbdb315074d58ac75ff82a6822d01cb21a7e5090050189793bcf1",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/relic_attunement_v132.gd",
+      "size": 4405,
+      "sha256": "7374ee559af67c3e213ac6568b50788e40901b9f0d1a70d46d98f064d75f0a26",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/rose_bloom_relay_v128.gd",
+      "size": 2310,
+      "sha256": "d1075367bc18014dcb0fad29b3b5986b470cb987114c8fd18b433faeb67d613f",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/rose_hook.gd",
+      "size": 11734,
+      "sha256": "b385ef0466bd1633cfa9a43a6bc83fb8fa457c2b5ab603bc20e0261687b55f42",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/rose_wraith.gd",
+      "size": 8731,
+      "sha256": "7fe0a4393293d8a55e7dc34f26a2fe33aedf37be7215d3a16c5abc8e713607ef",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "scripts/spell_reliquary_v127.gd",
+      "size": 1813,
+      "sha256": "5998a6dea69b1b8e52249baf6b35ba3c11dccaa76a5c38d7fd24ed1435a00f72",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/triune_reliquary_v130.gd",
+      "size": 3973,
+      "sha256": "6c2aa280d8e60483ec7436071954ba30b3b03cd2c2b948a9d18291d900f93068",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/vesper_vigil_v134.gd",
+      "size": 6011,
+      "sha256": "1e2d8e721ae641e74c19042f08db6efecafe0a95c66bb7623480c080085056a9",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/wand_idle_glimmer.gd",
+      "size": 3071,
+      "sha256": "1a971150afef0db2de29a9e9d170bb0909880ca879b280c59cdf361d7e44fbf0",
+      "latest_source": "GhostGirl_v1.43_Moonthread_Weapon_Alignment_PATCH_for_v1.42.zip"
+    },
+    {
+      "path": "scripts/warden_attack_echo_v134.gd",
+      "size": 2129,
+      "sha256": "d4c14fbde70dd614b162a1916b038e433a361f640486f58130986dad7798a8aa",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/water_body.gd",
+      "size": 8845,
+      "sha256": "13e9510ffd7bcd7246d372f38897562701c9dace4caaf60b3365de0f657a19bf",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/weapon_animation_layers.gd",
+      "size": 3795,
+      "sha256": "c1f7e6b93fad86bab232cd82781b5ac5253ed987da22fa1c2f2682e452974b53",
+      "latest_source": "GhostGirl_v1.41_Quiet_Relic_Light_Control_Fix_PATCH_for_v1.40.zip"
+    },
+    {
+      "path": "scripts/weapon_fx_library.gd",
+      "size": 6395,
+      "sha256": "833a6831edcf52552d3d06963bcfa897521636fe72fbb709c11157c474a79be5",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "scripts/weapon_prestige_fx.gd",
+      "size": 10368,
+      "sha256": "a8ed62b13b721a82c031969917f5f88c13f8779f414b3a19d4bb8ea240585b1b",
+      "latest_source": "GhostGirl_v1.44_Moonroot_Causeways_Quiet_Glows_PATCH_for_v1.43.zip"
+    },
+    {
+      "path": "scripts/world_drop.gd",
+      "size": 7462,
+      "sha256": "c78f5ca9ff2e7b3fc924e42a7e73fdc85727e2af2844706ceb25d277f6ffd583",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v125.py",
+      "size": 4534,
+      "sha256": "c212bb292eebb2debf79157e0e42a876921e011a78604ad81713d3af0a63af28",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v126.py",
+      "size": 4485,
+      "sha256": "b82ee1d7b0f717641761ff84a98ddf4492228b28b8ffad9b938b55964934ebdb",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v127.py",
+      "size": 4251,
+      "sha256": "7dae0aa1f07dbb2a94e1d6bc8fcb2d109bcb0aa9b32a17f86d09dcc10b656364",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v128.py",
+      "size": 5556,
+      "sha256": "933f534860d8b2d9dd66fb0817a2084723af574e1617b48c66c2f3d9f326d154",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v129.py",
+      "size": 5477,
+      "sha256": "30611f612664a2b1c5b88075cea21c02c4c19e58bd635274e9692c582e7ccfe2",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v130.py",
+      "size": 5147,
+      "sha256": "fd93d59c33528318e4e20c10d36dce8b02870f48a3ac4612c2ec0c0ed7514292",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v131.py",
+      "size": 5786,
+      "sha256": "0bdeebd1ada1f57289a2a5b85b92b487492f33e00e66889149e5951e8ddd89c2",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v132.py",
+      "size": 7316,
+      "sha256": "ee4c6482e8f41cc17779ea155e3c995067e1af2a1849bcbd9e55780f7f5a3ce5",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v133.py",
+      "size": 6234,
+      "sha256": "777014689046511eee1a4a3f149b7889d6b8411ba45272b70195144d4c541c50",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v134.py",
+      "size": 5131,
+      "sha256": "676c17a5c2f4abbfe112bcd969ae15c7e2816f0c4abaaf38c7df6abd3290086b",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v135.py",
+      "size": 5905,
+      "sha256": "9968db9d5bd0205739b32035bf02a78c00b486b0bdc50319007e3e16188774f2",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v136.py",
+      "size": 6228,
+      "sha256": "f0b59b03bf7435aad25ed0ebb9ae4d828da508bf78f8f899dde93cc21f6eef77",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v137.py",
+      "size": 6621,
+      "sha256": "ce366862dbe63e316eec3efade7e7a1a3115637aebc81ba5ea78abe9cc7eb750",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v138.py",
+      "size": 5835,
+      "sha256": "1f77b25513437cc47ddfc9ed04ff611c24bf3bdea140664d9cf8aae3b7c2fccc",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v139.py",
+      "size": 4998,
+      "sha256": "fb6994ffabf347f9cc08c88b3d80ac76e552503433b9726267c8dc969acd7c8d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v140.py",
+      "size": 4967,
+      "sha256": "a98a5e829197c85fa93e1b6e0668b2a60244b2342d6653657f38308798fba68d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tests/validate_v141.py",
+      "size": 2840,
+      "sha256": "03b610ec9348d91f4e5ebb943b335ebd4e2bfb90b88db076ee803687fb4ceabb",
+      "latest_source": "GhostGirl_v1.41_Quiet_Relic_Light_Control_Fix_PATCH_for_v1.40.zip"
+    },
+    {
+      "path": "tests/validate_v142.py",
+      "size": 4486,
+      "sha256": "813706f440fa51b89d725e5dd05a55f4a3200b50a177019492925cc08408230e",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "tests/validate_v143.py",
+      "size": 4855,
+      "sha256": "ff9060655380943d22220185b097bef135c72376d346e70814588f5e3ac1fb65",
+      "latest_source": "GhostGirl_v1.43_Moonthread_Weapon_Alignment_PATCH_for_v1.42.zip"
+    },
+    {
+      "path": "tests/validate_v144.py",
+      "size": 5209,
+      "sha256": "162e8c0f6b80c54267a38b43edbe666194db47698032d4237da3fbad8e2764fe",
+      "latest_source": "GhostGirl_v1.44_Moonroot_Causeways_Quiet_Glows_PATCH_for_v1.43.zip"
+    },
+    {
+      "path": "tests/validate_v145.py",
+      "size": 4946,
+      "sha256": "f84c78c6dc2e016bc9fa78f1bbb7350307e6675d91e52d88e748dafd99bc9e37",
+      "latest_source": "GhostGirl_v1.45_The_Listening_Moor_PATCH_for_v1.44.zip"
+    },
+    {
+      "path": "tests/validate_v146.py",
+      "size": 7232,
+      "sha256": "644764c1f2b411fb223472353bc0732501fc7048060fc32132b3a345d35e5cd5",
+      "latest_source": "GhostGirl_v1.46_The_Ashglass_Watch_PATCH_for_v1.45.zip"
+    },
+    {
+      "path": "tools/build_bow_combat_polish_v138.py",
+      "size": 5019,
+      "sha256": "2675f80ba205078b211d80152f784aee196c448afa4d5ab85b0c3208ed51b2e4",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tools/build_bow_draw_v139.py",
+      "size": 5835,
+      "sha256": "d0e07842c0b32a8c8a31751bd9c023aedfdf1ad68cb2f62d5e2d92c2c040599d",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tools/build_bow_masks_v139.py",
+      "size": 1976,
+      "sha256": "8c8cf7320a814cc46c8b9deba590aede16cab8e7fe6775bb8edb3e56c4bb7cb9",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tools/build_bows_v126.py",
+      "size": 6209,
+      "sha256": "e0e58eadc6d43b326e69b44330210dda15ddc37db4c0c396bfaeffafa1444954",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tools/build_long_weapon_axes_v143.py",
+      "size": 2762,
+      "sha256": "80362e20ecc12c13a8fda25bfb4d273c7763da4d17f8e65da381bd825755554b",
+      "latest_source": "GhostGirl_v1.43_Moonthread_Weapon_Alignment_PATCH_for_v1.42.zip"
+    },
+    {
+      "path": "tools/build_moor_creature_art_v130.py",
+      "size": 6618,
+      "sha256": "cb006a84a364c2a3c2fcc16f69c67e332cc0f8f77e95c1532c756805cb3a29a6",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    },
+    {
+      "path": "tools/build_weapon_axes_v142.py",
+      "size": 2687,
+      "sha256": "f899cee315cd0f6db0948aaf68285b02b7f7d1b0f7b32894635b687c47522c25",
+      "latest_source": "GhostGirl_v1.42_Fletchers_Quiet_Light_PATCH_for_v1.41.zip"
+    },
+    {
+      "path": "tools/place_v129_moor_creatures.py",
+      "size": 4228,
+      "sha256": "6465a8c8bda6af020fb305afbd5b7824cbd41c6848344dc4399e969a83632c31",
+      "latest_source": "GhostGirl_v1.40_Cumulative_Dependency_and_Palette_REPAIR_for_v1.24_plus.zip"
+    }
+  ]
+}

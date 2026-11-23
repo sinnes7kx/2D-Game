@@ -1,0 +1,22 @@
+Ghost Girl v1.55.2 — Dress Reroll & Brighter Soft Glow HOTFIX
+
+REQUIRES: v1.55 (v1.55.1 hotfix may also be installed).
+
+WHAT IT FIXES
+- item_instance.gd: Previously on dress reroll, a ternary expression assigned
+  untyped [] to Array[Color]; Godot fails with: "Trying to assign an array of type
+  'Array' to a variable of type 'Array[Color]'". The empty value is now an
+  explicitly typed Array[Color], and only equipped weapons fetch gradients.
+- weapon_prestige_fx.gd: Soft glow is slightly brighter, with more overlapping
+  round samples for smoother continuity. Sword, bow and wand cosmetic effects
+  from earlier patches are preserved.
+
+INSTALL
+1. Back up your project / close Godot.
+2. Extract this ZIP into the directory containing project.godot.
+3. Merge scripts/ and overwrite the two matching scripts.
+4. Reopen Godot and use the inventory reroll control on a dress.
+5. Equip a weapon and compare the glow idle / moving / attacking.
+
+NO save schema, RNG ID, item stat, inventory scene, or artwork changes.
+Engine F5 visual/runtime testing was not available in the packaging environment.

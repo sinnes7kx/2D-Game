@@ -1,0 +1,23 @@
+Ghost Girl v1.65 — Bow Grip, Stronger Mythic Separation, Unique Jewels
+Apply over v1.64.3.
+
+Main changes
+- better one-hand bow carry alignment during idle/walk via directional carry offsets
+- slightly brighter bow overlay glow, with stronger mythic bow overlay intensity
+- mythic bow prestige effect now reads more clearly apart from normal/rare effects
+- added three named unique socketables: Malady, Delirium, Exile
+- about 1 in 29 gem/rune drops now upgrades into one of the unique jewels
+  if you do not already own that jewel
+
+Files changed
+- scripts/bow_palette_overlay_v139.gd
+- scripts/weapon_prestige_fx.gd
+- scripts/inventory.gd
+- items/malady_jewel.tres
+- items/delirium_jewel.tres
+- items/exile_jewel.tres
+
+Notes
+- attack animations remain as-is
+- idle/walk continue using the one-hand carry approach introduced earlier
+- unique jewels are socketables only; they do not alter save schema

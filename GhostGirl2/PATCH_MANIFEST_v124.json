@@ -1,0 +1,36 @@
+{
+  "patch_version": "1.24",
+  "requires": "1.23",
+  "files": [
+    {
+      "path": "scripts/player.gd",
+      "sha256": "ec6b42ecf188948d24c0b2d2065cb4bb08bcec813ba679a8fb65ad7167a3a62a",
+      "bytes": 46522
+    },
+    {
+      "path": "scripts/moonstep_route.gd",
+      "sha256": "2ab196e676cccc868357d93cb9cdc46344557f753c8ef14dcbca49ccc79fc600",
+      "bytes": 4412
+    },
+    {
+      "path": "scripts/jump_landing_cue.gd",
+      "sha256": "8f3b49f31f5d02576cd6f34e9951426c1dc2e890f38afe2421c60c3fc8f11fc3",
+      "bytes": 793
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "sha256": "088703e20c83999eabfcb242782d8c48ade6cf0334eec6e2d50eaceac233ae88",
+      "bytes": 59419
+    },
+    {
+      "path": "docs/V124_MOONSTEP_ROUTES.md",
+      "sha256": "d70fdea4c73904724dbfe0c4dcd45d64a878413527314447d0cb0b6886d6fb44",
+      "bytes": 1870
+    },
+    {
+      "path": "tests/validate_v124.py",
+      "sha256": "c381a9e3d13658a86ee9ca4057dedb15a790fa9cdaccf6e9b43a7dd3524be9bc",
+      "bytes": 4825
+    }
+  ]
+}

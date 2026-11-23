@@ -1,0 +1,16 @@
+{
+  "version": "1.46.2",
+  "requires": "1.46.1",
+  "files": {
+    "scripts/moor_performance_director_v1462.gd": "7d618dc2322c289838eeef66c01c5722ef5449a62a762714cf9c2d7265291f7c",
+    "scripts/game.gd": "7fb429053c70f4499fb0b01e5fd4bc7995579650b0e636b43fcc09f0a2aa9de9",
+    "scripts/moor_waystone.gd": "7e3921fb1ec86c1f4cc10b8ef1bbea91fef820219fa3117b150d5c6586028142",
+    "scripts/moor_lantern.gd": "bb7c97ae301b51cf66745d039eb63f44a47017dfd224ce0e4f1668c9a0039eb7",
+    "scripts/moor_story_slab_v134.gd": "86cc988185a0e7591e0e0ac0b671c843296dd85104e10e6bf028ded2bfca6dc9",
+    "scripts/moor_water_ripples.gd": "7d3188af9bde04b9b5f5d2c80dc0ab56c96bfbe469b489727beaf5728059a780",
+    "scripts/moor_rain.gd": "cd1ee26ba6c5196b2c81e0476216f3c34a4c464b48fae3e6fa79441dd3525884",
+    "scenes/rooms/hollow_veil_moor.tscn": "b436cccda3c4ae23c1ffb1bc94fc910103e34683984fd5ba13a76fc8e8b9bf13",
+    "V1462_RELEASE_NOTES.md": "255b91579a765d2786bbcd3498ee14f3804a283e02fd31fd1368ef92bb14b1a1",
+    "tests/validate_v1462.py": "00a68f2f72659f6fdfaca48e8594e2c2b9eab5dfe72a220b77f02d68b9429fd0"
+  }
+}

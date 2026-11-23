@@ -1,0 +1,77 @@
+{
+  "release": "1.25",
+  "base": "1.24",
+  "scope": "Moonfall Blizzard spell and Frost Reliquary unlock",
+  "files": [
+    {
+      "path": "project.godot",
+      "size": 8516,
+      "sha256": "9ecf88c720af73d36f46c2d9055a0fcc9d134f7c9b575549d18d0da39e56875d"
+    },
+    {
+      "path": "scripts/player.gd",
+      "size": 47503,
+      "sha256": "8a704374f4fb1fd52b358d29500a85cdacc3b0dc3962d320e223c5c640e194a6"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 37382,
+      "sha256": "a439ac5d54c95c42c8dde6a1c908c937aa858465ed6efb34461800267887e6c9"
+    },
+    {
+      "path": "scripts/rose_wraith.gd",
+      "size": 6878,
+      "sha256": "852f21ca01d1c52b9b97fcb91f708dd81abcae8e0603c29fae06d267871f6c97"
+    },
+    {
+      "path": "scripts/gothic_hunter.gd",
+      "size": 17001,
+      "sha256": "35e84b49acefef2a845998e7584694876c3ed3fe4b8973ad49f5f67bb925f44b"
+    },
+    {
+      "path": "scripts/weapon_fx_library.gd",
+      "size": 6395,
+      "sha256": "833a6831edcf52552d3d06963bcfa897521636fe72fbb709c11157c474a79be5"
+    },
+    {
+      "path": "scripts/item_rich_text.gd",
+      "size": 6859,
+      "sha256": "b81931fc319cb7e1e59447cd000554a52a98059ef8ac41be73700acbdeb3a788"
+    },
+    {
+      "path": "scripts/moonfall_blizzard.gd",
+      "size": 5701,
+      "sha256": "0e17cfbf2a8071c5a423eba24f5628437db2534430903993366edce0110b728a"
+    },
+    {
+      "path": "scripts/moonfall_shrine.gd",
+      "size": 1532,
+      "sha256": "55d97a98f69586e98c27b70abecf7a98b22d40cfc84bdf240dcfd5c704e0387f"
+    },
+    {
+      "path": "scenes/moonfall_blizzard.tscn",
+      "size": 209,
+      "sha256": "4ec0cc1de293b6c5bd5be005fe4db4ff0f4524f481c92b67a5556500eee3c225"
+    },
+    {
+      "path": "scenes/rooms/moonwake_crypt.tscn",
+      "size": 12785,
+      "sha256": "3475c91f4f472c8ced09e11fd47fdc049783936975aa00f108304af6765e2be3"
+    },
+    {
+      "path": "tests/validate_v125.py",
+      "size": 4534,
+      "sha256": "c212bb292eebb2debf79157e0e42a876921e011a78604ad81713d3af0a63af28"
+    },
+    {
+      "path": "docs/V125_MOONFALL_BLIZZARD.md",
+      "size": 2240,
+      "sha256": "af4ff3772a7c1df6631051df7b967939c08c4fb8216efeb72257671401a2720a"
+    },
+    {
+      "path": "V125_PATCH_INSTALL.txt",
+      "size": 542,
+      "sha256": "39304301e596a8236a274fa62ab69bcc33074782929138a879dd1ea2a3d91e5d"
+    }
+  ]
+}

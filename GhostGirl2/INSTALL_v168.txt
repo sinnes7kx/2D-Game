@@ -1,0 +1,45 @@
+GHOST GIRL v1.68 — Polished Mythic Layers & Larger Inventory
+INCREMENTAL PATCH — APPLY OVER v1.67
+
+INSTALL
+1. Close Godot and back up both the GhostGirl2 project folder and your
+   existing user://ghost_girl_treasures_v2.json save first.
+2. Extract this patch directly into the GhostGirl2 folder containing project.godot.
+   Overwrite matching scripts and scenes.
+3. Reopen the project, wait for Godot's imports, then playtest.
+
+UPDATES
+• Dedicated bow locomotion sprites are selected instead of idle/walk body
+  sprites that contain the painted rose hook. All original bow attacks remain.
+• The painted bow is visible during movement, without a detached carry shard.
+• Independent full-spectrum bow-limb and bowstring gradients from the SAVED
+  128-bit cosmetic UID. No cosmetic IDs displayed to players.
+• Mythic effects appear as brief seeded bursts; soft taper replaces blunt sword
+  edges. Rare effects do not cause any extra hit or change damage.
+• Mythic wand bolts, beams and lances get a glowing moontear core and one of
+  four seeded animated accents; original collision and damage are unchanged.
+• Backpack grid expands from 10x4 to 10x6 per page, eight pages, capacity 72.
+  Old 4-row grid positions are migrated by preserving item page and local row;
+  the save adds a small 'grid_rows' metadata key. Items, indices, affixes, and
+  equipment IDs are preserved. A backup is required before downgrading.
+• The extra explanatory lines are removed from the inventory panel. The
+  selected/hovered item stays compact; hold ALT for rare/Mythic effects,
+  flavor text, spell forms and the bow's two independently rolled gradients.
+
+KNOWN LIMITATIONS
+• This patch is source-validated only: no live Godot runtime/F5 test was
+  available here. Inspect all 4 bow directions, Mythic display, projectile
+  trails, and save/load migration inside Godot.
+• The original bow full-body idle/walk art is used rather than introducing
+  unrelated/redrawn character frames. Fine pose refinement remains possible.
+• No new damage, affixes, item generation probabilities or gameplay collision
+  behavior was intentionally changed.
+
+FILES
+scripts/player.gd, scripts/bow_palette_overlay_v139.gd,
+scripts/cosmetic_rng_v152.gd, scripts/item_instance.gd,
+scripts/weapon_prestige_fx.gd, scripts/moon_spell.gd,
+scripts/wand_release_fx_v156.gd, scripts/game.gd,
+scripts/inventory.gd, scripts/inventory_grid.gd,
+scripts/inventory_panel.gd, scripts/item_rich_text.gd,
+scenes/inventory_panel.tscn, scenes/hud.tscn.

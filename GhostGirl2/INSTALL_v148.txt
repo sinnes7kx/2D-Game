@@ -1,0 +1,12 @@
+GHOST GIRL v1.48 — ROSE PATH & COMBAT RHYTHM
+
+APPLY OVER v1.47 (which must itself already be over v1.46.4).
+Copy the scripts/ and scenes/ folders into your existing Godot project root, merging and replacing matching files. Do not delete existing files. This ZIP intentionally has no art/audio (uses existing approved assets) and is NOT a standalone game.
+
+GARDEN BRIDGE: Find the small rose-route altar near the east-side entrance. Press E to begin. Hook the three numbered lanterns in order with F, crossing toward the old western rose anchors. A one-time chest appears on the far bank; return if inventory is full. The run is optional and replayable for a faster time with no extra drops. Wrong lantern costs four seconds; menu pauses the timer.
+
+ECHO TRIALS: Opening inventory pauses countdown/timer (enemies were already paused); failed encounters clean up their wave and allow a fresh restart. Hooking a rose bell during an enemy attack windup returns 9 stamina.
+
+SAVE DATA: No changes to existing inventory/world JSON schema. Optional speed records are kept in user://ghost_girl_rose_run_bests_v148.json. The completed route and its chest use collected-pickup booleans.
+
+CHECKS: Offline static checks only; Godot engine F5 runtime and visual collision/lantern interaction playtest are REQUIRED.

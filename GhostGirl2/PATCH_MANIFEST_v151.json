@@ -1,0 +1,26 @@
+{
+  "version": "1.51",
+  "title": "Visible Blades & Alt Inspection",
+  "requires": "fully assembled v1.50",
+  "changed_files": [
+    "scripts/item_instance.gd",
+    "scripts/item_rich_text.gd",
+    "scripts/item_compare_popup.gd",
+    "scripts/hud.gd",
+    "scripts/inventory_panel.gd",
+    "scripts/weapon_prestige_fx.gd"
+  ],
+  "runtime_godot_verified": false,
+  "static_validation": "78/78 v1.51 and 371/371 v1.50",
+  "files": {
+    "INSTALL_v151.txt": "7d009e400061d17dde95415ffcf01e275e6853878b4d631c8b8c456e81d02af6",
+    "scripts/item_instance.gd": "063bbfd7970f4d960103542f6a5687d8bf683995f55c67d58bd822501b9bcf7b",
+    "scripts/item_rich_text.gd": "fbb9df6dd2c12d59d0622a9f49215780a7b91508556f50e7b8f3d53beda1f67c",
+    "scripts/item_compare_popup.gd": "289600788b349d8af109f86771f1b5800c527f98093cd5d0debe439eaf247a8a",
+    "scripts/weapon_prestige_fx.gd": "56eef82a40355d1760af3378d0596411d32c26b1601856967a0d930c0fe2dbac",
+    "scripts/hud.gd": "f6fe1f4992001afa1a70364f9f244a3320556574451090e31c1b2c24295d55ec",
+    "scripts/inventory_panel.gd": "16f0e8f42a8de6229ca572ce5262cb97f46ed9470216b64d81f98d62e1acc771",
+    "tests/validate_v151.py": "bcebbe0596194315cb585da732eec7365fd402107fa703320f2d63ff29a11374",
+    "docs/V151_PLAYTEST.md": "e7e42cfcfa71a54cd76deeaf416c15daaa70515b6f9d1b2a11979f9c56a6e238"
+  }
+}

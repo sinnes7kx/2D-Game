@@ -1,0 +1,20 @@
+{
+  "versions_included": "1.25-1.40",
+  "source_files": 162,
+  "fixed_global_class_callers": [
+    "scripts/bow_arrow_v126.gd",
+    "scripts/item_instance.gd",
+    "scripts/weapon_prestige_fx.gd"
+  ],
+  "missing_explicit_scene_resources": [],
+  "missing_scan_refs": [
+    [
+      "resources/ghost_dress_tint.tres",
+      "assets/equipment/dress_palette.gd"
+    ],
+    [
+      "scripts/bow_palette_overlay_v139.gd",
+      "assets/equipment/bow_palette_v139.gd"
+    ]
+  ]
+}

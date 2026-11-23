@@ -1,0 +1,17 @@
+Ghost Girl v1.64.1 — Mythic Visibility Hotfix
+Apply over v1.64.
+
+Changes:
+- stronger Mythic dress glimmer (signature 4)
+- brighter and more distinct Mythic weapon beam effect (signature 4)
+- visual only; no stat, save, or loot changes
+
+Files changed:
+- scripts/equipment_visuals.gd
+- scripts/weapon_prestige_fx.gd
+
+Install:
+1. Close Godot.
+2. Extract into the GhostGirl2 project folder.
+3. Overwrite matching files.
+4. Reopen and playtest.

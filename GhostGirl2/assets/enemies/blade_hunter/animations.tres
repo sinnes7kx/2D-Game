@@ -1,0 +1,116 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://xfix8haiof4p"]
+
+[ext_resource type="Texture2D" uid="uid://dnxtelt2hp1bi" path="res://assets/enemies/blade_hunter/frame_00.png" id="tex_00"]
+[ext_resource type="Texture2D" uid="uid://c2e2acm23lj5t" path="res://assets/enemies/blade_hunter/frame_01.png" id="tex_01"]
+[ext_resource type="Texture2D" uid="uid://dm60suca8wnid" path="res://assets/enemies/blade_hunter/frame_02.png" id="tex_02"]
+[ext_resource type="Texture2D" uid="uid://btxicxg7k1hfp" path="res://assets/enemies/blade_hunter/frame_03.png" id="tex_03"]
+[ext_resource type="Texture2D" uid="uid://wg42fusocjfd" path="res://assets/enemies/blade_hunter/frame_04.png" id="tex_04"]
+[ext_resource type="Texture2D" uid="uid://chrh3kvwkn3dv" path="res://assets/enemies/blade_hunter/frame_05.png" id="tex_05"]
+[ext_resource type="Texture2D" uid="uid://c8472rjcwxhdx" path="res://assets/enemies/blade_hunter/frame_06.png" id="tex_06"]
+[ext_resource type="Texture2D" uid="uid://dlb6sa53pyy0o" path="res://assets/enemies/blade_hunter/frame_07.png" id="tex_07"]
+[ext_resource type="Texture2D" uid="uid://dpfubj8xqunrq" path="res://assets/enemies/blade_hunter/frame_08.png" id="tex_08"]
+[ext_resource type="Texture2D" uid="uid://do84sywfuuy0i" path="res://assets/enemies/blade_hunter/frame_09.png" id="tex_09"]
+[ext_resource type="Texture2D" uid="uid://m7gpyhlr2ekh" path="res://assets/enemies/blade_hunter/frame_10.png" id="tex_10"]
+[ext_resource type="Texture2D" uid="uid://cp6datufraye3" path="res://assets/enemies/blade_hunter/frame_11.png" id="tex_11"]
+[ext_resource type="Texture2D" uid="uid://ru62mh8cmqhk" path="res://assets/enemies/blade_hunter/frame_12.png" id="tex_12"]
+[ext_resource type="Texture2D" uid="uid://cfdd08em1ag40" path="res://assets/enemies/blade_hunter/frame_13.png" id="tex_13"]
+[ext_resource type="Texture2D" uid="uid://diakxdojf26t0" path="res://assets/enemies/blade_hunter/frame_14.png" id="tex_14"]
+[ext_resource type="Texture2D" uid="uid://b8klma7lskicn" path="res://assets/enemies/blade_hunter/frame_15.png" id="tex_15"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_09")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_11")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_15")
+}],
+"loop": 0,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_13")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_00")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_03")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_03")
+}],
+"loop": 0,
+"name": &"recover",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_07")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_08")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_09")
+}],
+"loop": 1,
+"name": &"windup",
+"speed": 5.0
+}]

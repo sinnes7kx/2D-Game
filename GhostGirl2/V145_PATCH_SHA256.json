@@ -1,0 +1,18 @@
+{
+  "version": "1.45",
+  "requires": "v1.44",
+  "files": {
+    "scripts/moor_world_response_v145.gd": "f49546514bc1c3f724a1e52997ad3e929f24cc477dcf295ebbd35a234c84f116",
+    "scripts/moor_aftershock_memory_v145.gd": "345b9e199dd51bc65c95ded49d49c27e61304076acf95c35b0205f179cc87e8d",
+    "scripts/moor_creature_v129.gd": "c5e9120123b6d3e986d992ba68d0ca982058d8f386936bff982b8546b0de0fc4",
+    "scripts/gothic_hunter.gd": "dd6b3916eebfc8bb3859d98f332c2f78810a9b2567aa8844dd3b26aad33b0c2c",
+    "scripts/rose_wraith.gd": "28e187f69fa822796c6ece0ec2862cb8c576c6c77510f7d551d0146aa819e247",
+    "scripts/moonroot_lattice_v144.gd": "4dd698e58d05a1c4917d5da605d53e4193a985cc277b0c06c1d7f65806297eae",
+    "scripts/collapse_support_v135.gd": "32eeb9fc5a70ed935d48c6ad9488a1b9d4e9b3c1e999a0d64993046562a782c7",
+    "scripts/breakable_cover_v136.gd": "889b2b2db353c1c92e3fc4fd02c3838eaf1ea8e9565f54887f35e8bea4e00095",
+    "scripts/game.gd": "2fdbee2a526d62af0a9565d56b277f36845ddcfb6b9c12b7ef8ebbaa8605aa81",
+    "scenes/rooms/hollow_veil_moor.tscn": "32de01a187cd8be779c419c20ec4bfe9182fe7a7423dbdddef9ad3cc58492049",
+    "tests/validate_v145.py": "f84c78c6dc2e016bc9fa78f1bbb7350307e6675d91e52d88e748dafd99bc9e37",
+    "V145_RELEASE_NOTES.md": "0ca82163c3d06068c5b9622fbf0982e5c387c98ceb02039d6c5bd273612460f7"
+  }
+}

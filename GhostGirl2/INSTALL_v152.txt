@@ -1,0 +1,43 @@
+GHOST GIRL v1.52 — LIVING BLADES, UNIQUE COSMETIC IDS & DRESS TINT
+
+REQUIRES: the existing assembled playable GhostGirl2 project at v1.51.1
+(v1.51 plus the v1.51.1 inventory swatch scene hotfix).
+
+1) Back up your entire project and user:// save directory.
+2) CLOSE GODOT.
+3) Extract this ZIP into the folder containing project.godot.
+   Merge/replace matching scripts/, scenes/, and assets/ files.
+   Do NOT place a second GhostGirl2 folder inside your project.
+4) Launch Godot. Equip a SWORD and check idle/walk/attacks all four directions.
+   The EquippedPrestigeFX node is now visible in scenes/player.tscn under Ghost.
+5) Equip a DRESS with NO sword, reroll its appearance in inventory, close
+   inventory, and verify the fabric color changes. Do the same with a sword.
+6) ALT while hovering a weapon: rare visual modifier is shown only if rolled.
+   CTRL remains the equipped-item comparison key.
+7) SAVE a cosmetic favorite, reroll, restore it; then close/reopen the game
+   and confirm saved effect/colors and item stats survive.
+
+CHANGES
+- Sword glow drawn as a static, editor-visible node, with brighter
+  direction/animation-following blade light during idle/walk/attack.
+- More pronounced but constrained dress dye, independent of sword wear.
+- Every newly picked up equipment item gets a fresh 128-bit CSPRNG cosmetic ID.
+  Every cosmetic reroll uses another fresh 128-bit ID. Old saves preserve
+  original looks until rerolled; old loot/stat seed is never rewritten.
+- The new opaque ID is saved in existing inventory JSON; saved looks retain
+  exact appearance, rare mod and ID. No IDs printed in item tooltips.
+- Independent ultra-rare visual signatures for swords/wands:
+  Aether Thorns ~1/512; Void Eclipse ~1/4096; Astral Seraph ~1/32768.
+  Cosmetic only: NO EXTRA DAMAGE, no extra projectiles, no combat stat changes.
+- ALT shows rare modifier details; default tooltip remains compact.
+
+IMPORTANT
+128-bit random IDs have an astronomically low accidental collision rate,
+but cannot promise mathematical uniqueness between independent players.
+Some visually similar color palettes can still occur from different IDs.
+
+TEST STATUS
+Static integrity and regression tests ran. A Godot F5 runtime/visual
+playtest was NOT possible in the build environment. Glow alignment,
+rarity presentation and cloth masking MUST be tested in game.
+This is a SOURCE PATCH, not a complete Godot game archive.

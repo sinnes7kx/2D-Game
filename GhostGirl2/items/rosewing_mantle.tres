@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://6s3us35mn43x"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://ccp4yfcws8qbt" path="res://assets/ui/reliquary/moon_crest.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "rosewing_mantle"
+display_name = "Rosewing Mantle"
+description = "Gentle spectral wings, embroidered with sleeping roses."
+icon = ExtResource("2_icon")
+equip_slot = "wings"
+stat_id = "hook_pull_pct"
+min_stat = 4.0
+max_stat = 10.0

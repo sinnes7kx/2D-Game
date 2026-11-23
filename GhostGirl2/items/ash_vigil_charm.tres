@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://dyenefjgg427n"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://c3ecsrvybafw8" path="res://assets/ui/reliquary/rose_ring.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "ash_vigil_charm"
+display_name = "Ash Vigil Charm"
+description = "An ember-warmed relic kept by the vanished cathedral watch. Its bearer's vitality endures."
+icon = ExtResource("2_icon")
+equip_slot = "charm"
+stat_id = "vitality_pct"
+min_stat = 6.0
+max_stat = 14.0
+max_sockets = 2
+item_level = 4

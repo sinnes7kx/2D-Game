@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/ui/reliquary/v16_scythe.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "rose_reaper_scythe"
+display_name = "Rose Reaper"
+description = "A moonlit harvest scythe. Broad spectral sweeps gather the wounded." 
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+weapon_style = "scythe"
+stat_id = "rally_power_pct"
+min_stat = 4.0
+max_stat = 9.0
+max_sockets = 2
+item_level = 12
+min_weapon_damage = 12.0
+max_weapon_damage = 18.0
+inventory_width = 2
+inventory_height = 3

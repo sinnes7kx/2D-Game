@@ -1,0 +1,203 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="SpriteFrames" path="res://assets/enemies/blade_hunter/animations.tres" id="1_blade"]
+[ext_resource type="SpriteFrames" path="res://assets/enemies/occultist/animations.tres" id="2_occultist"]
+
+[node name="EnemyAnimationGallery" type="Node2D"]
+
+[node name="Backdrop" type="ColorRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.065, 0.067, 0.077, 1)
+
+[node name="Heading" type="Label" parent="."]
+offset_left = 34.0
+offset_top = 16.0
+offset_right = 940.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 23
+text = "GHOST GIRL  |  ENEMY ANIMATION GALLERY v0.9"
+
+[node name="BladeLabel" type="Label" parent="."]
+offset_left = 38.0
+offset_top = 70.0
+offset_right = 700.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 20
+text = "BLADE HUNTER"
+
+[node name="OccultistLabel" type="Label" parent="."]
+offset_left = 38.0
+offset_top = 387.0
+offset_right = 700.0
+offset_bottom = 417.0
+theme_override_font_sizes/font_size = 20
+text = "OCCULTIST (FIRST PASS)"
+
+[node name="Blade_Idle" type="AnimatedSprite2D" parent="."]
+position = Vector2(125, 238)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("1_blade")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="Blade_Idle_Caption" type="Label" parent="."]
+offset_left = 83.0
+offset_top = 361.0
+offset_right = 213.0
+offset_bottom = 391.0
+text = "IDLE"
+
+[node name="Blade_Walk" type="AnimatedSprite2D" parent="."]
+position = Vector2(345, 238)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("1_blade")
+animation = &"walk"
+autoplay = "walk"
+
+[node name="Blade_Walk_Caption" type="Label" parent="."]
+offset_left = 303.0
+offset_top = 361.0
+offset_right = 433.0
+offset_bottom = 391.0
+text = "WALK"
+
+[node name="Blade_Windup" type="AnimatedSprite2D" parent="."]
+position = Vector2(555, 238)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("1_blade")
+animation = &"windup"
+autoplay = "windup"
+
+[node name="Blade_Windup_Caption" type="Label" parent="."]
+offset_left = 513.0
+offset_top = 361.0
+offset_right = 643.0
+offset_bottom = 391.0
+text = "WINDUP"
+
+[node name="Blade_Attack" type="AnimatedSprite2D" parent="."]
+position = Vector2(765, 238)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("1_blade")
+animation = &"attack"
+autoplay = "attack"
+
+[node name="Blade_Attack_Caption" type="Label" parent="."]
+offset_left = 723.0
+offset_top = 361.0
+offset_right = 853.0
+offset_bottom = 391.0
+text = "ATTACK"
+
+[node name="Blade_Hit" type="AnimatedSprite2D" parent="."]
+position = Vector2(975, 238)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("1_blade")
+animation = &"hit"
+autoplay = "hit"
+
+[node name="Blade_Hit_Caption" type="Label" parent="."]
+offset_left = 933.0
+offset_top = 361.0
+offset_right = 1063.0
+offset_bottom = 391.0
+text = "HIT"
+
+[node name="Blade_Death" type="AnimatedSprite2D" parent="."]
+position = Vector2(1165, 238)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("1_blade")
+animation = &"death"
+autoplay = "death"
+
+[node name="Blade_Death_Caption" type="Label" parent="."]
+offset_left = 1123.0
+offset_top = 361.0
+offset_right = 1253.0
+offset_bottom = 391.0
+text = "DEATH"
+
+[node name="Occultist_Idle" type="AnimatedSprite2D" parent="."]
+position = Vector2(125, 556)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("2_occultist")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="Occultist_Idle_Caption" type="Label" parent="."]
+offset_left = 83.0
+offset_top = 679.0
+offset_right = 213.0
+offset_bottom = 709.0
+text = "IDLE"
+
+[node name="Occultist_Walk" type="AnimatedSprite2D" parent="."]
+position = Vector2(345, 556)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("2_occultist")
+animation = &"walk"
+autoplay = "walk"
+
+[node name="Occultist_Walk_Caption" type="Label" parent="."]
+offset_left = 303.0
+offset_top = 679.0
+offset_right = 433.0
+offset_bottom = 709.0
+text = "WALK"
+
+[node name="Occultist_Windup" type="AnimatedSprite2D" parent="."]
+position = Vector2(555, 556)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("2_occultist")
+animation = &"windup"
+autoplay = "windup"
+
+[node name="Occultist_Windup_Caption" type="Label" parent="."]
+offset_left = 513.0
+offset_top = 679.0
+offset_right = 643.0
+offset_bottom = 709.0
+text = "WINDUP"
+
+[node name="Occultist_Attack" type="AnimatedSprite2D" parent="."]
+position = Vector2(765, 556)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("2_occultist")
+animation = &"attack"
+autoplay = "attack"
+
+[node name="Occultist_Attack_Caption" type="Label" parent="."]
+offset_left = 723.0
+offset_top = 679.0
+offset_right = 853.0
+offset_bottom = 709.0
+text = "ATTACK"
+
+[node name="Occultist_Hit" type="AnimatedSprite2D" parent="."]
+position = Vector2(975, 556)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("2_occultist")
+animation = &"hit"
+autoplay = "hit"
+
+[node name="Occultist_Hit_Caption" type="Label" parent="."]
+offset_left = 933.0
+offset_top = 679.0
+offset_right = 1063.0
+offset_bottom = 709.0
+text = "HIT"
+
+[node name="Occultist_Death" type="AnimatedSprite2D" parent="."]
+position = Vector2(1165, 556)
+scale = Vector2(1.58, 1.58)
+sprite_frames = ExtResource("2_occultist")
+animation = &"death"
+autoplay = "death"
+
+[node name="Occultist_Death_Caption" type="Label" parent="."]
+offset_left = 1123.0
+offset_top = 679.0
+offset_right = 1253.0
+offset_bottom = 709.0
+text = "DEATH"

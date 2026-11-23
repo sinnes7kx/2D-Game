@@ -1,0 +1,31 @@
+Ghost Girl v1.68.1 — Missing BowCarry Scene Node Hotfix
+Applies over v1.68; does not require older updates again.
+
+Crash fixed:
+  res://scripts/bow_palette_overlay_v139.gd:94
+  Invalid assignment to sprite_frames on null instance.
+
+Root cause:
+  The v1.66 BowCarryV166 sibling AnimatedSprite2D node may be missing
+  from older or independently modified scenes/player.tscn. Since v1.68
+  uses hook-free bow character atlases instead of the detached carry layer
+  during idle/walk, the node is OPTIONAL and must not be dereferenced.
+
+Changes:
+  - Resolve optional BowCarryV166 with get_node_or_null().
+  - Only initialize its sprite frames when the node actually exists.
+  - Guard _create_bow_carry_art() against missing node.
+  - No player scene replacement; no save, stat, or animation changes.
+
+Install:
+  1. Close Godot.
+  2. Extract this ZIP into the GhostGirl2 folder containing project.godot.
+  3. Replace scripts/bow_palette_overlay_v139.gd.
+  4. Reopen Godot and try a bow (front/left/back/right, walking/attacking).
+  5. Report any remaining debugger errors, especially missing bow atlases.
+
+Compatibility:
+  - With v1.66 scene: BowCarryV166 is initialized, kept hidden in v1.68.
+  - Without v1.66 scene: initialization skips optional detached layer.
+
+This patch has static validation only; no real Godot runtime test available.

@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://b5yq462dstsax"]
+
+[ext_resource type="Script" uid="uid://be3ih4pa6kphb" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="PackedScene" uid="uid://c41xnvk4053yv" path="res://scenes/rooms/moonwake_crypt.tscn" id="2_crypt"]
+[ext_resource type="PackedScene" uid="uid://bi10piivdyyfs" path="res://scenes/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="4_hud"]
+[ext_resource type="Script" uid="uid://bmagq2mrtvtfb" path="res://scripts/aim_indicator.gd" id="5_aim"]
+[ext_resource type="Script" uid="uid://cyje336o3h6re" path="res://scripts/inventory.gd" id="6_inventory"]
+
+[node name="GhostGirlActI" type="Node2D" unique_id=77407735]
+y_sort_enabled = true
+script = ExtResource("1_game")
+
+[node name="Room" parent="." unique_id=2136141918 instance=ExtResource("2_crypt")]
+
+[node name="GhostGirl" parent="." unique_id=1613990258 instance=ExtResource("3_player")]
+position = Vector2(1194, 1190)
+
+[node name="MouseThrowAim" type="Node2D" parent="." unique_id=1175572517]
+z_index = 45
+script = ExtResource("5_aim")
+
+[node name="Inventory" type="Node" parent="." unique_id=987570640]
+script = ExtResource("6_inventory")
+
+[node name="HUD" parent="." unique_id=857163095 instance=ExtResource("4_hud")]

@@ -1,0 +1,12 @@
+Ghost Girl v1.25 — Moonfall Blizzard
+
+Base: v1.24 Moonstep Trails
+
+1) BACK UP YOUR PROJECT FOLDER AND SAVES.
+2) Extract this ZIP INTO the existing Godot project root that contains project.godot.
+3) Replace matching files, then open project.godot and run the game.
+4) Visit Moonwake Crypt. E at the new Frost Reliquary unlocks Moonfall.
+5) Equip a wand, aim with mouse, and press Z to cast (37 stamina, 6.2s cooldown).
+
+The bow weapon family is not part of v1.25.
+Runtime playtest is still necessary; only static checks were available here.

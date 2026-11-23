@@ -1,0 +1,19 @@
+{
+  "version": "0.8",
+  "baseline": "0.7 Hunter's Rhythm (includes inventory grid hotfix)",
+  "changed_files": [
+    "README.md",
+    "docs/V07_INVENTORY_GRID_HOTFIX.md",
+    "docs/V08_MEASURED_STEPS.md",
+    "project.godot",
+    "scenes/inventory_panel.tscn",
+    "scripts/gothic_hunter.gd",
+    "scripts/inventory.gd",
+    "scripts/inventory_grid.gd",
+    "scripts/inventory_panel.gd",
+    "scripts/player.gd",
+    "tests/validate_static.py"
+  ],
+  "protected_file_count": 326,
+  "static_validation_only": true
+}

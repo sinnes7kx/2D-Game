@@ -1,0 +1,53 @@
+Ghost Girl v1.61 — Wand Synchronization & Combat Variety
+====================================================
+Apply this incremental overlay ON TOP OF v1.60.
+
+Installation
+1. Back up the project (and your game save).
+2. Close the Godot editor.
+3. Extract this ZIP into the GhostGirl2 folder that contains project.godot.
+4. Overwrite matching files, reopen Godot, and allow the asset import to finish.
+5. Run the project using F5.
+
+What changes
+- The held-wand Sprite2D now sits under Ghost, the same AnimatedSprite2D
+  parent as the glow renderer. Its pose is controlled in Ghost-local pixels.
+  The gameplay Hand marker and rose-hook launch location are unchanged.
+- Wand glow follows the actual hand-held artwork transform (with a fallback
+  if no texture has loaded), and casting softly brightens the crystal head.
+- Non-elite blade hunters sometimes circle around Ghost Girl instead of
+  charging directly. Their sidestep cannot deal damage.
+- Blade-hunter missed lunges have a brief visibly exposed recovery; the
+  existing recovery-hit bonus is not increased.
+- Occultists drift sideways during their existing post-cast recovery,
+  using collision raycasts rather than passing through walls.
+
+Changed files
+- scenes/player.tscn
+- scripts/equipment_visuals.gd
+- scripts/weapon_prestige_fx.gd
+- scripts/gothic_hunter.gd
+
+Compatibility
+- No save format, loot RNG, item stats, spell damage, enemy strike damage,
+  enemy hitbox, or character artwork changes.
+- The wand art from v1.60 is reused. Do not install on v1.59 directly.
+- v1.59 feints/weaving bolts and previous cosmetic effects are retained.
+
+Manual playtest checklist
+- Idle/walk/cast in all four directions with a wand: overlay and glow stay
+  attached throughout animation and returning to idle.
+- Cast with and without a sword in inventory; the equipped-slot behavior
+  remains unchanged.
+- Hook targets still fire from Hand and do not shift with wand animation.
+- Fight non-elite blade hunters: observe occasional short circle approach,
+  then ordinary telegraphed attacks. Dodge a lunge and punish its miss.
+- Fight an occultist close to and away from walls: it should slide slightly
+  after firing but not pass through walls or fire more projectiles.
+- Confirm save/reload, inventory, rare item icon flipping, and cosmetic
+  gradient favorites still behave like v1.60.
+
+Testing limitation
+Offline validation checks code/scene structure and important invariants.
+Godot runtime behavior and combat feel were NOT tested here; Godot executable
+is unavailable in this environment.

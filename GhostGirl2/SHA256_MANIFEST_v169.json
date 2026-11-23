@@ -1,0 +1,29 @@
+{
+  "version": "v1.69",
+  "base": "v1.68.1",
+  "files": {
+    "INSTALL_v169.txt": "1613f3d10a69628efd9cfc3a6d103e8630ac4e459116a6c954131eccdf6f76d8",
+    "assets/equipment/weapons_v169/dagger_combat_2048x1760.png": "922382550efd4f8ec726708d5e7b248d9f408d00ba4abf4b497d513de76e6a84",
+    "assets/equipment/weapons_v169/dagger_locomotion_2048x1760.png": "76d9f424acdf945155634c667153f945c7c702774f356766d1cdb25f2f334458",
+    "assets/equipment/weapons_v169/spear_combat_2048x1760.png": "998c304fcc876c87690be689e7ae964e751d8fa76ab7c415b04329b46f398f6f",
+    "assets/equipment/weapons_v169/spear_locomotion_2048x1760.png": "51d54ae5fe2990bcae5c89e6eb3c312ee7981c008187ca99184d5219860e6ca0",
+    "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png": "e54f10a3db27405256b3ffc2f4ded5dec9fbcc03d073fff60dc8d687aa38f3a5",
+    "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png": "6f79c2e47adb4faefa0de21176f7759a8a039dc26945c3c86d97e2747f7c9360",
+    "assets/ghost/bows_v139/moonveil_locomotion_mask_2048x1760.png": "973af5c55a41559d5040be6aa96da509c7719470d9da85a2b4ea8e638eec6dfc",
+    "assets/ghost/bows_v139/thornrose_locomotion_mask_2048x1760.png": "b2b04a5616ef5f82dd0eea82c1f724efc65c165c594b50af0fd0b594f2d79048",
+    "assets/ui/weapons_v169/dagger.png": "7f3045bdf234a987a05df25b3ea39179055c0e02a1b9660cab1f25dd2c0cc235",
+    "assets/ui/weapons_v169/spear.png": "0ceaaa982d1a8cff2f83a0a2b153799a09feebbde685b707b550e3e8b54b2118",
+    "items/moonwarden_spear_v169.tres": "67002cda42683c0cc10ba8900648b8acce9fce2d9b9b71b3da73f152a8b7ca2a",
+    "items/roseglass_dagger_v169.tres": "067f48d32372141b9662a9c840a9ef726d63df87e7abd6c42d28578347843bbd",
+    "resources/ghost_extra_animations.json": "14aca7fcb180860241208a48eb00c166214253243976ca543e7add6f7c0dc7da",
+    "resources/new_weapon_axes_v169.json": "a1b67a4c0491a83a260f76a57b7e0bedf3b49f3ce9021b9335e996675366999b",
+    "resources/weapon_glow_axes_v142.json": "7f55ec26110dbed5a0c988979c50f03276dfd5977aed054ca2505052285f2659",
+    "scripts/bow_palette_overlay_v139.gd": "fba952c7436c3afdeb97b8f78c520c43ddc3531da5ca81d5599424047299b8c0",
+    "scripts/game.gd": "82329b1edc886b317cf2828adad3ac45cd74af3c8a8e44fa0bf0521656643506",
+    "scripts/item_data.gd": "ca48e53e11d0db4eeca09290082bc27c5a1430d76b0ed6fceb9f305a6b02aee2",
+    "scripts/item_instance.gd": "a0a8ed9e9fc2386d4605e927f525968a52ce35836f12e85caf79ed7493002fd5",
+    "scripts/player.gd": "4a45b6041b998f4bbf75ff3450dfe1cc333521f955449667a75c1ca70e3babc9",
+    "scripts/weapon_prestige_fx.gd": "091ab5c7bbfe7e82f9e6e85863f0da2bfc0edac08599613afb8d94d2f89cc27f",
+    "tests/validate_v169.py": "f0a96df1d1c61b95471176cad4134c74007291ce211680b1923be0fdc8379135"
+  }
+}

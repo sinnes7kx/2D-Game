@@ -1,0 +1,11 @@
+Ghost Girl v1.70.1 — New Weapon Effects & Mythics
+Apply over v1.70.
+
+Changes:
+- adds distinct baseline weapon effects for dagger, spear, maul, and twinblade
+- adds distinct mythic treatments for dagger, spear, maul, and twinblade
+- preserves existing bow and wand mythic treatments
+- no stat, damage, hitbox, save, or loot-table changes
+
+Changed files:
+- scripts/weapon_prestige_fx.gd

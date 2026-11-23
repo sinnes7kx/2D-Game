@@ -1,0 +1,126 @@
+{
+  "version": "v1.39",
+  "base": "v1.38",
+  "files": [
+    {
+      "path": "V139_RELEASE_NOTES.md",
+      "sha256": "83ff0be3fe8fe33921cc351c2ea189fb5df5d77e329b72c948dbe85b03840f43",
+      "bytes": 2848
+    },
+    {
+      "path": "assets/equipment/bow_palette_v139.gdshader",
+      "sha256": "386d8ed77c0f14a6a65de14db64b02d06fbb499705257e36640d2a08f2fec34d",
+      "bytes": 981
+    },
+    {
+      "path": "assets/ghost/bows_v139/moonveil_combat_2048x1760.png",
+      "sha256": "867c7d61aee46a11e6fbb92610de3bfd3365f75490370e35955b6857d7e59d9a",
+      "bytes": 2278289
+    },
+    {
+      "path": "assets/ghost/bows_v139/moonveil_combat_mask_2048x1760.png",
+      "sha256": "7b98cad85c211847d70e766ccd3e8fb21757d03a3551e34ae275918fb8582364",
+      "bytes": 179729
+    },
+    {
+      "path": "assets/ghost/bows_v139/moonveil_locomotion_mask_2048x1760.png",
+      "sha256": "4407dd0368b80d530ab1b20f51ea5b707d6a918ceb7b035de794c7cbc3c37975",
+      "bytes": 251074
+    },
+    {
+      "path": "assets/ghost/bows_v139/thornrose_combat_2048x1760.png",
+      "sha256": "230c1594d8c94cefa6439447c48c8f9eb97d47ed667b03ac0d55749efea86d0f",
+      "bytes": 2278893
+    },
+    {
+      "path": "assets/ghost/bows_v139/thornrose_combat_mask_2048x1760.png",
+      "sha256": "aba0d7a9b6479c4f23fb6f1dfd51c55af24083c8f72de0b12e0e0a80ab4e6a93",
+      "bytes": 180370
+    },
+    {
+      "path": "assets/ghost/bows_v139/thornrose_locomotion_mask_2048x1760.png",
+      "sha256": "77749937436954e6538e04602116154e5bb1c7f58913b4acdf2b195a3e5c1ca2",
+      "bytes": 267152
+    },
+    {
+      "path": "resources/ghost_extra_animations.json",
+      "sha256": "fe93e7b2f755d60b0ba663776ff12e299457d13a75954242d21560a13abb9729",
+      "bytes": 51306
+    },
+    {
+      "path": "scenes/player.tscn",
+      "sha256": "8ad07e1dbd7109279492bb8a436b99311b1efba61fd4343eadb3ab1b1de3f9e0",
+      "bytes": 3628
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "sha256": "870ac83d62e3f480ff2bd4acee743e57495c0ec764a8602ebca15f6ed147529a",
+      "bytes": 139075
+    },
+    {
+      "path": "scripts/bow_arrow_v126.gd",
+      "sha256": "455f28bdfe0507bd78219d12bd1f5de964eb777c018bf0f67a303b3b6accce07",
+      "bytes": 13336
+    },
+    {
+      "path": "scripts/bow_palette_overlay_v139.gd",
+      "sha256": "28feae462e933d1a3f589798b053ea26fb64fd70a2147318f81d8d20795a32e0",
+      "bytes": 3752
+    },
+    {
+      "path": "scripts/elemental_flammable_v139.gd",
+      "sha256": "ce2cdeecab0fbd01680ea4e5c8b6e649869df791db4c6d4f1c6f63a05e47bee1",
+      "bytes": 4188
+    },
+    {
+      "path": "scripts/elemental_ice_bridge_v139.gd",
+      "sha256": "8d18a24d8ae44d6fc65fe755f1eee840e4d2ed5c006da8175a2b805fad388ee5",
+      "bytes": 3207
+    },
+    {
+      "path": "scripts/elemental_light_secret_v139.gd",
+      "sha256": "0b8e6ca8cacea35204db7492573e4e192de548985c86131f92d9bc833e3c0ea3",
+      "bytes": 2109
+    },
+    {
+      "path": "scripts/game.gd",
+      "sha256": "77eae9101ead55384131bfeb89cb88ee563975e2fe53a7218747eab2d168e1f5",
+      "bytes": 46415
+    },
+    {
+      "path": "scripts/item_instance.gd",
+      "sha256": "4937f3d9bfac02ac89365867317c7c0e3b69cf97f5a18a6a12af2afe9f63d082",
+      "bytes": 9882
+    },
+    {
+      "path": "scripts/player.gd",
+      "sha256": "74e63c035cab2a3177156aaff118323ac3208b94200f135d75145c4f37c8f436",
+      "bytes": 57883
+    },
+    {
+      "path": "scripts/procedural_relic_palette_v139.gd",
+      "sha256": "4fbf5a518f9dbdb315074d58ac75ff82a6822d01cb21a7e5090050189793bcf1",
+      "bytes": 2434
+    },
+    {
+      "path": "scripts/weapon_prestige_fx.gd",
+      "sha256": "00cb13d4be5cab4eabd1e00d5bb4bc4f2a83f144d5286a979e27665a959f33c8",
+      "bytes": 10918
+    },
+    {
+      "path": "tests/validate_v139.py",
+      "sha256": "fb6994ffabf347f9cc08c88b3d80ac76e552503433b9726267c8dc969acd7c8d",
+      "bytes": 4998
+    },
+    {
+      "path": "tools/build_bow_draw_v139.py",
+      "sha256": "d0e07842c0b32a8c8a31751bd9c023aedfdf1ad68cb2f62d5e2d92c2c040599d",
+      "bytes": 5835
+    },
+    {
+      "path": "tools/build_bow_masks_v139.py",
+      "sha256": "8c8cf7320a814cc46c8b9deba590aede16cab8e7fe6775bb8edb3e56c4bb7cb9",
+      "bytes": 1976
+    }
+  ]
+}

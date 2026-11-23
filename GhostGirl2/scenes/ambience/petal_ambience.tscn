@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="SpriteFrames" path="res://resources/petal_ambience_frames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://scripts/ambient_animation.gd" id="2_script"]
+
+[node name="PetalAmbience" type="Node2D"]
+script = ExtResource("2_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_frames")
+animation = &"petal"
+autoplay = "petal"
+scale = Vector2(0.65, 0.65)

@@ -1,0 +1,56 @@
+{
+  "patch_version": "1.17",
+  "patch_base": "1.16",
+  "changes": [
+    {
+      "path": "docs/V117_LUMINOUS_LANCE_AND_MOOR.md",
+      "bytes": 2219,
+      "sha256": "e844ff87f3c298daf47013b3ff20ee86afcc4d0217fc3886376eeb9f6d00113e"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "bytes": 34702,
+      "sha256": "96994e9cabfbbd89b1ff427d2ac5634ea25f9c157ea1e7eded2e343f1b779beb"
+    },
+    {
+      "path": "scripts/game.gd",
+      "bytes": 33258,
+      "sha256": "2661409e529bf7b9bbb8954f6149ce2260da1616935064fcf7b286cf371c9be6"
+    },
+    {
+      "path": "scripts/inventory.gd",
+      "bytes": 16711,
+      "sha256": "2c072472ab4711e6a579dacb3675863cc5d7981ba21e04ed44a4cb3fd412d574"
+    },
+    {
+      "path": "scripts/item_generator.gd",
+      "bytes": 6159,
+      "sha256": "ee2264f2b837b9674026c8f7d432cf831c8439dc0e57a06be52c98ab9ec7792c"
+    },
+    {
+      "path": "scripts/item_instance.gd",
+      "bytes": 8197,
+      "sha256": "49b44ffb6dd6a47752cb906cd9cdfdc9e02d3458aa2c4fb06a8325793fea60e6"
+    },
+    {
+      "path": "scripts/item_rich_text.gd",
+      "bytes": 6430,
+      "sha256": "a54cb22591217e6683bac70b02581e20965bc95ba616ecd0f58be06d474737ee"
+    },
+    {
+      "path": "scripts/moon_spell.gd",
+      "bytes": 14734,
+      "sha256": "00a3b3a497a8c993c9c9d6906b8dac019ee9517f3368740d01018843692b2a19"
+    },
+    {
+      "path": "scripts/weapon_fx_library.gd",
+      "bytes": 4871,
+      "sha256": "6b24041347379b9cbc42d76368c9cd9dd816bc53a82f57cc8b0659c369cbc2f7"
+    },
+    {
+      "path": "tests/validate_v117.py",
+      "bytes": 5571,
+      "sha256": "6a075950607d975724922e567b4dd46096584826c0c54f819464aed9d74caa3e"
+    }
+  ]
+}

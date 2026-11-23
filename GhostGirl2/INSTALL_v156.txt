@@ -1,0 +1,19 @@
+GHOST GIRL v1.56 — WAND SPELL COSMETICS (incremental patch for v1.55.2)
+
+New visuals:
+- Wand projectile palettes now use the equipped wand's 3-stop, saved full-spectrum RNG gradient.
+- Each wand projectile produces one soft release flash in the same colours.
+- Bolts leave a short feathery three-colour wake; beams/lances have delicate flowing highlights.
+- Ultra-rare visual signatures add tiny extra orbiting beads, not additional damage.
+- Held wand cosmetics from v1.55 and brighter glow/dress reroll fixes from v1.55.2 remain untouched.
+
+Install:
+1. Install through v1.55.2 first. Close Godot.
+2. Extract this ZIP in the GhostGirl2 folder containing project.godot.
+3. Merge scripts/ and replace scripts/game.gd and scripts/moon_spell.gd.
+4. Reopen Godot and test with a wand equipped, especially normal/charged spells and rare wand looks.
+
+Three files are added/changed under scripts/. No scene or save-file format changes.
+Do not remove any older patched files. A project backup is recommended.
+
+No Godot runtime test was possible in this environment; static checks cannot guarantee visual feel or error-free in-engine play.

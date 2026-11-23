@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ui/reliquary/rose_ring.png" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v137_chimekeeper_rosary"
+display_name = "Chimekeeper Rosary"
+description = "Four sleeping bells answered the same small hand. Their echoes guide the wanderer through the dark."
+icon = ExtResource("icon")
+unique = true
+equip_slot = "charm"
+stat_id = "stamina_recovery_pct"
+min_stat = 11.0
+max_stat = 18.0
+max_sockets = 1
+item_level = 32
+inventory_width = 1
+inventory_height = 1

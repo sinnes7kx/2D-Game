@@ -1,0 +1,1024 @@
+{
+  "version": "0.1-master",
+  "root": "GhostGirl",
+  "foundation": "latest Act I RPG draft",
+  "user_archive_project": false,
+  "canonical_sheet": "art_sources/GhostGirl_Walk_Idle_Hook_8x8_256x220.png",
+  "sheet_px": [
+    2048,
+    1760
+  ],
+  "frame_px": [
+    256,
+    220
+  ],
+  "source_frames_reused": 64,
+  "updated_frame_files": 64,
+  "vfx_matches_WORKING_zip": 16,
+  "directions": [
+    "front",
+    "back",
+    "left",
+    "right"
+  ],
+  "animation_names": [
+    "idle_front",
+    "walk_front",
+    "blink_front",
+    "hook_front",
+    "hook_hold_front",
+    "throw_front",
+    "wand_idle_front",
+    "wand_walk_front",
+    "wand_cast_front",
+    "idle_back",
+    "walk_back",
+    "blink_back",
+    "hook_back",
+    "hook_hold_back",
+    "throw_back",
+    "wand_idle_back",
+    "wand_walk_back",
+    "wand_cast_back",
+    "idle_left",
+    "walk_left",
+    "blink_left",
+    "hook_left",
+    "hook_hold_left",
+    "throw_left",
+    "wand_idle_left",
+    "wand_walk_left",
+    "wand_cast_left",
+    "idle_right",
+    "walk_right",
+    "blink_right",
+    "hook_right",
+    "hook_hold_right",
+    "throw_right",
+    "wand_idle_right",
+    "wand_walk_right",
+    "wand_cast_right"
+  ],
+  "frame_alignment": [
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 0,
+      "bbox": [
+        53,
+        26,
+        207,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 1,
+      "bbox": [
+        51,
+        26,
+        202,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 2,
+      "bbox": [
+        52,
+        26,
+        199,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 3,
+      "bbox": [
+        56,
+        26,
+        202,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 4,
+      "bbox": [
+        58,
+        26,
+        202,
+        214
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 5,
+      "bbox": [
+        56,
+        26,
+        201,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 6,
+      "bbox": [
+        54,
+        26,
+        205,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "back",
+      "frame": 7,
+      "bbox": [
+        53,
+        26,
+        207,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 0,
+      "bbox": [
+        57,
+        16,
+        201,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 1,
+      "bbox": [
+        56,
+        16,
+        202,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 2,
+      "bbox": [
+        54,
+        16,
+        203,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 3,
+      "bbox": [
+        53,
+        16,
+        203,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 4,
+      "bbox": [
+        52,
+        17,
+        204,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 5,
+      "bbox": [
+        53,
+        17,
+        203,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 6,
+      "bbox": [
+        58,
+        16,
+        203,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "back",
+      "frame": 7,
+      "bbox": [
+        59,
+        16,
+        204,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 0,
+      "bbox": [
+        52,
+        22,
+        206,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 1,
+      "bbox": [
+        51,
+        22,
+        209,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 2,
+      "bbox": [
+        49,
+        22,
+        209,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 3,
+      "bbox": [
+        50,
+        22,
+        214,
+        213
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 4,
+      "bbox": [
+        50,
+        22,
+        213,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 5,
+      "bbox": [
+        45,
+        22,
+        213,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 6,
+      "bbox": [
+        38,
+        22,
+        207,
+        214
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "front",
+      "frame": 7,
+      "bbox": [
+        43,
+        22,
+        205,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 0,
+      "bbox": [
+        53,
+        15,
+        206,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 1,
+      "bbox": [
+        50,
+        15,
+        206,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 2,
+      "bbox": [
+        48,
+        15,
+        203,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 3,
+      "bbox": [
+        50,
+        15,
+        204,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 4,
+      "bbox": [
+        52,
+        17,
+        207,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 5,
+      "bbox": [
+        52,
+        18,
+        205,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 6,
+      "bbox": [
+        53,
+        15,
+        206,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "front",
+      "frame": 7,
+      "bbox": [
+        55,
+        15,
+        206,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 0,
+      "bbox": [
+        52,
+        26,
+        205,
+        214
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 1,
+      "bbox": [
+        49,
+        26,
+        210,
+        214
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 2,
+      "bbox": [
+        46,
+        26,
+        214,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 3,
+      "bbox": [
+        36,
+        26,
+        215,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 4,
+      "bbox": [
+        36,
+        26,
+        214,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 5,
+      "bbox": [
+        41,
+        26,
+        211,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 6,
+      "bbox": [
+        45,
+        26,
+        210,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "left",
+      "frame": 7,
+      "bbox": [
+        48,
+        26,
+        210,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 0,
+      "bbox": [
+        53,
+        14,
+        201,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 1,
+      "bbox": [
+        55,
+        14,
+        207,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 2,
+      "bbox": [
+        55,
+        14,
+        207,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 3,
+      "bbox": [
+        54,
+        15,
+        207,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 4,
+      "bbox": [
+        52,
+        17,
+        199,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 5,
+      "bbox": [
+        51,
+        14,
+        205,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 6,
+      "bbox": [
+        50,
+        13,
+        198,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "left",
+      "frame": 7,
+      "bbox": [
+        50,
+        13,
+        198,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 0,
+      "bbox": [
+        51,
+        26,
+        204,
+        214
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 1,
+      "bbox": [
+        46,
+        26,
+        207,
+        214
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 2,
+      "bbox": [
+        42,
+        26,
+        210,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 3,
+      "bbox": [
+        41,
+        26,
+        220,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 4,
+      "bbox": [
+        42,
+        26,
+        220,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 5,
+      "bbox": [
+        45,
+        26,
+        215,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 6,
+      "bbox": [
+        46,
+        26,
+        211,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "walk",
+      "direction": "right",
+      "frame": 7,
+      "bbox": [
+        46,
+        26,
+        208,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 0,
+      "bbox": [
+        55,
+        14,
+        203,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 1,
+      "bbox": [
+        49,
+        14,
+        201,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 2,
+      "bbox": [
+        49,
+        14,
+        201,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 3,
+      "bbox": [
+        49,
+        15,
+        202,
+        216
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 4,
+      "bbox": [
+        52,
+        16,
+        204,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 5,
+      "bbox": [
+        57,
+        17,
+        204,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 6,
+      "bbox": [
+        59,
+        14,
+        204,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    },
+    {
+      "animation": "idle",
+      "direction": "right",
+      "frame": 7,
+      "bbox": [
+        59,
+        14,
+        203,
+        215
+      ],
+      "size": [
+        256,
+        220
+      ]
+    }
+  ]
+}

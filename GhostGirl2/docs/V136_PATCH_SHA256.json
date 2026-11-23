@@ -1,0 +1,13 @@
+{
+  "tests/validate_v136.py": "f0b59b03bf7435aad25ed0ebb9ae4d828da508bf78f8f899dde93cc21f6eef77",
+  "tests/validate_v135.py": "9968db9d5bd0205739b32035bf02a78c00b486b0bdc50319007e3e16188774f2",
+  "scripts/chain_support_v136.gd": "7e53026b8d0f19b55dd3d208d352e0fb02fcc1fe2463b3c9c79b6a6ad803b738",
+  "scripts/collapse_support_v135.gd": "e887c118d24b7e9143b5796c1095a82b06575381e1add74c90ff99ac2929c77f",
+  "scripts/rose_hook.gd": "b385ef0466bd1633cfa9a43a6bc83fb8fa457c2b5ab603bc20e0261687b55f42",
+  "scripts/falling_debris_v135.gd": "1b37bbe3a402d78216f8551f7222b30e70eb276e33317d1b0d565c926af9576e",
+  "scripts/breakable_cover_v136.gd": "071e2c0c8fb48dc23c5ac6f68d082959e5bbcc8b201c0cf71362958ea7fbdffa",
+  "docs/V136_CHAINFALL_RELEASE.md": "b0a810ffbeb5ab546bc54525ba0593f7347ee3d018b6b6d9051b66ea26c7128a",
+  "scenes/rooms/hollow_veil_moor.tscn": "ca20ff049df1afb62bc506c0d8de6f2ee89fe9c8562338dd77f2eed27783614c",
+  "items/v136/mourning_girder_bow.tres": "c995ae730ec8aa1d27293d626556fd026c16f750ac44b6a73c7e155d7f5f7666",
+  "items/v136/chainwake_amulet.tres": "3ae89fef3183154d95f3e818c47799c5bba1c3cacd0557ac159c0519c3718a0c"
+}

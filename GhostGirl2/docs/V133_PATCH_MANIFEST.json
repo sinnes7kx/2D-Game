@@ -1,0 +1,56 @@
+{
+  "version": "1.33",
+  "requires": "1.32",
+  "files": [
+    {
+      "path": "scripts/bellglass_echo_v133.gd",
+      "bytes": 5058,
+      "sha256": "7c581e759cb7bcff28ca9b34f9cd45bc21734730c5a7849a86721466d49e2956"
+    },
+    {
+      "path": "scripts/bellglass_vault_v133.gd",
+      "bytes": 1941,
+      "sha256": "2a4f3d5aa629af01f9dd6828895b9b461674853a071c273c0e7b15f9a348357e"
+    },
+    {
+      "path": "scripts/game.gd",
+      "bytes": 43818,
+      "sha256": "397e4561c686d3b5c5211bbe1fa3881a6da87ce6e89067261c440b9d3d9442c2"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "bytes": 10150,
+      "sha256": "c501a4757c29cdca68c0d7463cac45560882baefcf5405b766b2cf9f30d33bff"
+    },
+    {
+      "path": "scripts/moor_warden_v132.gd",
+      "bytes": 13251,
+      "sha256": "b01d54d7a1c6679dc9adab2e3cbf299cb3bff6b5d899679ba0e747fb98b7f854"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "bytes": 89316,
+      "sha256": "e36df9bc48f1936ee62c2128e066756698a59ec06205da1eca700151d00b777a"
+    },
+    {
+      "path": "items/v133/bellglass_reliquary.tres",
+      "bytes": 685,
+      "sha256": "b1d66d6001f05e7fe076e9677707f2b0488616c7f10a54200d02b1ddff136ca8"
+    },
+    {
+      "path": "docs/V133_BELLGLASS_ECHOES.md",
+      "bytes": 2014,
+      "sha256": "7cda32f51c6d44c5cae8d8a2d565642f329a7a460769dcfbdc6d343fd5a0c15d"
+    },
+    {
+      "path": "tests/validate_v133.py",
+      "bytes": 6234,
+      "sha256": "777014689046511eee1a4a3f149b7889d6b8411ba45272b70195144d4c541c50"
+    },
+    {
+      "path": "README_v133.txt",
+      "bytes": 832,
+      "sha256": "d396c71acbc74ad3a27620342d42f0dc1073c8484bc5ba7308c47b3657dfe00d"
+    }
+  ]
+}

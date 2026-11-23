@@ -1,0 +1,64 @@
+{
+  "version": "v1.52",
+  "base": "v1.51.1",
+  "kind": "incremental-source-patch",
+  "runtime_tested": false,
+  "files": {
+    "INSTALL_v152.txt": {
+      "bytes": 2407,
+      "sha256": "2814becaf573be8cf7624dacab4493be3d972c80859fcb9e8edde44047e7eaf5"
+    },
+    "PLAYTEST_v152.txt": {
+      "bytes": 996,
+      "sha256": "633ab18f813f0c65b77ef29b6bf12cb217cc52bc630f437bceb73b13dc1e8f49"
+    },
+    "assets/equipment/dress_palette.gdshader": {
+      "bytes": 1881,
+      "sha256": "ada317331b55668ab0bad9caa2d85b427f7f44976e82ff4daad9d11c7f26a98d"
+    },
+    "scenes/player.tscn": {
+      "bytes": 3838,
+      "sha256": "3082d47178ac3bab13a9c7cf94b9dbf73b067a1362f3abe4e476eae67a19c3ea"
+    },
+    "scripts/cosmetic_rng_v152.gd": {
+      "bytes": 1921,
+      "sha256": "ad7f4f0177dffc5e676141d1706b95b9a752c823bb922d6a1ff9902e15678e94"
+    },
+    "scripts/equipment_visuals.gd": {
+      "bytes": 4276,
+      "sha256": "69864570ed970543a16230878046737b08f69ab5743da7cece306c2d475b7fc3"
+    },
+    "scripts/game.gd": {
+      "bytes": 49969,
+      "sha256": "4219db673e7693c26e84c49eb5b499d9131e188754a0ca43804f1d728ed2109a"
+    },
+    "scripts/inventory.gd": {
+      "bytes": 17320,
+      "sha256": "4105928324a88d447e886e23bd5a2f6bf02551d60f57cf171a3c43a718296df8"
+    },
+    "scripts/inventory_panel.gd": {
+      "bytes": 14329,
+      "sha256": "057c6a3b92c36609416f9309adce9cdb562e4a56c35e83e96743e0d2dcc8f778"
+    },
+    "scripts/item_instance.gd": {
+      "bytes": 15806,
+      "sha256": "96fba0ace0b6b05e93e9fd8582ff3480f5262575a33673a5d1dc76bcd2be1539"
+    },
+    "scripts/item_rich_text.gd": {
+      "bytes": 6761,
+      "sha256": "529ae3eabcde24320f98d3e60e45a142b500981be0602f8193584c75e4c8ae5b"
+    },
+    "scripts/relic_attunement_v132.gd": {
+      "bytes": 3003,
+      "sha256": "2a6bfb8162f8477d2f8dd3f22b23786fff3d32aaf18275588f2b4300b9ce8fef"
+    },
+    "scripts/weapon_prestige_fx.gd": {
+      "bytes": 18050,
+      "sha256": "87e8605eaeb71d516ecc9043066b35ac1e9ba31f29f4ae4fd0c33328743cb065"
+    },
+    "tests/validate_v152.py": {
+      "bytes": 5333,
+      "sha256": "d99eee4fb51ee6d56bbbf43d5bdbf975debce177fbc1d2f6b963a4d801376170"
+    }
+  }
+}

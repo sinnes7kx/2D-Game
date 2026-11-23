@@ -1,0 +1,116 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://bpq1gkq6ss501"]
+
+[ext_resource type="Texture2D" uid="uid://dsdmhddr34q0y" path="res://assets/enemies/occultist/frame_00.png" id="tex_00"]
+[ext_resource type="Texture2D" uid="uid://cyregq6ms1suc" path="res://assets/enemies/occultist/frame_01.png" id="tex_01"]
+[ext_resource type="Texture2D" uid="uid://bpdvpsytmqxri" path="res://assets/enemies/occultist/frame_02.png" id="tex_02"]
+[ext_resource type="Texture2D" uid="uid://8r7tegmy1x2j" path="res://assets/enemies/occultist/frame_03.png" id="tex_03"]
+[ext_resource type="Texture2D" uid="uid://brgykvxc0q25" path="res://assets/enemies/occultist/frame_04.png" id="tex_04"]
+[ext_resource type="Texture2D" uid="uid://d23pgpsxvxjut" path="res://assets/enemies/occultist/frame_05.png" id="tex_05"]
+[ext_resource type="Texture2D" uid="uid://c5oihhyayxhps" path="res://assets/enemies/occultist/frame_06.png" id="tex_06"]
+[ext_resource type="Texture2D" uid="uid://ddi8w3luayha0" path="res://assets/enemies/occultist/frame_07.png" id="tex_07"]
+[ext_resource type="Texture2D" uid="uid://irdna88rndd8" path="res://assets/enemies/occultist/frame_08.png" id="tex_08"]
+[ext_resource type="Texture2D" uid="uid://dm3hvnm7rpbjp" path="res://assets/enemies/occultist/frame_09.png" id="tex_09"]
+[ext_resource type="Texture2D" uid="uid://dtyumivqnaanl" path="res://assets/enemies/occultist/frame_10.png" id="tex_10"]
+[ext_resource type="Texture2D" uid="uid://83aq4d60vp3x" path="res://assets/enemies/occultist/frame_11.png" id="tex_11"]
+[ext_resource type="Texture2D" uid="uid://bpwt0joo63iap" path="res://assets/enemies/occultist/frame_12.png" id="tex_12"]
+[ext_resource type="Texture2D" uid="uid://clkrm4vah87m7" path="res://assets/enemies/occultist/frame_13.png" id="tex_13"]
+[ext_resource type="Texture2D" uid="uid://dv2obaplu2jqd" path="res://assets/enemies/occultist/frame_14.png" id="tex_14"]
+[ext_resource type="Texture2D" uid="uid://cksp7r7xqmys5" path="res://assets/enemies/occultist/frame_15.png" id="tex_15"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_09")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_11")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_15")
+}],
+"loop": 0,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_13")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_00")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_01")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_03")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_03")
+}],
+"loop": 0,
+"name": &"recover",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_04")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_05")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_06")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_07")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_08")
+}, {
+"duration": 1.0,
+"texture": ExtResource("tex_09")
+}],
+"loop": 1,
+"name": &"windup",
+"speed": 5.0
+}]

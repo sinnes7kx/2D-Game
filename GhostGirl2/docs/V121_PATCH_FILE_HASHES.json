@@ -1,0 +1,42 @@
+{
+  "version": "1.21",
+  "patch_base": "v1.20",
+  "files": {
+    "scenes/rooms/hollow_veil_moor.tscn": {
+      "bytes": 53906,
+      "sha256": "e7197afb1e8dad2bda40c51e4cf4b36cc3d3a3864486f63d1b6ef86dd19bc8ee"
+    },
+    "scripts/player.gd": {
+      "bytes": 45696,
+      "sha256": "43189370fd6d82d707d0aa0ae4c06217f17f3c19389d3a581bdd0c08331a9f1f"
+    },
+    "scripts/moon_spell.gd": {
+      "bytes": 15095,
+      "sha256": "3b061d15840e77a0174428598bca646d0c37c90ae188f80ee799db3fd88ac7f2"
+    },
+    "scripts/weapon_spectacle.gd": {
+      "bytes": 6392,
+      "sha256": "c6aab98f7a5d4ffa186f9bf9b974b60226feba510a06109367691b617b978e08"
+    },
+    "scripts/water_body.gd": {
+      "bytes": 1759,
+      "sha256": "a3c191f21076cc371b397be5bdab06aa1518c35b8513f344a28a96e206cc06ed"
+    },
+    "scripts/moor_water_ripples.gd": {
+      "bytes": 2260,
+      "sha256": "3a9e970aa64d23237cd2eebcf5e4efb718d1ab96c8115fefb23c12df36372ffb"
+    },
+    "scripts/moor_rain.gd": {
+      "bytes": 2107,
+      "sha256": "0925ea8982c8765030e58c74c21e94b601d008965cd04703b5e56cdd961cebee"
+    },
+    "docs/V121_MOOR_REFINEMENT.md": {
+      "bytes": 2883,
+      "sha256": "0e4787490815e469832b7eae2599a9dcd2aa0f73482e2f2ccb3531be4f843fa9"
+    },
+    "tests/validate_v121.py": {
+      "bytes": 4633,
+      "sha256": "448800a11927777a9318bce755f9bd14d1bdc1a0042da90a3ac48af1003024c7"
+    }
+  }
+}

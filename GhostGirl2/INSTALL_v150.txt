@@ -1,0 +1,16 @@
+GHOST GIRL v1.50 — MOMENTUM, SHATTER & STAGGER
+
+Apply over your fully assembled Ghost Girl v1.49 or v1.49.1 project.
+The v1.49.1 missing floor-breach hotfix is INCLUDED.
+
+1. Close the Godot editor.
+2. Extract the CONTENTS of this ZIP into the folder containing project.godot.
+3. Choose merge/replace for scripts/ and scenes/rooms/.
+4. Reopen your Godot 4 project and test the early-room breakables.
+
+Do not extract this ZIP into a separate project, and do not delete existing
+assets, scenes, or user:// save files. This archive contains changed scripts
+and two room scenes, not the entire game.
+
+Run python tests/validate_v150.py from the project folder to check the static
+overlay. That does not replace actual Godot F5 playtesting.

@@ -1,0 +1,16 @@
+v1.52 PLAYTEST
+1. Existing v1.51.1 save: open with no weapon, equip a dress, reroll 3x
+   and verify dress color, not hair/face, is updated after closing inventory.
+2. Equip a sword: idle, moving, light/heavy, jump attack (four directions).
+   Verify bright edge glow follows the blade and does not float over the face.
+3. Equip a wand instead: the sword glow must disappear. Cast a spell.
+4. Reroll a sword. Verify gradients and the in-game glow colors change.
+5. Save favorite look, reroll, restore it; verify outfit/weapon colors.
+6. For very rare modifiers, see ALT tooltip and observe animated ribbons/
+   eclipse arcs/astral wings. Ordinary weapons always show base blade glow.
+7. Save/reload and verify existing item damage/stats/sockets unchanged.
+8. Watch Godot debugger for GDScript parser errors and shader warnings.
+9. The scene tree must have one player Ghost/EquippedPrestigeFX node.
+10. Monitor FPS on low-end GPUs with rare effect active.
+
+Godot runtime untested at package time.

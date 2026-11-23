@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ui/reliquary/moon_pendant.png" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v135_widows_knot"
+display_name = "Widow's Knot"
+description = "A moonbound knot from the fallen bridge. It remembers how to pull what should not move."
+icon = ExtResource("icon")
+unique = true
+equip_slot = "charm"
+stat_id = "hook_pull_pct"
+min_stat = 15.0
+max_stat = 22.0
+max_sockets = 2
+item_level = 27
+inventory_width = 1
+inventory_height = 1

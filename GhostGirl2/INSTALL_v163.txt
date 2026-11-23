@@ -1,0 +1,23 @@
+GHOST GIRL v1.63 — DIRECTIONAL WAND POSE SHEETS
+Incremental overlay for v1.62; no full project needed.
+
+INSTALL
+1. Back up the existing project and saves, then close Godot.
+2. Extract this ZIP into GhostGirl2 (the folder containing project.godot), replacing matching files.
+3. Reopen Godot to import all three PNG pose atlases and the JSON guide.
+4. Test idle/walk/cast for front, back, left, and right with each wand appearance.
+
+WHAT CHANGED
+- 3 transparent wand pose atlases, 12 rows each (idle, walk, cast x 4 directions), actual animation-specific frame counts.
+- Each frame has individually authored grip, tip, swing and recovery positions, sourced from the three v1.62 wand paintings.
+- The same frame selection is used by WandVisual and its existing weapon glow.
+- No more single wand rotation for every pose. The back-facing pose is layered behind Ghost Girl.
+- v1.62 debug Mythic toggle, save system, equipment, item stats, drop odds and approved Ghost Girl artwork are unchanged.
+
+TECHNICAL NOTE
+These are frame-by-frame transforms of the v1.62 painted weapons, not 96 independently hand-painted drawings per design. This approach gives real aligned pose sheets with small game-ready art, without redrawing Ghost Girl.
+
+LIMITATIONS
+Godot runtime and visual playtesting were unavailable in this environment.
+Watch for hands covering the wand and slight offsets in unusual animation transitions.
+No hitboxes, projectiles, damage, items, or save schema were changed.

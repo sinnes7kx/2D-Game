@@ -1,0 +1,13 @@
+Ghost Girl v1.10 — Clean Hands (PATCH ONLY, requires v1.9)
+
+1. Back up your Ghost Girl v1.9 project and saves.
+2. Extract this ZIP into the folder containing project.godot.
+3. Overwrite only matching resources/ghost_extra_animations.json.
+4. Open project.godot in Godot 4; import all new PNGs; run F5.
+5. Equip the scythe and halberd. Check all four idle, walk, light, and heavy directions.
+
+What changed: duplicate painted rose-hook removed from weapon locomotion bodies;
+inherited magic slash/floor artifact removed from 2H attacks. Original sprites,
+overlay atlases, inventory and save schema are not overwritten.
+
+No Godot in-engine F5 validation was available. Full notes in docs/V110_CLEAN_HANDS.md.

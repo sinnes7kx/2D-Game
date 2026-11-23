@@ -1,0 +1,23 @@
+{
+  "patch_version": "v1.47",
+  "requires": "v1.46.4",
+  "type": "incremental_code_and_scene_patch",
+  "files": {
+    "INSTALL_v147_GAMEPLAY_PATCH.txt": "89eb39db4da1dda5b3c624ce3fff5f81967e92ec29c94f5762c721edd3a228d2",
+    "docs/V147_PLAYTEST_AND_CONTENT.md": "cf31711059d9e91615aa6e25eb6285c8e6f61ee62084d6810471465466d5bc12",
+    "scenes/rooms/crypt_gallery.tscn": "499fbd8f57c7a4312bb3c53b059af4a07c0035e3e5cc9d58accc5a83a854eb8c",
+    "scenes/rooms/garden.tscn": "96818345e292c3cbf4babef897d70307fb88f420d71e503c2ec4108ba2564d11",
+    "scenes/rooms/moonwake_crypt.tscn": "85071c3b727ea5d27c7c23924554f91e5bb81767a23986199dd6c2c79705468f",
+    "scripts/game.gd": "44140cd78fa9abf12b0608dc4c563a5a81e7dcd7819980c2f191f409067ce9d7",
+    "scripts/hud.gd": "878436cbbb42dd835634a3fe4bede44867a944a7b7625599d292c836dc5586fe",
+    "scripts/v147_echo_trial.gd": "de449d12d405c8b5ad9ff7c78b822703f9e551bba48e4d1641dea1c67b21eccb",
+    "scripts/v147_rose_bell.gd": "97586db8065d20f9040cba23064c2bee96d2cd227dc2330686aa2603a7f21b6f",
+    "scripts/v147_rose_relay.gd": "d1879b0648433556ea64c22cf79773ab260859c17168c06afe7e81eb3b006a92",
+    "scripts/v147_rose_relay_bell.gd": "a80d31b5429d54d2ade76666299e73658493b74866bfb0646509cf3650d50774",
+    "tests/validate_v147.py": "fc34d0ab47a09d7082db2c4cab0b1f1d3b1028c1f1ed4bcfb45d7c6c5b779cd3"
+  },
+  "static_checks_passed": 689,
+  "engine_f5_verified": false,
+  "world_save_schema_changed": false,
+  "inventory_save_schema_changed": false
+}

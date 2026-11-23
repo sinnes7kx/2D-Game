@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://ddjql1g572h1k"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://2fgu8r205prg" path="res://assets/ui/weapons_v170/eclipse_twinblade.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "eclipse_twinblade_v170"
+display_name = "Eclipse Twinblade"
+description = "Two moonlit crescents mounted at opposite ends of a dark haft."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+stat_id = "attack_speed_pct"
+min_stat = 3.5
+max_stat = 8.0
+max_sockets = 2
+item_level = 10
+weapon_style = "twinblade"
+min_weapon_damage = 11.2
+max_weapon_damage = 15.5
+inventory_width = 2
+inventory_height = 4

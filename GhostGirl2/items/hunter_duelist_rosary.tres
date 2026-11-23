@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://btggehcfq5luq"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://q6csl16msajp" path="res://assets/ui/reliquary/moon_pendant.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "hunter_duelist_rosary"
+display_name = "Duelist Rosary"
+description = "A thorn-wound rosary that sharpens a strike immediately after a retreat."
+icon = ExtResource("2_icon")
+equip_slot = "trinket"
+stat_id = "counter_damage_pct"
+min_stat = 10.0
+max_stat = 20.0
+max_sockets = 2
+item_level = 8

@@ -1,0 +1,20 @@
+GHOST GIRL v1.9 — FRAME-AUTHORED WEAPON LAYERS
+
+REQUIRES: Ghost Girl v1.8 (Weight of Roses). This is NOT a standalone game.
+
+1. Close Godot and back up your project.
+2. Extract this ZIP straight into your existing Ghost Girl v1.8 folder,
+   the folder containing project.godot; merge/replace the matching files.
+3. Re-open project.godot in Godot 4, allow PNG importing, then press F5.
+4. Equip Rose Reaper scythe or Lunar Vigil halberd. Check idle/walk and
+   light/heavy attacks facing all four directions, then test dodge/hook/hurt.
+
+New 2048x1760 transparent atlases, 256x220 frames, 8 frames per row.
+The character frame artwork and save data have NOT been changed.
+
+NOTE: Some approved idle/walk body frames have the rose-hook painted in.
+The hook may still be visible by her side with a scythe/halberd equipped.
+This is separate from the corrected weapon-overlay alignment.
+
+Static validation passed, but no Godot runtime/F5 test was possible here.
+See docs/V19_HAND_AUTHORED_WEAPON_LAYERS.md for details.

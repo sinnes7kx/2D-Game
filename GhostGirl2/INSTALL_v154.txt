@@ -1,0 +1,50 @@
+GHOST GIRL v1.54 — SOFT LANTERN BLOOM / LEFT BOW / GLOW ARROWS / DRESS FILIGREE
+===============================================================================
+INCREMENTAL PATCH. Requires an assembled and working v1.53 project.
+
+INSTALL
+1. Close Godot and back up the project folder + save data.
+2. Extract this zip INTO the GhostGirl2 folder containing project.godot.
+   The archive starts with scripts/ and assets/ (no extra GhostGirl2 directory).
+   Overwrite all 12 matching source/asset files, including the 4 PNG atlases.
+3. Reopen Godot. Allow it to reimport the replacement bow atlases and shaders.
+4. Play from F5 with your EXISTING SAVE. No reset is needed.
+
+CHANGES
+- Weapons: replaces wide straight-edged beams and polygon fan effects with
+  feathered colored glow around the same weapon guides. Idle light is softer;
+  attacks still pulse. Rare signatures are retained as small, readable effects
+  without fan-shaped triangles behind the character.
+- Bow: reduces the opaque recolor mask to subtle translucent enamel so the
+  original bow shape/string are visible, even with bright gradients.
+- Left-facing bow: reorients only the bow's original art/mask in the two left
+  locomotion rows (idle left, walk left) for Thornrose and Moonveil. No movement,
+  shooting or right/front/back frames were changed. The approved Ghost Girl
+  body, hair and dress are not replaced with generated character sprites.
+- Arrows: every physical bow arrow now has a separate additive 3-color soft
+  lantern glow and a fading motion trail. It follows the parent projectile and
+  its saved bow gradient, including charged and normal shots. This cosmetic
+  child has no collision, damage, or extra projectiles.
+- Dress: stable, low-contrast rose-like embroidered filigree appears on the
+  skirt of an equipped dress. Its orientation follows the dress's saved cosmetic
+  look, not the weapon. No glowing patterns over hair/eyes.
+- Existing 128-bit cosmetic UID, stat rolls, saved favorites and all saves are
+  left untouched. No combat or loot changes.
+
+GODOT PLAYTEST PRIORITIES (NOT engine-tested in this environment)
+A. Equip sword, bow, scythe, and wand: verify glow fades smoothly at the edge,
+   remains visible but doesn't hide the painted weapon.
+B. With Thornrose bow and Moonveil bow, idle+walk facing LEFT and then shoot
+   LEFT: verify upright non-jumping bow alignment and frame continuity.
+C. Shoot normal and charged arrows with differently colored saved bow looks:
+   arrow head and wake should glow while target/damage behavior stays the same.
+D. Equip a dress without a sword, change/favorite palette, reload: skirt's
+   delicate embroidered pattern should remain while hair remains untouched.
+E. If any right-facing bow frame became mirrored, that would be a bug: only
+   left idle/walking rows should have changed.
+
+LIMITATIONS
+Static and image-difference checks have passed but Godot F5 renderer, shader
+compilation, bow rotation transition, and real trail visibility could not be
+verified without running the Godot engine. Please report engine errors and a
+short gameplay screenshot if any offset remains.

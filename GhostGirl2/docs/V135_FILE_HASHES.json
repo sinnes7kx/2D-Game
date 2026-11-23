@@ -1,0 +1,76 @@
+{
+  "release": "1.35",
+  "base": "1.34",
+  "files": [
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 111235,
+      "sha256": "592213981422f8d691c390e4cd85fd800df43bb7fcff76ac7000d2f371c03dc6"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 44782,
+      "sha256": "b692a67d83b95d6e522b97b73244a08f6e1d9f02c35d353921432513a8a17ca0"
+    },
+    {
+      "path": "scripts/moonfall_blizzard.gd",
+      "size": 9170,
+      "sha256": "91eb55df42669d2e20244a6b6a9aceca87238198db9757db280fda552ce4e496"
+    },
+    {
+      "path": "scripts/grasping_roses_v127.gd",
+      "size": 5013,
+      "sha256": "00a67517bc3385f9841880cafb06f804b0a48e3a9f24c77672ea2c4586e33737"
+    },
+    {
+      "path": "scripts/collapse_support_v135.gd",
+      "size": 8555,
+      "sha256": "37da8e49545fa8969b50c1666c11b6411cdfa20cb14bfc86c438ef2ca46d0933"
+    },
+    {
+      "path": "scripts/collapse_support_hitbox_v135.gd",
+      "size": 333,
+      "sha256": "c256f12a0b53bdad309f56874d65e431d5b481d77b465c9040c96f0377fdaf78"
+    },
+    {
+      "path": "scripts/falling_debris_v135.gd",
+      "size": 4026,
+      "sha256": "086dfce5bea407c971db308abbf241e5913842feda721695c36e1a7988f56be5"
+    },
+    {
+      "path": "scripts/moor_salvage_seal_v135.gd",
+      "size": 1795,
+      "sha256": "3e328a975ef4c33cea87ab0a69358336c7fbfec1dca4978ff2670fb47243d962"
+    },
+    {
+      "path": "items/v135/widows_knot.tres",
+      "size": 644,
+      "sha256": "b0027d409dd6e25704a52c2e773165919f76d4df9c259fe8597069e7c1e7d0a7"
+    },
+    {
+      "path": "items/v135/rafterfall_moonbow.tres",
+      "size": 748,
+      "sha256": "e78f0eb57b61f2955237e710d64694be6f6ca62603be9a69d4bdd8a954e05324"
+    },
+    {
+      "path": "assets/audio/v135_beam_creak.wav",
+      "size": 24740,
+      "sha256": "6c5040ee7c4bc8e4f1020089f10ebbde11d0a3231dcc8c83aa8c7c62d566446c"
+    },
+    {
+      "path": "assets/audio/v135_debris_impact.wav",
+      "size": 39734,
+      "sha256": "0e202ad29e3872568ff3a2123827c76ae36151fa8db3b55d805d1d57e17070f3"
+    },
+    {
+      "path": "docs/V135_FALLING_WORLD_GUIDE.md",
+      "size": 3684,
+      "sha256": "4e8554ca35f896f38005e1e77e9cd96ad780aaa0d6e5e8389b0a155a8473e49a"
+    },
+    {
+      "path": "tests/validate_v135.py",
+      "size": 5868,
+      "sha256": "9462e4c2507a8fe8eb14b747060d008d93571ca7895b96153ac728666790268d"
+    }
+  ]
+}

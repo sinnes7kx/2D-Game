@@ -1,0 +1,11 @@
+{
+  "INSTALL_v163.txt": "e3c334a8f359e04d00c0ffe1a8c46dcd05329849da6b727fdb9116e5a72a8a03",
+  "WAND_POSES_PREVIEW_v163.png": "408914186df7bbf5850ddefbad9b4533a35758e431a4951d12575e37a80a145a",
+  "assets/equipment/wands_v163/crystal_rose_poses_v163.png": "4d89d955e86c321bca67a096ae17f0dc360901322cc4f1a4a1c1009feb9d7c1c",
+  "assets/equipment/wands_v163/moonlit_censer_poses_v163.png": "a319b63363c59c17949601e44164ebf33aac19c613af0909edb12cd35426af86",
+  "assets/equipment/wands_v163/thorn_crescent_poses_v163.png": "1ad2737c89fdf9984370b39fc5e13b5a0e03760894081449c973f165f3ebc6f0",
+  "resources/wand_pose_guides_v163.json": "3ebb49c97b2135d09291b34e6b01d357192f9e24f6e79e8204e7d9b704e5002b",
+  "scripts/equipment_visuals.gd": "cac70798e7bddbdf1fa8f90cae659c811b4b790390a9fa290589fcea1001b439",
+  "scripts/weapon_prestige_fx.gd": "09f010cdde00518c5e9bb07e105f582a4161adcabce82864457bd4841c4bf710",
+  "tests/validate_v163.py": "3e1bbbe7056272a0a2d5e8b12a2b9d1d75ea9f677b46d89dc9986d7d2164ed07"
+}

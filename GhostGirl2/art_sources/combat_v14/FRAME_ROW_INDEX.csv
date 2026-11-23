@@ -1,0 +1,9 @@
+row_zero_based,frames,animation_directions,attack,atlas_size,cell_size
+0,8,front,light,2048x1760,256x220
+1,8,back,light,2048x1760,256x220
+2,8,left,light,2048x1760,256x220
+3,8,right,light,2048x1760,256x220
+4,8,front,heavy,2048x1760,256x220
+5,8,back,heavy,2048x1760,256x220
+6,8,left,heavy,2048x1760,256x220
+7,8,right,heavy,2048x1760,256x220

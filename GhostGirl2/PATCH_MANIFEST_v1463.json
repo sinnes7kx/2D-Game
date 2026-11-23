@@ -1,0 +1,96 @@
+{
+  "version": "v1.46.3",
+  "type": "small incremental overlay patch",
+  "base": "supplied GhostGirl2(1).zip source + GhostGirl2_part2.rar assets",
+  "modified_files": [
+    "scenes/inventory_panel.tscn",
+    "scripts/equipment_panel.gd",
+    "scripts/game.gd",
+    "scripts/hud.gd",
+    "scripts/inventory.gd",
+    "scripts/inventory_panel.gd",
+    "scripts/item_compare_popup.gd",
+    "scripts/item_instance.gd",
+    "scripts/item_rich_text.gd",
+    "scripts/player.gd",
+    "scripts/relic_attunement_v132.gd",
+    "scripts/wand_idle_glimmer.gd",
+    "scripts/weapon_prestige_fx.gd"
+  ],
+  "verified": "static checks pass; no Godot runtime available",
+  "files": {
+    "scenes/inventory_panel.tscn": {
+      "size": 6335,
+      "sha256": "25c596cd9a54e6640745501be136eff5ddd95fffa6ef4e2c222f67bd514e3ddb",
+      "previous_sha256": "930c12b1c4b5a5b7300f734c038981aec22b05ed4fe4b27b191b61e6366b2e92"
+    },
+    "scripts/equipment_panel.gd": {
+      "size": 4057,
+      "sha256": "49edd211cdd1d6a0b3ee019fb0a96c4f9e9a67877c04153dbadc148b31aa2816",
+      "previous_sha256": "94e49298be024e106f3cede125375194c4e7d1ae5fa91737af11584b0024ac6b"
+    },
+    "scripts/game.gd": {
+      "size": 47914,
+      "sha256": "2ff1f1220a351ec6850e20cc5907a9e52d08500eeba759297d9527021cafdb59",
+      "previous_sha256": "80fc0ad7a937754be11c28bbf5a71f8a620af7824443c109b5ef3379824af0ee"
+    },
+    "scripts/hud.gd": {
+      "size": 11012,
+      "sha256": "537338d079ff620c35f2d645eee3810e6fb84fc11aac0177f6f9953730f4ea63",
+      "previous_sha256": "3dcf5bc601f32db78d14ba6dbafd4bda9c97c11469cac82cfacbce6d3be92038"
+    },
+    "scripts/inventory.gd": {
+      "size": 16752,
+      "sha256": "ba785e85d042865941286bcebe959f00aba2d5486ddfd0a028dd3d35d4b0dd5d",
+      "previous_sha256": "251ece08b963d12834f367c507268a682442034c7de5036a4d7e79dca859db58"
+    },
+    "scripts/inventory_panel.gd": {
+      "size": 11829,
+      "sha256": "9d6ee960b11b89e72a13220ae111ef82582ca2482869130b08bfa037a0d2ce98",
+      "previous_sha256": "eda06415ca9c9cc493fa1ba3da4303360fb646557f12c970096e653eefee1f25"
+    },
+    "scripts/item_compare_popup.gd": {
+      "size": 2779,
+      "sha256": "44dbaaca7a2a8b8781fbc782306d056f751665376ba520e44a1b6bfad4f5fe30",
+      "previous_sha256": "83600ba8457006a71ae74d6c9c62352536e72165644034459ca01b9e3dcea104"
+    },
+    "scripts/item_instance.gd": {
+      "size": 15112,
+      "sha256": "9259fec8ad862a5a3d2963b563d82a5e52a0edfb0baaf14ffe232853ed1ff711",
+      "previous_sha256": "895ba81c58dc4be336b742512a286efa5b7af3b5dd69e3b67448b67379482ac0"
+    },
+    "scripts/item_rich_text.gd": {
+      "size": 7111,
+      "sha256": "55f023822d976544d2544feacecf4939c4b497b2771246a5d737866c75d163d8",
+      "previous_sha256": "534d8c2e05e9486d9ccc165452741209b7eb2c5fd567fd8bd7d292f68697ff9e"
+    },
+    "scripts/player.gd": {
+      "size": 58559,
+      "sha256": "3521f4c125da86d698ff2cbfbd4410426f5ba19310b81500eca936dc921b5a69",
+      "previous_sha256": "3e6cecf6421c494e04f7bf2d8239cf18be7ec3cdf991a248dadaa519ff5727bd"
+    },
+    "scripts/relic_attunement_v132.gd": {
+      "size": 4304,
+      "sha256": "d0774f42484d6ece84c4c9ca7c69f6d0d56766dd9d7732f74687adfd599aa225",
+      "previous_sha256": "b0113fe5c2d6f36b59f8dd74387a850148e474304612792aec07679c68168757"
+    },
+    "scripts/wand_idle_glimmer.gd": {
+      "size": 3075,
+      "sha256": "ad309aef71091c6d4f3718b3507116ff2addb26bafccf357912c7d0140988114",
+      "previous_sha256": "1a971150afef0db2de29a9e9d170bb0909880ca879b280c59cdf361d7e44fbf0"
+    },
+    "scripts/weapon_prestige_fx.gd": {
+      "size": 11221,
+      "sha256": "e645afda92bb9f96966d09218a22269314fb8b0003769393ad0ab5c72e2f217e",
+      "previous_sha256": "a8ed62b13b721a82c031969917f5f88c13f8779f414b3a19d4bb8ea240585b1b"
+    },
+    "docs/V1463_TOOLTIP_COSMETIC_SEEDS.md": {
+      "size": 4328,
+      "sha256": "d00694940d582f94d9012d8fd448015bc9c3fb436c233b850b9dfbc423e1b5d8"
+    },
+    "tests/validate_v1463.py": {
+      "size": 4725,
+      "sha256": "1af30ef1a0a2d3136d1a2dc6fe3ba90ead71fa2dd70d6edb45d579c2b9b382bf"
+    }
+  }
+}

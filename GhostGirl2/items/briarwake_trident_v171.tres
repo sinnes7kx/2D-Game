@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/ui/weapons_v171/briarwake_spear.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "briarwake_trident_v171"
+display_name = "Briarwake Trident"
+description = "An antique rosewood spear ending in a three-pronged garnet briar."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+weapon_style = "spear"
+stat_id = "poise_power_pct"
+min_stat = 5.0
+max_stat = 10.0
+max_sockets = 2
+item_level = 12
+min_weapon_damage = 13.9
+max_weapon_damage = 18.0
+inventory_width = 2
+inventory_height = 4

@@ -1,0 +1,288 @@
+[gd_scene load_steps=28 format=3]
+
+[ext_resource type="Script" path="res://scripts/collectible_item.gd" id="treasure_script"]
+[ext_resource type="Resource" path="res://items/moonwoven_dress.tres" id="item_0"]
+[ext_resource type="Texture2D" path="res://assets/ui/treasure_dress.png" id="icon_0"]
+
+[ext_resource type="Texture2D" path="res://assets/world/crypt_gallery.png" id="background"]
+[ext_resource type="Texture2D" path="res://assets/world/layers/crypt_gallery_foreground.png" id="foreground"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" path="res://scripts/hook_anchor.gd" id="anchor"]
+[ext_resource type="Script" path="res://scripts/atmosphere.gd" id="dust"]
+[ext_resource type="PackedScene" path="res://scenes/carryable.tscn" id="carry"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/flame_ambience.tscn" id="flame"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/water_ambience.tscn" id="water"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/petal_ambience.tscn" id="petal"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/firefly_ambience.tscn" id="firefly"]
+
+[ext_resource type="Script" path="res://scripts/v147_rose_relay.gd" id="v147_relay"]
+[ext_resource type="Script" path="res://scripts/v147_rose_relay_bell.gd" id="v147_relay_bell"]
+[ext_resource type="Script" path="res://scripts/buried_cache_v1464.gd" id="v147_relay_cache"]
+[ext_resource type="Resource" path="res://items/silver_thread_charm.tres" id="v147_cache_reward"]
+
+[sub_resource type="RectangleShape2D" id="Box0"]
+size = Vector2(2389, 190)
+
+[sub_resource type="RectangleShape2D" id="Box1"]
+size = Vector2(124, 1792)
+
+[sub_resource type="RectangleShape2D" id="Box2"]
+size = Vector2(124, 1792)
+
+[sub_resource type="RectangleShape2D" id="Box3"]
+size = Vector2(2389, 68)
+
+[sub_resource type="RectangleShape2D" id="Box4"]
+size = Vector2(680, 280)
+
+[sub_resource type="RectangleShape2D" id="Box5"]
+size = Vector2(360, 590)
+
+[sub_resource type="RectangleShape2D" id="Box6"]
+size = Vector2(360, 590)
+
+[sub_resource type="RectangleShape2D" id="Box7"]
+size = Vector2(270, 320)
+
+[sub_resource type="RectangleShape2D" id="Box8"]
+size = Vector2(250, 180)
+
+[sub_resource type="CircleShape2D" id="v147_chime_shape"]
+radius = 24.0
+
+[node name="CryptGallery" type="Node2D"]
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("background")
+centered = false
+z_index = -50
+
+[node name="ForegroundCanopy" type="Sprite2D" parent="."]
+texture = ExtResource("foreground")
+centered = false
+z_index = 49
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="North marble wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/North marble wall"]
+position = Vector2(1194, 95)
+shape = SubResource("Box0")
+
+[node name="West outer wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/West outer wall"]
+position = Vector2(62, 900)
+shape = SubResource("Box1")
+
+[node name="East outer wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/East outer wall"]
+position = Vector2(2327, 900)
+shape = SubResource("Box2")
+
+[node name="South wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/South wall"]
+position = Vector2(1194, 1758)
+shape = SubResource("Box3")
+
+[node name="Altar dais" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Altar dais"]
+position = Vector2(1194, 395)
+shape = SubResource("Box4")
+
+[node name="Western pews" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Western pews"]
+position = Vector2(787, 985)
+shape = SubResource("Box5")
+
+[node name="Eastern pews" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Eastern pews"]
+position = Vector2(1578, 985)
+shape = SubResource("Box6")
+
+[node name="Memorial alcove" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Memorial alcove"]
+position = Vector2(339, 438)
+shape = SubResource("Box7")
+
+[node name="Reliquary chest" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Reliquary chest"]
+position = Vector2(1990, 1310)
+shape = SubResource("Box8")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1190, 1450)
+
+[node name="From_moonwake_crypt" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1190, 1410)
+
+[node name="From_garden" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1940, 858)
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="crypt" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1190, 1575)
+script = ExtResource("portal")
+interaction_name = "Return to Moonwake Crypt"
+destination = "moonwake_crypt"
+opened = true
+
+[node name="garden" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(2123, 790)
+script = ExtResource("portal")
+interaction_name = "Step into the moonlit garden"
+destination = "garden"
+opened = true
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Collectibles" type="Node2D" parent="Gameplay"]
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay"]
+
+[node name="GalleryRose_1" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1840, 650)
+script = ExtResource("anchor")
+
+[node name="GalleryRose_2" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(390, 810)
+script = ExtResource("anchor")
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay"]
+
+[node name="WestMemorialNiche" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(360, 1170)
+
+[node name="CandleShelfSecret" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(1930, 420)
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="MoonlitDust" type="Node2D" parent="Gameplay/Effects"]
+z_index = 12
+script = ExtResource("dust")
+
+[node name="AnimatedDetails" type="Node2D" parent="Gameplay/Effects"]
+
+[node name="flame_00" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("flame")]
+position = Vector2(380, 480)
+scale = Vector2(0.85, 0.85)
+
+[node name="flame_01" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("flame")]
+position = Vector2(1940, 475)
+scale = Vector2(0.95, 0.95)
+
+[node name="flame_02" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("flame")]
+position = Vector2(1210, 560)
+scale = Vector2(1.1, 1.1)
+
+[node name="petal_03" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("petal")]
+position = Vector2(1170, 1240)
+scale = Vector2(1.3, 1.3)
+
+[node name="firefly_04" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("firefly")]
+position = Vector2(2050, 960)
+scale = Vector2(1.0, 1.0)
+
+[node name="DressOfTheMemorial" type="Node2D" parent="Gameplay/Collectibles"]
+position = Vector2(1830, 1280)
+script = ExtResource("treasure_script")
+item_data = ExtResource("item_0")
+pickup_id = "gallery_dress_001"
+item_seed = 274613
+interaction_name = "Collect Moonwoven Dress"
+
+[node name="KeyArt" type="Sprite2D" parent="Gameplay/Collectibles/DressOfTheMemorial"]
+texture = ExtResource("icon_0")
+scale = Vector2(0.42, 0.42)
+
+[node name="TreasureChests" type="Node2D" parent="Gameplay"]
+
+[node name="ThreeRoseCache" type="Node2D" parent="Gameplay/TreasureChests"]
+position = Vector2(1190, 820)
+script = ExtResource("v147_relay_cache")
+interaction_name = "Open the three-rose reliquary"
+chest_id = "v147_gallery_three_rose_cache"
+loot_data = ExtResource("v147_cache_reward")
+loot_seed = 147303
+guaranteed_quality = "magic"
+
+[node name="V147RoseRelay" type="Node2D" parent="Gameplay"]
+script = ExtResource("v147_relay")
+
+[node name="Bells" type="Node2D" parent="Gameplay/V147RoseRelay"]
+
+[node name="Chime1" type="Node2D" parent="Gameplay/V147RoseRelay/Bells"]
+position = Vector2(1050, 1160)
+script = ExtResource("v147_relay_bell")
+sequence_number = 1
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V147RoseRelay/Bells/Chime1"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V147RoseRelay/Bells/Chime1/HookBody"]
+shape = SubResource("v147_chime_shape")
+
+[node name="Chime2" type="Node2D" parent="Gameplay/V147RoseRelay/Bells"]
+position = Vector2(1190, 1040)
+script = ExtResource("v147_relay_bell")
+sequence_number = 2
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V147RoseRelay/Bells/Chime2"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V147RoseRelay/Bells/Chime2/HookBody"]
+shape = SubResource("v147_chime_shape")
+
+[node name="Chime3" type="Node2D" parent="Gameplay/V147RoseRelay/Bells"]
+position = Vector2(1330, 1160)
+script = ExtResource("v147_relay_bell")
+sequence_number = 3
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V147RoseRelay/Bells/Chime3"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V147RoseRelay/Bells/Chime3/HookBody"]
+shape = SubResource("v147_chime_shape")

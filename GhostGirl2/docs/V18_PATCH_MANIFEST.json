@@ -1,0 +1,51 @@
+{
+  "title": "Ghost Girl \u2014 Weight of Roses",
+  "version": "1.8",
+  "requires": "1.7 Moonrose Resonance",
+  "type": "incremental patch",
+  "compatible_save": "user://ghost_girl_treasures_v2.json",
+  "runtime_tested": false,
+  "features": [
+    "2 crate pressure-plate gates with persistent chests",
+    "weapon family stamina check and dodge buffering",
+    "wraith backstep-counter and recovery improvements"
+  ],
+  "files": {
+    "project.godot": {
+      "size": 7824,
+      "sha256": "0be899d4de6977f554e4ca2a8a6715ee859f09dfc66ebc5db71d0756e3d211b6"
+    },
+    "scripts/player.gd": {
+      "size": 37884,
+      "sha256": "91276caf004132cf50e5be433c3061fa4b9e24bdee464491da8f5db1fc31689b"
+    },
+    "scripts/game.gd": {
+      "size": 31052,
+      "sha256": "c30130d17de92928db9748f99b842a15290ff98ab4224fdb303b2a9a45baea54"
+    },
+    "scripts/rose_wraith.gd": {
+      "size": 6108,
+      "sha256": "76b693bb8157978e2ff7bb5308a19fbb48a474612ef75fa76eb55e80301e8d45"
+    },
+    "scripts/weighted_rose_plate.gd": {
+      "size": 2848,
+      "sha256": "1dfeeb1c7fbbe9e9d68696609a973455893b3cb76e770663524fcabd686ee962"
+    },
+    "scenes/rooms/blackbrick_court.tscn": {
+      "size": 12792,
+      "sha256": "27d36ff60a0aaa161453624cc5cd3810f54ed3374821f5605a7cff0c3d7871f5"
+    },
+    "scenes/rooms/ashen_causeway.tscn": {
+      "size": 14703,
+      "sha256": "b73345ecc1cb8103ddd6a47073a7564e7812f44811140be920222dad64d2800d"
+    },
+    "tests/validate_v18.py": {
+      "size": 5488,
+      "sha256": "df4e49d72a3a497b23fe3b49d88cb9d02948a4740857495bb10047b77aae06a1"
+    },
+    "docs/V18_WEIGHT_OF_ROSES.md": {
+      "size": 2618,
+      "sha256": "63d865841355f97150dcba2c6691b0e0f920d060f0b2523c00e2f4c3d24be81d"
+    }
+  }
+}

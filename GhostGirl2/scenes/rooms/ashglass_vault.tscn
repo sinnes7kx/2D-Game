@@ -1,0 +1,306 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/ashglass_vault.png" id="bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" path="res://scripts/hook_anchor.gd" id="anchor"]
+[ext_resource type="Script" path="res://scripts/hook_secret.gd" id="secret"]
+[ext_resource type="Script" path="res://scripts/lantern_shrine.gd" id="shrine"]
+[ext_resource type="PackedScene" path="res://scenes/gothic_hunter.tscn" id="hunter"]
+[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="chest"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/flame_ambience.tscn" id="flame"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/petal_ambience.tscn" id="petal"]
+[ext_resource type="Resource" path="res://items/gloamglass_locket.tres" id="newitem"]
+[ext_resource type="Resource" path="res://items/ashbound_wand.tres" id="wand"]
+[ext_resource type="Resource" path="res://items/blackbrick_reliquary.tres" id="relic"]
+[ext_resource type="Resource" path="res://items/moon_gem.tres" id="gem"]
+[ext_resource type="Resource" path="res://items/thorn_rune.tres" id="rune"]
+
+[ext_resource type="Resource" path="res://items/hunter_sable_dress.tres" id="v07_0"]
+[ext_resource type="Resource" path="res://items/hunter_duelist_rosary.tres" id="v07_1"]
+
+[sub_resource type="RectangleShape2D" id="edge_n"]
+size = Vector2(3344, 84)
+
+[sub_resource type="RectangleShape2D" id="edge_s"]
+size = Vector2(3344, 84)
+
+[sub_resource type="RectangleShape2D" id="edge_l"]
+size = Vector2(84, 1882)
+
+[sub_resource type="RectangleShape2D" id="edge_r"]
+size = Vector2(84, 1882)
+
+[node name="AshglassVault" type="Node2D"]
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("bg")
+centered = false
+z_index = -50
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="North wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/North wall"]
+position = Vector2(1672, 42)
+shape = SubResource("edge_n")
+
+[node name="South wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/South wall"]
+position = Vector2(1672, 1840)
+shape = SubResource("edge_s")
+
+[node name="West wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/West wall"]
+position = Vector2(42, 941)
+shape = SubResource("edge_l")
+
+[node name="East wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/East wall"]
+position = Vector2(3302, 941)
+shape = SubResource("edge_r")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1650, 1460)
+
+[node name="From_ashen_causeway" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1650, 1460)
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Collectibles" type="Node2D" parent="Gameplay"]
+
+[node name="TreasureChests" type="Node2D" parent="Gameplay"]
+
+[node name="Enemies" type="Node2D" parent="Gameplay"]
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay"]
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay"]
+
+[node name="WaterBodies" type="Node2D" parent="Gameplay"]
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="RestShrines" type="Node2D" parent="Gameplay"]
+
+[node name="ashen_causeway" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1660, 1670)
+script = ExtResource("portal")
+destination = "ashen_causeway"
+interaction_name = "Return to the Ashen Causeway"
+opened = true
+
+[node name="AshglassEmber" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(1770, 1200)
+script = ExtResource("shrine")
+shrine_id = "ashglass_ember"
+interaction_name = "Rest at the Ashglass Ember"
+
+[node name="BlackVigil" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1010, 1020)
+archetype = "mourner"
+maximum_health = 54.7
+windup_duration = 0.59
+strike_damage = 10.5
+loot_template = ExtResource("gem")
+loot_seed = 40711
+loot_quality = "normal"
+
+[node name="LamentWarder" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2230, 1040)
+archetype = "warder"
+maximum_health = 120.0
+move_speed = 77.0
+windup_duration = 0.95
+strike_damage = 20.0
+loot_template = ExtResource("relic")
+loot_seed = 40519
+loot_quality = "random"
+
+is_elite = true
+[node name="RoseBellSentinel" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1660, 710)
+archetype = "bell_keeper"
+maximum_health = 165.0
+move_speed = 86.0
+windup_duration = 0.88
+strike_damage = 26.0
+loot_template = ExtResource("newitem")
+loot_seed = 40988
+loot_quality = "random"
+
+is_elite = true
+[node name="NorthReliquary" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(1710, 510)
+chest_id = "ashglass_north_reliquary"
+loot_data = ExtResource("newitem")
+loot_seed = 41013
+guaranteed_quality = "rare"
+
+[node name="EastWandCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2770, 850)
+chest_id = "ashglass_east_coffer"
+loot_data = ExtResource("wand")
+loot_seed = 40932
+guaranteed_quality = "magic"
+
+[node name="WestRuneCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(585, 845)
+chest_id = "ashglass_west_runecache"
+loot_data = ExtResource("rune")
+loot_seed = 42091
+
+[node name="HiddenRosary" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(1150, 595)
+chest_id = "ashglass_secret_rosary"
+loot_data = ExtResource("newitem")
+loot_seed = 45611
+guaranteed_quality = "unique"
+
+[node name="RoseAnchorWest" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(760, 880)
+script = ExtResource("anchor")
+
+[node name="RoseAnchorEast" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(2650, 850)
+script = ExtResource("anchor")
+
+[node name="RoseAnchorNorth" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1710, 510)
+script = ExtResource("anchor")
+
+[node name="SecretRoseSigil" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1250, 800)
+script = ExtResource("secret")
+secret_chest = NodePath("../../TreasureChests/HiddenRosary")
+discovery_id = "ashglass_sigils_hooked"
+
+[node name="FarAlcove" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(3100, 630)
+
+[node name="UpperWindow" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(1580, 380)
+
+[node name="WestRoseNiche" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(440, 670)
+
+[node name="NorthCandles" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(1480, 460)
+
+[node name="WestCandles" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(430, 690)
+
+[node name="EastCandles" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(2920, 680)
+
+[node name="FallingPetals" parent="Gameplay/Effects" instance=ExtResource("petal")]
+position = Vector2(1690, 870)
+
+[node name="bellwether_court" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(2890, 1320)
+script = ExtResource("portal")
+destination = "bellwether_court"
+interaction_name = "Follow the western bell passage"
+opened = true
+
+[node name="From_bellwether_court" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(2600, 1200)
+
+[node name="VaultDuelist" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2440, 1180)
+archetype = "blade_hunter"
+maximum_health = 125.0
+move_speed = 133.0
+notice_range = 610.0
+attack_distance = 83.0
+windup_duration = 0.50
+strike_damage = 23.0
+loot_template = ExtResource("v07_1")
+loot_seed = 70410
+loot_quality = "random"
+
+is_elite = true
+[node name="SableDressCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(940, 560)
+chest_id = "v07_ashglass_vault_sabledresscache"
+loot_data = ExtResource("v07_0")
+loot_seed = 70435
+guaranteed_quality = "rare"
+
+[node name="V15FadedWanderer1" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1250, 1250)
+archetype = "mourner"
+maximum_health = 32.0
+move_speed = 82.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("gem")
+loot_seed = 815200
+loot_quality = "random"
+
+[node name="V15FadedWanderer2" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1850, 1280)
+archetype = "mourner"
+maximum_health = 37.0
+move_speed = 89.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("gem")
+loot_seed = 815207
+loot_quality = "random"
+
+[node name="V15FadedWanderer3" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2650, 1390)
+archetype = "mourner"
+maximum_health = 32.0
+move_speed = 96.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("gem")
+loot_seed = 815214
+loot_quality = "random"
+
+[node name="V15FadedWanderer4" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(900, 1180)
+archetype = "mourner"
+maximum_health = 37.0
+move_speed = 82.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("gem")
+loot_seed = 815221
+loot_quality = "random"

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://ylr4q41rx1g6"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://31xxnx3cb2yt" path="res://assets/ui/reliquary/lantern.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "moon_rose_key"
+display_name = "Moon Rose Key"
+description = "An old silver key. A rose is carved into its bow."
+icon = ExtResource("2_icon")
+unique = true

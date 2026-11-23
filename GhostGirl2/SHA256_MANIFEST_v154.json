@@ -1,0 +1,34 @@
+{
+  "version": "1.54",
+  "requires": "1.53",
+  "changed_files": [
+    "scripts/weapon_prestige_fx.gd",
+    "scripts/bow_palette_overlay_v139.gd",
+    "scripts/bow_arrow_v126.gd",
+    "scripts/arrow_glow_v154.gd",
+    "scripts/player.gd",
+    "scripts/equipment_visuals.gd",
+    "assets/equipment/dress_palette.gdshader",
+    "assets/equipment/bow_palette_v139.gdshader",
+    "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+    "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+    "assets/ghost/bows_v139/thornrose_locomotion_mask_2048x1760.png",
+    "assets/ghost/bows_v139/moonveil_locomotion_mask_2048x1760.png"
+  ],
+  "sha256": {
+    "scripts/weapon_prestige_fx.gd": "f26af0c817b515b14880c5bb20fe2193a6ba4733fc0d5ca910920531e5104497",
+    "scripts/bow_palette_overlay_v139.gd": "980098c13dfef8b5bbfe007c4da153f59a9b5bbfe8b2f1a4587db4188533c3c9",
+    "scripts/bow_arrow_v126.gd": "347c4cacab50d53def23dc5c9ad646932df7314268b03d4920e677d79e62d382",
+    "scripts/arrow_glow_v154.gd": "21354b736d1d12f4f77f64c63e8b419537dbdac3b530b5f8e0bc01445dcc5775",
+    "scripts/player.gd": "a1865870859407e14bbdf55bf6db04b79860871fc2425176aa3722eabc3995b6",
+    "scripts/equipment_visuals.gd": "ac857649568e8ef86c7e8141448370b44bf12dc2e5e5106f453f94c5708ea0ec",
+    "assets/equipment/dress_palette.gdshader": "bac17526f7afa50291ac8c331e28719e46c9e761ec739cf7b33d4c1dcbdf92b6",
+    "assets/equipment/bow_palette_v139.gdshader": "d81df9acddf7afecffc2364ecb577b2a99948dc716d076d2a0f27ae6013fa8f0",
+    "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png": "08b361a5480d960ca4bd94cd3dc4dca24ecb32d3b5b30b1a78ef97221bb76c3f",
+    "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png": "81cc06a6d2619f1d4c559e48d968300f07ae03bb875989d9aab93d2a11556b4a",
+    "assets/ghost/bows_v139/thornrose_locomotion_mask_2048x1760.png": "64f9ff1000679a9842b87de4e7f81d15d8968399f14d6609f048544ca73b8a2a",
+    "assets/ghost/bows_v139/moonveil_locomotion_mask_2048x1760.png": "bb609c744960dfac6b9b0a169c52561d1e823799d60694216fbca8aa0444d511",
+    "INSTALL_v154.txt": "51c65e184a2368ecc0f939929c84194e847431983ed23e6cd9e3047adeaf7621",
+    "tests/validate_v154.py": "1230e5263c173823d09d98a78041039aada910d99dc9e5869c0749e8ab815b5c"
+  }
+}

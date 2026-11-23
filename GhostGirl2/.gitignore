@@ -1,0 +1,7 @@
+# Godot regenerates imports and cache on first open.
+.godot/
+*.import
+.DS_Store
+__pycache__/
+*.tmp
+*.bak

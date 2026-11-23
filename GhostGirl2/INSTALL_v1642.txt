@@ -1,0 +1,19 @@
+Ghost Girl v1.64.2 — Stable Mythic Halo + Distinct Weapon Mythics
+Incremental PATCH for v1.64.1 (also retains v1.64/v1.63).
+
+Changes:
+- Mythic Radiance dress (signature 4) now uses a fixed-intensity feathered light behind Ghost Girl's animated body. Soft motes still drift; strong cyclical blinking removed.
+- Swords, scythes and halberds: pronounced white-hot core, colored outer edge, chasing highlight, bright tip flare.
+- Bows: two distinct illuminated crescents, bright string and central star.
+- Wands: distinct orbiting crystal crown, stable bright center and head halo.
+- Other rarities and Moonfall signature 5 unchanged.
+- Art, stats, damage, loot RNG, cosmetic UIDs and save format unchanged.
+
+INSTALL
+1. Close Godot. Back up project folder.
+2. Extract this ZIP over the v1.64.1 GhostGirl2 project directory containing project.godot.
+3. Allow Godot to import assets/effects/mythic_dress_halo_v1642.png.
+4. In Godot debug build, select a dress then PLAYTEST MYTHIC, equip it and walk 4 directions. Try a blade, bow, wand with PLAYTEST MYTHIC; compare to CLEAR MYTHIC TEST.
+5. If any script parser error appears, please share the exact message/line.
+
+VALIDATION: Source assertions, halo texture shape, ZIP CRC and SHA256; no Godot engine runtime available, so visual effectiveness is not yet confirmed.

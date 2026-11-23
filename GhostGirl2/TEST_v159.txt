@@ -1,0 +1,24 @@
+GHOST GIRL v1.59 — MANUAL GODOT PLAYTEST
+
+1. Open the project; check the Debugger Errors tab for new parse errors.
+2. Find a blade_hunter (later encounters or combat trials). Wait for two
+   real strikes, then observe a pale broken arc/brief side-step before a
+   red warning and the real lunge. The fake should never damage you.
+3. Dodge during a fake: it must NOT grant a confirmed-evade counter.
+4. Fight an occultist. Every third cast should use one slightly weaving
+   cool-colored projectile. Wall contact and dodge should work as before.
+5. Confirm enemy DPS and loot are unchanged after a defeat/retry.
+6. Equip a dress with a mythic saved look. The aura should follow the
+   body near the dress rather than floating above the character.
+7. Equip rare wings or trinket; look for a small non-obstructive glimmer.
+8. Verify the first mythic look (signature 4) still gives a laser edge.
+9. Verify Moonfall Halo (signature 5) gives a distinct twin-rail weapon
+   shimmer / lunar dress halo if you own such a rare look.
+10. Save an old favorite, reroll to another, then restore it. The preview
+    must be the saved gradient; the mirrored icon stays with its saved look.
+11. Hold ALT on item: only advanced tooltip shows names; normal tooltip
+    remains compact. Ctrl equipment comparison should still work.
+12. Save, close, reopen, load. Confirm exact cosmetics and stats persist.
+
+Note: An expected ~1/131072 roll may take an extremely large number of
+rerolls; its absence during a brief playtest is not evidence of failure.

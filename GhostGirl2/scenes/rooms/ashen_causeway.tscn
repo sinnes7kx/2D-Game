@@ -1,0 +1,442 @@
+[gd_scene load_steps=29 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/ashen_causeway.png" id="bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" path="res://scripts/hook_anchor.gd" id="anchor"]
+[ext_resource type="Script" path="res://scripts/lantern_shrine.gd" id="shrine"]
+[ext_resource type="PackedScene" path="res://scenes/gothic_hunter.tscn" id="hunter"]
+[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="chest"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/flame_ambience.tscn" id="flame"]
+[ext_resource type="Resource" path="res://items/ash_vigil_charm.tres" id="itemcharm"]
+[ext_resource type="Resource" path="res://items/ashbound_wand.tres" id="itemwand"]
+[ext_resource type="Resource" path="res://items/blackbrick_reliquary.tres" id="itemrelic"]
+[ext_resource type="Resource" path="res://items/thorn_rune.tres" id="itemrune"]
+[ext_resource type="Resource" path="res://items/moon_gem.tres" id="itemgem"]
+
+[ext_resource type="Resource" path="res://items/hunter_censer_wand.tres" id="v07_0"]
+[ext_resource type="Resource" path="res://items/hunter_duelist_rosary.tres" id="v07_1"]
+
+[ext_resource type="Script" path="res://scripts/rose_switch.gd" id="v15_switch"]
+[ext_resource type="Script" path="res://scripts/rose_gate.gd" id="v15_gate"]
+[ext_resource type="Resource" path="res://items/lunar_vigil_halberd.tres" id="v16_weapon"]
+
+[ext_resource type="Script" path="res://scripts/weighted_rose_plate.gd" id="v18_weight_plate"]
+[ext_resource type="PackedScene" path="res://scenes/carryable.tscn" id="v18_crate"]
+
+[sub_resource type="RectangleShape2D" id="block_0"]
+size = Vector2(3344, 84)
+
+[sub_resource type="RectangleShape2D" id="block_1"]
+size = Vector2(92, 1882)
+
+[sub_resource type="RectangleShape2D" id="block_2"]
+size = Vector2(92, 1882)
+
+[sub_resource type="RectangleShape2D" id="block_3"]
+size = Vector2(3344, 84)
+
+[sub_resource type="RectangleShape2D" id="block_4"]
+size = Vector2(455, 530)
+
+[sub_resource type="RectangleShape2D" id="block_5"]
+size = Vector2(425, 550)
+
+[sub_resource type="RectangleShape2D" id="block_6"]
+size = Vector2(550, 220)
+
+[sub_resource type="RectangleShape2D" id="v15_gate_shape"]
+size = Vector2(130, 54)
+
+[sub_resource type="RectangleShape2D" id="v18_weight_gate_shape"]
+size = Vector2(124, 50)
+
+[node name="AshenCauseway" type="Node2D"]
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("bg")
+centered = false
+z_index = -50
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="North edge" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/North edge"]
+position = Vector2(1672, 42)
+shape = SubResource("block_0")
+
+[node name="West edge" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/West edge"]
+position = Vector2(46, 941)
+shape = SubResource("block_1")
+
+[node name="East edge" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/East edge"]
+position = Vector2(3298, 941)
+shape = SubResource("block_2")
+
+[node name="South edge" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/South edge"]
+position = Vector2(1672, 1840)
+shape = SubResource("block_3")
+
+[node name="Old chapel" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Old chapel"]
+position = Vector2(230, 275)
+shape = SubResource("block_4")
+
+[node name="Eastern chapel" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Eastern chapel"]
+position = Vector2(3150, 280)
+shape = SubResource("block_5")
+
+[node name="North gate" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/North gate"]
+position = Vector2(1672, 123)
+shape = SubResource("block_6")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1680, 1530)
+
+[node name="From_blackbrick_court" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1672, 1500)
+
+[node name="From_candle_reliquary" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(725, 920)
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Collectibles" type="Node2D" parent="Gameplay"]
+
+[node name="TreasureChests" type="Node2D" parent="Gameplay"]
+
+[node name="Enemies" type="Node2D" parent="Gameplay"]
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay"]
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay"]
+
+[node name="WaterBodies" type="Node2D" parent="Gameplay"]
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="RestShrines" type="Node2D" parent="Gameplay"]
+
+[node name="blackbrick_court" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1670, 1670)
+script = ExtResource("portal")
+destination = "blackbrick_court"
+interaction_name = "Return to Blackbrick Court"
+opened = true
+
+[node name="candle_reliquary" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(638, 745)
+script = ExtResource("portal")
+destination = "candle_reliquary"
+interaction_name = "Enter the western reliquary"
+opened = true
+
+[node name="CausewayShrine" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(1672, 1190)
+script = ExtResource("shrine")
+shrine_id = "causeway_shrine"
+interaction_name = "Rest at the ember shrine"
+
+[node name="AshMourner" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1100, 990)
+archetype = "mourner"
+maximum_health = 48.6
+move_speed = 112.0
+windup_duration = 0.58
+strike_damage = 9.0
+loot_template = ExtResource("itemwand")
+loot_seed = 33251
+loot_quality = "random"
+
+[node name="BlackbrickWarder" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2260, 1120)
+archetype = "warder"
+maximum_health = 79.0
+move_speed = 76.0
+windup_duration = 0.94
+strike_damage = 17.2
+loot_template = ExtResource("itemcharm")
+loot_seed = 35019
+loot_quality = "random"
+
+[node name="BellKeeper" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1640, 700)
+archetype = "bell_keeper"
+maximum_health = 138.0
+move_speed = 91.0
+windup_duration = 0.88
+strike_damage = 24.0
+loot_template = ExtResource("itemrelic")
+loot_seed = 36120
+loot_quality = "random"
+
+is_elite = true
+[node name="AshCharmCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(690, 1260)
+chest_id = "ashen_causeway_westvault"
+loot_data = ExtResource("itemcharm")
+loot_seed = 38122
+guaranteed_quality = "rare"
+
+[node name="IronRoseChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2640, 840)
+chest_id = "ashen_causeway_ironrose"
+loot_data = ExtResource("itemwand")
+loot_seed = 84297
+guaranteed_quality = "magic"
+
+[node name="BellTomb" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(1690, 410)
+chest_id = "ashen_causeway_belltomb"
+loot_data = ExtResource("itemrelic")
+loot_seed = 92881
+guaranteed_quality = "unique"
+
+[node name="OldRuneChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2325, 1460)
+chest_id = "ashen_causeway_runecache"
+loot_data = ExtResource("itemrune")
+loot_seed = 81773
+guaranteed_quality = "random"
+
+[node name="RoseAnchor0" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(790, 750)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor1" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(2730, 710)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor2" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1720, 480)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor3" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1390, 1420)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor4" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(2450, 1330)
+script = ExtResource("anchor")
+
+[node name="ForgottenGate" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(1700, 365)
+
+[node name="RoseVault" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(620, 1310)
+
+[node name="UpperWalk" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(2790, 620)
+
+[node name="LowBrickCrack" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(2440, 1440)
+
+[node name="ChapelCandle" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(610, 610)
+
+[node name="GateCandle" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(1570, 555)
+
+[node name="EasternCandle" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(2800, 630)
+
+
+[node name="From_ashglass_vault" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(2720, 856)
+
+[node name="ashglass_vault" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(2840, 812)
+script = ExtResource("portal")
+destination = "ashglass_vault"
+interaction_name = "Enter the Ashglass Vault"
+opened = true
+
+[node name="bellwether_court" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1660, 350)
+script = ExtResource("portal")
+destination = "bellwether_court"
+interaction_name = "Enter Bellwether Court"
+opened = true
+
+[node name="From_bellwether_court" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1680, 680)
+
+[node name="SableDuelist" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2470, 760)
+archetype = "blade_hunter"
+maximum_health = 78.0
+move_speed = 121.0
+notice_range = 610.0
+attack_distance = 85.0
+windup_duration = 0.50
+strike_damage = 15.0
+loot_template = ExtResource("v07_1")
+loot_seed = 70210
+loot_quality = "random"
+
+is_elite = true
+[node name="WestOccultist" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(850, 735)
+archetype = "occultist"
+maximum_health = 71.0
+move_speed = 76.0
+notice_range = 610.0
+attack_distance = 105.0
+windup_duration = 1.00
+strike_damage = 14.0
+loot_template = ExtResource("v07_0")
+loot_seed = 70211
+loot_quality = "random"
+
+is_elite = true
+[node name="CenserCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(640, 1180)
+chest_id = "v07_ashen_causeway_censercoffer"
+loot_data = ExtResource("v07_0")
+loot_seed = 70235
+guaranteed_quality = "rare"
+
+[node name="RoseSealGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(2060, 1080)
+script = ExtResource("v15_gate")
+
+chest_path = NodePath("../TreasureChests/IronRoseChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/RoseSealGate"]
+shape = SubResource("v15_gate_shape")
+
+[node name="RoseSealSwitch" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1920, 1040)
+script = ExtResource("v15_switch")
+gate_path = NodePath("../../RoseSealGate")
+discovery_id = "v15_ashen_rose_seal"
+
+[node name="V15FadedWanderer1" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1210, 1210)
+archetype = "mourner"
+maximum_health = 32.0
+move_speed = 82.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("itemwand")
+loot_seed = 815100
+loot_quality = "random"
+
+[node name="V15FadedWanderer2" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1920, 1260)
+archetype = "mourner"
+maximum_health = 37.0
+move_speed = 89.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("itemwand")
+loot_seed = 815107
+loot_quality = "random"
+
+[node name="V15FadedWanderer3" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2750, 1030)
+archetype = "mourner"
+maximum_health = 32.0
+move_speed = 96.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("itemwand")
+loot_seed = 815114
+loot_quality = "random"
+
+[node name="V15FadedWanderer4" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1440, 930)
+archetype = "mourner"
+maximum_health = 37.0
+move_speed = 82.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("itemwand")
+loot_seed = 815121
+loot_quality = "random"
+
+[node name="V16_halberd_Chest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(1510, 1320)
+interaction_name = "Open the moonrose armory"
+chest_id = "v16_ashen_causeway_armory"
+loot_data = ExtResource("v16_weapon")
+loot_seed = 160102
+guaranteed_quality = "normal"
+
+# v1.8 — editor-owned weight puzzle. The crate is a real RigidBody2D and can
+# be carried or Q-hooked; the plate persists its solved state in v2 inventory.
+[node name="V18MoonstoneWeight" parent="Gameplay/Carryables" instance=ExtResource("v18_crate")]
+position = Vector2(960, 1490)
+interaction_name = "Rose-marked moonstone weight"
+
+[node name="V18RoseWeightPlate" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1110, 1500)
+script = ExtResource("v18_weight_plate")
+crate_path = NodePath("../../Carryables/V18MoonstoneWeight")
+gate_path = NodePath("../../V18WeightGate")
+discovery_id = "v18_causeway_weight_rose"
+
+[node name="V18WeightGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(1200, 1380)
+script = ExtResource("v15_gate")
+chest_path = NodePath("../TreasureChests/V18WeightCoffer")
+gate_width = 124.0
+gate_height = 50.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V18WeightGate"]
+shape = SubResource("v18_weight_gate_shape")
+
+[node name="V18WeightCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(1240, 1320)
+interaction_name = "Open the moonstone rose coffer"
+chest_id = "v18_causeway_weight_coffer"
+loot_data = ExtResource("itemrune")
+loot_seed = 1818002
+guaranteed_quality = "magic"

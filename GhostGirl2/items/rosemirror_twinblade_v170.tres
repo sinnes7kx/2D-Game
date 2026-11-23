@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://dolnm13cq038v"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://68incurpdr36" path="res://assets/ui/weapons_v170/rosemirror_twinblade.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "rosemirror_twinblade_v170"
+display_name = "Rosemirror Twinblade"
+description = "A twin-ended silverglass blade bordered with antique thorn filigree."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+stat_id = "stamina_efficiency_pct"
+min_stat = 4.0
+max_stat = 9.0
+max_sockets = 2
+item_level = 14
+weapon_style = "twinblade"
+min_weapon_damage = 13.0
+max_weapon_damage = 16.8
+inventory_width = 2
+inventory_height = 4

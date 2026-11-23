@@ -1,0 +1,14 @@
+Ghost Girl v1.13 — Spectral Prestige (incremental update)
+REQUIRES: Ghost Girl v1.12 Manual Lock & Rose-Hook Objects
+
+1. BACK UP the current v1.12 project (especially the user:// save in Godot).
+2. Extract the ZIP into the folder that already contains project.godot.
+3. Replace matching files, preserving all unchanged art, scenes and saves.
+4. Open project.godot with Godot 4, import resources, run F5.
+5. Equip a sword/scythe/halberd or wand, and check effect colors in the item tooltip.
+6. For a successful dodge counter, retreat during an enemy warning, then strike within the 0.62-second counter window. A confirmed hit triggers RIPOSTE! and a glass chime.
+
+This patch makes small procedural particle/ring effects, wand spell shapes, and a cosmetic randomization/persistence system. New visual forms are intentionally gated by item quality.
+See docs/V113_SPECTRAL_PRESTIGE.md for details and testing instructions.
+
+No actual Godot F5 runtime test was possible in the packaging environment.

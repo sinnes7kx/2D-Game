@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://chnna3mser3vg"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://c3ecsrvybafw8" path="res://assets/ui/reliquary/rose_ring.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "silver_thread_charm"
+display_name = "Silver Thread Charm"
+description = "An old charm that lends more force to thrown objects."
+icon = ExtResource("2_icon")
+equip_slot = "charm"
+stat_id = "throw_force_pct"
+min_stat = 5.0
+max_stat = 12.0

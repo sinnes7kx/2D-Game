@@ -1,0 +1,30 @@
+GHOST GIRL v1.49 — WEIGHT & AFTERMATH
+==================================
+
+REQUIRES: An already assembled/playable v1.48 project.
+This ZIP is an INCREMENTAL PATCH, not a standalone Godot project.
+
+1. Back up your project folder and your Godot user:// save data.
+2. Extract this ZIP into the ROOT of your existing GhostGirl2 folder.
+   The folders scripts/, tests/ and docs/ should merge with the existing ones.
+   Replace only matching files. Do not delete your other project files.
+3. Open that project in the same Godot 4.5+ version that already ran v1.48.
+4. Play from a safe checkpoint. First test moving/sprinting, then jump landing,
+   jump attacks, receiving damage, hook-breaking supports and thrown crates.
+
+The v1.48 Rose Path, v1.47 trials, existing items, scenes, game saves,
+approved sprite atlases and combat damage values are NOT replaced.
+No new autoload, input binding, save migration, asset or scene file is required.
+
+Added procedural FX scripts: impact_burst_v149.gd, blood_pool_v149.gd,
+impact_spawner_v149.gd. Smoke/splinters/dust are visual only.
+
+Limits: max 26 short impact bursts and 24 fading blood/ichor pools in the
+active scene tree. Pools last up to 75 seconds and are not saved to disk.
+
+OFFLINE VERIFICATION: tests/validate_v149.py (run with Python 3).
+The static suites do not confirm Godot runtime rendering or animation feel.
+The v1.49 patch has not been F5-playtested with the Godot engine here.
+
+If Godot reports a script parse error or a missing asset, send the exact
+Godot error and your installed base version; do not apply another full ZIP.

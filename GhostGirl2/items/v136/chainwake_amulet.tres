@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ui/reliquary/moon_pendant.png" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v136_chainwake_amulet"
+display_name = "Chainwake Locket"
+description = "Three falling echoes are held inside the moonstone. A relic for those who listen to the sound of a distant collapse."
+icon = ExtResource("icon")
+unique = true
+equip_slot = "charm"
+stat_id = "hook_range_pct"
+min_stat = 13.0
+max_stat = 19.0
+max_sockets = 1
+item_level = 30
+inventory_width = 1
+inventory_height = 1

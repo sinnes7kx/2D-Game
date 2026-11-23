@@ -1,0 +1,256 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/candle_reliquary.png" id="bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" path="res://scripts/hook_anchor.gd" id="anchor"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/petal_ambience.tscn" id="petal"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/flame_ambience.tscn" id="flame"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/water_ambience.tscn" id="water"]
+[ext_resource type="PackedScene" path="res://scenes/gothic_hunter.tscn" id="hunter"]
+[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="chest"]
+[ext_resource type="Resource" path="res://items/ashbound_wand.tres" id="itemwand"]
+[ext_resource type="Resource" path="res://items/thornlace_dress.tres" id="itemdress"]
+[ext_resource type="Resource" path="res://items/moon_gem.tres" id="itemgem"]
+[ext_resource type="Resource" path="res://items/blackbrick_reliquary.tres" id="itemrelic"]
+[ext_resource type="Resource" path="res://items/thorn_rune.tres" id="itemrune"]
+
+[sub_resource type="RectangleShape2D" id="shape_0"]
+size = Vector2(2304, 76)
+
+[sub_resource type="RectangleShape2D" id="shape_1"]
+size = Vector2(96, 1536)
+
+[sub_resource type="RectangleShape2D" id="shape_2"]
+size = Vector2(96, 1536)
+
+[sub_resource type="RectangleShape2D" id="shape_3"]
+size = Vector2(2304, 80)
+
+[sub_resource type="RectangleShape2D" id="shape_4"]
+size = Vector2(500, 225)
+
+[sub_resource type="RectangleShape2D" id="shape_5"]
+size = Vector2(340, 365)
+
+[sub_resource type="RectangleShape2D" id="shape_6"]
+size = Vector2(305, 380)
+
+[node name="CandleReliquary" type="Node2D"]
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("bg")
+centered = false
+z_index = -50
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="North crypt wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/North crypt wall"]
+position = Vector2(1152.0, 38)
+shape = SubResource("shape_0")
+
+[node name="West crypt wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/West crypt wall"]
+position = Vector2(48, 768.0)
+shape = SubResource("shape_1")
+
+[node name="East crypt wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/East crypt wall"]
+position = Vector2(2256, 768.0)
+shape = SubResource("shape_2")
+
+[node name="South crypt wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/South crypt wall"]
+position = Vector2(1152.0, 1496)
+shape = SubResource("shape_3")
+
+[node name="Stone altar" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Stone altar"]
+position = Vector2(1145, 285)
+shape = SubResource("shape_4")
+
+[node name="Western sarcophagi" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Western sarcophagi"]
+position = Vector2(222, 425)
+shape = SubResource("shape_5")
+
+[node name="Eastern sarcophagi" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Eastern sarcophagi"]
+position = Vector2(2075, 425)
+shape = SubResource("shape_6")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1150, 1220)
+
+[node name="From_blackbrick_court" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1145, 1240)
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="blackbrick_court" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1148, 1350)
+script = ExtResource("portal")
+destination = "blackbrick_court"
+interaction_name = "Return to the blackbrick courtyard"
+opened = true
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Collectibles" type="Node2D" parent="Gameplay"]
+
+[node name="TreasureChests" type="Node2D" parent="Gameplay"]
+
+[node name="Enemies" type="Node2D" parent="Gameplay"]
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay"]
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay"]
+
+[node name="WaterBodies" type="Node2D" parent="Gameplay"]
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="ReliquaryWarder" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1450, 790)
+archetype = "warder"
+maximum_health = 56.2
+move_speed = 72.0
+windup_duration = 0.95
+strike_damage = 13.5
+loot_template = ExtResource("itemrelic")
+loot_seed = 90812
+loot_quality = "random"
+
+[node name="CandleMourner" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(830, 710)
+archetype = "mourner"
+maximum_health = 36.5
+move_speed = 104.0
+windup_duration = 0.64
+strike_damage = 7.5
+loot_template = ExtResource("itemdress")
+loot_seed = 61031
+loot_quality = "random"
+
+[node name="ReliquaryCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(550, 900)
+chest_id = "candle_reliquary_reliquarycache"
+loot_data = ExtResource("itemrelic")
+loot_seed = 60014
+guaranteed_quality = "unique"
+
+[node name="AshenRuneCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(1830, 900)
+chest_id = "candle_reliquary_ashenrunecache"
+loot_data = ExtResource("itemrune")
+loot_seed = 88612
+guaranteed_quality = "random"
+
+[node name="RoseAnchor0" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(400, 840)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor1" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1890, 1050)
+script = ExtResource("anchor")
+
+[node name="BehindStainedGlass" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(1150, 475)
+
+[node name="MemorialSideNiche" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(1910, 530)
+
+[node name="Flame0" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(510, 500)
+scale = Vector2(1.0, 1.0)
+
+[node name="Flame1" parent="Gameplay/Effects" instance=ExtResource("flame")]
+position = Vector2(1840, 470)
+scale = Vector2(1.0, 1.0)
+
+[node name="Petal2" parent="Gameplay/Effects" instance=ExtResource("petal")]
+position = Vector2(1040, 930)
+scale = Vector2(0.9, 0.9)
+
+
+[node name="From_ashen_causeway" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1720, 1060)
+
+[node name="ashen_causeway" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1840, 920)
+script = ExtResource("portal")
+destination = "ashen_causeway"
+interaction_name = "Exit to the ashen causeway"
+opened = true
+
+[node name="V15FadedWanderer1" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1120, 920)
+archetype = "mourner"
+maximum_health = 32.0
+move_speed = 82.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("itemrelic")
+loot_seed = 815400
+loot_quality = "random"
+
+[node name="V15FadedWanderer2" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(1610, 990)
+archetype = "mourner"
+maximum_health = 37.0
+move_speed = 89.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("itemrelic")
+loot_seed = 815407
+loot_quality = "random"
+
+[node name="V15FadedWanderer3" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(730, 1050)
+archetype = "mourner"
+maximum_health = 32.0
+move_speed = 96.0
+notice_range = 430.0
+attack_distance = 82.0
+windup_duration = 0.90
+strike_damage = 7.0
+loot_template = ExtResource("itemrelic")
+loot_seed = 815414
+loot_quality = "random"

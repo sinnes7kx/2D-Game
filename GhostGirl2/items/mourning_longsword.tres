@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://bwj36c8yedu1g"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://bh4tswd7tlkdl" path="res://assets/ui/reliquary/roseblade.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "mourning_longsword"
+display_name = "Mourning Longsword"
+description = "A cold longsword scarred by centuries of vigil."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+stat_id = "melee_power_pct"
+min_stat = 7.0
+max_stat = 13.0
+max_sockets = 2
+item_level = 10
+min_weapon_damage = 13.0
+max_weapon_damage = 18.0
+inventory_width = 2
+inventory_height = 3

@@ -1,0 +1,21 @@
+GHOST GIRL v1.46.3 — SMALL SOURCE PATCH
+======================================
+Apply to the assembled GhostGirl2 project (the project folder with project.godot).
+This is NOT a standalone game. BACK UP both your files and user:// saves.
+
+Merge these patch folders into the existing project, replacing matching files:
+  scripts/
+  scenes/
+  docs/
+  tests/
+
+HOVER item      = item tooltip follows mouse
+HOLD CTRL       = equipped comparison ONLY for same slot
+RELEASE CTRL    = go back to single tooltip (even without moving mouse)
+SELECT item     = enables REROLL, SAVE ★, SAVED LOOKS controls in inspector
+REROLL          = new separate cosmetic seed (different primary color)
+SAVE ★          = favorite exact current appearance on this item
+SAVED LOOKS     = restore a saved appearance without changing stats
+
+Existing art and save files are retained. See docs/V1463_TOOLTIP_COSMETIC_SEEDS.md.
+Godot F5/runtime and save roundtrip still need real in-engine verification.

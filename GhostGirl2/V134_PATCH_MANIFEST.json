@@ -1,0 +1,52 @@
+{
+  "release": "v1.34",
+  "requires": "v1.33",
+  "description": "Vesper Vigil, boss attack VFX, environmental lore",
+  "files": [
+    {
+      "path": "docs/V134_LAST_VIGIL.md",
+      "size": 1772,
+      "sha256": "c2d355b372fb051a9b7634fb8f1f42695a811a14afec83900bb8e7df8cddbf8d"
+    },
+    {
+      "path": "items/v134/vesperglass_wand.tres",
+      "size": 665,
+      "sha256": "3df9e7f0fce4f92a7490133fef335ffe9febbaaa262575a88d43fe90f97e7173"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 91490,
+      "sha256": "7df6cfa2eb8cd4719e9d837dc18b9161da839964dbc6137a70af3a826362fd8a"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 44384,
+      "sha256": "e1b85798fb93014ac9cc641203afc4ae96686a49bd4115a0f0c60fb198c51c9e"
+    },
+    {
+      "path": "scripts/moor_story_slab_v134.gd",
+      "size": 1212,
+      "sha256": "7f1c0458fc2c6520100cdd562b04ae7488def3bebe0cdfcb7e64cd76950c592e"
+    },
+    {
+      "path": "scripts/moor_warden_v132.gd",
+      "size": 13840,
+      "sha256": "044c43d154dff30747ad2bc3f1bc6aa1881e90e2dcae1e370f2b189fe5b3160a"
+    },
+    {
+      "path": "scripts/vesper_vigil_v134.gd",
+      "size": 6011,
+      "sha256": "1e2d8e721ae641e74c19042f08db6efecafe0a95c66bb7623480c080085056a9"
+    },
+    {
+      "path": "scripts/warden_attack_echo_v134.gd",
+      "size": 2129,
+      "sha256": "d4c14fbde70dd614b162a1916b038e433a361f640486f58130986dad7798a8aa"
+    },
+    {
+      "path": "tests/validate_v134.py",
+      "size": 5131,
+      "sha256": "676c17a5c2f4abbfe112bcd969ae15c7e2816f0c4abaaf38c7df6abd3290086b"
+    }
+  ]
+}

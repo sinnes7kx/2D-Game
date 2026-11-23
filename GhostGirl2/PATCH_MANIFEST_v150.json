@@ -1,0 +1,30 @@
+{
+  "patch": "1.50",
+  "title": "Momentum, Shatter & Stagger",
+  "base": "fully assembled v1.49 or v1.49.1",
+  "includes_v1491_floor_breach_hotfix": true,
+  "changes": [
+    "scripts/player.gd",
+    "scripts/impact_burst_v149.gd",
+    "scripts/breakable_cover_v136.gd",
+    "scripts/gothic_hunter.gd",
+    "scenes/rooms/garden.tscn",
+    "scenes/rooms/moonwake_crypt.tscn"
+  ],
+  "checks": {
+    "runtime_godot_performed": false,
+    "static": true
+  },
+  "files": {
+    "INSTALL_v150.txt": "f74e74a2ffe29662328cdd36fdf378b20a71a487fb3a6ce31b6159220a088baf",
+    "docs/V150_GAMEPLAY_PLAYTEST.md": "1d09a8711c3a619c7c7eb3c5ba9dd02e0a68a00b0b71ae66da6201e8e5ec18c1",
+    "scenes/rooms/garden.tscn": "0349da06ca4da2fdba286b6435bae4d77dd652ed4ce55424a91c43e1e0f964d1",
+    "scenes/rooms/moonwake_crypt.tscn": "0572da2655b59c26ccc7130fbada27b0e497f04a0960812a6cc1d4d6750906e3",
+    "scripts/breakable_cover_v136.gd": "bdd51ac92eff420da8344e2e4e98fea7fe1c62cde5efc8d5eb5d803ceae69e7c",
+    "scripts/floor_breach_v1464.gd": "c6de8ee3b97440bded10254530922da3c852cb6abde6b99061049595d15b7d11",
+    "scripts/gothic_hunter.gd": "9dbf3c57d0d3c508ff496efb2e6a5c2699b39e859a2907c80c166b9ba7b75a14",
+    "scripts/impact_burst_v149.gd": "815c840359c798f503308b9473030e807d4016573db14ffab6754adf5db94cd3",
+    "scripts/player.gd": "b1192eff32bbe94192d21c28d119753ee743a0cae31bb7914605f6bad88138ea",
+    "tests/validate_v150.py": "063d882c4f1b5914dd169421958786d7c9933dc59915ff2731b42555df0428a7"
+  }
+}

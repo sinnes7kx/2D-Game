@@ -1,0 +1,32 @@
+{
+  "version": "1.70",
+  "base_version": "1.69",
+  "files": {
+    "INSTALL_v170.txt": "43cd90be202d9e527ecb98a31e40c175815e0ddc5b1489b3ef66c0c93f135943",
+    "assets/equipment/weapons_v170/ashglass_maul_combat_2048x1760.png": "a687b9e07e08f76a12e42671ecbc6191d359858ed9e6325f2a6c204b35412133",
+    "assets/equipment/weapons_v170/ashglass_maul_locomotion_2048x1760.png": "64c57793aa68d2445a37b7d9d9895593fa3bcb97de75abecae65d1f1accfa0de",
+    "assets/equipment/weapons_v170/maul_combat_2048x1760.png": "79981028fd25f53b332247b4ec5e48dac9b8277c71c646caedbe545457816162",
+    "assets/equipment/weapons_v170/maul_locomotion_2048x1760.png": "efe69085caf26a4a9555c65d1a8ea84c33254d83f920eaadad7832999d986542",
+    "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png": "e98ee1c1cb6bda761a2d929348b36ed105275554688d0825258b51adc6b04e66",
+    "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png": "3ce2960a24bb159d9b5baf9165f78cecbd26b0621ff751ff0ea2a3da7efeae24",
+    "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png": "be8eb7cef23a76a1d18f60a4990314b46952feb29df07ca11db57395bbef7b27",
+    "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png": "87dcfcd869e681063fed88992ce81937d63a93ed79e7e4c24d5152194dd27ec4",
+    "assets/ui/weapons_v170/ashglass_warmaul.png": "a36bbc4937c60353c3e48a216c8026e9f9da0f2fe1bf579775f474fedb562b1e",
+    "assets/ui/weapons_v170/eclipse_twinblade.png": "1e6289168bd41e0e0a1251c47128c00620f290036186215f28638ec28fe8ccc2",
+    "assets/ui/weapons_v170/gravebell_maul.png": "da47e6572a83058ba5245b363243eabe7927f79c6d2b5e4564ac417c4f84ba58",
+    "assets/ui/weapons_v170/rosemirror_twinblade.png": "9bcde62d73a0f579547b9c7e8c855a914b6f050a2501f5a817fde8d2d79ff5fe",
+    "items/ashglass_warmaul_v170.tres": "6138be48fcc592ff952171acda11867692c779d3882547360530bb5485ab9a8e",
+    "items/eclipse_twinblade_v170.tres": "9e3f252ea7fe8f37fae51131483fdde2046a70de250df6d9bc331d0c3c9006a0",
+    "items/gravebell_maul_v170.tres": "7a42c10d607b6d964e593491fe66ddea8fe7ae77a75c84f1d8343979595c67b4",
+    "items/rosemirror_twinblade_v170.tres": "fbbac304a5ac4db7b6b566a154dadd940737f57d83680f49b37635c961680cb4",
+    "resources/ghost_extra_animations.json": "271bc9549cff90181357e12f58490e261ac6807cc572e35a0feee8fcf53d58d8",
+    "resources/new_weapon_axes_v170.json": "953834173d28e202e2afc32bdea4072c1a0624f97dab34f8e00f8f9a922ebabc",
+    "scripts/game.gd": "2eeb02ceca7b0104d047b0a307c8ef8e093b66d10a5b851f6535455fd6dcd799",
+    "scripts/item_data.gd": "c0397e5ed4709a2cb7eacae5100f946d5b075521084e06a7928e85d6c6663215",
+    "scripts/item_instance.gd": "9686b7acd39ea5ff8d3630e70a033a37465d2634ab8d43ce94897a024d25d13e",
+    "scripts/player.gd": "40221e78b537959c06884d3302ec2379e2e188296085099b5fb96727deaa7c06",
+    "scripts/weapon_prestige_fx.gd": "8ae03d38b6b314d2cddbefbf2604fda89b52a837f1714f220746bbfbc2b71ea8",
+    "tests/manifest_v169_baseline.json": "8f2d0980ec82955ab10259bb2d8884d5fa16ac50bb6d9adbfadbdec45ec519b4",
+    "tests/validate_v170.py": "3d6ab07c0e67f3f9eca1b0330d1be4b090e3d65144e2e617613486547ec3f582"
+  }
+}

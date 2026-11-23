@@ -1,0 +1,102 @@
+{
+  "version": "1.9",
+  "base": "1.8",
+  "change": "frame-authored front/back scythe and halberd layers",
+  "files": [
+    {
+      "path": "project.godot",
+      "sha256": "fbe0effc605014fb255b26ff964243060844184af527cee218131c9c71be1d6b",
+      "bytes": 7836
+    },
+    {
+      "path": "V19_PATCH_INSTALL.txt",
+      "sha256": "60856db61ccb2dcac878323880a5483740991840628e536cacce7d799e74af4b",
+      "bytes": 1014
+    },
+    {
+      "path": "scenes/player.tscn",
+      "sha256": "8032878dd12c3e95712707820123a201d330f6a6a4c8dab5a1930abdcda6daa5",
+      "bytes": 3402
+    },
+    {
+      "path": "scripts/weapon_animation_layers.gd",
+      "sha256": "dcbacc95f8934d4814972f409dfe04139ceb1997df19e3cb5a2e932764a5f952",
+      "bytes": 3462
+    },
+    {
+      "path": "resources/ghost_extra_animations.json",
+      "sha256": "8df9eed28fe01658752b394d9456628527446fe8b99ecd186250fb0e29f8e976",
+      "bytes": 52450
+    },
+    {
+      "path": "resources/weapon_layer_manifest.json",
+      "sha256": "79252d30950b328a79846cb3a5c7715973639c2332b2762d7624f941f4d87bd7",
+      "bytes": 11011
+    },
+    {
+      "path": "tools/generate_weapon_overlays.py",
+      "sha256": "dafaa4cfcded8b356c1e678ec4149738281ddcb9791004c30e785c2f6d705f41",
+      "bytes": 7945
+    },
+    {
+      "path": "tests/validate_v16.py",
+      "sha256": "23d5e13d46c263a12fd663b545796ebd7bcd3412bde5ae295e6406f07723d821",
+      "bytes": 4372
+    },
+    {
+      "path": "tests/validate_v17.py",
+      "sha256": "9482c439ce22e22fc597feebc6dedadc5d5e6a43f5a23de2c0923b17804a1fd5",
+      "bytes": 6009
+    },
+    {
+      "path": "tests/validate_v19.py",
+      "sha256": "a0bd8b4591cf134f6e45230ddfcb6b3e9eb72614ec432c613b8fed705637b739",
+      "bytes": 4009
+    },
+    {
+      "path": "docs/V19_HAND_AUTHORED_WEAPON_LAYERS.md",
+      "sha256": "683ab79a8ca0323dc42e18c8310b6becd6162146d302b1f67b6e8a4c76b649eb",
+      "bytes": 3240
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/halberd_combat_back_2048x1760.png",
+      "sha256": "690370a48aa14881de0d55038c67e992244289020288eeff55d553339391035d",
+      "bytes": 173715
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/halberd_combat_front_2048x1760.png",
+      "sha256": "2d1ed853d1e06dda33581adb2fd97beb07720c96e2508cdf7f4ddcd39fd0178c",
+      "bytes": 492793
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/halberd_locomotion_back_2048x1760.png",
+      "sha256": "10ca37faf01ff8114b2ae6a08e4b9f3e109e5c10727179aa4ef769088aed5f44",
+      "bytes": 163365
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/halberd_locomotion_front_2048x1760.png",
+      "sha256": "7251e06ba26c0700b1ea12ecbd5309fe7963d553fcff4064f6b6dd741854074c",
+      "bytes": 385676
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/scythe_combat_back_2048x1760.png",
+      "sha256": "31c5d98e78e7c4c7196a2fe805f010449ed720c810a84e7d582ee3ca591bf47e",
+      "bytes": 170683
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/scythe_combat_front_2048x1760.png",
+      "sha256": "5665076c0cacf22d17c68d06842e548880d848d8ab8a3a59d63b38e441f8ddac",
+      "bytes": 398267
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/scythe_locomotion_back_2048x1760.png",
+      "sha256": "2b6b22144a25e4b007c8fc26e405a34b415c21800e9c8ce7d66f2eaf15a69596",
+      "bytes": 151713
+    },
+    {
+      "path": "assets/ghost/weapon_layers_v19/scythe_locomotion_front_2048x1760.png",
+      "sha256": "f4abe6456ad6de12f8721e47b9873a4f10a94613512bd344b250d2ca79edaf26",
+      "bytes": 307230
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "scenes": 41,
+  "resource_files": 27,
+  "scripts": 39,
+  "references": 516,
+  "ui_validated": [
+    "scenes/equipment_panel.tscn",
+    "scenes/hud.tscn",
+    "scenes/inventory_panel.tscn",
+    "scenes/main.tscn"
+  ],
+  "errors": [],
+  "warnings": [
+    "scripts/water_body.gd: missing first extends"
+  ],
+  "room_reachability": {
+    "ashen_causeway": {
+      "size": [
+        3344,
+        1882
+      ],
+      "walkable_cells": 2099,
+      "new_nodes_approach_distance_px": {
+        "SableDuelist": 0,
+        "WestOccultist": 0,
+        "CenserCoffer": 0
+      }
+    },
+    "bellwether_court": {
+      "size": [
+        3344,
+        1882
+      ],
+      "walkable_cells": 2179,
+      "new_nodes_approach_distance_px": {
+        "BellbladeHunter": 0,
+        "BellOccultist": 0,
+        "TrialSigilCoffer": 0
+      }
+    },
+    "ashglass_vault": {
+      "size": [
+        3344,
+        1882
+      ],
+      "walkable_cells": 2275,
+      "new_nodes_approach_distance_px": {
+        "VaultDuelist": 0,
+        "SableDressCache": 0
+      }
+    }
+  },
+  "protected_files": 322
+}

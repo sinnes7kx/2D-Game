@@ -1,0 +1,27 @@
+GHOST GIRL v1.70 — Four Weapon Silhouettes, Two Combat Families
+
+INSTALL: Apply over v1.69 (which itself requires v1.68.1).
+1. Back up GhostGirl2 and user://ghost_girl_treasures_v2.json.
+2. Close Godot.
+3. Unzip these paths into the project root containing project.godot.
+4. Overwrite matching scripts/resources. Open Godot and allow PNG imports.
+
+WHAT IS NEW
+- Two melee combat families: MAUL and TWINBLADE.
+- Four real in-game weapon designs, including two distinct silhouettes
+  within EACH combat family. Other saved equipment and classes are unchanged.
+- Gravebell Maul, Ashglass Warmaul, Eclipse Twinblade, Rosemirror Twinblade.
+- 4 x 16 directional animation entries (idle/walk/light/heavy in all 4 directions),
+  each with 8 authored pose cells (512 new frames total).
+- Different in-game animations are selected by the item base ID, so two mauls
+  no longer look like the same weapon with different colored glow.
+- Slower broad high-poise maul impacts, faster wider twinblade light attacks.
+- Exact per-frame weapon-glow axes tied to the new poses.
+- New base items join the existing weapon loot table; drop frequency unchanged.
+
+COMPATIBILITY / CAUTIONS
+- No changes to item save keys, cosmetic UID, saved looks, or old animation entries.
+- No changes to old weapon damage, old enemy balance, or bow/wand scripts.
+- Godot/F5 runtime testing was unavailable. Please test all four directions,
+  light/heavy and jump attacks, and report any debugger errors.
+- This patch ships project-relative changes only, not the entire Godot project.

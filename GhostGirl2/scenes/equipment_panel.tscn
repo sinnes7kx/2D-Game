@@ -1,0 +1,210 @@
+[gd_scene format=3 uid="uid://beu4pp0lji0m7"]
+
+[ext_resource type="Script" uid="uid://dh7acqh3v4d5d" path="res://scripts/equipment_panel.gd" id="1_controller"]
+[ext_resource type="Texture2D" uid="uid://2u2swibnqnp2" path="res://assets/ghost/idle_front_00.png" id="2_doll"]
+
+[sub_resource type="StyleBoxFlat" id="IronPanel"]
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+bg_color = Color(0.055, 0.048, 0.061, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63, 0.45, 0.32, 0.96)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="SlotIron"]
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
+bg_color = Color(0.09, 0.075, 0.084, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.44, 0.31, 0.25, 0.94)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SlotHover"]
+bg_color = Color(0.17, 0.11, 0.16, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.58, 0.47, 0.98)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SlotEmpty"]
+bg_color = Color(0.056, 0.053, 0.059, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.24, 0.21, 0.23, 0.88)
+
+[node name="EquipmentPanel" type="PanelContainer" unique_id=1791698616]
+custom_minimum_size = Vector2(454, 610)
+theme_override_styles/panel = SubResource("IronPanel")
+script = ExtResource("1_controller")
+
+[node name="Layout" type="VBoxContainer" parent="." unique_id=491392739]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Layout" unique_id=1644430187]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.69, 0.53, 1)
+theme_override_font_sizes/font_size = 19
+text = "Character Screen"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Layout" unique_id=1687462767]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.6, 0.71, 1)
+text = "EQUIPMENT"
+horizontal_alignment = 1
+
+[node name="EquipmentSlots" type="Control" parent="Layout" unique_id=58516516]
+custom_minimum_size = Vector2(418, 326)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Doll" type="TextureRect" parent="Layout/EquipmentSlots" unique_id=1232891981]
+modulate = Color(0.84, 0.8, 0.94, 0.96)
+layout_mode = 0
+offset_left = 92.0
+offset_top = 40.0
+offset_right = 326.0
+offset_bottom = 276.0
+mouse_filter = 2
+texture = ExtResource("2_doll")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Wings" type="Button" parent="Layout/EquipmentSlots" unique_id=1912665575]
+layout_mode = 0
+offset_left = 157.0
+offset_right = 260.0
+offset_bottom = 47.0
+theme_override_colors/font_color = Color(0.76, 0.66, 0.61, 1)
+theme_override_colors/font_disabled_color = Color(0.52, 0.48, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("SlotIron")
+theme_override_styles/pressed = SubResource("SlotHover")
+theme_override_styles/hover = SubResource("SlotHover")
+theme_override_styles/disabled = SubResource("SlotEmpty")
+text = "WINGS"
+expand_icon = true
+
+[node name="Dress" type="Button" parent="Layout/EquipmentSlots" unique_id=1340228098]
+layout_mode = 0
+offset_left = 154.0
+offset_top = 260.0
+offset_right = 264.0
+offset_bottom = 318.0
+theme_override_colors/font_color = Color(0.76, 0.66, 0.61, 1)
+theme_override_colors/font_disabled_color = Color(0.52, 0.48, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("SlotIron")
+theme_override_styles/pressed = SubResource("SlotHover")
+theme_override_styles/hover = SubResource("SlotHover")
+theme_override_styles/disabled = SubResource("SlotEmpty")
+text = "DRESS"
+expand_icon = true
+
+[node name="Trinket" type="Button" parent="Layout/EquipmentSlots" unique_id=720210023]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 104.0
+offset_right = 110.0
+offset_bottom = 174.0
+theme_override_colors/font_color = Color(0.76, 0.66, 0.61, 1)
+theme_override_colors/font_disabled_color = Color(0.52, 0.48, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("SlotIron")
+theme_override_styles/pressed = SubResource("SlotHover")
+theme_override_styles/hover = SubResource("SlotHover")
+theme_override_styles/disabled = SubResource("SlotEmpty")
+text = "TRINKET"
+expand_icon = true
+
+[node name="Charm" type="Button" parent="Layout/EquipmentSlots" unique_id=1100446088]
+layout_mode = 0
+offset_left = 309.0
+offset_top = 104.0
+offset_right = 411.0
+offset_bottom = 174.0
+theme_override_colors/font_color = Color(0.76, 0.66, 0.61, 1)
+theme_override_colors/font_disabled_color = Color(0.52, 0.48, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("SlotIron")
+theme_override_styles/pressed = SubResource("SlotHover")
+theme_override_styles/hover = SubResource("SlotHover")
+theme_override_styles/disabled = SubResource("SlotEmpty")
+text = "CHARM"
+expand_icon = true
+
+[node name="Wand" type="Button" parent="Layout/EquipmentSlots" unique_id=1143376054]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 223.0
+offset_right = 110.0
+offset_bottom = 295.0
+theme_override_colors/font_color = Color(0.76, 0.66, 0.61, 1)
+theme_override_colors/font_disabled_color = Color(0.52, 0.48, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("SlotIron")
+theme_override_styles/pressed = SubResource("SlotHover")
+theme_override_styles/hover = SubResource("SlotHover")
+theme_override_styles/disabled = SubResource("SlotEmpty")
+text = "WAND"
+expand_icon = true
+
+[node name="Sword" type="Button" parent="Layout/EquipmentSlots" unique_id=1376239204]
+layout_mode = 0
+offset_left = 309.0
+offset_top = 223.0
+offset_right = 411.0
+offset_bottom = 295.0
+theme_override_colors/font_color = Color(0.76, 0.66, 0.61, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("SlotIron")
+theme_override_styles/pressed = SubResource("SlotHover")
+theme_override_styles/hover = SubResource("SlotHover")
+theme_override_styles/disabled = SubResource("SlotEmpty")
+text = "SWORD"
+expand_icon = true
+
+[node name="FooterTitle" type="Label" parent="Layout" unique_id=136002118]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.69, 0.53, 1)
+text = "EQUIPPED RELICS"
+
+[node name="Details" type="RichTextLabel" parent="Layout" unique_id=259716023]
+custom_minimum_size = Vector2(395, 108)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+
+[node name="Help" type="Label" parent="Layout" unique_id=901898905]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.55, 0.58, 1)
+theme_override_font_sizes/font_size = 12
+text = "CLICK occupied slot to unequip  ·  I / C to close"
+horizontal_alignment = 1

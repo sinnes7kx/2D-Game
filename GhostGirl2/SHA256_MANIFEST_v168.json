@@ -1,0 +1,18 @@
+{
+  "INSTALL_v168.txt": "5c55f14fc8261820705c30106f5f0c4e96d8fd74019a460a290de994720440f6",
+  "scenes/hud.tscn": "fb7068dc82b16e6b93f8cb89f9001ca273d117f99532186342abb50c0aee4091",
+  "scenes/inventory_panel.tscn": "d975a293904f8c23e249949841e5b415cf62f26bd743239be4a08575e8ccc54b",
+  "scripts/bow_palette_overlay_v139.gd": "dbdb877dec00c442ede62ec4bfdf6416f8597d3197779a8838fb105b3ae35da8",
+  "scripts/cosmetic_rng_v152.gd": "964c3b6a159b5120ac99a8e7ab763b240d9c9f7db877c1053bde30d3aefa46a7",
+  "scripts/game.gd": "74b7d81dbf497f4cf91a7198c4f741a3ed6890329d4b3dc10ecb3674701175d3",
+  "scripts/inventory.gd": "d0fd4bf493471c354787806f5c9e214e27bbe2cf5099d52345f36941085b90f8",
+  "scripts/inventory_grid.gd": "cdaed404d7b4328436f22378ce94fb4ee64a86783e0d5150635d21b6c75acf18",
+  "scripts/inventory_panel.gd": "8ebbfd887620fd98993760b76fc1b025c5f3b186cc4d7199c8c2b121990ade02",
+  "scripts/item_instance.gd": "0afdd136425769e77a09573a6472fe4086e56ebc0c70f367a26b1b06ee93e816",
+  "scripts/item_rich_text.gd": "4c872c3b2dc3cdd15c240845038e0b9d608aff1f4695b6202a882b63d428d425",
+  "scripts/moon_spell.gd": "94c1f9fee47c7b78e3732d92ee83998a32f46eecb1122adedd27770f617e10de",
+  "scripts/player.gd": "52b79b9ef3934b66fc6290cd95e8bf61dad9be49d57b83842295a480eb4aebd6",
+  "scripts/wand_release_fx_v156.gd": "6ac653ceab4156aab6350d47ce2d9a8a24fdd277151f02ec081cb989c1a292b4",
+  "scripts/weapon_prestige_fx.gd": "1afd458da99277a6a52f779f2e5883c7124f1cf771b9ee367c002a55de23ed9f",
+  "tests/validate_v168.py": "ce14a7468703ade86d67cbbfb39af13ec57e32239496ea70fb598efb84caa175"
+}

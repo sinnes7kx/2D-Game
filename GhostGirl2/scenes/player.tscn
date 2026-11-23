@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://bi10piivdyyfs"]
+
+[ext_resource type="Script" uid="uid://b1pn02dciroc1" path="res://scripts/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://x5lclnveuvrc" path="res://scripts/shadow.gd" id="2_shadow"]
+[ext_resource type="SpriteFrames" uid="uid://8f82g2orllx5" path="res://resources/ghost_girl_frames.tres" id="4_frames"]
+[ext_resource type="PackedScene" path="res://scenes/rose_hook.tscn" id="5_rose_hook"]
+[ext_resource type="Material" path="res://resources/ghost_dress_tint.tres" id="6_tint"]
+[ext_resource type="Script" uid="uid://cbhuvdfvaj8i2" path="res://scripts/equipment_visuals.gd" id="7_equip"]
+[ext_resource type="Texture2D" uid="uid://b1ivo1l2e3rp" path="res://assets/equipment/wings_overlay.png" id="8_wings"]
+[ext_resource type="Texture2D" uid="uid://b8je2vhtep3ph" path="res://assets/equipment/trinket_overlay.png" id="9_trinket"]
+[ext_resource type="Texture2D" uid="uid://de3cpsxvst8el" path="res://assets/equipment/wand_hand_overlay.png" id="10_wand"]
+[ext_resource type="Script" uid="uid://bumflheffy6i3" path="res://scripts/weapon_animation_layers.gd" id="11_weapon_layers"]
+[ext_resource type="Script" uid="uid://822053ps0vdi" path="res://scripts/bow_palette_overlay_v139.gd" id="v139_bow_palette"]
+[ext_resource type="Script" uid="uid://dbk7xk5kx42m6" path="res://scripts/weapon_prestige_fx.gd" id="v152_prestige_fx"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_feet"]
+radius = 15.0
+height = 36.0
+
+[node name="GhostGirl" type="CharacterBody2D" unique_id=478404095]
+collision_mask = 30
+motion_mode = 1
+script = ExtResource("1_player")
+
+[node name="FeetCollision" type="CollisionShape2D" parent="." unique_id=2000213440]
+position = Vector2(0, -14)
+shape = SubResource("CapsuleShape2D_feet")
+
+[node name="Shadow" type="Node2D" parent="." unique_id=1211915626]
+z_index = -1
+script = ExtResource("2_shadow")
+
+[node name="Ghost" type="AnimatedSprite2D" parent="." unique_id=430858062]
+material = ExtResource("6_tint")
+position = Vector2(0, -57)
+scale = Vector2(0.52, 0.52)
+sprite_frames = ExtResource("4_frames")
+animation = &"idle_front"
+autoplay = "idle_front"
+frame_progress = 0.48644552
+
+[node name="BowPaletteV139" type="AnimatedSprite2D" parent="Ghost" unique_id=800683166]
+visible = false
+script = ExtResource("v139_bow_palette")
+
+[node name="EquippedPrestigeFX" type="Node2D" parent="Ghost" unique_id=2052342950]
+z_index = 8
+script = ExtResource("v152_prestige_fx")
+
+[node name="WeaponLayers" type="Node2D" parent="Ghost" unique_id=1333204374]
+script = ExtResource("11_weapon_layers")
+
+[node name="Back" type="AnimatedSprite2D" parent="Ghost/WeaponLayers" unique_id=1082515643]
+visible = false
+z_index = -1
+
+[node name="Front" type="AnimatedSprite2D" parent="Ghost/WeaponLayers" unique_id=1361959106]
+visible = false
+z_index = 1
+
+[node name="WandVisual" type="Sprite2D" parent="Ghost" unique_id=676680065]
+visible = false
+z_index = 6
+position = Vector2(0, -12)
+scale = Vector2(0.38, 0.38)
+texture = ExtResource("10_wand")
+
+[node name="RoseHook" parent="." unique_id=1817615753 instance=ExtResource("5_rose_hook")]
+
+[node name="Hand" type="Marker2D" parent="." unique_id=1293297833]
+z_index = 5
+position = Vector2(0, -40)
+
+[node name="SwordVisual" type="Sprite2D" parent="Hand" unique_id=1769892260]
+visible = false
+z_index = 7
+position = Vector2(10, -12)
+scale = Vector2(0.27, 0.27)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=166765554]
+position = Vector2(0, -12)
+limit_left = 0
+limit_top = 0
+limit_right = 2389
+limit_bottom = 1792
+position_smoothing_enabled = true
+position_smoothing_speed = 4.0
+
+[node name="EquipmentVisuals" type="Node2D" parent="." unique_id=1679822590]
+script = ExtResource("7_equip")
+
+[node name="Wings" type="Sprite2D" parent="EquipmentVisuals" unique_id=1226878339]
+visible = false
+z_index = -1
+position = Vector2(0, -54)
+texture = ExtResource("8_wings")
+
+[node name="Trinket" type="Sprite2D" parent="EquipmentVisuals" unique_id=1151945760]
+visible = false
+z_index = 2
+position = Vector2(0, -15)
+texture = ExtResource("9_trinket")
+
+[node name="ActionSFX" type="AudioStreamPlayer2D" parent="." unique_id=1157320349]
+volume_db = -10.0
+max_distance = 900.0

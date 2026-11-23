@@ -1,0 +1,78 @@
+{
+  "version": "1.16",
+  "base": "1.15",
+  "changed_files": {
+    "assets/world/hollow_veil_moor_v116.jpg": {
+      "bytes": 3495342,
+      "sha256": "15bb97533fcca83bc49a980e03e28247aef2da34e8bf531abc058fd72f8f617e"
+    },
+    "docs/V116_BLOOD_AND_MOOR.md": {
+      "bytes": 2632,
+      "sha256": "b3c4335c1dba048869e5abde0f4384ae1834047e6cdba580c580e6609ad8a683"
+    },
+    "docs/V116_ENEMY_DENSITY.json": {
+      "bytes": 2602,
+      "sha256": "b3df4c2e5e9fdaa1444a3ca870e7baaad2b12a72aa165daea42a466675682f22"
+    },
+    "docs/V116_Hollow_Veil_Moor_Preview.jpg": {
+      "bytes": 148259,
+      "sha256": "041d34bb0f1ad4558dcd23702ee0f229e2e55b42ded98fd91290350d33b18486"
+    },
+    "scenes/rooms/briar_hollow.tscn": {
+      "bytes": 8964,
+      "sha256": "3b483b77551feb5d7df4e49f6e49a7b984ca2955ceedbe1e32e979d3e1b33ea9"
+    },
+    "scenes/rooms/hollow_veil_moor.tscn": {
+      "bytes": 23770,
+      "sha256": "529e77c5c6f021cb266d9e5fccbdd052dd316db07e85fc06046a6d75517f9140"
+    },
+    "scenes/rooms/moonthorn_woods.tscn": {
+      "bytes": 8591,
+      "sha256": "b6aedbce3bf9cc54435c79630963bbd1bff8fc678acf010ed8b29b2cd5d679d4"
+    },
+    "scripts/game.gd": {
+      "bytes": 32285,
+      "sha256": "1e727ee5ae2d4d4fd76aade2b6df60bc84e61aae962ad84fd23223fafeb56f64"
+    },
+    "scripts/impact_prestige_v116.gd": {
+      "bytes": 4914,
+      "sha256": "98d499c9aacd1285be0ffb0ce23db89ae844d7e3e212e63ef2d31dbb8211c005"
+    },
+    "scripts/inventory.gd": {
+      "bytes": 16548,
+      "sha256": "42598a7285375f38f89211c0e29470290b60b925f2823ea0afae5e939f67af9b"
+    },
+    "scripts/item_generator.gd": {
+      "bytes": 6068,
+      "sha256": "c3f9ffec58640fe985d9b96c73d0a0de501819ef1a605632fa9daf6df6da5ef6"
+    },
+    "scripts/item_instance.gd": {
+      "bytes": 7816,
+      "sha256": "55e34f9223df858d227b31a82211b412946b3d5406863ff7d2fa2fd9f3d96b7c"
+    },
+    "scripts/item_rich_text.gd": {
+      "bytes": 6241,
+      "sha256": "1bd496b005cc9fc7d0fa4c667bdfbf149970d4a32b3823b6c426a2c3e6a73898"
+    },
+    "scripts/moon_spell.gd": {
+      "bytes": 11786,
+      "sha256": "821defdb0c402f465f756615e6f65184586feeaf838a3a0702ea2e5beceda49d"
+    },
+    "scripts/player.gd": {
+      "bytes": 45192,
+      "sha256": "c005a26d0c0f681d265e7b6ae7d9305c6766904a418b232562728b9035ae0780"
+    },
+    "scripts/weapon_fx_library.gd": {
+      "bytes": 4186,
+      "sha256": "0d861e77c7d82f3f9f21d4edfa56041259dbdb2d0403be3307fb4f45420f913b"
+    },
+    "tests/validate_v116.py": {
+      "bytes": 4265,
+      "sha256": "97ac5e12b85761ff4471c95e51aaafd1135ee6dd649016aecffa8c74a3298dfc"
+    },
+    "tools/build_hollow_veil_moor_v116.py": {
+      "bytes": 12237,
+      "sha256": "be338d319f71da8f1fa3f8dcee1c194c668c5f26ee85a88ec48a89df9234c6bb"
+    }
+  }
+}

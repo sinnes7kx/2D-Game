@@ -1,0 +1,66 @@
+{
+  "version": "1.49",
+  "title": "Weight & Aftermath",
+  "requires": "v1.48 clean overlay",
+  "patch_type": "incremental",
+  "godot_runtime_playtest": false,
+  "description": "Procedural material impacts, fading blood pools, contact-sensitive jump hits, directional camera kick, tightened move response",
+  "files": {
+    "scripts/player.gd": {
+      "sha256_new": "cf0b42cc7a3e4b75c3f558842853c250e7f048eda6a9f770d99eb1de77f68a7f",
+      "sha256_base_v148": "3521f4c125da86d698ff2cbfbd4410426f5ba19310b81500eca936dc921b5a69"
+    },
+    "scripts/gothic_hunter.gd": {
+      "sha256_new": "700bd98d5385ce7cd820730580fec1368a003b633b7134ece8c159a1469675b9",
+      "sha256_base_v148": "7fee20fbef357bbadfdce20e1e46405519ccaed858797c9f7dec4d415212fb31"
+    },
+    "scripts/moor_warden_v132.gd": {
+      "sha256_new": "421ea530427e1469c8cfffea53130276e47044dc371715159b63bea1591d4981",
+      "sha256_base_v148": "044c43d154dff30747ad2bc3f1bc6aa1881e90e2dcae1e370f2b189fe5b3160a"
+    },
+    "scripts/breakable_cover_v136.gd": {
+      "sha256_new": "3f80ddd592683d8b60fcf86fb7e6a17d1a8453e485930a5edafd01f9e42571d9",
+      "sha256_base_v148": "c1b741f82ee993a700dc315229de76286d77e2e672f03fdbe7fd3ecde88045aa"
+    },
+    "scripts/collapse_support_v135.gd": {
+      "sha256_new": "db638b07a1df7689fce476ccb1a200d274af3cac09101cd7a891447c9ba42530",
+      "sha256_base_v148": "51d25b9b7b912a75474e9ca7f0b7f21f0eed22ee6e3fd72f94a4491104e3c5af"
+    },
+    "scripts/falling_debris_v135.gd": {
+      "sha256_new": "27bf7f90b2e6486bfcd2bc2d566b06648ea406ae89ddc38f31bc2287c9355ce6",
+      "sha256_base_v148": "1b37bbe3a402d78216f8551f7222b30e70eb276e33317d1b0d565c926af9576e"
+    },
+    "scripts/carryable.gd": {
+      "sha256_new": "343ed6c36190d756481ba0b0bb74a2278323a941476f8a7a39d4406fd7fb4186",
+      "sha256_base_v148": "fbd95ef5b704a249dbe5ae948de8fadbca145a1ab775684d945fa2952357b10d"
+    },
+    "scripts/moonroot_lattice_v144.gd": {
+      "sha256_new": "2f09e6681c05060d9ba1637522213fe698a7bd283be970df2e2f9db18f8e92ab",
+      "sha256_base_v148": "fd079587fa7dd018e20ab60640636099a36a711f9ea25c4c06526058320404ee"
+    },
+    "scripts/impact_spawner_v149.gd": {
+      "sha256_new": "c7c17822f7b75a8de746af3faaf871cd75a7af8ef92e3fd96a2f1da32bdb95da",
+      "sha256_base_v148": null
+    },
+    "scripts/impact_burst_v149.gd": {
+      "sha256_new": "55909d70e145439b4ce4918dc4922d61b4305abd01722d3794a4d7a3e8aea46f",
+      "sha256_base_v148": null
+    },
+    "scripts/blood_pool_v149.gd": {
+      "sha256_new": "3b7d9b4e05c01e2de799499a7866b9afbb3beaaed45ac1bf66b1cf274fc6521c",
+      "sha256_base_v148": null
+    },
+    "tests/validate_v149.py": {
+      "sha256_new": "3a0f7eebd1fbfa940c477ce81a19f26c75cac7b9c67f4d8af734f404a9ff748b",
+      "sha256_base_v148": null
+    },
+    "docs/V149_PLAYTEST.md": {
+      "sha256_new": "2187366a89d5abdd38ecb72db94054d6547d8058908e0f266fcee271ab56260b",
+      "sha256_base_v148": null
+    },
+    "INSTALL_v149.txt": {
+      "sha256_new": "ce6d539f305869662be1808c8d22a07e6327d4980d8b4106a804973fb76fc514",
+      "sha256_base_v148": null
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "INSTALL_v162.txt": "2ba99f2be5e401621555ccbfe036ffb115b22d18b4114f5121076a692847f57e",
+  "WAND_SPRITES_PREVIEW_v162.png": "a0dab37973f1061897fc9c95c213c79559d3191d4dab740fe43b7f470a34e204",
+  "assets/equipment/wand_moonlit_censer_v162.png": "7139972af9428f8616fdfed51a6beafb4cae9f6b74248c72a42a91a9a843cb17",
+  "assets/equipment/wand_thorn_crescent_v162.png": "7e10a5fdc45b1d3daf23d48a2ffe62aa21e287c5d919b82d5b54a0f79eee3b9f",
+  "scenes/inventory_panel.tscn": "36aa8ef5097b67aaf2ba18066e7222aad28a956c542b17c745aa283934561c8f",
+  "scripts/equipment_visuals.gd": "d0a802e67cb3d3f4b9d39a385d7b122797a7c33aebd028c141a335665d987eea",
+  "scripts/inventory_panel.gd": "28fb161f56634c92f46bd48e8ae49f52b1b94378e83e932807f6f3fc0c5bd811",
+  "scripts/item_instance.gd": "38082289dd4551b5368ce9f5bb3a01cdcadd1ac280c1ef6ea111d4c35fdb32a0",
+  "scripts/weapon_prestige_fx.gd": "7a16b41ea56c2587e986f0bbd0ef3e1200d2651076e00a708728f2b726c7e108",
+  "tests/validate_v162.py": "fdd7b480f6b406ba0645fa150fe428b84e625f794e536398827e53d88322cfe1"
+}

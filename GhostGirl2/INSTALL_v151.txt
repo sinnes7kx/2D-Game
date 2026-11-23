@@ -1,0 +1,21 @@
+GHOST GIRL v1.51 — VISIBLE BLADES & ALT INSPECTION
+Small incremental script patch for fully assembled v1.50.
+
+1. Close Godot.
+2. Extract this ZIP into your actual GhostGirl2 folder containing project.godot.
+   Merge scripts/ into scripts/ and choose overwrite for those six scripts.
+   Do NOT extract a second nested GhostGirl2 folder.
+3. Reopen Godot, let it re-import changed scripts, and run your scene with F5.
+4. Confirm the sword and combat animations work. The ORIGINAL base art files
+   from GhostGirl2_part2.rar are REQUIRED; do not delete or replace them.
+5. Hover equipment to see a compact item tooltip. Hold ALT for advanced visual
+   effects; hold CTRL to show a comparison to the equipped item in that slot.
+   Holding ALT+CTRL shows both. The selected-item text responds to ALT too.
+6. Equip a BLADE sword (not a wand) and observe a low-key idle glint and a
+   brighter directional glint when attacking. Colors follow saved cosmetics.
+
+Patch is scripts-only. It does not ship artwork, saves, items, stat changes,
+scenes, or new assets. Back up your project before overwriting scripts.
+
+Validation: python tests/validate_v151.py from your assembled project.
+This is static validation only; an actual Godot F5 playtest is needed.

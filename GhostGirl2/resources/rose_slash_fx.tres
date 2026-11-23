@@ -1,0 +1,494 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://73ldyop7dc4q"]
+
+[ext_resource type="Texture2D" uid="uid://nv3w0fcoy6q5" path="res://assets/effects/rose_slash_8x8_2048x1760.png" id="1_atlas"]
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_5_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 1100, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_4_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 880, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_6_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 1320, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_7_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 1540, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_1_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 220, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_0_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 0, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_2_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 440, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_0"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 660, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_1"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 660, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_2"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 660, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 660, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1024, 660, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 660, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1536, 660, 256, 220)
+
+[sub_resource type="AtlasTexture" id="RoseFx_3_7"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1792, 660, 256, 220)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_5_7")
+}],
+"loop": 0,
+"name": &"heavy_back",
+"speed": 27.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_4_7")
+}],
+"loop": 0,
+"name": &"heavy_front",
+"speed": 27.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_6_7")
+}],
+"loop": 0,
+"name": &"heavy_left",
+"speed": 27.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_7_7")
+}],
+"loop": 0,
+"name": &"heavy_right",
+"speed": 27.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_1_7")
+}],
+"loop": 0,
+"name": &"light_back",
+"speed": 27.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_0_7")
+}],
+"loop": 0,
+"name": &"light_front",
+"speed": 27.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_2_7")
+}],
+"loop": 0,
+"name": &"light_left",
+"speed": 27.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("RoseFx_3_7")
+}],
+"loop": 0,
+"name": &"light_right",
+"speed": 27.0
+}]

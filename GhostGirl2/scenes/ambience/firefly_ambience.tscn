@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cnrdey1gtjuvo"]
+
+[ext_resource type="SpriteFrames" uid="uid://dm5nijdmeq6kf" path="res://resources/firefly_ambience_frames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://0jpn8f3l4coc" path="res://scripts/ambient_animation.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://chdt48mjjtrth" path="res://assets/animated/moon_glow.png" id="3_light"]
+
+[node name="FireflyAmbience" type="Node2D" unique_id=1577029141]
+script = ExtResource("2_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1703211506]
+scale = Vector2(0.65, 0.65)
+sprite_frames = ExtResource("1_frames")
+animation = &"firefly"
+autoplay = "firefly"
+frame_progress = 0.48902652
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1229945396]
+color = Color(1, 0.634295, 0.34281, 1)
+energy = 0.6997657
+texture = ExtResource("3_light")
+texture_scale = 1.6

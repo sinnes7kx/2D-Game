@@ -1,0 +1,48 @@
+{
+  "version": "v1.42",
+  "requires": "v1.41",
+  "format": "incremental patch",
+  "validation": "static only; Godot F5 outstanding",
+  "files": [
+    {
+      "path": "scripts/player.gd",
+      "bytes": 58680,
+      "sha256": "f6209c88305e71233eb8a613dcd25dddcb709d4586193ba86d5a600104fe0080"
+    },
+    {
+      "path": "scripts/weapon_prestige_fx.gd",
+      "bytes": 8933,
+      "sha256": "cc5ef5a2ad2cc62a61af97cf9deb478aab9c21c54d102e018f61c98b1a236e1b"
+    },
+    {
+      "path": "scripts/bow_practice_v142.gd",
+      "bytes": 3155,
+      "sha256": "5931d993283ffae9e4f5090e5dc929b0bc7dce13284c4d7376080fef4b151d7c"
+    },
+    {
+      "path": "resources/weapon_glow_axes_v142.json",
+      "bytes": 12690,
+      "sha256": "02af45dcee50440ec10dd9c5190db97308afde1ad1d49ec5acc659227814f390"
+    },
+    {
+      "path": "scenes/rooms/moonwake_crypt.tscn",
+      "bytes": 16720,
+      "sha256": "444f41c67e159dc19ed7686c12cdb72339e442da81a84cfe759c0dfd0451ed3f"
+    },
+    {
+      "path": "tools/build_weapon_axes_v142.py",
+      "bytes": 2687,
+      "sha256": "f899cee315cd0f6db0948aaf68285b02b7f7d1b0f7b32894635b687c47522c25"
+    },
+    {
+      "path": "tests/validate_v142.py",
+      "bytes": 4486,
+      "sha256": "813706f440fa51b89d725e5dd05a55f4a3200b50a177019492925cc08408230e"
+    },
+    {
+      "path": "V142_RELEASE_NOTES.md",
+      "bytes": 1476,
+      "sha256": "f140b52a59b8344dfdc24ec0e4fa2b673dc85ddee365e7f68bc91b5c70a59336"
+    }
+  ]
+}

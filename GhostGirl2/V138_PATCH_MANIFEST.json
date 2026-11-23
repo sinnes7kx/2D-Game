@@ -1,0 +1,122 @@
+{
+  "version": "1.38",
+  "base": "1.37",
+  "godot_runtime_tested": false,
+  "files": [
+    {
+      "path": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+      "size": 2693147,
+      "sha256": "de027c7099f8adf0136f4db377221228dfab6d601ae9c1469de34f4bf483452e"
+    },
+    {
+      "path": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+      "size": 2707326,
+      "sha256": "007ba0016b59aff96e5598026289deef09c4548182bab27f9190aee5b8613c58"
+    },
+    {
+      "path": "docs/V138_RELEASE_NOTES.md",
+      "size": 2619,
+      "sha256": "d1fd9b456e9f6c98c7ad4c47c761106baf602199198d5987c372cf1adcf5da7a"
+    },
+    {
+      "path": "docs/v138_bow_combat_review.jpg",
+      "size": 162552,
+      "sha256": "13e3fd7b6199099353d8edb34d7d86f6f8a7f44b225129eb62f6ffafadc5c4e3"
+    },
+    {
+      "path": "items/v138/emberfrost_stave.tres",
+      "size": 740,
+      "sha256": "3d965503c7d4ecb2bd3c172e673fa156c4344433be39f47ae3980d25f86bd415"
+    },
+    {
+      "path": "items/v138/sunlace_longbow.tres",
+      "size": 719,
+      "sha256": "85700c865d29da0b86ac99dcd1b8c064b2634b743dcd746f6ac9f252051b7e84"
+    },
+    {
+      "path": "resources/bow_animations_v126.json",
+      "size": 7643,
+      "sha256": "982010996e0e1528be965e78f43b944d3ee7904f7ca7965c8c9edd893dcba7ea"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 136047,
+      "sha256": "49673be3ab6de0b56e2406ad274ae70b4ed7de679fe7d212d13e44adbeaff4cf"
+    },
+    {
+      "path": "scenes/rooms/moonwake_crypt.tscn",
+      "size": 15963,
+      "sha256": "65e0854ea1f182f2f7908cb294638a49f61726fd7821118f9d739491fa6c4c21"
+    },
+    {
+      "path": "scripts/bow_arrow_v126.gd",
+      "size": 10625,
+      "sha256": "b58cecaad306b9db638eeb830f5fe8a5cfab294e15a6a781e80ac8c7bcfe07e2"
+    },
+    {
+      "path": "scripts/bow_impact_v129.gd",
+      "size": 4688,
+      "sha256": "345bc988157ded384540f8d0cc3a28a92203cbd8b4ecf0690f73ea99c5e8a049"
+    },
+    {
+      "path": "scripts/bow_imprints_v138.gd",
+      "size": 1835,
+      "sha256": "a935d2c2c230249d7bc7db3b3e8e2f388811b6a04bd3e43aade02f8ee3832084"
+    },
+    {
+      "path": "scripts/elemental_bow_target_v138.gd",
+      "size": 3451,
+      "sha256": "f028419180edcd88794de48827bd07e53d84999f40322e0d95768267d92a690a"
+    },
+    {
+      "path": "scripts/elemental_bow_vault_v138.gd",
+      "size": 1589,
+      "sha256": "3109d3fcd40627b83bb44923b0099dccefc5464a53904822de7f94e18d81680b"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 46002,
+      "sha256": "4dcdc1d44bd4e669cec98ee8c500f15dbcea23a466b441a5874dbdf986b65433"
+    },
+    {
+      "path": "scripts/inventory.gd",
+      "size": 17611,
+      "sha256": "0392da3483faea221cc1fd81d6e88adcdf981ed5f965dcb350a3393a825a01c4"
+    },
+    {
+      "path": "scripts/item_generator.gd",
+      "size": 6644,
+      "sha256": "f8a8372ef7e39a7012bf1b0955550a31a3d72cdbfbc479fc67461196f5fbde34"
+    },
+    {
+      "path": "scripts/item_instance.gd",
+      "size": 9633,
+      "sha256": "cc38180013746ea594118afee36564da8fb22a2543eb9c0a14d194a05722a4b0"
+    },
+    {
+      "path": "scripts/item_rich_text.gd",
+      "size": 7593,
+      "sha256": "1ce5637aaf174fc2b8353153b7253d5626bbdba30a44d3784baf493073cb1540"
+    },
+    {
+      "path": "scripts/player.gd",
+      "size": 55177,
+      "sha256": "994ffe2c2c12a701ab663a25fffb3ef28c8c028f9aab909067b493e27061b82d"
+    },
+    {
+      "path": "scripts/relic_attunement_v132.gd",
+      "size": 4405,
+      "sha256": "7374ee559af67c3e213ac6568b50788e40901b9f0d1a70d46d98f064d75f0a26"
+    },
+    {
+      "path": "tests/validate_v138.py",
+      "size": 5835,
+      "sha256": "1f77b25513437cc47ddfc9ed04ff611c24bf3bdea140664d9cf8aae3b7c2fccc"
+    },
+    {
+      "path": "tools/build_bow_combat_polish_v138.py",
+      "size": 5019,
+      "sha256": "2675f80ba205078b211d80152f784aee196c448afa4d5ab85b0c3208ed51b2e4"
+    }
+  ]
+}

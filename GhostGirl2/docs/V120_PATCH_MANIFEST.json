@@ -1,0 +1,54 @@
+{
+  "version": "1.20",
+  "applies_to": [
+    "1.18",
+    "1.19"
+  ],
+  "files": [
+    {
+      "path": "assets/world/hollow_veil_moor_v118.jpg",
+      "size": 7726929,
+      "sha256": "dbe904ca0871e3f3df091048d183b127de6bac9b4b5bf3c4ff13da2990dd0325"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 51784,
+      "sha256": "fcc978db275d274f628b10d5833662983efd79a24264603e042321402ef5f269"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 33587,
+      "sha256": "d56741fd49ad3cfd560cf88ddd932420e6f2ebc76091c12bf973526b229bf26a"
+    },
+    {
+      "path": "scripts/moor_waystone.gd",
+      "size": 2159,
+      "sha256": "64ae15f331ab5b2d9557bd463727cb782d40fae2b8eb6092c72bf91c1e4d820e"
+    },
+    {
+      "path": "scripts/moor_lantern.gd",
+      "size": 1181,
+      "sha256": "2e8c1ca2cc965505b2a6bad3295528d1538541e359886640efaf16910b5dd8e2"
+    },
+    {
+      "path": "tools/expand_hollow_veil_moor_v120.py",
+      "size": 7153,
+      "sha256": "071c9e8709c5e8bb97eb886e5e48318eb1141cb0419eff40ab3819bdec7fb741"
+    },
+    {
+      "path": "tests/validate_v119.py",
+      "size": 2076,
+      "sha256": "ffd56e81cb15f928c7a8b1e9b5493febbf1671da4d9f98d68aad9fb5af604798"
+    },
+    {
+      "path": "tests/validate_v120.py",
+      "size": 4721,
+      "sha256": "8972a1443dcf21d25d24e494c3c725990e818febd836c4995e24cdfeb66885fb"
+    },
+    {
+      "path": "docs/V120_MOOR_EXPLORATION_README.md",
+      "size": 2887,
+      "sha256": "042c7d58e940026a24c994d827eb292cf8faa00ee8c993d4f5bfb4795951a0fc"
+    }
+  ]
+}

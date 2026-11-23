@@ -1,0 +1,15 @@
+{
+  "patch": "v1.55.1",
+  "base": "v1.55",
+  "source": "original v1.46.4",
+  "files": {
+    "scripts/buried_cache_v1464.gd": {
+      "sha256": "7218b1d580be043dfb49ada5ea4f79fcf145e184ce0e177802e02c649ad7acae",
+      "bytes": 1146
+    },
+    "scripts/floor_breach_v1464.gd": {
+      "sha256": "c6de8ee3b97440bded10254530922da3c852cb6abde6b99061049595d15b7d11",
+      "bytes": 2838
+    }
+  }
+}

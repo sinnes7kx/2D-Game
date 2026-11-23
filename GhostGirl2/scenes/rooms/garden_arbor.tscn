@@ -1,0 +1,279 @@
+[gd_scene load_steps=26 format=3]
+
+[ext_resource type="Script" path="res://scripts/collectible_item.gd" id="treasure_script"]
+[ext_resource type="Resource" path="res://items/rosewing_mantle.tres" id="item_0"]
+[ext_resource type="Texture2D" path="res://assets/ui/treasure_wings.png" id="icon_0"]
+[ext_resource type="Resource" path="res://items/moonwoven_dress.tres" id="item_1"]
+[ext_resource type="Texture2D" path="res://assets/ui/treasure_dress.png" id="icon_1"]
+
+[ext_resource type="Texture2D" path="res://assets/world/garden_arbor.png" id="background"]
+[ext_resource type="Texture2D" path="res://assets/world/layers/garden_arbor_foreground.png" id="foreground"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" path="res://scripts/hook_anchor.gd" id="anchor"]
+[ext_resource type="Script" path="res://scripts/atmosphere.gd" id="dust"]
+[ext_resource type="PackedScene" path="res://scenes/carryable.tscn" id="carry"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/flame_ambience.tscn" id="flame"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/water_ambience.tscn" id="water"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/petal_ambience.tscn" id="petal"]
+[ext_resource type="PackedScene" path="res://scenes/ambience/firefly_ambience.tscn" id="firefly"]
+
+[sub_resource type="RectangleShape2D" id="Box0"]
+size = Vector2(2389, 244)
+
+[sub_resource type="RectangleShape2D" id="Box1"]
+size = Vector2(108, 1792)
+
+[sub_resource type="RectangleShape2D" id="Box2"]
+size = Vector2(108, 1792)
+
+[sub_resource type="RectangleShape2D" id="Box3"]
+size = Vector2(2389, 55)
+
+[sub_resource type="RectangleShape2D" id="Box4"]
+size = Vector2(720, 690)
+
+[sub_resource type="RectangleShape2D" id="Box5"]
+size = Vector2(630, 250)
+
+[sub_resource type="RectangleShape2D" id="Box6"]
+size = Vector2(250, 360)
+
+[sub_resource type="RectangleShape2D" id="Box7"]
+size = Vector2(285, 365)
+
+[sub_resource type="RectangleShape2D" id="Box8"]
+size = Vector2(305, 160)
+
+[sub_resource type="RectangleShape2D" id="Box9"]
+size = Vector2(335, 160)
+
+[node name="GardenArbor" type="Node2D"]
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("background")
+centered = false
+z_index = -50
+
+[node name="ForegroundCanopy" type="Sprite2D" parent="."]
+texture = ExtResource("foreground")
+centered = false
+z_index = 49
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="Northern cloister wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Northern cloister wall"]
+position = Vector2(1194, 122)
+shape = SubResource("Box0")
+
+[node name="Western wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Western wall"]
+position = Vector2(54, 910)
+shape = SubResource("Box1")
+
+[node name="Eastern wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Eastern wall"]
+position = Vector2(2336, 910)
+shape = SubResource("Box2")
+
+[node name="Southern wall" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Southern wall"]
+position = Vector2(1194, 1765)
+shape = SubResource("Box3")
+
+[node name="Central walled flower bed" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Central walled flower bed"]
+position = Vector2(1194, 921)
+shape = SubResource("Box4")
+
+[node name="North stone sanctuary" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/North stone sanctuary"]
+position = Vector2(1194, 353)
+shape = SubResource("Box5")
+
+[node name="West shrine" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/West shrine"]
+position = Vector2(350, 429)
+shape = SubResource("Box6")
+
+[node name="East glass window" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/East glass window"]
+position = Vector2(2080, 425)
+shape = SubResource("Box7")
+
+[node name="Left bench" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Left bench"]
+position = Vector2(355, 945)
+shape = SubResource("Box8")
+
+[node name="Right bench" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Right bench"]
+position = Vector2(2000, 950)
+shape = SubResource("Box9")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1160, 1400)
+
+[node name="From_garden" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1160, 1400)
+
+[node name="From_garden_bridge" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1900, 1220)
+
+[node name="From_moonthorn_woods" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1820, 1150)
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="garden" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1180, 1570)
+script = ExtResource("portal")
+interaction_name = "Return to the Waking Garden"
+destination = "garden"
+opened = true
+
+[node name="garden_bridge" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(2133, 1235)
+script = ExtResource("portal")
+interaction_name = "Follow the old bridge path"
+destination = "garden_bridge"
+opened = true
+
+[node name="moonthorn_woods" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(660, 1170)
+script = ExtResource("portal")
+interaction_name = "Explore Moonthorn Woods"
+destination = "moonthorn_woods"
+opened = true
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="LooseStone" parent="Gameplay/Carryables" instance=ExtResource("carry")]
+position = Vector2(1720, 1190)
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Collectibles" type="Node2D" parent="Gameplay"]
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay"]
+
+[node name="ArborRose_1" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(690, 770)
+script = ExtResource("anchor")
+
+[node name="ArborRose_2" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1740, 725)
+script = ExtResource("anchor")
+
+[node name="ArborRose_3" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1800, 1380)
+script = ExtResource("anchor")
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay"]
+
+[node name="IvyWindowNiche" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(1900, 615)
+
+[node name="BuriedFountain" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(1050, 1220)
+
+[node name="GardenUndercroft" type="Marker2D" parent="Gameplay/FutureSecrets"]
+position = Vector2(330, 1330)
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="MoonlitDust" type="Node2D" parent="Gameplay/Effects"]
+z_index = 12
+script = ExtResource("dust")
+
+[node name="AnimatedDetails" type="Node2D" parent="Gameplay/Effects"]
+
+[node name="flame_00" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("flame")]
+position = Vector2(200, 600)
+scale = Vector2(0.9, 0.9)
+
+[node name="flame_01" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("flame")]
+position = Vector2(2170, 660)
+scale = Vector2(0.95, 0.95)
+
+[node name="petal_02" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("petal")]
+position = Vector2(690, 1020)
+scale = Vector2(1.6, 1.6)
+
+[node name="petal_03" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("petal")]
+position = Vector2(1750, 1100)
+scale = Vector2(1.45, 1.45)
+
+[node name="firefly_04" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("firefly")]
+position = Vector2(1210, 1370)
+scale = Vector2(1.0, 1.0)
+
+[node name="water_05" parent="Gameplay/Effects/AnimatedDetails" instance=ExtResource("water")]
+position = Vector2(1190, 950)
+scale = Vector2(1.9, 1.9)
+
+[node name="MoonRosewingMantle" type="Node2D" parent="Gameplay/Collectibles"]
+position = Vector2(1810, 1360)
+script = ExtResource("treasure_script")
+item_data = ExtResource("item_0")
+pickup_id = "arbor_wings_001"
+item_seed = 981614
+interaction_name = "Collect Rosewing Mantle"
+
+[node name="KeyArt" type="Sprite2D" parent="Gameplay/Collectibles/MoonRosewingMantle"]
+texture = ExtResource("icon_0")
+scale = Vector2(0.42, 0.42)
+
+
+[node name="MoonwovenDressII" type="Node2D" parent="Gameplay/Collectibles"]
+position = Vector2(530, 1300)
+script = ExtResource("treasure_script")
+item_data = ExtResource("item_1")
+pickup_id = "arbor_dress_002"
+item_seed = 487155
+interaction_name = "Collect Moonwoven Dress"
+
+[node name="KeyArt" type="Sprite2D" parent="Gameplay/Collectibles/MoonwovenDressII"]
+texture = ExtResource("icon_1")
+scale = Vector2(0.42, 0.42)
+

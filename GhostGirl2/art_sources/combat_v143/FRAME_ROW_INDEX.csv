@@ -1,0 +1,25 @@
+Sheet,Animation,Row (1-based),Frames (left-to-right)
+SWORD ATTACK,attack_sword_light_front,1,1–8
+SWORD ATTACK,attack_sword_light_back,2,1–8
+SWORD ATTACK,attack_sword_light_left,3,1–8
+SWORD ATTACK,attack_sword_light_right,4,1–8
+SWORD ATTACK,attack_sword_heavy_front,5,1–8
+SWORD ATTACK,attack_sword_heavy_back,6,1–8
+SWORD ATTACK,attack_sword_heavy_left,7,1–8
+SWORD ATTACK,attack_sword_heavy_right,8,1–8
+UNARMED ATTACK,attack_unarmed_light_front,1,1–8
+UNARMED ATTACK,attack_unarmed_light_back,2,1–8
+UNARMED ATTACK,attack_unarmed_light_left,3,1–8
+UNARMED ATTACK,attack_unarmed_light_right,4,1–8
+UNARMED ATTACK,attack_unarmed_heavy_front,5,1–8
+UNARMED ATTACK,attack_unarmed_heavy_back,6,1–8
+UNARMED ATTACK,attack_unarmed_heavy_left,7,1–8
+UNARMED ATTACK,attack_unarmed_heavy_right,8,1–8
+SWORD READY,sword_idle_front,1,1–8
+SWORD READY,sword_idle_back,2,1–8
+SWORD READY,sword_idle_left,3,1–8
+SWORD READY,sword_idle_right,4,1–8
+SWORD READY,sword_walk_front,5,1–8
+SWORD READY,sword_walk_back,6,1–8
+SWORD READY,sword_walk_left,7,1–8
+SWORD READY,sword_walk_right,8,1–8

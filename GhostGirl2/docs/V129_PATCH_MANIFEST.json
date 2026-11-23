@@ -1,0 +1,62 @@
+{
+  "version": "1.29",
+  "requires": "v1.28",
+  "runtime_tested": false,
+  "files": [
+    {
+      "path": "scripts/moor_creature_v129.gd",
+      "bytes": 8316,
+      "sha256": "a3691a99224e0d15b6cc7fb98575db0792a780a02413a82b40f5aee89e33630d"
+    },
+    {
+      "path": "scenes/moor_creature_v129.tscn",
+      "bytes": 733,
+      "sha256": "37427e9a8444643008140d5661aa3baed29bdb3d72de8cd97577943c548a0b48"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "bytes": 70874,
+      "sha256": "e7d5210d12f2805917d7371cc5a1fd369068c22710a3dc0f2571ab6f33636737"
+    },
+    {
+      "path": "scripts/bow_impact_v129.gd",
+      "bytes": 3418,
+      "sha256": "898a307b89c74a001945e06fdde2a806c48815bbe2beba85adcc98891e02ba7c"
+    },
+    {
+      "path": "scripts/bow_arrow_v126.gd",
+      "bytes": 7612,
+      "sha256": "14c346f454babfd8d5048032523bf85dc4bdddeaeec5a72dfac5a9767b093be1"
+    },
+    {
+      "path": "scripts/jump_landing_cue.gd",
+      "bytes": 2076,
+      "sha256": "038b90fea09f8ad6ff295c66f7493f45521c491a7afa452250f44d31e4ab0d8e"
+    },
+    {
+      "path": "scripts/player.gd",
+      "bytes": 54721,
+      "sha256": "335b320a469b5705d4c1dcd84a00b10bf9add9046516647079281076aa478dd9"
+    },
+    {
+      "path": "scripts/moonfall_blizzard.gd",
+      "bytes": 7984,
+      "sha256": "eca3778dffd3653ee32e51ff9e538ec4cf8bba80ef70b42817d96e2203d47f9d"
+    },
+    {
+      "path": "tools/place_v129_moor_creatures.py",
+      "bytes": 4228,
+      "sha256": "6465a8c8bda6af020fb305afbd5b7824cbd41c6848344dc4399e969a83632c31"
+    },
+    {
+      "path": "tests/validate_v129.py",
+      "bytes": 5477,
+      "sha256": "30611f612664a2b1c5b88075cea21c02c4c19e58bd635274e9692c582e7ccfe2"
+    },
+    {
+      "path": "docs/V129_MOOR_CREATURES_AND_FX.md",
+      "bytes": 2151,
+      "sha256": "00e6b4fd23401004353ac6e97272b861d64c7e4bc3eebeb5564014ae655803c0"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+Ghost Girl v1.71 — Nocturne & Briarwake
+
+INSTALL OVER v1.70.1 (which itself applies over v1.70).
+Back up your project and user://ghost_girl_treasures_v2.json before overwriting.
+Unzip directly into the GhostGirl2 folder beside project.godot, merging folders.
+Open Godot to import the new textures. No extra full-project archive is needed.
+
+NEW ITEMS
+- Nocturne Stiletto: visually distinct slender darkglass dagger with a crescent guard.
+- Briarwake Trident: rosewood spear with three-pronged garnet head.
+Each base uses its original class's existing damage/collision/combat logic but has
+independent frame-authored art with 8 poses each in 4 directions for
+idle, walking, light strike and heavy strike.
+Both are included in normal weapon loot rolls.
+
+CHANGED FILES
+- scripts/player.gd (item-ID => animation-art lookup only)
+- scripts/game.gd (two new sword loot entries only)
+- resources/ghost_extra_animations.json (32 new definitions appended)
+- resources/new_weapon_axes_v169.json (32 new glow-frame guides appended)
+- items/*.tres (2 new)
+- assets/equipment/weapons_v171/*.png (4 new)
+- assets/ui/weapons_v171/*.png (2 new)
+
+PRESERVED
+Old art/animation entries, statistics for existing gear, item save schema,
+128-bit cosmetic UID rules, mythic effects from v1.70.1, bow/wand art, and
+all prior player attack mechanics. This patch does not touch engine hitboxes.
+
+NOTE: Structural tests are not the same as playing in Godot. Test F5 in-engine.

@@ -1,0 +1,4273 @@
+[gd_scene load_steps=87 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/hollow_veil_moor_v118.jpg" id="bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="PackedScene" path="res://scenes/rose_wraith.tscn" id="wraith"]
+[ext_resource type="PackedScene" path="res://scenes/gothic_hunter.tscn" id="hunter"]
+[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="chest"]
+[ext_resource type="Script" path="res://scripts/hook_anchor.gd" id="anchor"]
+[ext_resource type="Resource" path="res://items/moon_gem.tres" id="gem"]
+[ext_resource type="Resource" path="res://items/rose_reaper_scythe.tres" id="scythe"]
+[ext_resource type="Resource" path="res://items/briar_wand.tres" id="wand"]
+[ext_resource type="PackedScene" path="res://scenes/carryable.tscn" id="crate"]
+[ext_resource type="Script" path="res://scripts/rose_switch.gd" id="v117_switch"]
+[ext_resource type="Script" path="res://scripts/rose_gate.gd" id="v117_gate"]
+[ext_resource type="Script" path="res://scripts/hook_secret.gd" id="v117_secret"]
+[ext_resource type="Script" path="res://scripts/lantern_shrine.gd" id="v117_shrine"]
+[ext_resource type="Script" path="res://scripts/moor_waystone.gd" id="v120_waystone"]
+[ext_resource type="Script" path="res://scripts/moor_lantern.gd" id="v120_lantern"]
+[ext_resource type="Script" path="res://scripts/weighted_rose_plate.gd" id="v120_plate"]
+
+[ext_resource type="Script" path="res://scripts/water_body.gd" id="v121_water"]
+[ext_resource type="Script" path="res://scripts/moor_rain.gd" id="v121_rain"]
+[ext_resource type="Script" path="res://scripts/moor_water_ripples.gd" id="v121_ripples"]
+
+[ext_resource type="Script" path="res://scripts/moonstep_route.gd" id="v124_route"]
+[ext_resource type="Script" path="res://scripts/moonstep_trial.gd" id="v124_trial"]
+[ext_resource type="Script" path="res://scripts/low_thorn_barrier.gd" id="v124_thorns"]
+[ext_resource type="Resource" path="res://items/gloamglass_locket.tres" id="v124_locket"]
+[ext_resource type="Resource" path="res://items/lunar_vigil_halberd.tres" id="v124_halberd"]
+[ext_resource type="Script" path="res://scripts/rose_bloom_relay_v128.gd" id="v128_bloom"]
+[ext_resource type="Script" path="res://scripts/moon_archery_target_v128.gd" id="v128_target"]
+[ext_resource type="Resource" path="res://items/thornrose_bow.tres" id="v128_thornrose"]
+[ext_resource type="Resource" path="res://items/moonveil_bow.tres" id="v128_moonveil"]
+[ext_resource type="PackedScene" path="res://scenes/moor_creature_v129.tscn" id="v129_creature"]
+[ext_resource type="Script" path="res://scripts/triune_reliquary_v130.gd" id="v130_triune"]
+[ext_resource type="Script" path="res://scripts/moonshot_bloom_v131.gd" id="v131_moonbloom"]
+
+[ext_resource type="Script" path="res://scripts/moor_vigil_memory_v132.gd" id="v132_memory"]
+[ext_resource type="Script" path="res://scripts/moor_vigil_altar_v132.gd" id="v132_altar"]
+[ext_resource type="PackedScene" path="res://scenes/moor_warden_v132.tscn" id="v132_boss"]
+[ext_resource type="Script" path="res://scripts/relic_attunement_v132.gd" id="v132_attune"]
+[ext_resource type="Resource" path="res://items/v132/veilkeeper_reaper.tres" id="v132_reaper"]
+[ext_resource type="Resource" path="res://items/v132/lament_moonbow.tres" id="v132_bow"]
+[ext_resource type="Resource" path="res://items/v132/censer_of_the_fourth_bell.tres" id="v132_censer"]
+[ext_resource type="Script" path="res://scripts/bellglass_echo_v133.gd" id="v133_echo"]
+[ext_resource type="Script" path="res://scripts/bellglass_vault_v133.gd" id="v133_vault"]
+[ext_resource type="Resource" path="res://items/v133/bellglass_reliquary.tres" id="v133_charm"]
+[ext_resource type="Script" path="res://scripts/vesper_vigil_v134.gd" id="v134_vigil"]
+[ext_resource type="Script" path="res://scripts/moor_story_slab_v134.gd" id="v134_slab"]
+[ext_resource type="Resource" path="res://items/v134/vesperglass_wand.tres" id="v134_wand"]
+
+[ext_resource type="Script" path="res://scripts/collapse_support_v135.gd" id="v135_support"]
+[ext_resource type="Script" path="res://scripts/collapse_support_hitbox_v135.gd" id="v135_hitbox"]
+[ext_resource type="Script" path="res://scripts/moor_salvage_seal_v135.gd" id="v135_seal"]
+
+[ext_resource type="Resource" path="res://items/v135/widows_knot.tres" id="v135_knot"]
+[ext_resource type="Resource" path="res://items/v135/rafterfall_moonbow.tres" id="v135_moonbow"]
+
+[ext_resource type="Script" path="res://scripts/chain_support_v136.gd" id="v136_chain"]
+[ext_resource type="Script" path="res://scripts/breakable_cover_v136.gd" id="v136_cover"]
+[ext_resource type="Resource" path="res://items/v136/chainwake_amulet.tres" id="v136_amulet"]
+[ext_resource type="Resource" path="res://items/v136/mourning_girder_bow.tres" id="v136_bow"]
+
+[ext_resource type="Script" path="res://scripts/bellroot_resonance_v137.gd" id="v137_bell"]
+[ext_resource type="Script" path="res://scripts/bellroot_chorus_v137.gd" id="v137_chorus"]
+[ext_resource type="Resource" path="res://items/v137/chimekeeper_rosary.tres" id="v137_rosary"]
+[ext_resource type="Resource" path="res://items/v137/choral_moonbow.tres" id="v137_bow"]
+
+[ext_resource type="Script" path="res://scripts/elemental_flammable_v139.gd" id="v139_fire"]
+[ext_resource type="Script" path="res://scripts/elemental_ice_bridge_v139.gd" id="v139_ice"]
+[ext_resource type="Script" path="res://scripts/elemental_light_secret_v139.gd" id="v139_light"]
+[ext_resource type="Script" path="res://scripts/elemental_bow_target_v138.gd" id="v138_target"]
+[ext_resource type="Script" path="res://scripts/elemental_bow_vault_v138.gd" id="v138_vault"]
+[ext_resource type="Resource" path="res://items/v138/emberfrost_stave.tres" id="v138_emberfrost"]
+[ext_resource type="Resource" path="res://items/v138/sunlace_longbow.tres" id="v138_sunlace"]
+
+[ext_resource type="Script" path="res://scripts/elemental_kindling_v140.gd" id="v140_kindling"]
+[ext_resource type="Script" path="res://scripts/elemental_hidden_relic_v140.gd" id="v140_reveal"]
+[ext_resource type="Script" path="res://scripts/moonthread_waylight_v143.gd" id="v143_waylight"]
+
+[ext_resource type="Script" path="res://scripts/moonroot_lattice_v144.gd" id="v144_lattice"]
+[ext_resource type="Script" path="res://scripts/moonroot_hitbox_v144.gd" id="v144_hitbox"]
+[ext_resource type="Script" path="res://scripts/moor_world_response_v145.gd" id="v145_reaction"]
+[ext_resource type="Script" path="res://scripts/moor_aftershock_memory_v145.gd" id="v145_aftershock"]
+
+[sub_resource type="RectangleShape2D" id="v144_west_shape"]
+size = Vector2(148, 34)
+
+[sub_resource type="RectangleShape2D" id="v144_westchain_shape"]
+size = Vector2(140, 34)
+
+[sub_resource type="RectangleShape2D" id="v144_east_shape"]
+size = Vector2(165, 34)
+
+[sub_resource type="RectangleShape2D" id="limNorth"]
+size = Vector2(10368, 76)
+
+[sub_resource type="RectangleShape2D" id="limSouth"]
+size = Vector2(10368, 76)
+
+[sub_resource type="RectangleShape2D" id="limWest"]
+size = Vector2(76, 6912)
+
+[sub_resource type="RectangleShape2D" id="limEast"]
+size = Vector2(76, 6912)
+
+[sub_resource type="CircleShape2D" id="grave_shape"]
+radius = 62.0
+
+[sub_resource type="CircleShape2D" id="tree_shape"]
+radius = 41.0
+
+[sub_resource type="RectangleShape2D" id="v117_seal_shape"]
+size = Vector2(130, 54)
+
+[sub_resource type="CircleShape2D" id="v135_anchor_shape"]
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="v136_anchor_shape"]
+radius = 36.0
+
+[sub_resource type="RectangleShape2D" id="v136_cover_shape"]
+size = Vector2(104, 45)
+
+[sub_resource type="CircleShape2D" id="v137_bell_shape"]
+radius = 27.0
+
+[node name="HollowVeilMoor" type="Node2D"]
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("bg")
+centered = false
+z_index = -50
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="NorthBoundary" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/NorthBoundary"]
+position = Vector2(5184, 85.5)
+shape = SubResource("limNorth")
+
+[node name="SouthBoundary" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/SouthBoundary"]
+position = Vector2(5184, 6826.5)
+shape = SubResource("limSouth")
+
+[node name="WestBoundary" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/WestBoundary"]
+position = Vector2(85.5, 3456)
+shape = SubResource("limWest")
+
+[node name="EastBoundary" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/EastBoundary"]
+position = Vector2(10282.5, 3456)
+shape = SubResource("limEast")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1620, 6007.5)
+
+[node name="From_briar_hollow" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1608.75, 5985)
+
+[node name="From_moonthorn_woods" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(9000, 1080)
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="briar_hollow" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1260, 6457.5)
+script = ExtResource("portal")
+interaction_name = "Return to Briar Hollow"
+destination = "briar_hollow"
+opened = true
+
+[node name="moonthorn_woods" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(9427.5, 821.25)
+script = ExtResource("portal")
+interaction_name = "Enter Moonthorn Woods"
+destination = "moonthorn_woods"
+opened = true
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="VisualClues" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Collectibles" type="Node2D" parent="Gameplay"]
+
+[node name="TreasureChests" type="Node2D" parent="Gameplay"]
+
+[node name="Enemies" type="Node2D" parent="Gameplay"]
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay"]
+
+[node name="FutureSecrets" type="Node2D" parent="Gameplay"]
+
+[node name="RestShrines" type="Node2D" parent="Gameplay"]
+
+[node name="WaterBodies" type="Node2D" parent="Gameplay"]
+position = Vector2(0, 0)
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="HiddenCoffer1" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7087.5, 5445)
+chest_id = "v116_hollow_veil_cache_1"
+loot_data = ExtResource("gem")
+loot_seed = 116600
+guaranteed_quality = "normal"
+
+[node name="HiddenCoffer2" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(9382.5, 3802.5)
+chest_id = "v116_hollow_veil_cache_2"
+loot_data = ExtResource("wand")
+loot_seed = 117399
+guaranteed_quality = "magic"
+
+[node name="HiddenCoffer3" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(3397.5, 1305)
+chest_id = "v116_hollow_veil_cache_3"
+loot_data = ExtResource("scythe")
+loot_seed = 118198
+guaranteed_quality = "rare"
+
+[node name="RoseAnchor1" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(2700, 1777.5)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor2" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(5512.5, 3802.5)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor3" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(7987.5, 5332.5)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor4" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(9562.5, 2610)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor5" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(5062.5, 5625)
+script = ExtResource("anchor")
+
+[node name="RoseAnchor6" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(7987.5, 1485)
+script = ExtResource("anchor")
+
+[node name="Moor_00_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2253.83, 1110.21)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_00_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3859.81, 1016.11)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_00_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5156.27, 1201.94)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_00_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7200, 1570)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_00_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(8771.6, 1448.34)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_01_00" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2463.75, 2308.5)
+archetype = "mourner"
+maximum_health = 18.0
+strike_damage = 3.0
+move_speed = 75.0
+notice_range = 360.0
+is_elite = false
+windup_duration = 0.72
+
+
+[node name="Moor_01_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9898.21, 2073.7)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_01_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1435.31, 1761.15)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_01_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3086.5, 1725.96)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_02_00" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(7073, 1921)
+archetype = "blade_hunter"
+maximum_health = 85.0
+strike_damage = 10.0
+move_speed = 87.0
+notice_range = 360.0
+is_elite = true
+windup_duration = 0.72
+loot_template = ExtResource("gem")
+
+[node name="Moor_02_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4557.71, 1998.62)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_02_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(6016.17, 2216.2)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_02_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7760.01, 2435.37)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_02_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9710.48, 2739.56)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_03_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2777.53, 2780.03)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_03_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4043.57, 2881.69)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_03_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(6391.21, 2952.19)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_03_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9478.84, 3342.13)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_04_00" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(8370, 5737.5)
+archetype = "mourner"
+maximum_health = 18.0
+strike_damage = 3.0
+move_speed = 75.0
+notice_range = 360.0
+is_elite = false
+windup_duration = 0.72
+
+
+[node name="Moor_04_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2297.3, 3700.51)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_04_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4219.79, 3799.86)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_04_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5998.75, 3634.87)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_04_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9685.41, 4031.63)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_05_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1892.45, 4426.57)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_05_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3370.94, 4383.59)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_05_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5146.54, 4697.59)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_05_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9352.9, 4780.43)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_06_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2408.01, 5465.07)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_06_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3995.19, 5564.81)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_06_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5714.19, 5678.51)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_06_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7860.45, 5568.82)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_07_00" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(5130, 4320)
+archetype = "mourner"
+maximum_health = 18.0
+strike_damage = 3.0
+move_speed = 75.0
+notice_range = 360.0
+is_elite = false
+windup_duration = 0.72
+
+
+[node name="Moor_07_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9787.42, 5996.45)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_07_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5114.09, 6311.98)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_07_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7430.43, 6279.12)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_08_00" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2463.75, 2308.5)
+archetype = "blade_hunter"
+maximum_health = 85.0
+strike_damage = 10.0
+move_speed = 87.0
+notice_range = 360.0
+is_elite = true
+windup_duration = 0.72
+loot_template = ExtResource("gem")
+
+[node name="Moor_08_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2186.45, 1328.84)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_08_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3764.16, 1166.72)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_08_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4963.44, 1304.11)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_08_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(6732, 2161)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_09_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(8678.25, 1643.58)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_09_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9721.85, 2286.88)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_09_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1248, 1944.66)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_09_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2922.72, 1920.87)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_10_00" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(6286, 2213)
+archetype = "mourner"
+maximum_health = 18.0
+strike_damage = 3.0
+move_speed = 75.0
+notice_range = 360.0
+is_elite = false
+windup_duration = 0.72
+
+
+[node name="Moor_10_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4324.84, 2138.02)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_10_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5797.87, 2389.07)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_10_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7605.69, 2604.14)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_10_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9643.92, 2930.34)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_11_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2645.38, 3004.14)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_11_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3938.86, 3059.15)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_11_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(6218.02, 3146.41)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_11_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9424.28, 3498.99)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_12_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2059.77, 3909.36)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_12_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4132.62, 4016.82)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_12_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5841.42, 3886.61)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_12_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9498.88, 4221.51)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_13_00" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(8370, 5737.5)
+archetype = "blade_hunter"
+maximum_health = 85.0
+strike_damage = 10.0
+move_speed = 87.0
+notice_range = 360.0
+is_elite = true
+windup_duration = 0.72
+loot_template = ExtResource("gem")
+
+[node name="Moor_13_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1688.84, 4663.23)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_13_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3207.91, 4547.7)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_14_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5012.22, 4908.34)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_14_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9248.16, 4953.74)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_14_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2248.75, 5622.43)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_14_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3882.26, 5731.7)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_15_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5630.59, 5881.2)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_15_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7668.86, 5692.48)
+max_health = 15.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_15_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9697.2, 6114.6)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="Moor_15_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4921.12, 6459.58)
+max_health = 12.0
+damage_to_player = 3.0
+move_speed = 77.0
+aggro_radius = 310.0
+
+[node name="RuinedMonument1" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/RuinedMonument1"]
+position = Vector2(2045.25, 2767.5)
+shape = SubResource("grave_shape")
+
+[node name="RuinedMonument2" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/RuinedMonument2"]
+position = Vector2(5319, 2936.25)
+shape = SubResource("grave_shape")
+
+[node name="RuinedMonument3" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/RuinedMonument3"]
+position = Vector2(6608.25, 5744.25)
+shape = SubResource("grave_shape")
+
+[node name="RuinedMonument4" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/RuinedMonument4"]
+position = Vector2(7188.75, 5737.5)
+shape = SubResource("grave_shape")
+
+[node name="RuinedMonument5" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/RuinedMonument5"]
+position = Vector2(6925.5, 1161)
+shape = SubResource("grave_shape")
+
+[node name="RuinedMonument6" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/RuinedMonument6"]
+position = Vector2(8100, 1228.5)
+shape = SubResource("grave_shape")
+
+[node name="DeadWillow1" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/DeadWillow1"]
+position = Vector2(1437.75, 688.5)
+shape = SubResource("tree_shape")
+
+[node name="DeadWillow2" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/DeadWillow2"]
+position = Vector2(3510, 985.5)
+shape = SubResource("tree_shape")
+
+[node name="DeadWillow3" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/DeadWillow3"]
+position = Vector2(4765.5, 850.5)
+shape = SubResource("tree_shape")
+
+[node name="DeadWillow4" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/DeadWillow4"]
+position = Vector2(10057.5, 1694.25)
+shape = SubResource("tree_shape")
+
+[node name="DeadWillow5" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/DeadWillow5"]
+position = Vector2(1086.75, 2605.5)
+shape = SubResource("tree_shape")
+
+[node name="DeadWillow6" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/DeadWillow6"]
+position = Vector2(175.5, 5150.25)
+shape = SubResource("tree_shape")
+
+[node name="DeadWillow7" type="StaticBody2D" parent="Collisions"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/DeadWillow7"]
+position = Vector2(9247.5, 5298.75)
+shape = SubResource("tree_shape")
+
+[node name="MoorCrate1" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(2992.5, 4567.5)
+
+[node name="MoorCrate2" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(4725, 3487.5)
+
+[node name="MoorCrate3" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(7650, 2587.5)
+
+[node name="MoorCrate4" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(8392.5, 6142.5)
+
+
+; v1.17 — Moonlight over the moor. Every object is editor-owned and
+; receives the existing inventory/room save binding automatically.
+; Recovery shrines make the large wilderness practical to explore.
+[node name="V117LowRoadShrine" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(1631.25, 5602.5)
+script = ExtResource("v117_shrine")
+shrine_id = "v117_low_road"
+interaction_name = "Rest at the low-road lamp"
+
+[node name="V117NorthPathShrine" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(7357.5, 2610)
+script = ExtResource("v117_shrine")
+shrine_id = "v117_north_path"
+interaction_name = "Rest beside the northern moonlamp"
+
+; North-east rose relay. Two latch points in a visible order open a relic cache.
+[node name="V117NorthRelic" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7717.5, 1878.75)
+chest_id = "v117_moor_north_relic"
+loot_data = ExtResource("wand")
+loot_seed = 117171
+; This seed is a rare Luminous Lance cosmetic roll: (117171+117117)%8 == 0.
+guaranteed_quality = "rare"
+
+[node name="V117NorthRoseGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(7672.5, 2065.5)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V117NorthRelic")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V117NorthRoseGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V117NorthRose1" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(6795, 2407.5)
+script = ExtResource("v117_switch")
+discovery_id = "v117_moor_north_rose_1"
+sequence_step = 1
+
+[node name="V117NorthRose2" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(7290, 2047.5)
+script = ExtResource("v117_switch")
+discovery_id = "v117_moor_north_rose_2"
+previous_switch_path = NodePath("../V117NorthRose1")
+sequence_step = 2
+gate_path = NodePath("../../V117NorthRoseGate")
+
+; Western hidden grotto: a second ordered seal puzzle with a separate reward.
+[node name="V117WestLocket" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2295, 1755)
+chest_id = "v117_moor_west_locket"
+loot_data = ExtResource("gem")
+loot_seed = 117392
+guaranteed_quality = "normal"
+
+[node name="V117WestRoseGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(2272.5, 1921.5)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V117WestLocket")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V117WestRoseGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V117WestRose1" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(1665, 2317.5)
+script = ExtResource("v117_switch")
+discovery_id = "v117_moor_west_rose_1"
+sequence_step = 1
+
+[node name="V117WestRose2" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(2115, 2106)
+script = ExtResource("v117_switch")
+discovery_id = "v117_moor_west_rose_2"
+previous_switch_path = NodePath("../V117WestRose1")
+sequence_step = 2
+gate_path = NodePath("../../V117WestRoseGate")
+
+; Three optional secrets: aim the hook at the dim moonrose to reveal the chest.
+[node name="V117ThornCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(6615, 5805)
+chest_id = "v117_moor_thorn_cache"
+loot_data = ExtResource("scythe")
+loot_seed = 117410
+guaranteed_quality = "magic"
+
+[node name="V117ThornRose" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(6322.5, 5670)
+script = ExtResource("v117_secret")
+discovery_id = "v117_moor_thorn_secret"
+secret_chest = NodePath("../../TreasureChests/V117ThornCache")
+
+[node name="V117StarCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8977.5, 5085)
+chest_id = "v117_moor_star_cache"
+loot_data = ExtResource("gem")
+loot_seed = 117430
+guaranteed_quality = "normal"
+
+[node name="V117StarRose" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(8730, 4905)
+script = ExtResource("v117_secret")
+discovery_id = "v117_moor_star_secret"
+secret_chest = NodePath("../../TreasureChests/V117StarCache")
+
+[node name="V117HushCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(4477.5, 1935)
+chest_id = "v117_moor_hush_cache"
+loot_data = ExtResource("wand")
+loot_seed = 117711
+guaranteed_quality = "magic"
+
+[node name="V117HushRose" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(4207.5, 1845)
+script = ExtResource("v117_secret")
+discovery_id = "v117_moor_hush_secret"
+secret_chest = NodePath("../../TreasureChests/V117HushCache")
+
+; Additional small patrols, all much weaker than a single normal wraith.
+[node name="V117MoorProwler_00_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7267.06, 6523.21)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_00_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2006.05, 1113.68)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_00_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3663.28, 788.78)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_00_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4888.09, 1123.59)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_00_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5876, 2061)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_01_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(8529.5, 1447.54)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_01_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9594.69, 2074.66)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_01_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1134.34, 1756.26)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_01_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2727.91, 1834.07)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_01_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4284.68, 1988.35)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_02_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5732.48, 2231.25)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_02_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7459.88, 2463.6)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_02_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9406.19, 2814.19)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_02_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2516.46, 2774.74)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_02_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3712.05, 2820.93)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_03_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(6143.17, 2966.9)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_03_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9192.51, 3318.7)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_03_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2019.33, 3700.91)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_03_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3948.59, 3770.59)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117MoorProwler_03_04" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5706.6, 3716.73)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 69.0
+aggro_radius = 255.0
+
+[node name="V117FadedMourner_1" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(5130, 4320)
+archetype = "mourner"
+maximum_health = 15.0
+strike_damage = 2.5
+move_speed = 66.0
+notice_range = 310.0
+windup_duration = 0.82
+is_elite = false
+
+[node name="V117FadedMourner_2" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2463.75, 2308.5)
+archetype = "mourner"
+maximum_health = 16.0
+strike_damage = 2.5
+move_speed = 66.0
+notice_range = 310.0
+windup_duration = 0.82
+is_elite = false
+
+[node name="V117FadedMourner_3" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(5632, 1753)
+archetype = "mourner"
+maximum_health = 17.0
+strike_damage = 2.5
+move_speed = 66.0
+notice_range = 310.0
+windup_duration = 0.82
+is_elite = false
+
+[node name="V117FadedMourner_4" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(8370, 5737.5)
+archetype = "mourner"
+maximum_health = 18.0
+strike_damage = 2.5
+move_speed = 66.0
+notice_range = 310.0
+windup_duration = 0.82
+is_elite = false
+
+[node name="V117HookCrate_1" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(3982.5, 2542.5)
+
+[node name="V117HookCrate_2" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(4522.5, 2947.5)
+
+[node name="V117HookCrate_3" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(6232.5, 5040)
+
+[node name="V117HookCrate_4" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(7020, 4612.5)
+
+[node name="V117HookCrate_5" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(8752.5, 3307.5)
+
+[node name="V117HookCrate_6" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(2070, 2655)
+
+
+; ===== V1.20: MOOR WAYSTONES, PATROLS, AND SIDE ROUTES =====
+
+[node name="Waystones" type="Node2D" parent="Gameplay"]
+
+[node name="PathLanterns" type="Node2D" parent="Gameplay"]
+
+[node name="V120LowRoadWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(1390, 5730)
+script = ExtResource("v120_waystone")
+region_title = "The Low Lantern Road"
+route_hint = "Briar Hollow to the southwest; crossroads northeast."
+arrow_direction = Vector2(0.8, -0.4)
+
+[node name="V120MossGravesWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(3030, 4950)
+script = ExtResource("v120_waystone")
+region_title = "The Moss Graves"
+route_hint = "Follow the warm lamps east to the crossroads."
+arrow_direction = Vector2(1, -0.2)
+
+[node name="V120CrossroadsWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(5150, 3750)
+script = ExtResource("v120_waystone")
+region_title = "The Weeping Crossroads"
+route_hint = "Southwest: Briar Hollow. Northeast: Moonthorn Woods."
+arrow_direction = Vector2(0.9, -0.6)
+
+[node name="V120MoonwellWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(6510, 4990)
+script = ExtResource("v120_waystone")
+region_title = "The Sunken Moonwell"
+route_hint = "Detour south to a rose weight seal; return north."
+arrow_direction = Vector2(-0.8, -0.5)
+
+[node name="V120CrescentRiseWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7350, 2580)
+script = ExtResource("v120_waystone")
+region_title = "Crescent Rise"
+route_hint = "The northern trail goes to Moonthorn Woods."
+arrow_direction = Vector2(0.8, -0.6)
+
+[node name="V120LilyFenWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8610, 4750)
+script = ExtResource("v120_waystone")
+region_title = "The Silted Lily Fen"
+route_hint = "Keep northwest to find the lamp-lit high path."
+arrow_direction = Vector2(-1, -0.6)
+
+[node name="V120NorthWatchWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(9170, 1370)
+script = ExtResource("v120_waystone")
+region_title = "The North Watch"
+route_hint = "Moonthorn Woods is nearby to the northeast."
+arrow_direction = Vector2(1, -0.7)
+
+[node name="V120PathLantern_01" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(1570, 5630)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_02" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(2430, 5240)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_03" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(3590, 4630)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_04" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(4520, 4040)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_05" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(5420, 3550)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_06" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(6280, 3110)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_07" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(7210, 2560)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_08" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(8350, 1860)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_09" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(8900, 1460)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_10" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(6710, 4650)
+script = ExtResource("v120_lantern")
+
+[node name="V120PathLantern_11" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(7770, 5190)
+script = ExtResource("v120_lantern")
+
+[node name="V120CrossroadsShrine" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(4810, 3780)
+script = ExtResource("v117_shrine")
+shrine_id = "v120_moor_crossroads_shrine"
+interaction_name = "Rest at the crossroads lantern"
+
+[node name="V120MoonwellShrine" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(6930, 5160)
+script = ExtResource("v117_shrine")
+shrine_id = "v120_moor_moonwell_shrine"
+interaction_name = "Rest at the moonwell lantern"
+
+[node name="V120OldRoadCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2760, 5470)
+chest_id = "v120_moor_oldroadcache"
+loot_data = ExtResource("gem")
+loot_seed = 120010
+guaranteed_quality = "normal"
+
+[node name="V120GravePathCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(3690, 3170)
+chest_id = "v120_moor_gravepathcache"
+loot_data = ExtResource("scythe")
+loot_seed = 120025
+guaranteed_quality = "magic"
+
+[node name="V120LilyFenCache" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8970, 5100)
+chest_id = "v120_moor_lilyfencache"
+loot_data = ExtResource("gem")
+loot_seed = 120040
+guaranteed_quality = "normal"
+
+[node name="V120SilentOrchardSecretCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(3140, 2340)
+chest_id = "v120_moor_silentorchard_coffer"
+loot_data = ExtResource("wand")
+loot_seed = 120110
+guaranteed_quality = "magic"
+
+[node name="V120SilentOrchardRose" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(2900, 2460)
+script = ExtResource("v117_secret")
+discovery_id = "v120_moor_silentorchard_revealed"
+secret_chest = NodePath("../../TreasureChests/V120SilentOrchardSecretCoffer")
+
+[node name="V120MourningPondSecretCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8030, 5830)
+chest_id = "v120_moor_mourningpond_coffer"
+loot_data = ExtResource("gem")
+loot_seed = 120125
+guaranteed_quality = "normal"
+
+[node name="V120MourningPondRose" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(7800, 5660)
+script = ExtResource("v117_secret")
+discovery_id = "v120_moor_mourningpond_revealed"
+secret_chest = NodePath("../../TreasureChests/V120MourningPondSecretCoffer")
+
+[node name="V120MoonwellCrate" parent="Gameplay/Carryables" instance=ExtResource("crate")]
+position = Vector2(5830, 5790)
+
+[node name="V120MoonwellReward" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(6650, 5710)
+chest_id = "v120_moor_moonwell_weight_reward"
+loot_data = ExtResource("scythe")
+loot_seed = 120160
+guaranteed_quality = "magic"
+
+[node name="V120MoonwellGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(6490, 5700)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V120MoonwellReward")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V120MoonwellGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V120MoonwellPressureRose" type="Node2D" parent="Gameplay/Plates"]
+position = Vector2(6220, 5700)
+script = ExtResource("v120_plate")
+crate_path = NodePath("../../Carryables/V120MoonwellCrate")
+gate_path = NodePath("../../V120MoonwellGate")
+discovery_id = "v120_moor_moonwell_weight_seal"
+
+[node name="V120MoorWraith_01_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9448.64, 4036.51)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_01_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1626.7, 4440.41)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_01_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3078.42, 4370.85)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_01_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4813.77, 4645.06)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_02_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9059.65, 4768.6)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_02_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2135.05, 5470.71)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_02_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3742.72, 5502)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_02_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5469.36, 5710.12)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_03_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7570.9, 5559.61)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_03_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9488.7, 5952.03)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_03_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4849.32, 6285.54)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_03_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7135.42, 6276.53)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_04_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2148.53, 948.55)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_04_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3786.82, 803.33)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_04_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5003.3, 977.55)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_04_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5632, 1387)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_05_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(8720, 1340.76)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_05_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9663.78, 1869.58)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_05_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1186.52, 1578.02)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_05_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2906.27, 1598.83)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_06_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4379.13, 1811.32)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_06_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5895.91, 2033.05)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_06_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7612.7, 2231.8)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_06_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9551.63, 2539.89)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_07_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2575.52, 2593.57)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_07_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3900.81, 2705.54)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_07_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(6254.22, 2783.56)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_07_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9433.51, 3164.67)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_08_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2097.7, 3563.28)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_08_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4145.08, 3608.18)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_08_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5895.93, 3465.23)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_08_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9536.39, 3885.95)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_09_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(1718.63, 4281.4)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_09_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3272.12, 4163.47)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_09_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(4977.6, 4483.68)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_09_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(9211.24, 4618.42)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_10_00" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2302.91, 5276.3)
+max_health = 9.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_10_01" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3839.16, 5319.77)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_10_02" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(5590.88, 5531.43)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorWraith_10_03" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7625.11, 5329.4)
+max_health = 10.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 250.0
+
+[node name="V120MoorSentinel_01" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(5130, 4320)
+archetype = "mourner"
+maximum_health = 20.0
+strike_damage = 3.0
+move_speed = 67.0
+notice_range = 320.0
+windup_duration = 0.85
+is_elite = false
+
+[node name="V120MoorSentinel_02" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2463.75, 2308.5)
+archetype = "mourner"
+maximum_health = 20.0
+strike_damage = 3.0
+move_speed = 67.0
+notice_range = 320.0
+windup_duration = 0.85
+is_elite = false
+
+[node name="V120MoorSentinel_03" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(5876, 1079)
+archetype = "mourner"
+maximum_health = 20.0
+strike_damage = 3.0
+move_speed = 67.0
+notice_range = 320.0
+windup_duration = 0.85
+is_elite = false
+
+[node name="V120MoorSentinel_04" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(8370, 5737.5)
+archetype = "mourner"
+maximum_health = 20.0
+strike_damage = 3.0
+move_speed = 67.0
+notice_range = 320.0
+windup_duration = 0.85
+is_elite = false
+
+[node name="MoorWater1" type="Area2D" parent="Gameplay/WaterBodies"]
+position = Vector2(870.75, 3466.12)
+script = ExtResource("v121_water")
+water_kind = "marsh"
+water_label = "Western Mire"
+
+[node name="WaterPolygon" type="CollisionPolygon2D" parent="Gameplay/WaterBodies/MoorWater1"]
+polygon = PackedVector2Array(-870.75, -286.88, -567, -307.12, -229.5, -300.38, 108, -259.88, 506.25, -253.12, 857.25, -138.38, 870.75, 84.38, 695.25, 246.38, 438.75, 307.12, 60.75, 307.12, -290.25, 293.62, -702, 259.88, -870.75, 246.38)
+
+[node name="Ripples" type="Node2D" parent="Gameplay/WaterBodies/MoorWater1"]
+script = ExtResource("v121_ripples")
+
+[node name="MoorWater2" type="Area2D" parent="Gameplay/WaterBodies"]
+position = Vector2(7674.75, 4377.38)
+script = ExtResource("v121_water")
+water_kind = "pond"
+water_label = "Moonlit Basin"
+
+[node name="WaterPolygon" type="CollisionPolygon2D" parent="Gameplay/WaterBodies/MoorWater2"]
+polygon = PackedVector2Array(-1053, -124.88, -850.5, -435.38, -452.25, -482.62, 87.75, -482.62, 492.75, -401.62, 843.75, -280.12, 1053, 43.88, 897.75, 334.12, 540, 482.62, 33.75, 435.38, -405, 421.88, -810, 273.38, -1032.75, 131.62)
+
+[node name="Ripples" type="Node2D" parent="Gameplay/WaterBodies/MoorWater2"]
+script = ExtResource("v121_ripples")
+
+[node name="MoorWater3" type="Area2D" parent="Gameplay/WaterBodies"]
+position = Vector2(8869.5, 1927.12)
+script = ExtResource("v121_water")
+water_kind = "pond"
+water_label = "Northern Tarn"
+
+[node name="WaterPolygon" type="CollisionPolygon2D" parent="Gameplay/WaterBodies/MoorWater3"]
+polygon = PackedVector2Array(-553.5, -91.12, -364.5, -232.88, 54, -266.62, 297, -226.12, 553.5, -84.38, 513, 131.62, 317.25, 232.88, -81, 266.62, -337.5, 178.88)
+
+[node name="Ripples" type="Node2D" parent="Gameplay/WaterBodies/MoorWater3"]
+script = ExtResource("v121_ripples")
+
+[node name="MoorRain" type="Node2D" parent="."]
+script = ExtResource("v121_rain")
+intensity = 0.42
+wind = 53.0
+streak_count = 190
+
+; v1.23 return passage for the starting-room training gallery.
+[node name="From_moonwake_crypt" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1840, 6020)
+
+[node name="moonwake_crypt" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1840, 6210)
+script = ExtResource("portal")
+interaction_name = "Return to Moonwake Crypt"
+destination = "moonwake_crypt"
+opened = true
+
+; v1.24 optional Moonstep paths. The main roads remain fully traversable.
+; Each route requires three separate actual jumps. Thorn fences are jump-only.
+[node name="MoonstepRoutes" type="Node2D" parent="Gameplay"]
+
+[node name="WestLanternStep" type="Node2D" parent="Gameplay/MoonstepRoutes"]
+script = ExtResource("v124_route")
+route_title = "Lantern Steps"
+discovery_id = "v124_lantern_steps_reward"
+reward_data = ExtResource("v124_locket")
+reward_seed = 124310
+reward_quality = "rare"
+
+[node name="Step1" type="Marker2D" parent="Gameplay/MoonstepRoutes/WestLanternStep"]
+position = Vector2(3050, 5140)
+
+[node name="Step2" type="Marker2D" parent="Gameplay/MoonstepRoutes/WestLanternStep"]
+position = Vector2(3200, 5140)
+
+[node name="Step3" type="Marker2D" parent="Gameplay/MoonstepRoutes/WestLanternStep"]
+position = Vector2(3350, 5140)
+
+[node name="EastMoonlightStep" type="Node2D" parent="Gameplay/MoonstepRoutes"]
+script = ExtResource("v124_route")
+route_title = "Moonlight Crossing"
+discovery_id = "v124_moonlight_crossing_reward"
+reward_data = ExtResource("wand")
+reward_seed = 124720
+reward_quality = "rare"
+
+[node name="Step1" type="Marker2D" parent="Gameplay/MoonstepRoutes/EastMoonlightStep"]
+position = Vector2(6820, 3010)
+
+[node name="Step2" type="Marker2D" parent="Gameplay/MoonstepRoutes/EastMoonlightStep"]
+position = Vector2(6970, 3010)
+
+[node name="Step3" type="Marker2D" parent="Gameplay/MoonstepRoutes/EastMoonlightStep"]
+position = Vector2(7120, 3010)
+
+[node name="V124WestThorns1" type="StaticBody2D" parent="Gameplay/MoonstepRoutes"]
+position = Vector2(3125, 5140)
+script = ExtResource("v124_thorns")
+barrier_size = Vector2(28, 140)
+
+[node name="V124WestThorns2" type="StaticBody2D" parent="Gameplay/MoonstepRoutes"]
+position = Vector2(3275, 5140)
+script = ExtResource("v124_thorns")
+barrier_size = Vector2(28, 140)
+
+[node name="V124EastThorns1" type="StaticBody2D" parent="Gameplay/MoonstepRoutes"]
+position = Vector2(6895, 3010)
+script = ExtResource("v124_thorns")
+barrier_size = Vector2(28, 140)
+
+[node name="V124EastThorns2" type="StaticBody2D" parent="Gameplay/MoonstepRoutes"]
+position = Vector2(7045, 3010)
+script = ExtResource("v124_thorns")
+barrier_size = Vector2(28, 140)
+
+[node name="V124WestRouteWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2820, 4940)
+script = ExtResource("v120_waystone")
+region_title = "Lantern Steps"
+route_hint = "Three jump seals lead east. With a bow equipped, jump and fire a charged arrow at the glowing moon target."
+arrow_direction = Vector2(1, 0)
+
+[node name="V124EastRouteWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(6650, 2830)
+script = ExtResource("v120_waystone")
+region_title = "Moonlight Crossing"
+route_hint = "Three jump seals lead east. With a bow, jump and loose a charged arrow toward the moon target beyond the last fence."
+arrow_direction = Vector2(1, 0)
+
+[node name="V124MireLeapSeal" type="Node2D" parent="Gameplay/MoonstepRoutes"]
+position = Vector2(8250, 3550)
+script = ExtResource("v124_trial")
+discovery_id = "v124_mire_leap_reward"
+reward_data = ExtResource("v124_halberd")
+reward_seed = 124990
+reward_quality = "magic"
+trigger_radius = 43.0
+
+[node name="V124MireLeapWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8010, 3410)
+script = ExtResource("v120_waystone")
+region_title = "Mire Leap"
+route_hint = "One optional airborne seal east of here. Jump onto its center to claim a lost weapon."
+arrow_direction = Vector2(1, 0)
+
+; A few fragile moor roamers near (not on) the new optional lanes.
+[node name="V124WestWraithA" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2680, 4760)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 220.0
+
+[node name="V124WestWraithB" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(2820, 4650)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 220.0
+
+[node name="V124WestWraithC" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(3520, 4860)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 220.0
+
+[node name="V124EastWraithA" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(6530, 2600)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 220.0
+
+[node name="V124EastWraithB" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7340, 2770)
+max_health = 13.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 220.0
+
+[node name="V124EastWraithC" parent="Gameplay/Enemies" instance=ExtResource("wraith")]
+position = Vector2(7400, 3240)
+max_health = 11.0
+damage_to_player = 2.0
+move_speed = 66.0
+aggro_radius = 220.0
+
+; v1.28: Two optional bloom relays triggered by Grasping Roses (T).
+; Separate gates keep their rare treasure chests non-interactable until opened.
+[node name="V128BloomRelays" type="Node2D" parent="Gameplay"]
+
+[node name="V128WesternBloom" type="Node2D" parent="Gameplay/V128BloomRelays"]
+position = Vector2(1850, 3430)
+script = ExtResource("v128_bloom")
+discovery_id = "v128_western_bloom_released"
+gate_path = NodePath("../../V128WesternBloomGate")
+bloom_radius = 60.0
+
+[node name="V128WesternBloomGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(2040, 3570)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V128WesternBloomChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V128WesternBloomGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V128WesternBloomChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2080, 3690)
+chest_id = "v128_western_bloom_chest"
+loot_data = ExtResource("scythe")
+loot_seed = 128120
+guaranteed_quality = "rare"
+
+[node name="V128EasternBloom" type="Node2D" parent="Gameplay/V128BloomRelays"]
+position = Vector2(7730, 3770)
+script = ExtResource("v128_bloom")
+discovery_id = "v128_eastern_bloom_released"
+gate_path = NodePath("../../V128EasternBloomGate")
+bloom_radius = 62.0
+
+[node name="V128EasternBloomGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(8020, 3650)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V128EasternBloomChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V128EasternBloomGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V128EasternBloomChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8090, 3550)
+chest_id = "v128_eastern_bloom_chest"
+loot_data = ExtResource("wand")
+loot_seed = 128420
+guaranteed_quality = "rare"
+
+; Charged airborne bow shots (C + right-click) ignite these two moon seals.
+; Each target consumes one physical arrow and unlocks exactly one saved chest.
+[node name="V128BowTargets" type="Node2D" parent="Gameplay"]
+
+[node name="V128WestMoonTarget" type="Node2D" parent="Gameplay/V128BowTargets"]
+position = Vector2(3500, 5140)
+script = ExtResource("v128_target")
+discovery_id = "v128_west_archery_seal"
+gate_path = NodePath("../../V128WestArcheryGate")
+trigger_radius = 36.0
+
+[node name="V128WestArcheryGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(3650, 5070)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V128WestArcheryChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V128WestArcheryGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V128WestArcheryChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(3750, 5000)
+chest_id = "v128_west_archery_chest"
+loot_data = ExtResource("v128_thornrose")
+loot_seed = 128560
+guaranteed_quality = "rare"
+
+[node name="V128EastMoonTarget" type="Node2D" parent="Gameplay/V128BowTargets"]
+position = Vector2(7310, 3010)
+script = ExtResource("v128_target")
+discovery_id = "v128_east_archery_seal"
+gate_path = NodePath("../../V128EastArcheryGate")
+trigger_radius = 36.0
+
+[node name="V128EastArcheryGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(7390, 2890)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V128EastArcheryChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V128EastArcheryGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V128EastArcheryChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7500, 2840)
+chest_id = "v128_east_archery_chest"
+loot_data = ExtResource("v128_moonveil")
+loot_seed = 128770
+guaranteed_quality = "rare"
+
+; Spell and archery tutorial directions on optional detours, without blocking main roads.
+[node name="V128WestMireWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(1390, 3110)
+script = ExtResource("v120_waystone")
+region_title = "Mireglass Water"
+route_hint = "Moonfall (Z) freezes shallow pools briefly. Grasping Roses (T) can awaken a dormant rose seal east of the mire."
+arrow_direction = Vector2(1, 0)
+
+[node name="V128EastBasinWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7470, 3520)
+script = ExtResource("v120_waystone")
+region_title = "Moonlit Basin"
+route_hint = "Freeze the water with Moonfall. A sleeping rose relay close to the northern shore responds to Grasping Roses."
+arrow_direction = Vector2(1, 0)
+
+; v1.29: two deliberately weak procedural enemy silhouettes in eight small, spaced pockets.
+
+[node name="V129HushMoth00_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(1785, 1355)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129100
+
+[node name="V129HushMoth00_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(1922, 1345)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129101
+
+[node name="V129HushMoth00_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(1853, 1233)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129102
+
+[node name="V129HushMoth01_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(3965, 1885)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129110
+
+[node name="V129HushMoth01_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(4102, 1875)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129111
+
+[node name="V129HushMoth01_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(4033, 1763)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129112
+
+[node name="V129HushMoth02_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6286, 927)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129120
+
+[node name="V129HushMoth02_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6732, 979)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129121
+
+[node name="V129HushMoth02_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7073, 1219)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129122
+
+[node name="V129HushMoth03_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(8875, 4935)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129130
+
+[node name="V129HushMoth03_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(9012, 4925)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129131
+
+[node name="V129HushMoth03_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(8907.6, 4845.4)
+creature_kind = "hush_moth"
+max_health = 13.0
+chase_speed = 112.0
+attack_damage = 3.0
+alert_distance = 320.0
+loot_seed = 129132
+
+[node name="V129GloomLantern04_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2825, 4455)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129140
+
+[node name="V129GloomLantern04_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2962, 4445)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129141
+
+[node name="V129GloomLantern04_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2893, 4333)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129142
+
+[node name="V129GloomLantern05_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(5065, 5475)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129150
+
+[node name="V129GloomLantern05_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(5202, 5465)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129151
+
+[node name="V129GloomLantern05_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(5133, 5353)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129152
+
+[node name="V129GloomLantern06_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7507.4, 5687.1)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129160
+
+[node name="V129GloomLantern06_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7709.2, 5546.1)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129161
+
+[node name="V129GloomLantern06_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7689.8, 5454.3)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129162
+
+[node name="V129GloomLantern07_00" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(9215, 3035)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129170
+
+[node name="V129GloomLantern07_01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(9352, 3025)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129171
+
+[node name="V129GloomLantern07_02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(9283, 2913)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+chase_speed = 63.0
+attack_damage = 4.0
+alert_distance = 280.0
+loot_seed = 129172
+
+; v1.30: optional multi-spell discoveries. These do not obstruct the main route.
+; Hook (F) -> Grasping Roses (T) -> Moonfall (Z). Progress survives reloads.
+[node name="V130WestTriune" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(4100, 2200)
+script = ExtResource("v130_triune")
+discovery_id = "v130_west_reliquary"
+gate_path = NodePath("../../V130WestTriuneGate")
+
+[node name="V130WestTriuneGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(4280, 2180)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V130WestTriuneChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V130WestTriuneGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V130WestTriuneChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(4350, 2120)
+chest_id = "v130_west_triune_chest"
+loot_data = ExtResource("v128_thornrose")
+loot_seed = 130251
+guaranteed_quality = "rare"
+
+[node name="V130WestTriuneWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(3890, 2420)
+script = ExtResource("v120_waystone")
+region_title = "THE THREEFOLD ROSE"
+route_hint = "Find the rose north-east. Hook it (F), bloom it (T), then freeze it (Z)."
+arrow_direction = Vector2(0.73, -0.68)
+
+[node name="V130EastTriune" type="Node2D" parent="Gameplay/HookAnchors"]
+position = Vector2(8700, 4550)
+script = ExtResource("v130_triune")
+discovery_id = "v130_east_reliquary"
+gate_path = NodePath("../../V130EastTriuneGate")
+
+[node name="V130EastTriuneGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(8880, 4560)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V130EastTriuneChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V130EastTriuneGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V130EastTriuneChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8940, 4520)
+chest_id = "v130_east_triune_chest"
+loot_data = ExtResource("wand")
+loot_seed = 130704
+guaranteed_quality = "rare"
+
+[node name="V130EastTriuneWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8540, 4750)
+script = ExtResource("v120_waystone")
+region_title = "THE FROSTED THORN"
+route_hint = "An old bloom east of here answers the hook, rose magic, and Moonfall—in that order."
+arrow_direction = Vector2(0.67, -0.74)
+
+; v1.31: optional Moonshot Bloom shrines. Shoot the disc with a CHARGED
+; arrow while jumping, then cast Grasping Roses near it. Saved stage by stage.
+; Neither challenge blocks the paths between Briar Hollow and Moonthorn Woods.
+[node name="V131MoonshotBloom" type="Node2D" parent="Gameplay"]
+
+[node name="V131WillowMoonDisc" type="Node2D" parent="Gameplay/V131MoonshotBloom"]
+position = Vector2(2480, 1370)
+script = ExtResource("v131_moonbloom")
+discovery_id = "v131_willow_moonbloom"
+gate_path = NodePath("../../V131WillowMoonGate")
+trigger_radius = 38.0
+bloom_radius = 80.0
+
+[node name="V131WillowMoonGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(2710, 1450)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V131WillowMoonChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V131WillowMoonGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V131WillowMoonChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2790, 1480)
+chest_id = "v131_willow_moonbloom_chest"
+loot_data = ExtResource("v128_thornrose")
+loot_seed = 131216
+guaranteed_quality = "rare"
+
+[node name="V131WillowWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2240, 1640)
+script = ExtResource("v120_waystone")
+region_title = "WILLOW MOONBLOOM"
+route_hint = "Jump (C), shoot the disc with a charged bow, then awaken it with Grasping Roses (T)."
+arrow_direction = Vector2(0.68, -0.73)
+
+[node name="V131DrownedMoonDisc" type="Node2D" parent="Gameplay/V131MoonshotBloom"]
+position = Vector2(7980, 5490)
+script = ExtResource("v131_moonbloom")
+discovery_id = "v131_drowned_moonbloom"
+gate_path = NodePath("../../V131DrownedMoonGate")
+trigger_radius = 38.0
+bloom_radius = 80.0
+
+[node name="V131DrownedMoonGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(8170, 5480)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V131DrownedMoonChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V131DrownedMoonGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V131DrownedMoonChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8260, 5520)
+chest_id = "v131_drowned_moonbloom_chest"
+loot_data = ExtResource("wand")
+loot_seed = 131799
+guaranteed_quality = "rare"
+
+[node name="V131DrownedWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7740, 5730)
+script = ExtResource("v120_waystone")
+region_title = "DROWNED MOONBLOOM"
+route_hint = "An airborne charged bow shot wakes the disc; Grasping Roses brings the bloom."
+arrow_direction = Vector2(0.71, -0.70)
+
+; v1.32 MAJOR UPDATE: the Four Laments are optional, persistent memorials.
+; Each is an editor-placeable object. No mandatory spells or jumps are needed.
+[node name="V132Vigil" type="Node2D" parent="Gameplay"]
+
+[node name="V132WillowLament" type="Node2D" parent="Gameplay/V132Vigil"]
+position = Vector2(1780, 1940)
+script = ExtResource("v132_memory")
+memory_id = "v132_vigil_willow"
+memory_title = "WILLOW LAMENT"
+hint_text = "Under the weeping branches, the first lost bell still waits."
+glow_color = Color(0.91, 0.71, 0.84, 1)
+
+[node name="V132GravesLament" type="Node2D" parent="Gameplay/V132Vigil"]
+position = Vector2(3400, 5430)
+script = ExtResource("v132_memory")
+memory_id = "v132_vigil_graves"
+memory_title = "MOURNER'S LAMENT"
+hint_text = "The second bell is buried in the southern grass."
+glow_color = Color(0.74, 0.75, 0.94, 1)
+
+[node name="V132FenLament" type="Node2D" parent="Gameplay/V132Vigil"]
+position = Vector2(7920, 4800)
+script = ExtResource("v132_memory")
+memory_id = "v132_vigil_fen"
+memory_title = "DROWNED LAMENT"
+hint_text = "The third bell sings beside the eastern fen."
+glow_color = Color(0.57, 0.83, 0.79, 1)
+
+[node name="V132RuinsLament" type="Node2D" parent="Gameplay/V132Vigil"]
+position = Vector2(8770, 1480)
+script = ExtResource("v132_memory")
+memory_id = "v132_vigil_ruins"
+memory_title = "CATHEDRAL LAMENT"
+hint_text = "The last bell watches the northeastern ruins."
+glow_color = Color(0.97, 0.81, 0.60, 1)
+
+[node name="V132MoorWarden" parent="Gameplay/V132Vigil" instance=ExtResource("v132_boss")]
+position = Vector2(6400, 1570)
+altar_path = NodePath("../V132WardenAltar")
+maximum_health = 270.0
+
+[node name="V132WardenAltar" type="Node2D" parent="Gameplay/V132Vigil"]
+position = Vector2(6260, 1850)
+script = ExtResource("v132_altar")
+boss_path = NodePath("../V132MoorWarden")
+reward_gate_path = NodePath("../../V132WardenGate")
+second_reward_gate_path = NodePath("../../V132WardenCenserGate")
+bonus_gate_path = NodePath("../../V132MidwayGate")
+
+; Two memorials release the moonbow. Defeating the Warden unlocks two
+; exclusive final rewards and the second cosmetic attunement shrine.
+[node name="V132MidwayGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(4180, 5140)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V132MidwayChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V132MidwayGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V132MidwayChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(4225, 5180)
+chest_id = "v132_midway_moonbow"
+loot_data = ExtResource("v132_bow")
+loot_seed = 132420
+guaranteed_quality = "unique"
+
+[node name="V132WardenGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(6560, 2130)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V132WardenChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V132WardenGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V132WardenChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(6605, 2185)
+chest_id = "v132_warden_reaper_reward"
+loot_data = ExtResource("v132_reaper")
+loot_seed = 132750
+guaranteed_quality = "unique"
+
+[node name="V132WardenCenserGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(6360, 2130)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V132CenserChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V132WardenCenserGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V132CenserChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(6310, 2185)
+chest_id = "v132_warden_censer_reward"
+loot_data = ExtResource("v132_censer")
+loot_seed = 132767
+guaranteed_quality = "unique"
+
+[node name="V132Attunements" type="Node2D" parent="Gameplay"]
+
+[node name="V132Veilforge" type="Node2D" parent="Gameplay/V132Attunements"]
+position = Vector2(6720, 2220)
+script = ExtResource("v132_attune")
+attunement_id = "v132_moor_veilforge_used"
+infusion_salt = 132919
+requires_warden_defeat = true
+
+; Elite hunters are optional and placed away from the player start/portals.
+; They use existing illustrated archetypes and normal combat telegraphs.
+[node name="V132WestSentinel" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(2120, 2120)
+archetype = "blade_hunter"
+maximum_health = 47.0
+strike_damage = 8.0
+is_elite = true
+loot_template = ExtResource("v128_thornrose")
+loot_seed = 132031
+loot_quality = "magic"
+
+[node name="V132SouthSentinel" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(3630, 5510)
+archetype = "occultist"
+maximum_health = 49.0
+strike_damage = 8.0
+is_elite = true
+loot_template = ExtResource("wand")
+loot_seed = 132037
+loot_quality = "magic"
+
+[node name="V132EastSentinel" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(8150, 4660)
+archetype = "blade_hunter"
+maximum_health = 53.0
+strike_damage = 8.5
+is_elite = true
+loot_template = ExtResource("v128_moonveil")
+loot_seed = 132041
+loot_quality = "magic"
+
+[node name="V132NorthSentinel" parent="Gameplay/Enemies" instance=ExtResource("hunter")]
+position = Vector2(8530, 1770)
+archetype = "occultist"
+maximum_health = 51.0
+strike_damage = 8.5
+is_elite = true
+loot_template = ExtResource("wand")
+loot_seed = 132049
+loot_quality = "magic"
+
+[node name="V132VigilWaystoneWillow" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(1560, 2190)
+script = ExtResource("v120_waystone")
+region_title = "FOUR LAMENTS · WEST"
+route_hint = "Seek the first memorial beside the willow. Three more lie to the south, east and north."
+arrow_direction = Vector2(0.7, -0.7)
+
+[node name="V132VigilWaystoneGraves" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(3120, 5580)
+script = ExtResource("v120_waystone")
+region_title = "THE MOURNER'S BELL"
+route_hint = "Two awakened memorials open the moonbow cache. Four awaken the central Warden altar."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V132VigilWaystoneFen" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7540, 4920)
+script = ExtResource("v120_waystone")
+region_title = "THE DROWNED BELL"
+route_hint = "The eastern fen remembers. Follow the road northwest to the Warden's altar."
+arrow_direction = Vector2(-0.6, -0.8)
+
+[node name="V132VigilWaystoneRuins" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8560, 1180)
+script = ExtResource("v120_waystone")
+region_title = "THE LAST LAMENT"
+route_hint = "With four memorials awake, consult the altar southwest of the ruins. Jump over the Warden's ground pulse."
+arrow_direction = Vector2(-0.7, 0.7)
+
+[node name="V132VigilWaystoneWarden" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(6010, 2200)
+script = ExtResource("v120_waystone")
+region_title = "THE MOOR WARDEN"
+route_hint = "E at the altar with four Laments. He telegraphs three attacks: evade, jump the ground pulse, or interrupt with the hook."
+arrow_direction = Vector2(0.5, -0.87)
+
+; Lanterns mark the Warden's open arena; they have no collider, so players
+; can still run and dodge freely between them.
+[node name="V132WardenLanternWest" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(5890, 1490)
+script = ExtResource("v120_lantern")
+lamp_color = Color(0.67, 0.53, 0.86, 1)
+glow_strength = 1.1
+
+[node name="V132WardenLanternEast" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(6900, 1490)
+script = ExtResource("v120_lantern")
+lamp_color = Color(0.67, 0.53, 0.86, 1)
+glow_strength = 1.1
+
+[node name="V132WardenLanternSouthWest" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(5900, 2050)
+script = ExtResource("v120_lantern")
+lamp_color = Color(0.78, 0.58, 0.81, 1)
+glow_strength = 1.05
+
+[node name="V132WardenLanternSouthEast" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(6900, 2050)
+script = ExtResource("v120_lantern")
+lamp_color = Color(0.78, 0.58, 0.81, 1)
+glow_strength = 1.05
+
+[node name="V132WardenApproachRest" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(5490, 2420)
+script = ExtResource("v117_shrine")
+shrine_id = "v132_warden_approach_rest"
+
+[node name="V132SouthernMournerRest" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(3100, 5910)
+script = ExtResource("v117_shrine")
+shrine_id = "v132_southern_mourner_rest"
+
+; v1.33 AFTERGLOW: these three echoes become responsive only AFTER the
+; Moor Warden has been defeated. Each has its own saved discovery flag.
+; This side quest uses the already-learned hook, Moonfall and airborne bow.
+[node name="V133Afterglow" type="Node2D" parent="Gameplay"]
+
+[node name="V133BellglassVault" type="Node2D" parent="Gameplay/V133Afterglow"]
+position = Vector2(6090, 2550)
+script = ExtResource("v133_vault")
+gate_path = NodePath("../V133BellglassGate")
+
+[node name="V133WillowHookEcho" type="Node2D" parent="Gameplay/V133Afterglow"]
+position = Vector2(2650, 4050)
+script = ExtResource("v133_echo")
+echo_kind = "hook"
+echo_id = "v133_bellglass_hook"
+echo_title = "THE WESTERN THREAD"
+vault_path = NodePath("../V133BellglassVault")
+
+[node name="V133FenFrostEcho" type="Node2D" parent="Gameplay/V133Afterglow"]
+position = Vector2(7070, 4550)
+script = ExtResource("v133_echo")
+echo_kind = "frost"
+echo_id = "v133_bellglass_frost"
+echo_title = "THE DROWNED FROST"
+vault_path = NodePath("../V133BellglassVault")
+
+[node name="V133RuinsBowEcho" type="Node2D" parent="Gameplay/V133Afterglow"]
+position = Vector2(8620, 2770)
+script = ExtResource("v133_echo")
+echo_kind = "airborne_bow"
+echo_id = "v133_bellglass_bow"
+echo_title = "THE SKYWARD NOTE"
+vault_path = NodePath("../V133BellglassVault")
+trigger_radius = 43.0
+
+[node name="V133BellglassGate" type="StaticBody2D" parent="Gameplay/V133Afterglow"]
+position = Vector2(6165, 2655)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../../TreasureChests/V133BellglassChest")
+gate_width = 144.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V133Afterglow/V133BellglassGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V133BellglassChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(6245, 2700)
+chest_id = "v133_warden_bellglass_reward"
+loot_data = ExtResource("v133_charm")
+loot_seed = 133331
+guaranteed_quality = "unique"
+
+; Navigation stays light: existing paths remain fully open, and the three
+; new waystones are hints rather than blocking mandatory travel.
+[node name="V133EchoWaystoneWest" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2400, 4270)
+script = ExtResource("v120_waystone")
+region_title = "AFTER THE WARDEN · WESTERN THREAD"
+route_hint = "After the Warden falls, aim the rose-hook at the bellglass near the western path."
+arrow_direction = Vector2(0.75, -0.65)
+
+[node name="V133EchoWaystoneFen" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(6770, 4870)
+script = ExtResource("v120_waystone")
+region_title = "AFTER THE WARDEN · DROWNED FROST"
+route_hint = "The eastern bellglass listens for Moonfall. Bring a learned frost spell and a wand."
+arrow_direction = Vector2(0.7, -0.7)
+
+[node name="V133EchoWaystoneRuins" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8210, 3040)
+script = ExtResource("v120_waystone")
+region_title = "AFTER THE WARDEN · SKYWARD NOTE"
+route_hint = "Charge an arrow while jumping and strike the small bellglass beneath the eastern ruins."
+arrow_direction = Vector2(0.85, -0.52)
+
+[node name="V133EchoWaystoneVault" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(5910, 2830)
+script = ExtResource("v120_waystone")
+region_title = "BELLGLASS RELIQUARY"
+route_hint = "Three post-Warden echoes will release the gate southeast of the arena."
+arrow_direction = Vector2(0.87, -0.49)
+
+[node name="V133VaultLanternWest" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(5940, 2580)
+script = ExtResource("v120_lantern")
+lamp_color = Color(0.68, 0.68, 0.94, 1)
+glow_strength = 1.05
+
+[node name="V133VaultLanternEast" type="Node2D" parent="Gameplay/PathLanterns"]
+position = Vector2(6360, 2630)
+script = ExtResource("v120_lantern")
+lamp_color = Color(0.75, 0.61, 0.89, 1)
+glow_strength = 1.05
+
+; v1.34: The optional Vesper Vigil is a post-Warden hold-ground encounter.
+; Temporary enemies spawn only while the player performs the ritual.
+[node name="V134VesperVigil" type="Node2D" parent="Gameplay"]
+
+[node name="V134VesperCircle" type="Node2D" parent="Gameplay/V134VesperVigil"]
+position = Vector2(3200, 3750)
+script = ExtResource("v134_vigil")
+gate_path = NodePath("../../V134VesperGate")
+wave_container_path = NodePath("../../Enemies")
+
+[node name="V134VesperGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(3460, 3860)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V134VesperChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V134VesperGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V134VesperChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(3510, 3920)
+chest_id = "v134_vesperglass_wand_reward"
+loot_data = ExtResource("v134_wand")
+loot_seed = 134317
+guaranteed_quality = "unique"
+
+[node name="V134WarningStone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2960, 4150)
+script = ExtResource("v120_waystone")
+region_title = "THE LAST VIGIL"
+route_hint = "The sleeping circle lies northeast. After the Warden falls, hold it against the hush of the moor."
+arrow_direction = Vector2(0.7, -0.6)
+
+[node name="V134InscriptionOne" type="Node2D" parent="Gameplay/V134VesperVigil"]
+position = Vector2(2800, 3550)
+script = ExtResource("v134_slab")
+slab_title = "THE VIGIL'S FIRST HOUR"
+inscription = "The first bell called the living home. The second kept the lost from wandering."
+
+[node name="V134InscriptionTwo" type="Node2D" parent="Gameplay/V134VesperVigil"]
+position = Vector2(3660, 4170)
+script = ExtResource("v134_slab")
+slab_title = "THE VIGIL'S LAST HOUR"
+inscription = "When the fourth bell fell silent, the final watch was left to one fragile ghost."
+
+; BEGIN V135 FALLING WORLD
+; Supports use visible, individually editable StaticBody hitboxes.
+[node name="V135FallingWorld" type="Node2D" parent="Gameplay"]
+
+[node name="V135WestWidowBeam" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(1550, 2050)
+script = ExtResource("v135_support")
+site_id = "v135_WestWidowBeam"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedWidowMoth")
+display_name = "Widow Beam"
+activation = "hook"
+material_kind = "timber"
+landing_offset = Vector2(165, 145)
+collapse_radius = 108.0
+damage = 47.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135WestWidowBeam"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135WestWidowBeam/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135WestHangingBell" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(2850, 1880)
+script = ExtResource("v135_support")
+site_id = "v135_WestHangingBell"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedBellLantern")
+display_name = "Hanging Mourning Bell"
+activation = "airborne_bow"
+material_kind = "bell"
+landing_offset = Vector2(-120, 180)
+collapse_radius = 118.0
+damage = 51.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135WestHangingBell"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135WestHangingBell/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135WestThornBrace" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(2120, 4780)
+script = ExtResource("v135_support")
+site_id = "v135_WestThornBrace"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedThornMoth")
+display_name = "Rose-Lashed Scaffold"
+activation = "roses"
+material_kind = "thorn"
+landing_offset = Vector2(190, -125)
+collapse_radius = 106.0
+damage = 46.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135WestThornBrace"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135WestThornBrace/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135EastBrittleShelf" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(7560, 1600)
+script = ExtResource("v135_support")
+site_id = "v135_EastBrittleShelf"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedIceMoth")
+display_name = "Frostwept Shelf"
+activation = "frost"
+material_kind = "ice"
+landing_offset = Vector2(-130, 165)
+collapse_radius = 116.0
+damage = 53.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135EastBrittleShelf"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135EastBrittleShelf/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135EastRottenRig" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(8230, 4470)
+script = ExtResource("v135_support")
+site_id = "v135_EastRottenRig"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedRigLantern")
+display_name = "Crumbling Watch-Rig"
+activation = "hook"
+material_kind = "timber"
+landing_offset = Vector2(-200, 125)
+collapse_radius = 118.0
+damage = 49.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135EastRottenRig"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135EastRottenRig/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135EastColdJoint" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(6830, 5540)
+script = ExtResource("v135_support")
+site_id = "v135_EastColdJoint"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedColdMoth")
+display_name = "Frozen Arch Joint"
+activation = "frost_then_hook"
+material_kind = "masonry"
+landing_offset = Vector2(-165, -120)
+collapse_radius = 122.0
+damage = 56.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135EastColdJoint"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135EastColdJoint/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135BellsOfTheHollow" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(4900, 1440)
+script = ExtResource("v135_support")
+site_id = "v135_BellsOfTheHollow"
+display_name = "Hollow Bells"
+activation = "airborne_bow"
+material_kind = "bell"
+landing_offset = Vector2(155, 130)
+collapse_radius = 105.0
+damage = 47.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135BellsOfTheHollow"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135BellsOfTheHollow/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135MireLooseRafter" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(5590, 4110)
+script = ExtResource("v135_support")
+site_id = "v135_MireLooseRafter"
+display_name = "Loose Moor Rafter"
+activation = "hook"
+material_kind = "timber"
+landing_offset = Vector2(-155, 150)
+collapse_radius = 101.0
+damage = 44.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135MireLooseRafter"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135MireLooseRafter/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135CrackedRoseVault" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(3750, 5630)
+script = ExtResource("v135_support")
+site_id = "v135_CrackedRoseVault"
+display_name = "Cracked Rose Vault"
+activation = "roses"
+material_kind = "masonry"
+landing_offset = Vector2(190, -90)
+collapse_radius = 116.0
+damage = 53.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135CrackedRoseVault"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135CrackedRoseVault/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135FrostBelfry" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(9090, 3320)
+script = ExtResource("v135_support")
+site_id = "v135_FrostBelfry"
+display_name = "Frost Belfry"
+activation = "frost"
+material_kind = "ice"
+landing_offset = Vector2(-170, 65)
+collapse_radius = 112.0
+damage = 49.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135FrostBelfry"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135FrostBelfry/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135MossbridgeGirder" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(4110, 2800)
+script = ExtResource("v135_support")
+site_id = "v135_MossbridgeGirder"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedMossMoth")
+display_name = "Mossbridge Girder"
+activation = "hook"
+material_kind = "timber"
+landing_offset = Vector2(120, 150)
+collapse_radius = 108.0
+damage = 47.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135MossbridgeGirder"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135MossbridgeGirder/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135WitheredOrnament" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(6570, 3680)
+script = ExtResource("v135_support")
+site_id = "v135_WitheredOrnament"
+perched_enemy_path = NodePath("../../Enemies/V135PerchedOrnamentLantern")
+display_name = "Withered Ornament"
+activation = "hook"
+material_kind = "bell"
+landing_offset = Vector2(165, -115)
+collapse_radius = 103.0
+damage = 44.0
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V135FallingWorld/V135WitheredOrnament"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135FallingWorld/V135WitheredOrnament/HookBody"]
+shape = SubResource("v135_anchor_shape")
+
+[node name="V135WestSalvageSeal" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(2670, 2740)
+script = ExtResource("v135_seal")
+required_sites = PackedStringArray("v135_WestWidowBeam", "v135_WestHangingBell", "v135_WestThornBrace")
+gate_path = NodePath("../../V135WestSalvageGate")
+title = "West Salvage"
+
+[node name="V135WestSalvageGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(2790, 2770)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V135WestSalvageChest")
+gate_width = 152.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135WestSalvageGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V135WestSalvageChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2880, 2820)
+chest_id = "v135_westsalvage_reward"
+loot_data = ExtResource("v135_knot")
+loot_seed = 135510
+guaranteed_quality = "unique"
+
+[node name="V135EastSalvageSeal" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(7630, 4950)
+script = ExtResource("v135_seal")
+required_sites = PackedStringArray("v135_EastBrittleShelf", "v135_EastRottenRig", "v135_EastColdJoint")
+gate_path = NodePath("../../V135EastSalvageGate")
+title = "East Salvage"
+
+[node name="V135EastSalvageGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(7770, 5010)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V135EastSalvageChest")
+gate_width = 152.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V135EastSalvageGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V135EastSalvageChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7870, 5060)
+chest_id = "v135_eastsalvage_reward"
+loot_data = ExtResource("v135_moonbow")
+loot_seed = 135520
+guaranteed_quality = "unique"
+
+[node name="V135WestWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(1040, 2400)
+script = ExtResource("v120_waystone")
+region_title = "THE WIDOW SUPPORTS"
+route_hint = "Pull the rotted beam with F. A jump-shot can loosen a hanging bell; Grasping Roses claims thorn braces. Combine all three for a forgotten bow."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V135EastWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8560, 5230)
+script = ExtResource("v120_waystone")
+region_title = "THE BROKEN WATCH"
+route_hint = "Moonfall weakens old shelves. Hook rotten scaffolds. On frozen arches, first cast Z, then pull with F to bring the stone down."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V135CenterWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(4830, 3270)
+script = ExtResource("v120_waystone")
+region_title = "FALLING WORLD"
+route_hint = "Enemies standing beneath loose masonry can be caught by the fall. Watch for the warning circle, then step away or jump. Falling rubble briefly provides cover."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V135SouthWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(3780, 5380)
+script = ExtResource("v120_waystone")
+region_title = "SALVAGE IN THE MIST"
+route_hint = "Arrows, roses, frost, hooks and even hurled crates can set the old supports loose. Different approaches may reach the same result."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V135BrokenPledgeInscription" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(1740, 2260)
+script = ExtResource("v134_slab")
+slab_title = "THE BRIDGEKEEPER"
+inscription = "He cut the ropes as the wraiths crossed. The living called him a traitor; the dead called him a savior."
+
+[node name="V135FrostTollInscription" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(7460, 1800)
+script = ExtResource("v134_slab")
+slab_title = "THE FROZEN TITHE"
+inscription = "A winter tax of salt, iron, and moonlight. The bell was never rung, but the roof still remembers."
+
+[node name="V135LastCarpenterInscription" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(5720, 4310)
+script = ExtResource("v134_slab")
+slab_title = "THE LAST CARPENTER"
+inscription = "The moor is not empty. Every beam remembers the hand that placed it, and every fall may shelter another."
+
+[node name="V135RoseAshInscription" type="Node2D" parent="Gameplay/V135FallingWorld"]
+position = Vector2(3730, 5710)
+script = ExtResource("v134_slab")
+slab_title = "ASHES UNDER ROSES"
+inscription = "When she spoke the spell, the roots gripped the old scaffold. None of the hunters heard the wood begin to split."
+
+[node name="V135SalvageScout01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(1680, 2195)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135601
+loot_template = null
+
+[node name="V135SalvageScout02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(1880, 2350)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135602
+loot_template = null
+
+[node name="V135SalvageScout03" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2670, 2180)
+creature_kind = "gloom_lantern"
+max_health = 17.0
+attack_damage = 3.5
+loot_seed = 135603
+loot_template = null
+
+[node name="V135SalvageScout04" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2270, 4630)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135604
+loot_template = null
+
+[node name="V135SalvageScout05" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7550, 1840)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135605
+loot_template = null
+
+[node name="V135SalvageScout06" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7740, 1940)
+creature_kind = "gloom_lantern"
+max_health = 17.0
+attack_damage = 3.5
+loot_seed = 135606
+loot_template = null
+
+[node name="V135SalvageScout07" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(8220, 4570)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135607
+loot_template = null
+
+[node name="V135SalvageScout08" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(8290, 4680)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135608
+loot_template = null
+
+[node name="V135SalvageScout09" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6890, 5370)
+creature_kind = "gloom_lantern"
+max_health = 17.0
+attack_damage = 3.5
+loot_seed = 135609
+loot_template = null
+
+[node name="V135SalvageScout10" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6750, 5280)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135610
+loot_template = null
+
+[node name="V135SalvageScout11" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(4700, 1620)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135611
+loot_template = null
+
+[node name="V135SalvageScout12" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(5840, 4240)
+creature_kind = "gloom_lantern"
+max_health = 17.0
+attack_damage = 3.5
+loot_seed = 135612
+loot_template = null
+
+[node name="V135SalvageScout13" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(3920, 5540)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135613
+loot_template = null
+
+[node name="V135SalvageScout14" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(9080, 3420)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135614
+loot_template = null
+
+[node name="V135SalvageScout15" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(4390, 3030)
+creature_kind = "gloom_lantern"
+max_health = 17.0
+attack_damage = 3.5
+loot_seed = 135615
+loot_template = null
+
+[node name="V135SalvageScout16" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6540, 3780)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_seed = 135616
+loot_template = null
+
+; Eight fragile enemies perched on old supports. Breaking a support drops
+; its occupant, allowing a creative one-action environmental takedown.
+[node name="V135PerchedWidowMoth" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(1604, 2073)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 2.5
+loot_template = null
+loot_seed = 135701
+
+[node name="V135PerchedBellLantern" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2888, 1902)
+creature_kind = "gloom_lantern"
+max_health = 17.0
+attack_damage = 3.0
+loot_template = null
+loot_seed = 135702
+
+[node name="V135PerchedThornMoth" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2160, 4808)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_template = null
+loot_seed = 135703
+
+[node name="V135PerchedIceMoth" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7603, 1620)
+creature_kind = "hush_moth"
+max_health = 11.0
+attack_damage = 2.5
+loot_template = null
+loot_seed = 135704
+
+[node name="V135PerchedRigLantern" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(8275, 4488)
+creature_kind = "gloom_lantern"
+max_health = 18.0
+attack_damage = 3.0
+loot_template = null
+loot_seed = 135705
+
+[node name="V135PerchedColdMoth" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6870, 5560)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 2.5
+loot_template = null
+loot_seed = 135706
+
+[node name="V135PerchedMossMoth" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(4142, 2820)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 2.5
+loot_template = null
+loot_seed = 135707
+
+[node name="V135PerchedOrnamentLantern" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6603, 3708)
+creature_kind = "gloom_lantern"
+max_health = 18.0
+attack_damage = 3.0
+loot_template = null
+loot_seed = 135708
+
+
+; BEGIN V136 CHAINFALL — editor-editable structures and cover
+[node name="V136Chainfall" type="Node2D" parent="Gameplay"]
+
+[node name="V136WestFirstRafter" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(3100, 2900)
+script = ExtResource("v136_chain")
+site_id = "v136_west_first"
+display_name = "Western Falling Link 1"
+activation = "hook"
+material_kind = "timber"
+landing_offset = Vector2(155, 40)
+collapse_radius = 103.0
+damage = 42.0
+starting_support = true
+chain_only = false
+chain_next_path = NodePath("../V136WestSecondBeam")
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V136Chainfall/V136WestFirstRafter"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136WestFirstRafter/HookBody"]
+shape = SubResource("v136_anchor_shape")
+
+[node name="V136WestSecondBeam" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(3360, 2980)
+script = ExtResource("v136_chain")
+site_id = "v136_west_second"
+display_name = "Western Falling Link 2"
+activation = "hook"
+material_kind = "masonry"
+landing_offset = Vector2(155, 40)
+collapse_radius = 105.0
+damage = 42.0
+starting_support = false
+chain_only = true
+accepted_source_site = "v136_west_first"
+chain_next_path = NodePath("../V136WestFinalBell")
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V136Chainfall/V136WestSecondBeam"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136WestSecondBeam/HookBody"]
+shape = SubResource("v136_anchor_shape")
+
+[node name="V136WestFinalBell" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(3620, 3060)
+script = ExtResource("v136_chain")
+site_id = "v136_west_final"
+display_name = "Western Falling Link 3"
+activation = "hook"
+material_kind = "bell"
+landing_offset = Vector2(145, 55)
+collapse_radius = 106.0
+damage = 42.0
+starting_support = false
+chain_only = true
+accepted_source_site = "v136_west_second"
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V136Chainfall/V136WestFinalBell"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136WestFinalBell/HookBody"]
+shape = SubResource("v136_anchor_shape")
+
+[node name="V136EastFirstBrace" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(7300, 3880)
+script = ExtResource("v136_chain")
+site_id = "v136_east_first"
+display_name = "Eastern Falling Link 1"
+activation = "frost_then_hook"
+material_kind = "ice"
+landing_offset = Vector2(150, 40)
+collapse_radius = 108.0
+damage = 42.0
+starting_support = true
+chain_only = false
+chain_next_path = NodePath("../V136EastSecondArch")
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V136Chainfall/V136EastFirstBrace"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136EastFirstBrace/HookBody"]
+shape = SubResource("v136_anchor_shape")
+
+[node name="V136EastSecondArch" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(7560, 3970)
+script = ExtResource("v136_chain")
+site_id = "v136_east_second"
+display_name = "Eastern Falling Link 2"
+activation = "hook"
+material_kind = "masonry"
+landing_offset = Vector2(150, 45)
+collapse_radius = 108.0
+damage = 42.0
+starting_support = false
+chain_only = true
+accepted_source_site = "v136_east_first"
+chain_next_path = NodePath("../V136EastFinalChime")
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V136Chainfall/V136EastSecondArch"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136EastSecondArch/HookBody"]
+shape = SubResource("v136_anchor_shape")
+
+[node name="V136EastFinalChime" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(7820, 4050)
+script = ExtResource("v136_chain")
+site_id = "v136_east_final"
+display_name = "Eastern Falling Link 3"
+activation = "hook"
+material_kind = "bell"
+landing_offset = Vector2(145, 45)
+collapse_radius = 110.0
+damage = 42.0
+starting_support = false
+chain_only = true
+accepted_source_site = "v136_east_second"
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V136Chainfall/V136EastFinalChime"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v135_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136EastFinalChime/HookBody"]
+shape = SubResource("v136_anchor_shape")
+
+[node name="V136CoverWest01" type="StaticBody2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(2720, 3260)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v136_cover")
+durability = 23.0
+blast_radius = 88.0
+blast_damage = 9.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136CoverWest01"]
+shape = SubResource("v136_cover_shape")
+
+[node name="V136CoverWest02" type="StaticBody2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(4160, 3460)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v136_cover")
+durability = 23.0
+blast_radius = 88.0
+blast_damage = 9.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136CoverWest02"]
+shape = SubResource("v136_cover_shape")
+
+[node name="V136CoverEast01" type="StaticBody2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(6940, 3610)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v136_cover")
+durability = 23.0
+blast_radius = 88.0
+blast_damage = 9.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136CoverEast01"]
+shape = SubResource("v136_cover_shape")
+
+[node name="V136CoverEast02" type="StaticBody2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(8410, 4420)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v136_cover")
+durability = 23.0
+blast_radius = 88.0
+blast_damage = 9.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136Chainfall/V136CoverEast02"]
+shape = SubResource("v136_cover_shape")
+
+[node name="V136WestChainSeal" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(3800, 3150)
+script = ExtResource("v135_seal")
+required_sites = PackedStringArray("v136_west_first", "v136_west_second", "v136_west_final")
+gate_path = NodePath("../../V136WestChainGate")
+title = "West Chainfall"
+
+[node name="V136WestChainGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(3890, 3230)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V136WestChainChest")
+gate_width = 154.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136WestChainGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V136WestChainChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(4000, 3320)
+chest_id = "v136_west_chain_reward"
+loot_data = ExtResource("v136_amulet")
+loot_seed = 136601
+guaranteed_quality = "unique"
+
+[node name="V136EastChainSeal" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(8000, 4130)
+script = ExtResource("v135_seal")
+required_sites = PackedStringArray("v136_east_first", "v136_east_second", "v136_east_final")
+gate_path = NodePath("../../V136EastChainGate")
+title = "East Chainfall"
+
+[node name="V136EastChainGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(8090, 4220)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V136EastChainChest")
+gate_width = 154.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V136EastChainGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V136EastChainChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8210, 4280)
+chest_id = "v136_east_chain_reward"
+loot_data = ExtResource("v136_bow")
+loot_seed = 136602
+guaranteed_quality = "unique"
+
+[node name="V136WestWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2870, 2730)
+script = ExtResource("v120_waystone")
+region_title = "THE WESTERN DOMINO"
+route_hint = "One rotten beam pulls another down. Start the fall with F or a heavy crate; follow the sparks to the final bell."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V136EastWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7050, 3660)
+script = ExtResource("v120_waystone")
+region_title = "THE FROZEN CHAIN"
+route_hint = "Freeze the first joint with Z, then pull with F. Let the falling stone break the rest. The last chime guards a reward."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V136CoverWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(4260, 3510)
+script = ExtResource("v120_waystone")
+region_title = "COVER IS NOT FOREVER"
+route_hint = "F can rip weak barricades away. Arrows and thrown crates also splinter them. Enemy bolts may strike the cover instead of you."
+arrow_direction = Vector2(0.8, -0.5)
+
+[node name="V136ChainScout01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(3230, 2950)
+creature_kind = "hush_moth"
+max_health = 13.0
+attack_damage = 3.0
+loot_seed = 136701
+loot_template = null
+
+[node name="V136ChainScout02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(3350, 3100)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+attack_damage = 4.0
+loot_seed = 136702
+loot_template = null
+
+[node name="V136ChainScout03" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(3530, 3040)
+creature_kind = "hush_moth"
+max_health = 13.0
+attack_damage = 3.0
+loot_seed = 136703
+loot_template = null
+
+[node name="V136ChainScout04" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(3770, 3140)
+creature_kind = "hush_moth"
+max_health = 13.0
+attack_damage = 3.0
+loot_seed = 136704
+loot_template = null
+
+[node name="V136ChainScout05" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7480, 3950)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+attack_damage = 4.0
+loot_seed = 136705
+loot_template = null
+
+[node name="V136ChainScout06" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7680, 4050)
+creature_kind = "hush_moth"
+max_health = 13.0
+attack_damage = 3.0
+loot_seed = 136706
+loot_template = null
+
+[node name="V136ChainScout07" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7890, 4100)
+creature_kind = "hush_moth"
+max_health = 13.0
+attack_damage = 3.0
+loot_seed = 136707
+loot_template = null
+
+[node name="V136ChainScout08" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(8020, 4320)
+creature_kind = "gloom_lantern"
+max_health = 20.0
+attack_damage = 4.0
+loot_seed = 136708
+loot_template = null
+
+
+; Two practical recovery points and quiet stories near the optional hazards.
+[node name="V136WestRest" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(2770, 3410)
+script = ExtResource("v117_shrine")
+shrine_id = "v136_west_chain_rest"
+interaction_name = "Rest beneath the chain lantern"
+
+[node name="V136EastRest" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(7030, 4290)
+script = ExtResource("v117_shrine")
+shrine_id = "v136_east_chain_rest"
+interaction_name = "Rest by the fallen watch"
+
+[node name="V136WestMemory" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(3030, 2780)
+script = ExtResource("v134_slab")
+slab_title = "THE THREE LINKS"
+inscription = "One beam held another, and another held the bell. The watchmen built them to fall when the moor's dead walked beneath."
+
+[node name="V136EastMemory" type="Node2D" parent="Gameplay/V136Chainfall"]
+position = Vector2(7150, 3800)
+script = ExtResource("v134_slab")
+slab_title = "THE LAST CHIME"
+inscription = "Ice found the first weakness. Iron carried the echo. The last bell fell to protect the travelers who could not outrun the fog."
+
+; END V136 CHAINFALL
+
+; BEGIN V137 BELLROOT CHORUS - optional, save-compatible creative play
+[node name="V137Bellroots" type="Node2D" parent="Gameplay"]
+
+[node name="V137WillowBell" type="Node2D" parent="Gameplay/V137Bellroots"]
+position = Vector2(2150, 4250)
+script = ExtResource("v137_bell")
+bell_id = "v137_willow_bell"
+bell_title = "Willow Grave Chime"
+resonance_color = Color(0.862745, 0.682353, 0.74902, 1)
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V137Bellroots/V137WillowBell"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V137Bellroots/V137WillowBell/HookBody"]
+shape = SubResource("v137_bell_shape")
+
+[node name="V137DuskBell" type="Node2D" parent="Gameplay/V137Bellroots"]
+position = Vector2(4540, 1600)
+script = ExtResource("v137_bell")
+bell_id = "v137_dusk_bell"
+bell_title = "Duskwatch Bell"
+resonance_color = Color(0.741176, 0.705882, 0.917647, 1)
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V137Bellroots/V137DuskBell"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V137Bellroots/V137DuskBell/HookBody"]
+shape = SubResource("v137_bell_shape")
+
+[node name="V137GraveBell" type="Node2D" parent="Gameplay/V137Bellroots"]
+position = Vector2(7990, 4140)
+script = ExtResource("v137_bell")
+bell_id = "v137_grave_bell"
+bell_title = "Graveglass Bell"
+resonance_color = Color(0.713725, 0.858824, 0.913725, 1)
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V137Bellroots/V137GraveBell"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V137Bellroots/V137GraveBell/HookBody"]
+shape = SubResource("v137_bell_shape")
+
+[node name="V137FenBell" type="Node2D" parent="Gameplay/V137Bellroots"]
+position = Vector2(6020, 5700)
+script = ExtResource("v137_bell")
+bell_id = "v137_fen_bell"
+bell_title = "Mire-Crescent Bell"
+resonance_color = Color(0.882353, 0.811765, 0.666667, 1)
+
+[node name="HookBody" type="StaticBody2D" parent="Gameplay/V137Bellroots/V137FenBell"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V137Bellroots/V137FenBell/HookBody"]
+shape = SubResource("v137_bell_shape")
+
+[node name="V137ChorusSeal" type="Node2D" parent="Gameplay/V137Bellroots"]
+position = Vector2(5140, 3480)
+script = ExtResource("v137_chorus")
+bell_ids = PackedStringArray("v137_willow_bell", "v137_dusk_bell", "v137_grave_bell", "v137_fen_bell")
+gate_path = NodePath("../../V137ChorusGate")
+title = "THE FOUR CHIMES"
+
+[node name="V137CreativeSeal" type="Node2D" parent="Gameplay/V137Bellroots"]
+position = Vector2(5490, 3550)
+script = ExtResource("v137_chorus")
+bell_ids = PackedStringArray("v137_willow_bell", "v137_dusk_bell", "v137_grave_bell", "v137_fen_bell")
+method_threshold = 3
+gate_path = NodePath("../../V137CreativeGate")
+title = "THE MANY-VOICED CHORUS"
+
+[node name="V137ChorusGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(5180, 3570)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V137ChimeChest")
+gate_width = 160.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V137ChorusGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V137CreativeGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(5550, 3630)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V137CreativeChest")
+gate_width = 160.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V137CreativeGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V137ChimeChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(5200, 3740)
+chest_id = "v137_four_chimes_reward"
+loot_data = ExtResource("v137_rosary")
+loot_seed = 137137
+guaranteed_quality = "unique"
+
+[node name="V137CreativeChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(5580, 3800)
+chest_id = "v137_creative_chorus_reward"
+loot_data = ExtResource("v137_bow")
+loot_seed = 137372
+guaranteed_quality = "unique"
+
+[node name="V137WestWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(1940, 3990)
+script = ExtResource("v120_waystone")
+region_title = "WILLOW CHIME"
+route_hint = "The bell sings when pulled with F. Frost (Z), roses (T) and a jumping bow shot can awaken it differently."
+arrow_direction = Vector2(0.7, 0.3)
+
+[node name="V137NorthWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(4370, 1360)
+script = ExtResource("v120_waystone")
+region_title = "DUSKWATCH CHIME"
+route_hint = "Four bells answer many tools. Each new way of ringing one leaves a permanent note."
+arrow_direction = Vector2(0.5, 0.7)
+
+[node name="V137EastWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8080, 3750)
+script = ExtResource("v120_waystone")
+region_title = "GRAVEGLASS CHIME"
+route_hint = "A charged jump-shot (C + right-click) strikes it. The nearby collapsing chain can ring it too."
+arrow_direction = Vector2(0.7, 0.6)
+
+[node name="V137SouthWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(5800, 5430)
+script = ExtResource("v120_waystone")
+region_title = "MIRE-CRESCENT CHIME"
+route_hint = "Ice and roses have voices, too. The old chimes can also answer falling masonry."
+arrow_direction = Vector2(0.7, 0.7)
+
+[node name="V137VaultWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(5050, 3330)
+script = ExtResource("v120_waystone")
+region_title = "CHORUS RELIQUARY"
+route_hint = "Ring all four bells for the first coffer. Show three different methods across the bells for the second."
+arrow_direction = Vector2(0.4, 0.7)
+
+[node name="V137ChimeScout01" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(2280, 4150)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 3.0
+loot_seed = 137701
+loot_template = null
+
+[node name="V137ChimeScout02" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(1980, 4390)
+creature_kind = "gloom_lantern"
+max_health = 18.0
+attack_damage = 4.0
+loot_seed = 137702
+loot_template = null
+
+[node name="V137ChimeScout03" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(4620, 1710)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 3.0
+loot_seed = 137703
+loot_template = null
+
+[node name="V137ChimeScout04" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(4430, 1480)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 3.0
+loot_seed = 137704
+loot_template = null
+
+[node name="V137ChimeScout05" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(8150, 4310)
+creature_kind = "gloom_lantern"
+max_health = 18.0
+attack_damage = 4.0
+loot_seed = 137705
+loot_template = null
+
+[node name="V137ChimeScout06" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(7880, 4300)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 3.0
+loot_seed = 137706
+loot_template = null
+
+[node name="V137ChimeScout07" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(6070, 5850)
+creature_kind = "hush_moth"
+max_health = 12.0
+attack_damage = 3.0
+loot_seed = 137707
+loot_template = null
+
+[node name="V137ChimeScout08" parent="Gameplay/Enemies" instance=ExtResource("v129_creature")]
+position = Vector2(5860, 5620)
+creature_kind = "gloom_lantern"
+max_health = 18.0
+attack_damage = 4.0
+loot_seed = 137708
+loot_template = null
+
+[node name="V137ChorusInscription" type="Node2D" parent="Gameplay/V137Bellroots"]
+position = Vector2(5270, 3360)
+script = ExtResource("v134_slab")
+slab_title = "THE MANY-VOICED CHORUS"
+inscription = "The first song called four bells awake. The second belonged to those who found more than one way to ring them. No note was ever lost, only waiting."
+
+; END V137 BELLROOT CHORUS
+
+; v1.38 THE FLETCHER'S FOUR RUNES — two distinct bow puzzles. Targets
+; are deliberately placed off the main route and consume no extra arrows.
+[node name="V138BowRiddles" type="Node2D" parent="Gameplay"]
+
+[node name="V138EmberRune" type="Node2D" parent="Gameplay/V138BowRiddles"]
+position = Vector2(2675, 1640)
+script = ExtResource("v138_target")
+required_arrow = "Fire"
+discovery_id = "v138_ember_ignited"
+
+[node name="V138FrostRune" type="Node2D" parent="Gameplay/V138BowRiddles"]
+position = Vector2(3690, 1740)
+script = ExtResource("v138_target")
+required_arrow = "Ice"
+discovery_id = "v138_frost_illuminated"
+
+[node name="V138LightRune" type="Node2D" parent="Gameplay/V138BowRiddles"]
+position = Vector2(7080, 2310)
+script = ExtResource("v138_target")
+required_arrow = "Light"
+discovery_id = "v138_light_awakened"
+
+[node name="V138TripleRune" type="Node2D" parent="Gameplay/V138BowRiddles"]
+position = Vector2(8335, 2920)
+script = ExtResource("v138_target")
+required_arrow = "Triple"
+discovery_id = "v138_threefold_answer"
+require_charged = true
+
+[node name="V138EmberSeal" type="Node2D" parent="Gameplay/V138BowRiddles"]
+position = Vector2(3100, 2585)
+script = ExtResource("v138_vault")
+required_flags = PackedStringArray("v138_ember_ignited", "v138_frost_illuminated")
+gate_path = NodePath("../../V138EmberGate")
+
+[node name="V138LightSeal" type="Node2D" parent="Gameplay/V138BowRiddles"]
+position = Vector2(7590, 3680)
+script = ExtResource("v138_vault")
+required_flags = PackedStringArray("v138_light_awakened", "v138_threefold_answer")
+gate_path = NodePath("../../V138LightGate")
+
+[node name="V138EmberGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(3090, 2620)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V138EmberChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V138EmberGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V138LightGate" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(7600, 3725)
+script = ExtResource("v117_gate")
+chest_path = NodePath("../TreasureChests/V138LightChest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V138LightGate"]
+shape = SubResource("v117_seal_shape")
+
+[node name="V138EmberChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(3150, 2700)
+chest_id = "v138_emberfrost_reward"
+loot_data = ExtResource("v138_emberfrost")
+loot_seed = 138201
+guaranteed_quality = "unique"
+
+[node name="V138LightChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7710, 3850)
+chest_id = "v138_sunlace_reward"
+loot_data = ExtResource("v138_sunlace")
+loot_seed = 138317
+guaranteed_quality = "unique"
+
+[node name="V138WesternBowWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(3070, 2180)
+script = ExtResource("v120_waystone")
+region_title = "THE FLETCHER'S EMBERS"
+route_hint = "Fire lights the left rune; frost answers the right. Two imprints, one sealed keepsake."
+
+[node name="V138EasternBowWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7515, 3410)
+script = ExtResource("v120_waystone")
+region_title = "THE SUNLACE VAULT"
+route_hint = "One arrow must carry the light. Three reflected arrows must sing from a charged bow."
+
+; v1.39 Elemental Fletching: three genuinely reusable arrow/world interactions.
+[node name="V139ElementalWorld" type="Node2D" parent="Gameplay"]
+
+[node name="DryThornwood" type="Node2D" parent="Gameplay/V139ElementalWorld"]
+position = Vector2(6730, 3580)
+script = ExtResource("v139_fire")
+flag_id = "v139_dry_thornwood"
+display_name = "Dry thornwood"
+spread_radius = 290.0
+
+[node name="RottedBrazier" type="Node2D" parent="Gameplay/V139ElementalWorld"]
+position = Vector2(6980, 3640)
+script = ExtResource("v139_fire")
+flag_id = "v139_rotted_brazier"
+display_name = "Rotted brazier"
+spread_radius = 280.0
+reveal_chest_path = NodePath("../../TreasureChests/V139FireChest")
+
+[node name="WesternIcePassage" type="Node2D" parent="Gameplay/V139ElementalWorld"]
+position = Vector2(864, 3466)
+script = ExtResource("v139_ice")
+bridge_length = 210.0
+bridge_width = 55.0
+freeze_seconds = 8.0
+
+[node name="NorthernIcePassage" type="Node2D" parent="Gameplay/V139ElementalWorld"]
+position = Vector2(8830, 1920)
+script = ExtResource("v139_ice")
+bridge_length = 190.0
+bridge_width = 53.0
+freeze_seconds = 9.0
+
+[node name="ForgottenLight1" type="Node2D" parent="Gameplay/V139ElementalWorld"]
+position = Vector2(6330, 2610)
+script = ExtResource("v139_light")
+flag_id = "v139_light_secret_1"
+reward_chest_path = NodePath("../../TreasureChests/V139LightChest")
+
+[node name="V139FireChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7150, 3800)
+visible = false
+chest_id = "v139_ember_chain_reward"
+loot_data = ExtResource("v128_thornrose")
+loot_seed = 139213
+guaranteed_quality = "rare"
+
+[node name="V139LightChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(6400, 2700)
+visible = false
+chest_id = "v139_luminous_secret_reward"
+loot_data = ExtResource("v128_moonveil")
+loot_seed = 139317
+guaranteed_quality = "rare"
+
+[node name="V139FireWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(6570, 3430)
+script = ExtResource("v120_waystone")
+region_title = "THE KINDLING PATH"
+route_hint = "One ember can wake the next. A fire-touched arrow may burn the thornwood and reveal an old reward."
+
+[node name="V139IceWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(1160, 3460)
+script = ExtResource("v120_waystone")
+region_title = "THE FROST CROSSING"
+route_hint = "Frostglass arrows or Moonfall firm the unstable crossing for a few moments. The water soon returns."
+
+[node name="V139LightWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(6160, 2380)
+script = ExtResource("v120_waystone")
+region_title = "WHERE THE LIGHT RESTS"
+route_hint = "A faint moon-ring keeps watch nearby. Only a Luminous arrow reveals the hidden cache."
+
+; v1.40: world-wide elemental interactions, editor-authored placements.
+; Each fire cluster may spread to nearby destructible wooden cover; each
+; hidden moonmark responds to a luminous arrow passing within reveal range.
+[node name="V140ElementalWorld" type="Node2D" parent="Gameplay"]
+
+[node name="Kindling01" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(1320, 4800)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_01"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling02" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(1465, 4770)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_02"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling03" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(1610, 4820)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_03"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling04" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(3760, 1540)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_04"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling05" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(3875, 1560)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_05"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling06" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(4020, 1610)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_06"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling07" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(5810, 5630)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_07"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling08" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(5955, 5660)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_08"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling09" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(6090, 5710)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_09"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling10" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(8160, 3210)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_10"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling11" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(8290, 3150)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_11"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+
+[node name="Kindling12" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(8450, 3200)
+script = ExtResource("v140_kindling")
+flag_id = "v140_moor_kindling_12"
+display_name = "Dry moonroot"
+spread_radius = 226.0
+[node name="HiddenMoonmark01" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(2510, 4850)
+script = ExtResource("v140_reveal")
+discovery_id = "v140_moor_moonmark_01"
+display_name = "Hidden Moonmark 1"
+reward_chest_path = NodePath("../../TreasureChests/V140LightChest01")
+reveal_radius = 180.0
+
+[node name="V140LightChest01" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2570, 4930)
+visible = false
+chest_id = "v140_moor_light_reward_01"
+loot_data = ExtResource("gem")
+loot_seed = 141137
+guaranteed_quality = "rare"
+
+[node name="HiddenMoonmark02" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(4550, 2600)
+script = ExtResource("v140_reveal")
+discovery_id = "v140_moor_moonmark_02"
+display_name = "Hidden Moonmark 2"
+reward_chest_path = NodePath("../../TreasureChests/V140LightChest02")
+reveal_radius = 180.0
+
+[node name="V140LightChest02" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(4610, 2660)
+visible = false
+chest_id = "v140_moor_light_reward_02"
+loot_data = ExtResource("scythe")
+loot_seed = 141274
+guaranteed_quality = "rare"
+
+[node name="HiddenMoonmark03" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(8440, 5200)
+script = ExtResource("v140_reveal")
+discovery_id = "v140_moor_moonmark_03"
+display_name = "Hidden Moonmark 3"
+reward_chest_path = NodePath("../../TreasureChests/V140LightChest03")
+reveal_radius = 180.0
+
+[node name="V140LightChest03" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(8490, 5275)
+visible = false
+chest_id = "v140_moor_light_reward_03"
+loot_data = ExtResource("wand")
+loot_seed = 141411
+guaranteed_quality = "rare"
+
+[node name="HiddenMoonmark04" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(9150, 3530)
+script = ExtResource("v140_reveal")
+discovery_id = "v140_moor_moonmark_04"
+display_name = "Hidden Moonmark 4"
+reward_chest_path = NodePath("../../TreasureChests/V140LightChest04")
+reveal_radius = 180.0
+
+[node name="V140LightChest04" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(9230, 3600)
+visible = false
+chest_id = "v140_moor_light_reward_04"
+loot_data = ExtResource("gem")
+loot_seed = 141548
+guaranteed_quality = "rare"
+
+[node name="V140WestWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(1940, 4930)
+script = ExtResource("v120_waystone")
+region_title = "EMBER ROOTS"
+route_hint = "Fire leaps from root to root. Frostglass arrows can freeze any of the marked ponds, and luminous arrows can find hidden moonmarks."
+
+[node name="V140EastWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(8590, 4940)
+script = ExtResource("v120_waystone")
+region_title = "UNSEEN LIGHT"
+route_hint = "The hidden moonmarks answer light passing nearby. Aim luminous arrows along the darker banks and forgotten paths."
+
+; v1.43: optional alternative to an arrow-only moonmark reveal. Either the
+; rose-hook or a luminous arrow lights the lantern and reveals local secrets.
+[node name="V143MoonthreadWest" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(2350, 4880)
+script = ExtResource("v143_waylight")
+lantern_label = "West Moonthread"
+reveal_reach = 300.0
+
+[node name="V143MoonthreadCentral" type="Node2D" parent="Gameplay/V140ElementalWorld"]
+position = Vector2(4370, 2530)
+script = ExtResource("v143_waylight")
+lantern_label = "Central Moonthread"
+reveal_reach = 295.0
+
+[node name="V143MoonthreadWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2160, 4900)
+script = ExtResource("v120_waystone")
+region_title = "A THIN THREAD OF LIGHT"
+route_hint = "The hanging waylights answer a rose-hook or a Luminous arrow. Their pale light can uncover secrets close by."
+
+; v1.44: optional side-route clearings. The authored parent nodes each create
+; one physical barrier at runtime; removing it permanently opens the passage.
+[node name="V144MoonrootCauseways" type="Node2D" parent="Gameplay"]
+
+[node name="V144WestRoot" type="Node2D" parent="Gameplay/V144MoonrootCauseways"]
+position = Vector2(3020, 4370)
+script = ExtResource("v144_lattice")
+lattice_id = "v144_west_moonroot_01"
+display_name = "West Moonroot"
+lattice_kind = "timber"
+chain_radius = 250.0
+
+[node name="Barrier" type="StaticBody2D" parent="Gameplay/V144MoonrootCauseways/V144WestRoot"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v144_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V144MoonrootCauseways/V144WestRoot/Barrier"]
+shape = SubResource("v144_west_shape")
+
+[node name="V144WestChain" type="Node2D" parent="Gameplay/V144MoonrootCauseways"]
+position = Vector2(3190, 4410)
+script = ExtResource("v144_lattice")
+lattice_id = "v144_west_moonroot_02"
+display_name = "Broken Watchroot"
+lattice_kind = "timber"
+barrier_width = 140.0
+chain_radius = 250.0
+
+[node name="Barrier" type="StaticBody2D" parent="Gameplay/V144MoonrootCauseways/V144WestChain"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v144_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V144MoonrootCauseways/V144WestChain/Barrier"]
+shape = SubResource("v144_westchain_shape")
+
+[node name="V144EastFrostJoint" type="Node2D" parent="Gameplay/V144MoonrootCauseways"]
+position = Vector2(7380, 4850)
+script = ExtResource("v144_lattice")
+lattice_id = "v144_east_frost_joint"
+display_name = "Frostbound Lattice"
+lattice_kind = "frost_joint"
+barrier_width = 165.0
+allow_chain_open = false
+
+[node name="Barrier" type="StaticBody2D" parent="Gameplay/V144MoonrootCauseways/V144EastFrostJoint"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v144_hitbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V144MoonrootCauseways/V144EastFrostJoint/Barrier"]
+shape = SubResource("v144_east_shape")
+
+; Restored chest behavior is handled by the ordinary TreasureChests container.
+[node name="V144WestCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(3460, 4480)
+chest_id = "v144_west_causeway_coffer"
+loot_data = ExtResource("scythe")
+loot_seed = 144118
+guaranteed_quality = "rare"
+
+[node name="V144Moonmark" type="Node2D" parent="Gameplay/V144MoonrootCauseways"]
+position = Vector2(7540, 4800)
+script = ExtResource("v140_reveal")
+discovery_id = "v144_east_hidden_moonmark"
+display_name = "Frostbound Moonmark"
+reward_chest_path = NodePath("../../TreasureChests/V144EastCoffer")
+reveal_radius = 190.0
+
+[node name="V144EastCoffer" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7660, 4880)
+visible = false
+chest_id = "v144_east_causeway_coffer"
+loot_data = ExtResource("wand")
+loot_seed = 144276
+guaranteed_quality = "rare"
+
+[node name="V144WestWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2780, 4260)
+script = ExtResource("v120_waystone")
+region_title = "THE FALLEN WATCHROOT"
+route_hint = "A hooked root, rose magic, a charged leap-shot or a spark can clear the side passage. Falling timber may pull its neighbor down."
+
+[node name="V144EastWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7130, 4750)
+script = ExtResource("v120_waystone")
+region_title = "THE FROSTBOUND LATTICE"
+route_hint = "Freeze the ironbound roots with Moonfall or a Frostglass arrow, then pull them with the rose-hook. A moonmark beyond answers light."
+
+; v1.45: a physical collapse now has consequences for nearby creatures and
+; reveals two optional memories when structures fall within listening range.
+[node name="V145LivingMoor" type="Node2D" parent="Gameplay"]
+
+[node name="WorldResponse" type="Node2D" parent="Gameplay/V145LivingMoor"]
+script = ExtResource("v145_reaction")
+hearing_radius = 580.0
+investigation_seconds = 3.0
+
+[node name="WestAftershock" type="Node2D" parent="Gameplay/V145LivingMoor"]
+position = Vector2(3110, 4340)
+script = ExtResource("v145_aftershock")
+discovery_id = "v145_west_aftershock"
+prior_completed_keys = PackedStringArray("v144_west_moonroot_01", "v144_west_moonroot_02")
+display_name = "West Watchroot Memory"
+reward_chest_path = NodePath("../../TreasureChests/V145WestAftershockChest")
+listen_radius = 270.0
+
+[node name="EastAftershock" type="Node2D" parent="Gameplay/V145LivingMoor"]
+position = Vector2(7450, 4880)
+script = ExtResource("v145_aftershock")
+discovery_id = "v145_east_aftershock"
+prior_completed_keys = PackedStringArray("v144_east_frost_joint")
+display_name = "Frostbound Echo"
+reward_chest_path = NodePath("../../TreasureChests/V145EastAftershockChest")
+listen_radius = 250.0
+
+[node name="V145WestAftershockChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(2900, 4640)
+visible = false
+chest_id = "v145_west_aftershock_chest"
+loot_data = ExtResource("v128_thornrose")
+loot_seed = 145311
+guaranteed_quality = "rare"
+
+[node name="V145EastAftershockChest" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(7840, 5110)
+visible = false
+chest_id = "v145_east_aftershock_chest"
+loot_data = ExtResource("wand")
+loot_seed = 145912
+guaranteed_quality = "rare"
+
+[node name="V145WestWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(2830, 4230)
+script = ExtResource("v120_waystone")
+region_title = "THE WATCHROOT REMEMBERS"
+route_hint = "A fallen lattice makes nearby creatures curious. Collapse it with a hook, fire, roses or a charged leap-shot; listen for the memory it wakes."
+
+[node name="V145EastWaystone" type="Node2D" parent="Gameplay/Waystones"]
+position = Vector2(7160, 4590)
+script = ExtResource("v120_waystone")
+region_title = "THE AFTERSHOCK OF WINTER"
+route_hint = "Freeze the ironbound root and pull it down. A quiet stone beyond the passage remembers the noise."

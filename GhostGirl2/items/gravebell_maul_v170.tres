@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://c76feupuohv7m"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://bo65xjg6k6ghw" path="res://assets/ui/weapons_v170/gravebell_maul.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "gravebell_maul_v170"
+display_name = "Gravebell Maul"
+description = "A mournful bronze bell-head on a rosewood haft. Slow, heavy, merciless."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+stat_id = "poise_power_pct"
+min_stat = 5.0
+max_stat = 11.0
+max_sockets = 2
+item_level = 12
+weapon_style = "maul"
+min_weapon_damage = 18.1
+max_weapon_damage = 23.8
+inventory_width = 2
+inventory_height = 4

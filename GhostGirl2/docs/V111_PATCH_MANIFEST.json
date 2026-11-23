@@ -1,0 +1,143 @@
+{
+  "version": "1.11",
+  "base": "1.10",
+  "name": "Moonrose Materials",
+  "files": {
+    "V111_PATCH_INSTALL.txt": {
+      "bytes": 1613,
+      "sha256": "29c0b29ac3dd51aecba3e2d54e02c0558a0e934e7151b9a56afd3f121805d65c"
+    },
+    "tools/build_weapon_ready_bodies_v111.py": {
+      "bytes": 2142,
+      "sha256": "481727c98c2b3a98db85a58afd0aa9c10dc16a6fe9127e17c8e4740b57942be2"
+    },
+    "tools/build_safe_weapon_atlases_v111.py": {
+      "bytes": 4431,
+      "sha256": "a90a0fc82a2990a1340afd31c7d2dcfc23adb4f43d6e90135c567c1bed550c15"
+    },
+    "tools/render_weapon_previews_v111.py": {
+      "bytes": 3011,
+      "sha256": "251871d5558fe2cd8c26cc2886d66f689e25225e03518c1292483e2fc6114ad8"
+    },
+    "docs/V111_MOONROSE_MATERIALS.md": {
+      "bytes": 3345,
+      "sha256": "7f1bc3411325b470d1d01d4804f98905ff9104078b2e82711b3e9cf9634f9333"
+    },
+    "docs/V111_SAFE_ATLAS_AUDIT.json": {
+      "bytes": 47729,
+      "sha256": "8ceaa1d32057a391a2dd5066e4d536f00604cc868efe210a532248aeec6888d8"
+    },
+    "docs/V111_HOOK_CLEANUP_AUDIT.json": {
+      "bytes": 5795,
+      "sha256": "5a75141091d88d6d0b52fc919d3725027077c33a75ac9f30ccb0578b910ea74a"
+    },
+    "scripts/weapon_animation_layers.gd": {
+      "bytes": 5345,
+      "sha256": "a633795735d3efdb4f990444689eb74a10057c43ca90915d89efa76ab0a1b64e"
+    },
+    "scripts/item_rich_text.gd": {
+      "bytes": 5021,
+      "sha256": "2f9b076bdd88a615bf6d5b616b7f13bc16e8506eae714f4770ebe18bfb7542e8"
+    },
+    "scripts/inventory_grid.gd": {
+      "bytes": 5242,
+      "sha256": "307f7e8f0e2f14d3367a51e98037415c2e000d81792b7cc086db462e0053ae82"
+    },
+    "scripts/game.gd": {
+      "bytes": 31117,
+      "sha256": "9f02e12590ac2f535790d1ace25291e01976b0f3d94194c35f1fad51fa92265a"
+    },
+    "scripts/item_instance.gd": {
+      "bytes": 5723,
+      "sha256": "2c6ed782b010e0475ec6a4e92599e38f7e387228c298b2b33951315832288931"
+    },
+    "scripts/inventory.gd": {
+      "bytes": 15048,
+      "sha256": "cc5194eb10ef45a26280f825fb279837388adf22255462ea64891760c373b27f"
+    },
+    "scripts/item_generator.gd": {
+      "bytes": 5488,
+      "sha256": "7590adb2692d1bbdcf1442478bb8e2576402ed664d345a867a9a8d01e6781f5d"
+    },
+    "scripts/palette_library.gd": {
+      "bytes": 3466,
+      "sha256": "40060dde0b3c30ec139a5d6a99889e890e72df2d3a7948312afcbeeda0dead3b"
+    },
+    "tests/validate_v19.py": {
+      "bytes": 4426,
+      "sha256": "785805cc37229c7c0d0892fdd47fc73bc67dc24e870df09e63148e31083445ec"
+    },
+    "tests/validate_v110.py": {
+      "bytes": 3940,
+      "sha256": "6a880afbc50de09a679c6817fc74835719644f474244b69b6dfe0daf498b3f57"
+    },
+    "tests/validate_v111.py": {
+      "bytes": 4185,
+      "sha256": "98128dde041583a0a2d18bc5e2806d8e1a753667f32419bd9435a2fa930be779"
+    },
+    "resources/ghost_extra_animations.json": {
+      "bytes": 49906,
+      "sha256": "25eff0da1325c97753e5967f06a08366fd79bdf97c0ac2cf9e54199139172a62"
+    },
+    "resources/weapon_layer_manifest.json": {
+      "bytes": 11075,
+      "sha256": "caed5cee56ac9db0ef63da908f89ba49b77d64f6a2ccde80ec44bc715c11058c"
+    },
+    "assets/equipment/weapon_detail_atlas_v111.png": {
+      "bytes": 182828,
+      "sha256": "64d54ae81e8665e1f31cfc6eaa985dae2669275d58e0ee1a7324a2cd2aa8225c"
+    },
+    "assets/equipment/weapon_surface_v111.gdshader": {
+      "bytes": 2570,
+      "sha256": "7198558dcf837bd01742097402d64dfd9624e7c090b008e87619b4ff069c1c18"
+    },
+    "assets/ghost/weapon_body_v111/weapon_ready_locomotion_2048x1760.png": {
+      "bytes": 2655352,
+      "sha256": "d70dc4a916b9d10ba6d977e9804c434945f599bfde02453974225bc9b680f296"
+    },
+    "assets/ghost/weapon_layers_v111/halberd_locomotion_back_2048x1760.png": {
+      "bytes": 163365,
+      "sha256": "10ca37faf01ff8114b2ae6a08e4b9f3e109e5c10727179aa4ef769088aed5f44"
+    },
+    "assets/ghost/weapon_layers_v111/scythe_locomotion_front_2048x1760.png": {
+      "bytes": 307230,
+      "sha256": "f4abe6456ad6de12f8721e47b9873a4f10a94613512bd344b250d2ca79edaf26"
+    },
+    "assets/ghost/weapon_layers_v111/scythe_combat_front_2048x1760.png": {
+      "bytes": 396150,
+      "sha256": "e82e7ece83732d1d94dc25ef801ad7212197ff52772c2ce973afda687ff9a5cf"
+    },
+    "assets/ghost/weapon_layers_v111/halberd_combat_front_2048x1760.png": {
+      "bytes": 463421,
+      "sha256": "c1a798ef25ea90835582c43df549d66444b6b11500d4cda06a94ece2f69d0991"
+    },
+    "assets/ghost/weapon_layers_v111/scythe_combat_back_2048x1760.png": {
+      "bytes": 169854,
+      "sha256": "967ed45d4fa1414d7a5d0e02a82f464fe6f5b3aa85654daabd349c007e117f7b"
+    },
+    "assets/ghost/weapon_layers_v111/halberd_locomotion_front_2048x1760.png": {
+      "bytes": 385676,
+      "sha256": "7251e06ba26c0700b1ea12ecbd5309fe7963d553fcff4064f6b6dd741854074c"
+    },
+    "assets/ghost/weapon_layers_v111/scythe_locomotion_back_2048x1760.png": {
+      "bytes": 151713,
+      "sha256": "2b6b22144a25e4b007c8fc26e405a34b415c21800e9c8ce7d66f2eaf15a69596"
+    },
+    "assets/ghost/weapon_layers_v111/halberd_combat_back_2048x1760.png": {
+      "bytes": 161289,
+      "sha256": "8f7cc5b38964278006e1086ed87746af35e166c33cdedeb7e900a62418cf91c7"
+    },
+    "docs/v111_previews/hook_free_all_64_frames_v111.jpg": {
+      "bytes": 443517,
+      "sha256": "2d0bd18757dc7742031a707da7b4125a8733dec5c134fb66b77012a1dee9bcec"
+    },
+    "docs/v111_previews/scythe_full_frame_v111.jpg": {
+      "bytes": 333473,
+      "sha256": "9890b0f505565cfe20c4e4a4a9115a65ba5c94b16c58da8441d2cb8fc4b59f17"
+    },
+    "docs/v111_previews/halberd_full_frame_v111.jpg": {
+      "bytes": 348807,
+      "sha256": "20cf6551997b2e65840ef26c2d98b5eda131943801e1900f278a4735d86f97c7"
+    }
+  }
+}

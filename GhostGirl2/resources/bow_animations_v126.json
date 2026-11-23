@@ -1,0 +1,322 @@
+[
+  {
+	"name": "thornrose_idle_front",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 0,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "thornrose_idle_back",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 1,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "thornrose_idle_left",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 2,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "thornrose_idle_right",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 3,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "thornrose_walk_front",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 4,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "thornrose_walk_back",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 5,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "thornrose_walk_left",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 6,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "thornrose_walk_right",
+	"atlas": "assets/ghost/bows_v126/thornrose_locomotion_2048x1760.png",
+	"row": 7,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "attack_thornrose_light_front",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 0,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_thornrose_light_back",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 1,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_thornrose_light_left",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 2,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_thornrose_light_right",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 3,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_thornrose_heavy_front",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 4,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  },
+  {
+	"name": "attack_thornrose_heavy_back",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 5,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  },
+  {
+	"name": "attack_thornrose_heavy_left",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 6,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  },
+  {
+	"name": "attack_thornrose_heavy_right",
+	"atlas": "assets/ghost/bows_v138/thornrose_combat_2048x1760.png",
+	"row": 7,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  },
+  {
+	"name": "moonveil_idle_front",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 0,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "moonveil_idle_back",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 1,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "moonveil_idle_left",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 2,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "moonveil_idle_right",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 3,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 8,
+	"loop": true
+  },
+  {
+	"name": "moonveil_walk_front",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 4,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "moonveil_walk_back",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 5,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "moonveil_walk_left",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 6,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "moonveil_walk_right",
+	"atlas": "assets/ghost/bows_v126/moonveil_locomotion_2048x1760.png",
+	"row": 7,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 12,
+	"loop": true
+  },
+  {
+	"name": "attack_moonveil_light_front",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 0,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_moonveil_light_back",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 1,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_moonveil_light_left",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 2,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_moonveil_light_right",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 3,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 14,
+	"loop": false
+  },
+  {
+	"name": "attack_moonveil_heavy_front",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 4,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  },
+  {
+	"name": "attack_moonveil_heavy_back",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 5,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  },
+  {
+	"name": "attack_moonveil_heavy_left",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 6,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  },
+  {
+	"name": "attack_moonveil_heavy_right",
+	"atlas": "assets/ghost/bows_v138/moonveil_combat_2048x1760.png",
+	"row": 7,
+	"frame_count": 8,
+	"frame_width": 256,
+	"frame_height": 220,
+	"speed": 10,
+	"loop": false
+  }
+]

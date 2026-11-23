@@ -1,0 +1,71 @@
+{
+  "version": "1.27",
+  "requires": "v1.26",
+  "files": [
+    {
+      "path": "project.godot",
+      "size": 9209,
+      "sha256": "61b6d2214bd52114f697c4ed2768bab6f7feae5e4c63678d603ba2207ff5dcd5"
+    },
+    {
+      "path": "scripts/player.gd",
+      "size": 53950,
+      "sha256": "a6b9fbc58f465fa2286f679fa868a54ec85313a32d520b63bac5a71ba74f1bec"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 40741,
+      "sha256": "e37a222c18a4e4d17372bcb154580cbdf15b8da8cc48bdd03702efa567cbb334"
+    },
+    {
+      "path": "scripts/bow_arrow_v126.gd",
+      "size": 6302,
+      "sha256": "ea5a06e120fde10bdefa909261a3f86548c1c8b193ac4fca2be453966574d1de"
+    },
+    {
+      "path": "scripts/bow_release_v127.gd",
+      "size": 1631,
+      "sha256": "444d181b148ba8aecd7feba97e004ccbab108182beaee2b973154008c22a99e2"
+    },
+    {
+      "path": "scripts/astral_rain_v127.gd",
+      "size": 3826,
+      "sha256": "55c8cd234d37e1ef5a9af5fe1aa6b582d70de3184236800df570be1a683dc376"
+    },
+    {
+      "path": "scripts/grasping_roses_v127.gd",
+      "size": 3664,
+      "sha256": "356ad20a0ddc268aac4a6ee4ac9f2febe07e912331de0cc3ca6a02a11615a77b"
+    },
+    {
+      "path": "scripts/spell_reliquary_v127.gd",
+      "size": 1813,
+      "sha256": "5998a6dea69b1b8e52249baf6b35ba3c11dccaa76a5c38d7fd24ed1435a00f72"
+    },
+    {
+      "path": "scenes/astral_rain_v127.tscn",
+      "size": 177,
+      "sha256": "7f95b723d5a2670cdbbf660e9377c33da0b20b39729afc4e38b713b76bac65f0"
+    },
+    {
+      "path": "scenes/grasping_roses_v127.tscn",
+      "size": 183,
+      "sha256": "ccfd3831e87f2332942f21d489d6db525abffeda4340ab8bac6ef5efdfcf7dd8"
+    },
+    {
+      "path": "scenes/rooms/moonwake_crypt.tscn",
+      "size": 14222,
+      "sha256": "fd9e020fcfed3c8737882b37e6a795dcabb5013a6cfaa4d7436442ce7704b3e8"
+    },
+    {
+      "path": "docs/V127_ASTRAL_RAIN_AND_GRASPING_ROSES.txt",
+      "size": 2018,
+      "sha256": "75abacb3d8b77859b4a89c6354482fe8b23dd6c3d594a58a82fa8d2ae6b27598"
+    },
+    {
+      "path": "tests/validate_v127.py",
+      "size": 4251,
+      "sha256": "7dae0aa1f07dbb2a94e1d6bc8fcb2d109bcb0aa9b32a17f86d09dcc10b656364"
+    }
+  ]
+}

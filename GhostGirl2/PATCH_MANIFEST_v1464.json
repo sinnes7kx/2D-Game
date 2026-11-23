@@ -1,0 +1,18 @@
+{
+  "patch_version": "v1.46.4",
+  "requires": "v1.46.3",
+  "sha256": {
+    "INSTALL_v1464_SMALL_PATCH.txt": "36b3110546e1607f12702927f7af71f55050a641ea3982af3a1f9340e4dba4da",
+    "docs/V1464_EARLY_PUZZLES_AND_SWATCHES.md": "902658a5e32514c7da45006fd664b901f1e9c8d3a6c35bcfdb1c629427219ea2",
+    "scenes/inventory_panel.tscn": "0c22ef980f6e1705d8685f47c0656dd5282ac48f94430ab1b2438049ec09a8be",
+    "scenes/rooms/garden.tscn": "81dda0555b1f7ed2982c7dc9fb06d855d22717ad1a463e4876601052146c1a3a",
+    "scenes/rooms/moonwake_crypt.tscn": "594ea40158aa64ac2a5d5a55fea04f90385cb564bb2a1e21eb344dd6ff3f24f3",
+    "scripts/buried_cache_v1464.gd": "7218b1d580be043dfb49ada5ea4f79fcf145e184ce0e177802e02c649ad7acae",
+    "scripts/collapse_support_v135.gd": "51d25b9b7b912a75474e9ca7f0b7f21f0eed22ee6e3fd72f94a4491104e3c5af",
+    "scripts/floor_breach_v1464.gd": "c6de8ee3b97440bded10254530922da3c852cb6abde6b99061049595d15b7d11",
+    "scripts/game.gd": "4fdffc16cd27ef284c393c9019b1b37ed394c843db001cb3f83337c080f3c366",
+    "scripts/inventory_panel.gd": "8a508ae80fd14691da298777a5721d7329e1b3e40107b0bcc80d38b2584d2358",
+    "scripts/item_rich_text.gd": "a89978efea2b7b6f6c348a0a0f52f48f3829bf84ecb85e0bfd1c628126da3d1d"
+  },
+  "static_checks_passed": 164
+}

@@ -1,0 +1,22 @@
+Ghost Girl v1.57 — Confirmed Evades & Combat Readability
+
+Apply over v1.56 (which already includes v1.55.2 and v1.55.1).
+
+- Real counter timing: an actual enemy melee hit or occultist bolt must cross
+  Ghost Girl during the dodge iframe window. A nearby windup alone no longer
+  awards the counter bonus. The end-of-dodge 40-unit retreat check remains.
+- Successful evasions give a small spectral cue. The counter window and
+  +9 stamina are granted only at the end of a successful backstep.
+- Actual landed counters get a distinct two-ring contact burst, existing
+  chime and hitstop; whiffs still receive none.
+- Enemies gain rising windup progress cues and local attack-release sparks.
+  Existing attack damage, cooldowns, hurtbox, pathing and loot are unchanged.
+- Projectile dodge detection uses the existing hex bolt collision ray;
+  no new damage or interception behavior.
+
+Installation: Close Godot; back up; extract ZIP over project.godot folder,
+overwriting matching scripts/ paths. Reopen Godot.
+
+Important: Static verification only; no Godot F5 playtest was available.
+Test all four directions, enemies on obstacles, late dodge recovery, and
+projectile deflections before treating combat timing as final.

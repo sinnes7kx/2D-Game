@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/rose_hook.gd" id="1_hook"]
+[ext_resource type="SpriteFrames" path="res://resources/rose_hook_frames.tres" id="2_frames"]
+
+[sub_resource type="Gradient" id="Gradient_silver"]
+colors = PackedColorArray(0.99, 0.94, 1, 0.94, 0.82, 0.61, 0.96, 0.69, 0.64, 0.46, 0.79, 0)
+offsets = PackedFloat32Array(0, 0.4, 1)
+
+[node name="RoseHook" type="Node2D"]
+script = ExtResource("1_hook")
+z_index = 36
+
+[node name="MoonThread" type="Line2D" parent="."]
+visible = false
+width = 3.0
+default_color = Color(0.87, 0.77, 1, 0.86)
+texture_mode = 1
+joint_mode = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HookTip" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("2_frames")
+animation = &"cast"
+scale = Vector2(0.44, 0.44)
+
+[node name="ImpactPetals" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 14
+lifetime = 0.42
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 65.0
+initial_velocity_max = 175.0
+color_ramp = SubResource("Gradient_silver")

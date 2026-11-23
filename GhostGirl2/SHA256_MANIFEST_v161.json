@@ -1,0 +1,12 @@
+{
+  "patch": "v1.61",
+  "base": "v1.60",
+  "sha256": {
+    "scenes/player.tscn": "a31d0bd92990113a0afa6ee85261cf7d14226c83bc9d52abcb2573097c54a381",
+    "scripts/equipment_visuals.gd": "4030f8bdebc1add047e5aa0a86765891ca048294f6185da327bd7c38a7e93a8a",
+    "scripts/weapon_prestige_fx.gd": "f45862220c8774ac46bb8da5ab7c090ab2ca91e7b1963151bf39c831436fd855",
+    "scripts/gothic_hunter.gd": "8e8602cb7eaf2c6dda05d2340484906e2a8c2046689ab61f31ecc320dbc9c460",
+    "INSTALL_v161.txt": "4335ca843770fe03f25b2c5d4fbcb950cd996ce3b2ad183e490913daf956e1de",
+    "tests/validate_v161.py": "eba8659725166daea54ceb382151fb7ac3302780f4a54ddd333543e3d0096246"
+  }
+}

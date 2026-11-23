@@ -1,0 +1,3330 @@
+[
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      148,
+      59,
+      230,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      148,
+      60,
+      230,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      149,
+      59,
+      229,
+      155
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      149,
+      60,
+      229,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      147,
+      61,
+      229,
+      157
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      147,
+      61,
+      229,
+      160
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      148,
+      63,
+      230,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      148,
+      60,
+      230,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      45,
+      223,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      46,
+      223,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      45,
+      223,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      146,
+      46,
+      224,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      146,
+      47,
+      225,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      49,
+      224,
+      160
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      46,
+      223,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      44,
+      224,
+      163
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      44,
+      64,
+      128,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      45,
+      66,
+      128,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      43,
+      64,
+      128,
+      157
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      44,
+      62,
+      128,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      44,
+      63,
+      128,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      46,
+      66,
+      128,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      45,
+      65,
+      128,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      45,
+      64,
+      128,
+      157
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      71,
+      229,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      70,
+      229,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      70,
+      230,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      71,
+      229,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      72,
+      229,
+      163
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      131,
+      72,
+      227,
+      163
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      131,
+      71,
+      227,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      71,
+      229,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      147,
+      64,
+      229,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      62,
+      230,
+      154
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      144,
+      60,
+      229,
+      155
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      144,
+      61,
+      231,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      65,
+      230,
+      160
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      149,
+      66,
+      230,
+      160
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      151,
+      66,
+      228,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      148,
+      64,
+      229,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      46,
+      225,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      143,
+      44,
+      226,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      43,
+      230,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      44,
+      230,
+      163
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      143,
+      46,
+      228,
+      164
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      146,
+      49,
+      224,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      148,
+      47,
+      222,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      146,
+      46,
+      224,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      46,
+      66,
+      129,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      42,
+      63,
+      127,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      41,
+      64,
+      126,
+      153
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      42,
+      64,
+      127,
+      155
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      47,
+      69,
+      130,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      49,
+      70,
+      132,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      49,
+      68,
+      130,
+      158
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      47,
+      67,
+      128,
+      157
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      128,
+      71,
+      232,
+      160
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      127,
+      66,
+      234,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      125,
+      64,
+      236,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      128,
+      70,
+      235,
+      164
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      131,
+      75,
+      229,
+      163
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      133,
+      77,
+      226,
+      162
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      132,
+      75,
+      228,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      73,
+      230,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      59,
+      231,
+      152
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      58,
+      250,
+      146
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 2,
+    "safe_scale": 0.96,
+    "bbox": [
+      127,
+      45,
+      251,
+      147
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 3,
+    "safe_scale": 0.92,
+    "bbox": [
+      131,
+      42,
+      251,
+      142
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      140,
+      111,
+      245,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      111,
+      233,
+      208
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      140,
+      87,
+      227,
+      141
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      137,
+      58,
+      231,
+      155
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      133,
+      40,
+      227,
+      157
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      135,
+      17,
+      233,
+      153
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      143,
+      9,
+      210,
+      148
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      127,
+      14,
+      181,
+      140
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      148,
+      104,
+      223,
+      135
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      113,
+      228,
+      199
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      77,
+      218,
+      149
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      134,
+      40,
+      227,
+      159
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      47,
+      59,
+      128,
+      146
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      29,
+      76,
+      131,
+      139
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      12,
+      103,
+      130,
+      153
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 3,
+    "safe_scale": 0.98,
+    "bbox": [
+      5,
+      106,
+      133,
+      168
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      20,
+      105,
+      131,
+      195
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      42,
+      109,
+      128,
+      202
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      41,
+      100,
+      129,
+      142
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      47,
+      58,
+      129,
+      151
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      133,
+      66,
+      217,
+      151
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      129,
+      73,
+      234,
+      146
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      126,
+      87,
+      247,
+      140
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      123,
+      98,
+      246,
+      151
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      121,
+      111,
+      231,
+      198
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      123,
+      114,
+      212,
+      209
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      131,
+      94,
+      220,
+      147
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      133,
+      65,
+      218,
+      155
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      54,
+      210,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      135,
+      24,
+      192,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      123,
+      14,
+      181,
+      151
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      15,
+      242,
+      147
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      140,
+      106,
+      244,
+      151
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      119,
+      218,
+      204
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      99,
+      227,
+      148
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      140,
+      59,
+      221,
+      160
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      42,
+      216,
+      160
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      132,
+      15,
+      193,
+      156
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      123,
+      12,
+      181,
+      147
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      140,
+      21,
+      238,
+      142
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      146,
+      107,
+      230,
+      143
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      121,
+      214,
+      206
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      143,
+      106,
+      213,
+      146
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      48,
+      218,
+      161
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      49,
+      42,
+      126,
+      154
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      57,
+      21,
+      123,
+      150
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      76,
+      22,
+      127,
+      141
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      20,
+      51,
+      135,
+      131
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      13,
+      110,
+      132,
+      176
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      50,
+      115,
+      124,
+      197
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      44,
+      102,
+      128,
+      144
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      49,
+      48,
+      128,
+      155
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      136,
+      48,
+      207,
+      157
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      25,
+      187,
+      152
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      113,
+      22,
+      164,
+      141
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      125,
+      51,
+      242,
+      138
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      125,
+      112,
+      238,
+      165
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      129,
+      119,
+      202,
+      203
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      128,
+      95,
+      221,
+      151
+    ]
+  },
+  {
+    "style": "scythe",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      135,
+      54,
+      206,
+      158
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      38,
+      235,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      38,
+      235,
+      158
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      143,
+      38,
+      235,
+      157
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      143,
+      39,
+      235,
+      158
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      39,
+      234,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      40,
+      234,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      41,
+      235,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      39,
+      235,
+      160
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      22,
+      231,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      24,
+      231,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      23,
+      231,
+      160
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      24,
+      232,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      25,
+      233,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      26,
+      232,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      23,
+      231,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      22,
+      232,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      22,
+      57,
+      128,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      23,
+      59,
+      128,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      21,
+      57,
+      128,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      21,
+      55,
+      128,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      21,
+      56,
+      128,
+      166
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      24,
+      59,
+      127,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      22,
+      58,
+      128,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      22,
+      57,
+      128,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      48,
+      237,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      47,
+      237,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      47,
+      239,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      48,
+      237,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      49,
+      237,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      125,
+      49,
+      235,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      125,
+      48,
+      235,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "idle_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      48,
+      237,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      43,
+      235,
+      158
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      41,
+      236,
+      156
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      38,
+      235,
+      156
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      39,
+      237,
+      160
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      43,
+      236,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      143,
+      45,
+      236,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      45,
+      233,
+      160
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      43,
+      235,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      138,
+      23,
+      232,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      136,
+      21,
+      234,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      134,
+      18,
+      237,
+      160
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      134,
+      19,
+      237,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      135,
+      23,
+      236,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      27,
+      232,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      141,
+      25,
+      231,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      24,
+      232,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      24,
+      59,
+      129,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      20,
+      56,
+      127,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      20,
+      57,
+      126,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      20,
+      58,
+      127,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      25,
+      63,
+      130,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      27,
+      64,
+      132,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      27,
+      61,
+      130,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      25,
+      60,
+      128,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      122,
+      49,
+      241,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      120,
+      43,
+      243,
+      160
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      118,
+      40,
+      246,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 3,
+    "safe_scale": 1.0,
+    "bbox": [
+      121,
+      46,
+      244,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      125,
+      53,
+      238,
+      164
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      128,
+      56,
+      234,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      126,
+      53,
+      236,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "locomotion",
+    "track": "walk_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      51,
+      239,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      131,
+      36,
+      238,
+      153
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 1,
+    "safe_scale": 0.9,
+    "bbox": [
+      127,
+      50,
+      251,
+      145
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 2,
+    "safe_scale": 0.86,
+    "bbox": [
+      123,
+      32,
+      251,
+      145
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 3,
+    "safe_scale": 0.82,
+    "bbox": [
+      127,
+      30,
+      251,
+      140
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 4,
+    "safe_scale": 0.9,
+    "bbox": [
+      140,
+      116,
+      251,
+      165
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 5,
+    "safe_scale": 0.94,
+    "bbox": [
+      143,
+      107,
+      251,
+      211
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      136,
+      79,
+      237,
+      141
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      131,
+      35,
+      238,
+      156
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      126,
+      15,
+      234,
+      158
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 1,
+    "safe_scale": 0.88,
+    "bbox": [
+      130,
+      6,
+      231,
+      151
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 2,
+    "safe_scale": 0.86,
+    "bbox": [
+      141,
+      6,
+      213,
+      146
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 3,
+    "safe_scale": 0.94,
+    "bbox": [
+      133,
+      4,
+      187,
+      142
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      146,
+      108,
+      234,
+      143
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      139,
+      108,
+      250,
+      206
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      134,
+      59,
+      225,
+      150
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      127,
+      15,
+      234,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      26,
+      53,
+      128,
+      153
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      9,
+      70,
+      131,
+      146
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 2,
+    "safe_scale": 0.92,
+    "bbox": [
+      4,
+      97,
+      131,
+      148
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 3,
+    "safe_scale": 0.84,
+    "bbox": [
+      5,
+      112,
+      133,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 4,
+    "safe_scale": 0.98,
+    "bbox": [
+      11,
+      107,
+      137,
+      215
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 5,
+    "safe_scale": 0.88,
+    "bbox": [
+      45,
+      113,
+      131,
+      214
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      27,
+      93,
+      130,
+      147
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      25,
+      51,
+      128,
+      157
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      128,
+      45,
+      224,
+      152
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      124,
+      61,
+      245,
+      146
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 2,
+    "safe_scale": 0.88,
+    "bbox": [
+      126,
+      94,
+      250,
+      142
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 3,
+    "safe_scale": 0.88,
+    "bbox": [
+      124,
+      108,
+      251,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 4,
+    "safe_scale": 0.96,
+    "bbox": [
+      121,
+      106,
+      251,
+      202
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 5,
+    "safe_scale": 0.96,
+    "bbox": [
+      124,
+      110,
+      231,
+      214
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      128,
+      88,
+      230,
+      146
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "light_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      127,
+      44,
+      224,
+      156
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      136,
+      34,
+      217,
+      158
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      5,
+      205,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 2,
+    "safe_scale": 0.94,
+    "bbox": [
+      128,
+      4,
+      187,
+      153
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 3,
+    "safe_scale": 0.86,
+    "bbox": [
+      135,
+      5,
+      237,
+      145
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 4,
+    "safe_scale": 0.9,
+    "bbox": [
+      141,
+      114,
+      250,
+      158
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      142,
+      115,
+      238,
+      212
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      136,
+      96,
+      238,
+      147
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_front",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      134,
+      37,
+      227,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      132,
+      20,
+      225,
+      162
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 1,
+    "safe_scale": 0.92,
+    "bbox": [
+      141,
+      5,
+      203,
+      157
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 2,
+    "safe_scale": 0.92,
+    "bbox": [
+      129,
+      4,
+      186,
+      149
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 3,
+    "safe_scale": 0.92,
+    "bbox": [
+      135,
+      5,
+      238,
+      141
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 4,
+    "safe_scale": 1.0,
+    "bbox": [
+      144,
+      112,
+      242,
+      152
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      145,
+      117,
+      230,
+      215
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      140,
+      103,
+      222,
+      145
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_back",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      135,
+      26,
+      225,
+      163
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      34,
+      31,
+      125,
+      160
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      54,
+      5,
+      120,
+      156
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      78,
+      7,
+      132,
+      145
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 3,
+    "safe_scale": 0.92,
+    "bbox": [
+      5,
+      51,
+      133,
+      138
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 4,
+    "safe_scale": 0.94,
+    "bbox": [
+      5,
+      114,
+      135,
+      180
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 5,
+    "safe_scale": 0.96,
+    "bbox": [
+      48,
+      117,
+      128,
+      215
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      29,
+      96,
+      129,
+      150
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_left",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      33,
+      38,
+      128,
+      161
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 0,
+    "safe_scale": 1.0,
+    "bbox": [
+      130,
+      28,
+      215,
+      159
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 1,
+    "safe_scale": 1.0,
+    "bbox": [
+      135,
+      7,
+      199,
+      155
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 2,
+    "safe_scale": 1.0,
+    "bbox": [
+      116,
+      7,
+      170,
+      145
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 3,
+    "safe_scale": 0.96,
+    "bbox": [
+      121,
+      37,
+      250,
+      138
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 4,
+    "safe_scale": 0.96,
+    "bbox": [
+      124,
+      114,
+      250,
+      174
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 5,
+    "safe_scale": 1.0,
+    "bbox": [
+      129,
+      115,
+      221,
+      212
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 6,
+    "safe_scale": 1.0,
+    "bbox": [
+      125,
+      89,
+      232,
+      150
+    ]
+  },
+  {
+    "style": "halberd",
+    "family": "combat",
+    "track": "heavy_right",
+    "frame": 7,
+    "safe_scale": 1.0,
+    "bbox": [
+      129,
+      34,
+      213,
+      160
+    ]
+  }
+]

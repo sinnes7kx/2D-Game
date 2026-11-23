@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ghost/bows_v126/moonveil_icon.png" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v137_choral_moonbow"
+display_name = "Choral Moonbow"
+description = "A silver string remembers every way the bells were awakened: ice, roses, iron, the hook and flight."
+icon = ExtResource("icon")
+unique = true
+equip_slot = "sword"
+weapon_style = "bow"
+stat_id = "attack_speed_pct"
+min_stat = 9.0
+max_stat = 16.0
+max_sockets = 2
+item_level = 33
+min_weapon_damage = 20.0
+max_weapon_damage = 31.0
+inventory_width = 2
+inventory_height = 3

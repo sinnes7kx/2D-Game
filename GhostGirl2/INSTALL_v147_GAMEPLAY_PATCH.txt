@@ -1,0 +1,22 @@
+GHOST GIRL v1.47 — ECHO TRIALS & ROSE CHIMES
+INCREMENTAL PATCH — install on v1.46.4 (which already requires v1.46.3).
+
+1. Keep your current GhostGirl2 project and make a backup of it and your user:// saves.
+2. Open the existing GhostGirl2 project directory (the one containing project.godot).
+3. Extract THIS ZIP's scripts/, scenes/, tests/, and docs/ into that directory.
+   Overwrite the matching game.gd, hud.gd and the THREE early-room scenes.
+   Do NOT place the ZIP itself inside res:// or remove existing folders.
+4. Start the existing Godot 4.5+ project and run F5.
+5. Try the new interactive echo altars in Moonwake Crypt and the Waking Garden.
+   Press E to begin three-round optional fights. Aim F at the rose bell to stun
+   enemies in its ring. Q still yanks enemy targets via the existing hook.
+6. In the Crypt Gallery, use F on the three numbered-dot rose chimes in order
+   1, 2, 3 to reveal a permanent one-use cache.
+
+This is NOT a full project and contains no sprite replacements or original saves.
+It reuses the existing original enemy scenes, item resources and sound.
+
+NOTE: Automated STATIC integration checks passed in the build environment.
+The Godot runtime/executable was NOT available here. F5 scene import, weapon
+balance, collision feel, sound mix and live save/load require your playtest.
+See docs/V147_PLAYTEST_AND_CONTENT.md for a compact checklist.

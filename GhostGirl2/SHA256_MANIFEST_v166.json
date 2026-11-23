@@ -1,0 +1,18 @@
+{
+  "INSTALL_v166.txt": "e39986b80e739cd98fee16218bb8799e4b527bd9c807b6c52bd6d2654e0bba0c",
+  "assets/equipment/bows_v166/moonveil_carry_only_2048x1760.png": "9dd25f1183b90fc8ffed7524d6dbf621550ef02ebe3c2edab0c419b1401b8e4f",
+  "assets/equipment/bows_v166/thornrose_carry_only_2048x1760.png": "41684a58579bc1a1e6426b68558769715083c9f7a26c795c49644c23f7290e61",
+  "assets/ui/jewels_v166/delirium.png": "ddded8ac630d6daf01285993c09fb74522dad9092b2fe7ec55701a12f2609f8d",
+  "assets/ui/jewels_v166/exile.png": "56e2216e9301e8dfd879207fb194bef4f92b55e6ff1c5fc5611fbb1ce08b4f69",
+  "assets/ui/jewels_v166/malady.png": "5e009ea09edf447f206a71bce78e6daf69f74aa51934e4aa72964744558a3007",
+  "items/delirium_jewel.tres": "5e91ef3c65c239da63f790b62006b265efa111b76e26a7d5fc727e476050b38f",
+  "items/exile_jewel.tres": "32d7c85bb39753d2ca639b6e36bb177ac7eca5b91d9d24ad7f30cd109d09bc8a",
+  "items/malady_jewel.tres": "c2583b5a03cc7bb20c540b100b9e0162e5193e2152059f0b10343b60d6333ca0",
+  "scenes/player.tscn": "0a2e4ddae35848d72678e62c5566a32bd0af76c7d8b1c39d282c97a44e49c39a",
+  "scripts/bow_palette_overlay_v139.gd": "4b89a41253e26d2032b330349fbee1bef5a519a453c2bbcebcccebff5c3fba32",
+  "scripts/equipment_visuals.gd": "5af5f52c593a33222333092214e6ae78f7217d48f2997f484172494a9b97d227",
+  "scripts/inventory_grid.gd": "128e7451d18aff9199f9e00ff28c369db46ecef8af2470960cb07fd5084daea4",
+  "scripts/inventory_panel.gd": "71c18805f145b624057103685def60f9b7fc87c4eff56ea8083acbd107f1928e",
+  "scripts/item_rich_text.gd": "cb04537c527a135b9e14c94e73b334a7274e7d7678e703138c2bf2844df909a6",
+  "scripts/weapon_prestige_fx.gd": "48d2e14c55cf79310fab7ad7bffbd100acf8e5dff20558d41eae7fd3abe8f9a2"
+}

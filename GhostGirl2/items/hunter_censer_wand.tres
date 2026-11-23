@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://g5wxxe7u5i8x"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://cq263mcm1170e" path="res://assets/ui/reliquary/lantern_staff.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "hunter_censer_wand"
+display_name = "Censer Wand"
+description = "A silver incense wand used to fire fast moonlit spells between enemy tells."
+icon = ExtResource("2_icon")
+equip_slot = "wand"
+stat_id = "cast_speed_pct"
+min_stat = 8.0
+max_stat = 15.0
+max_sockets = 2
+item_level = 8

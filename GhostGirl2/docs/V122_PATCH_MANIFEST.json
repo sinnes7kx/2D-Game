@@ -1,0 +1,56 @@
+{
+  "version": "1.22",
+  "base": "v1.21",
+  "files": [
+    {
+      "path": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
+      "bytes": 2906094,
+      "sha256": "014f6aee7d61c9edb137eff2e33668db84f8fff1a52d2bd06f39b6842d38404e"
+    },
+    {
+      "path": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
+      "bytes": 2443276,
+      "sha256": "38aee9826e86c3042e50d956c7cb240cbedcf856205147db070adae19c69af36"
+    },
+    {
+      "path": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
+      "bytes": 3007431,
+      "sha256": "09a4a8665e30c7a0b4d4a4298b5f43fe15588e6a393bd87ce6737d446daa7a37"
+    },
+    {
+      "path": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
+      "bytes": 2525817,
+      "sha256": "8351ec2d472f672ecb53f818fbb363bcc12401e1e7e1adacc340f50fbf9104a8"
+    },
+    {
+      "path": "resources/ghost_extra_animations.json",
+      "bytes": 43634,
+      "sha256": "0d0e9d2444844b5db67d881efce9542a6c17cbacb6e087b7f64ace8008c39e92"
+    },
+    {
+      "path": "scripts/weapon_animation_layers.gd",
+      "bytes": 6998,
+      "sha256": "bea11ff058fe437b173c694a3129aca3f49bc2233dd9206457caa039d4434c5f"
+    },
+    {
+      "path": "scripts/equipment_visuals.gd",
+      "bytes": 3389,
+      "sha256": "9de2cc56ddff37c059d314b03a8a33799172e1140795d4ae90e59f027b7b7f89"
+    },
+    {
+      "path": "tools/build_weapon_baked_v122.py",
+      "bytes": 3790,
+      "sha256": "48498d02e8e135d724700c88b904e875a660ae5367fd592752b3bed4b85b817c"
+    },
+    {
+      "path": "tests/validate_v122.py",
+      "bytes": 3273,
+      "sha256": "e74069d7923f504a5d925fc5e3ba65fe586b73db91dec3bc892e8b66323e4bbf"
+    },
+    {
+      "path": "docs/V122_WEAPON_VISIBILITY.md",
+      "bytes": 2102,
+      "sha256": "971f79595b4b30b4e4960d2a7348539c2dd6a628330276437b4a90f4ff6bad11"
+    }
+  ]
+}

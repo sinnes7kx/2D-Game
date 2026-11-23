@@ -1,0 +1,47 @@
+basic validation issues: []
+garden spawn (1180.0, 1312.0) clear True reachable cells 5350
+  chapel Portals OK nearest 11
+  Crate Carryables OK nearest 10
+  Seal Plates OK nearest 8
+  MoonRoseAnchor_1 HookAnchors OK nearest 5
+chapel spawn (1173.0, 1350.0) clear True reachable cells 5769
+  garden Portals OK nearest 13
+  cloister Portals OK nearest 5
+  bell_west PuzzlePieces OK nearest 9
+  bell_center PuzzlePieces OK nearest 6
+  bell_east PuzzlePieces OK nearest 11
+cloister spawn (1172.0, 1355.0) clear True reachable cells 6079
+  chapel Portals OK nearest 11
+  sanctum Portals OK nearest 9
+  Crate Carryables OK nearest 12
+  Seal Plates OK nearest 9
+  MoonRoseAnchor_1 HookAnchors OK nearest 23
+sanctum spawn (1175.0, 1358.0) clear True reachable cells 5803
+  cloister Portals OK nearest 11
+  lily_pond Portals OK nearest 8
+  LostMemory Memories OK nearest 10
+lily_pond spawn (1180.0, 1365.0) clear True reachable cells 4841
+  sanctum Portals OK nearest 13
+  glasshouse Portals OK nearest 4
+  MoonstoneOne Carryables OK nearest 11
+  MoonstoneTwo Carryables OK nearest 6
+  LeftSeal Plates OK nearest 8
+  RightSeal Plates OK nearest 14
+  MoonRoseAnchor_1 HookAnchors OK nearest 29
+  MoonRoseAnchor_2 HookAnchors OK nearest 66
+glasshouse spawn (1180.0, 1360.0) clear True reachable cells 5715
+  lily_pond Portals OK nearest 7
+  observatory Portals OK nearest 9
+  blossom_rose PuzzlePieces OK nearest 13
+  blossom_lily PuzzlePieces OK nearest 11
+  blossom_iris PuzzlePieces OK nearest 40
+  MoonRoseAnchor_1 HookAnchors OK nearest 1
+observatory spawn (1183.0, 1353.0) clear True reachable cells 5597
+  glasshouse Portals OK nearest 9
+  mirror_west PuzzlePieces OK nearest 11
+  mirror_north PuzzlePieces OK nearest 9
+  mirror_east PuzzlePieces OK nearest 9
+  FinalStar Memories OK nearest 7
+  MoonRoseAnchor_1 HookAnchors OK nearest 10
+FINAL ISSUES: 0
+

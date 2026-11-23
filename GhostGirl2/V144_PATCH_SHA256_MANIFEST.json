@@ -1,0 +1,42 @@
+{
+  "version": "1.44",
+  "base_version": "1.43",
+  "files": [
+    {
+      "path": "scripts/moonroot_lattice_v144.gd",
+      "size": 9519,
+      "sha256": "ca2e0732d7f7f3045705ca6775484bfd1670e178971e217dccf6582d89f4231a"
+    },
+    {
+      "path": "scripts/moonroot_hitbox_v144.gd",
+      "size": 530,
+      "sha256": "f107ce5f328d8f479af4981e44b74d33b7bb91f9128ecbe35c34d3b4c2737fb8"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 47158,
+      "sha256": "da14373b757c9f3c0de9603049bc1787929f4052fb3330147399d152d9b3e63b"
+    },
+    {
+      "path": "scripts/weapon_prestige_fx.gd",
+      "size": 10368,
+      "sha256": "a8ed62b13b721a82c031969917f5f88c13f8779f414b3a19d4bb8ea240585b1b"
+    },
+    {
+      "path": "scenes/rooms/hollow_veil_moor.tscn",
+      "size": 150333,
+      "sha256": "791f359a106db96d9d21bd3b5a7fe797944f2b7258d230e1a726d60d6273f5a8"
+    },
+    {
+      "path": "tests/validate_v144.py",
+      "size": 5209,
+      "sha256": "162e8c0f6b80c54267a38b43edbe666194db47698032d4237da3fbad8e2764fe"
+    },
+    {
+      "path": "V144_RELEASE_NOTES.md",
+      "size": 2375,
+      "sha256": "7818b6f97e89da44a46452352b1c3d01185bdd59666512292eec1b71185d5887"
+    }
+  ],
+  "runtime_verified": false
+}

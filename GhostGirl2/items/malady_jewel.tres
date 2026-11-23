@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://dibdhcya2jiwc"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://bcmkjfcb2wlfj" path="res://assets/ui/jewels_v166/malady.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "malady_jewel"
+display_name = "Malady"
+description = "A black-rose jewel that bites into the wound and answers with violence."
+icon = ExtResource("2_icon")
+unique = true
+item_class = "gem"
+socket_bonus_id = "melee_power_pct"
+socket_bonus_value = 9.0

@@ -1,0 +1,93 @@
+{
+  "version": "1.13",
+  "base_version": "1.12",
+  "type": "incremental",
+  "save_file_unchanged": true,
+  "files": [
+    {
+      "path": "V113_PATCH_INSTALL.txt",
+      "size": 997,
+      "sha256": "768ad5391c9dccee634dbaa87244a25805e3ff1246c64c20f5adc3eea4cc843f"
+    },
+    {
+      "path": "assets/audio/riposte_chime_v113.wav",
+      "size": 18566,
+      "sha256": "961d742af0a417cc472684164a9c068107899be5ea0e08ad6ebcce0e0e455b89"
+    },
+    {
+      "path": "docs/V113_SPECTRAL_PRESTIGE.md",
+      "size": 3575,
+      "sha256": "451f1a689ecb27ecf60642637a02d479f025ec6960845fb401d2a9f83f3db7eb"
+    },
+    {
+      "path": "project.godot",
+      "size": 7827,
+      "sha256": "1794ae4debbeef11ab63a1ef0e71e4c67efe5babc1d8678e8fc17c848c8d3adf"
+    },
+    {
+      "path": "resources/weapon_layer_manifest.json",
+      "size": 23222,
+      "sha256": "fbd5aaed3e3ab2de304fba188868ee60107f801bd5d0805e8f7b8772dca02ec7"
+    },
+    {
+      "path": "scripts/game.gd",
+      "size": 31924,
+      "sha256": "a52ade72d3e3ac0fdd3c2717cd0c3be08abd20ecf91d5ae9ba888481eb4e9aa2"
+    },
+    {
+      "path": "scripts/inventory.gd",
+      "size": 15824,
+      "sha256": "8b289e2786973f403b8bd323552b39c555b186b2b91a56192f172150e04c42c5"
+    },
+    {
+      "path": "scripts/item_generator.gd",
+      "size": 5893,
+      "sha256": "06edf52bb684b661bbe615dae566d11963cce1b8d515f849beb2d4e2fbd989bb"
+    },
+    {
+      "path": "scripts/item_instance.gd",
+      "size": 6884,
+      "sha256": "9430d03ffec01db9726df035c89d6d4ca2cb065dd8a8e6d477d184e9410a3d50"
+    },
+    {
+      "path": "scripts/item_rich_text.gd",
+      "size": 5755,
+      "sha256": "473e86b2d6e8905b7b420ebcfb1389c7f2b941d9ba46997a165a39daa6763836"
+    },
+    {
+      "path": "scripts/moon_spell.gd",
+      "size": 9121,
+      "sha256": "c5d5d200638bd1e1aea7012db4ec61ae07c05d17e2213cda4f8d180b31b12a5c"
+    },
+    {
+      "path": "scripts/player.gd",
+      "size": 39081,
+      "sha256": "6d4c496fccc649d729653003d46ad94927ce44b80d2d49c5094b8f0a79522c7c"
+    },
+    {
+      "path": "scripts/wand_idle_glimmer.gd",
+      "size": 2035,
+      "sha256": "b20d00835d6afa9f018648e07eac224bacaa099742371920692c92625eb084e0"
+    },
+    {
+      "path": "scripts/weapon_animation_layers.gd",
+      "size": 7210,
+      "sha256": "f90a59ed48a3ef20c9f8fa685228dee15bc6be0eefbf448e4676d8fe0943c0ea"
+    },
+    {
+      "path": "scripts/weapon_fx_library.gd",
+      "size": 2552,
+      "sha256": "f506bee58fa4cb8563a4100a35ead33be4348184577f24b4957495dfd0add953"
+    },
+    {
+      "path": "scripts/weapon_spectacle.gd",
+      "size": 4601,
+      "sha256": "98d36104446508510695339e443de35dc4dd128dbb9c4b8e21351e8dac5c4b68"
+    },
+    {
+      "path": "tests/validate_v113.py",
+      "size": 4356,
+      "sha256": "ce4a179dcde5068f11e4794848e5cdc65eb6e5fdb7f1ce05d2eb72cb8d3bf1fb"
+    }
+  ]
+}

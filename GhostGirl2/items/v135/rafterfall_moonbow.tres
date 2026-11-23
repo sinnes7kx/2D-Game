@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ghost/bows_v126/moonveil_icon.png" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v135_rafterfall_moonbow"
+display_name = "Rafterfall Moonbow"
+description = "A moonlit bow strung from a collapsed watchtower. Its arrows awaken the forgotten hinges of the moor."
+icon = ExtResource("icon")
+unique = true
+equip_slot = "sword"
+weapon_style = "bow"
+stat_id = "throw_force_pct"
+min_stat = 13.0
+max_stat = 21.0
+max_sockets = 2
+item_level = 29
+min_weapon_damage = 22.0
+max_weapon_damage = 31.0
+inventory_width = 2
+inventory_height = 3

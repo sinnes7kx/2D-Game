@@ -1,0 +1,181 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Script" path="res://scripts/portal.gd" id="act_portal"]
+[ext_resource type="Script" path="res://scripts/pressure_plate.gd" id="act_plate"]
+[ext_resource type="Script" path="res://scripts/puzzle_token.gd" id="act_token"]
+[ext_resource type="Script" path="res://scripts/visual_clue.gd" id="act_clue"]
+[ext_resource type="Script" path="res://scripts/memory_point.gd" id="act_memory"]
+[ext_resource type="Script" path="res://scripts/atmosphere.gd" id="act_atmosphere"]
+[ext_resource type="Script" path="res://scripts/room_aurora.gd" id="act_aurora"]
+[ext_resource type="Script" path="res://scripts/beam_puzzle.gd" id="act_beam"]
+[ext_resource type="Script" path="res://scripts/hook_anchor.gd" id="act_anchor"]
+[ext_resource type="PackedScene" path="res://scenes/carryable.tscn" id="act_carry"]
+[ext_resource type="Texture2D" path="res://assets/props/stone_pile.png" id="act_stone"]
+[ext_resource type="Texture2D" path="res://assets/world/chapel.png" id="1_background"]
+[ext_resource type="Texture2D" path="res://assets/world/layers/chapel_foreground.png" id="1_foreground"]
+
+[sub_resource type="RectangleShape2D" id="shape_0"]
+size = Vector2(2389, 248)
+
+[sub_resource type="RectangleShape2D" id="shape_1"]
+size = Vector2(132, 1792)
+
+[sub_resource type="RectangleShape2D" id="shape_2"]
+size = Vector2(132, 1792)
+
+[sub_resource type="RectangleShape2D" id="shape_3"]
+size = Vector2(2389, 69)
+
+[sub_resource type="RectangleShape2D" id="shape_4"]
+size = Vector2(531, 346)
+
+[sub_resource type="RectangleShape2D" id="shape_5"]
+size = Vector2(314, 406)
+
+[sub_resource type="RectangleShape2D" id="shape_6"]
+size = Vector2(314, 406)
+
+[node name="Chapel" type="Node2D"]
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("1_background")
+centered = false
+z_index = -50
+
+[node name="ForegroundCanopy" type="Sprite2D" parent="."]
+texture = ExtResource("1_foreground")
+centered = false
+z_index = 49
+
+[node name="Northern boundary" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Northern boundary"]
+position = Vector2(1195, 124)
+shape = SubResource("shape_0")
+
+[node name="Western boundary" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Western boundary"]
+position = Vector2(66, 898)
+shape = SubResource("shape_1")
+
+[node name="Eastern boundary" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Eastern boundary"]
+position = Vector2(2323, 898)
+shape = SubResource("shape_2")
+
+[node name="Southern boundary" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Southern boundary"]
+position = Vector2(1195, 1769)
+shape = SubResource("shape_3")
+
+[node name="Northern altar" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Northern altar"]
+position = Vector2(1191, 503)
+shape = SubResource("shape_4")
+
+[node name="Western pews" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Western pews"]
+position = Vector2(723, 950)
+shape = SubResource("shape_5")
+
+[node name="Eastern pews" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Eastern pews"]
+position = Vector2(1642, 950)
+shape = SubResource("shape_6")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1173, 1350)
+
+[node name="From_garden" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1172, 1350)
+
+[node name="From_cloister" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1168, 1043)
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="garden" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1188, 1500)
+script = ExtResource("act_portal")
+interaction_name = "Return to the garden"
+destination = "garden"
+
+[node name="cloister" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1180, 858)
+script = ExtResource("act_portal")
+interaction_name = "Enter the cloister"
+destination = "cloister"
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="bell_west" type="Node2D" parent="Gameplay/PuzzlePieces"]
+position = Vector2(495, 606)
+script = ExtResource("act_token")
+interaction_name = "Ring the western bell"
+kind = "bell"
+tint = Color(0.77, 0.69, 0.98, 1)
+orientation = 0
+
+[node name="bell_center" type="Node2D" parent="Gameplay/PuzzlePieces"]
+position = Vector2(1172, 1244)
+script = ExtResource("act_token")
+interaction_name = "Ring the southern bell"
+kind = "bell"
+tint = Color(0.93, 0.77, 0.94, 1)
+orientation = 0
+
+[node name="bell_east" type="Node2D" parent="Gameplay/PuzzlePieces"]
+position = Vector2(1860, 594)
+script = ExtResource("act_token")
+interaction_name = "Ring the eastern bell"
+kind = "bell"
+tint = Color(0.65, 0.83, 0.95, 1)
+orientation = 0
+
+[node name="VisualClues" type="Node2D" parent="Gameplay"]
+
+[node name="BellPattern" type="Node2D" parent="Gameplay/VisualClues"]
+position = Vector2(1188, 891)
+script = ExtResource("act_clue")
+clue_type = "bells"
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="MoonlitDust" type="Node2D" parent="Gameplay/Effects"]
+scale = Vector2(1.65, 1.65)
+z_index = 12
+script = ExtResource("act_atmosphere")
+
+
+[node name="HookAnchors" type="Node2D" parent="Gameplay"]
+

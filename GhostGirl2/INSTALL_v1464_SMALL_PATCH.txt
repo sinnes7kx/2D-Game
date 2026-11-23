@@ -1,0 +1,17 @@
+GHOST GIRL v1.46.4 — SMALL INCREMENTAL PATCH
+============================================
+REQUIRES the assembled GhostGirl2 project with v1.46.3 already applied.
+Make a backup of the project and existing user:// saves.
+
+Merge scripts/, scenes/, docs/ into your existing GhostGirl2 project root,
+replacing matching files. Do not extract these files as a new Godot project.
+
+In Moonwake Crypt: F on cracked support near starting area, then E at
+newly-opened floor hole to enter Crypt Gallery.
+In the Waking Garden: F on the rotten trellis to uncover an optional cache.
+
+Item tooltip cosmetics are dots only; Favorites menu displays gradients;
+no seed ID or color-name clutter. Numeric seeds still exist internally for
+exact deterministic cosmetic restoration. Combat stats are unchanged.
+
+NOTE: No actual Godot runtime/playtest available for this patch.

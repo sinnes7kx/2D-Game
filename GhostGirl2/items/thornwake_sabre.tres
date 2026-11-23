@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://yivt5603hjru"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://cskf3dvrqegur" path="res://assets/ui/reliquary/thornwake.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "thornwake_sabre"
+display_name = "Thornwake Sabre"
+description = "A curved duelist blade worn by the last rosewardens."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+stat_id = "melee_power_pct"
+min_stat = 3.0
+max_stat = 7.0
+max_sockets = 2
+item_level = 5
+min_weapon_damage = 8.0
+max_weapon_damage = 12.0
+inventory_width = 2
+inventory_height = 3

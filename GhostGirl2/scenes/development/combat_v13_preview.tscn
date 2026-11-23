@@ -1,0 +1,252 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="SpriteFrames" path="res://resources/ghost_girl_frames.tres" id="1_body"]
+[ext_resource type="SpriteFrames" path="res://resources/rose_slash_fx.tres" id="2_fx"]
+
+[ext_resource type="Script" path="res://scripts/ghost_animation_preview.gd" id="99_preview"]
+
+[node name="AnimationWorkshop" type="Node2D"]
+script = ExtResource("99_preview")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 1180.0
+offset_bottom = 970.0
+color = Color(0.055, 0.048, 0.065, 1)
+
+[node name="Title_dodge" type="Label" parent="."]
+offset_left = 22.0
+offset_top = 38.0
+offset_right = 340.0
+offset_bottom = 68.0
+text = "DODGE (16)"
+
+[node name="dodge_front" type="AnimatedSprite2D" parent="."]
+position = Vector2(145, 100)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"dodge_front"
+autoplay = "dodge_front"
+
+[node name="Caption_dodge_front" type="Label" parent="."]
+offset_left = 81.0
+offset_top = 213.0
+offset_right = 209.0
+offset_bottom = 242.0
+horizontal_alignment = 1
+text = "FRONT"
+
+[node name="dodge_back" type="AnimatedSprite2D" parent="."]
+position = Vector2(417, 100)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"dodge_back"
+autoplay = "dodge_back"
+
+[node name="Caption_dodge_back" type="Label" parent="."]
+offset_left = 353.0
+offset_top = 213.0
+offset_right = 481.0
+offset_bottom = 242.0
+horizontal_alignment = 1
+text = "BACK"
+
+[node name="dodge_left" type="AnimatedSprite2D" parent="."]
+position = Vector2(689, 100)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"dodge_left"
+autoplay = "dodge_left"
+
+[node name="Caption_dodge_left" type="Label" parent="."]
+offset_left = 625.0
+offset_top = 213.0
+offset_right = 753.0
+offset_bottom = 242.0
+horizontal_alignment = 1
+text = "LEFT"
+
+[node name="dodge_right" type="AnimatedSprite2D" parent="."]
+position = Vector2(961, 100)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"dodge_right"
+autoplay = "dodge_right"
+
+[node name="Caption_dodge_right" type="Label" parent="."]
+offset_left = 897.0
+offset_top = 213.0
+offset_right = 1025.0
+offset_bottom = 242.0
+horizontal_alignment = 1
+text = "RIGHT"
+
+[node name="Title_attack_sword" type="Label" parent="."]
+offset_left = 22.0
+offset_top = 266.0
+offset_right = 340.0
+offset_bottom = 296.0
+text = "SWORD (16)"
+
+[node name="attack_sword_front" type="AnimatedSprite2D" parent="."]
+position = Vector2(145, 328)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_sword_front"
+autoplay = "attack_sword_front"
+
+[node name="Caption_attack_sword_front" type="Label" parent="."]
+offset_left = 81.0
+offset_top = 441.0
+offset_right = 209.0
+offset_bottom = 470.0
+horizontal_alignment = 1
+text = "FRONT"
+
+[node name="attack_sword_back" type="AnimatedSprite2D" parent="."]
+position = Vector2(417, 328)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_sword_back"
+autoplay = "attack_sword_back"
+
+[node name="Caption_attack_sword_back" type="Label" parent="."]
+offset_left = 353.0
+offset_top = 441.0
+offset_right = 481.0
+offset_bottom = 470.0
+horizontal_alignment = 1
+text = "BACK"
+
+[node name="attack_sword_left" type="AnimatedSprite2D" parent="."]
+position = Vector2(689, 328)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_sword_left"
+autoplay = "attack_sword_left"
+
+[node name="Caption_attack_sword_left" type="Label" parent="."]
+offset_left = 625.0
+offset_top = 441.0
+offset_right = 753.0
+offset_bottom = 470.0
+horizontal_alignment = 1
+text = "LEFT"
+
+[node name="attack_sword_right" type="AnimatedSprite2D" parent="."]
+position = Vector2(961, 328)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_sword_right"
+autoplay = "attack_sword_right"
+
+[node name="Caption_attack_sword_right" type="Label" parent="."]
+offset_left = 897.0
+offset_top = 441.0
+offset_right = 1025.0
+offset_bottom = 470.0
+horizontal_alignment = 1
+text = "RIGHT"
+
+[node name="Title_attack_light_alt" type="Label" parent="."]
+offset_left = 22.0
+offset_top = 494.0
+offset_right = 340.0
+offset_bottom = 524.0
+text = "COMBO II (8)"
+
+[node name="attack_light_alt_front" type="AnimatedSprite2D" parent="."]
+position = Vector2(145, 556)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_light_alt_front"
+autoplay = "attack_light_alt_front"
+
+[node name="Caption_attack_light_alt_front" type="Label" parent="."]
+offset_left = 81.0
+offset_top = 669.0
+offset_right = 209.0
+offset_bottom = 698.0
+horizontal_alignment = 1
+text = "FRONT"
+
+[node name="attack_light_alt_back" type="AnimatedSprite2D" parent="."]
+position = Vector2(417, 556)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_light_alt_back"
+autoplay = "attack_light_alt_back"
+
+[node name="Caption_attack_light_alt_back" type="Label" parent="."]
+offset_left = 353.0
+offset_top = 669.0
+offset_right = 481.0
+offset_bottom = 698.0
+horizontal_alignment = 1
+text = "BACK"
+
+[node name="attack_light_alt_left" type="AnimatedSprite2D" parent="."]
+position = Vector2(689, 556)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_light_alt_left"
+autoplay = "attack_light_alt_left"
+
+[node name="Caption_attack_light_alt_left" type="Label" parent="."]
+offset_left = 625.0
+offset_top = 669.0
+offset_right = 753.0
+offset_bottom = 698.0
+horizontal_alignment = 1
+text = "LEFT"
+
+[node name="attack_light_alt_right" type="AnimatedSprite2D" parent="."]
+position = Vector2(961, 556)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"attack_light_alt_right"
+autoplay = "attack_light_alt_right"
+
+[node name="Caption_attack_light_alt_right" type="Label" parent="."]
+offset_left = 897.0
+offset_top = 669.0
+offset_right = 1025.0
+offset_bottom = 698.0
+horizontal_alignment = 1
+text = "RIGHT"
+
+[node name="Title_hook_launch" type="Label" parent="."]
+offset_left = 22.0
+offset_top = 722.0
+offset_right = 340.0
+offset_bottom = 752.0
+text = "ROSE HOOK (UP / DOWN)"
+
+[node name="hook_launch_front" type="AnimatedSprite2D" parent="."]
+position = Vector2(145, 784)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"hook_launch_front"
+autoplay = "hook_launch_front"
+
+[node name="Caption_hook_launch_front" type="Label" parent="."]
+offset_left = 81.0
+offset_top = 897.0
+offset_right = 209.0
+offset_bottom = 926.0
+horizontal_alignment = 1
+text = "FRONT"
+
+[node name="hook_launch_back" type="AnimatedSprite2D" parent="."]
+position = Vector2(417, 784)
+scale = Vector2(0.83, 0.83)
+sprite_frames = ExtResource("1_body")
+animation = &"hook_launch_back"
+autoplay = "hook_launch_back"
+
+[node name="Caption_hook_launch_back" type="Label" parent="."]
+offset_left = 353.0
+offset_top = 897.0
+offset_right = 481.0
+offset_bottom = 926.0
+horizontal_alignment = 1
+text = "BACK"

@@ -1,0 +1,28 @@
+GHOST GIRL v1.55.1 — EARLY PUZZLE MISSING SCRIPT HOTFIX
+For the assembled v1.55 project (also safe over v1.54).
+
+FIXES:
+Godot red path: res://scripts/buried_cache_v1464.gd
+This original script is referenced by Waking Garden, Crypt Gallery, and Garden Bridge.
+Also bundles the previously missing floor_breach_v1464.gd so that the
+Moonwake Crypt collapsed-floor puzzle remains functional.
+
+INSTALL:
+1. CLOSE GODOT.
+2. Extract this ZIP to the actual GhostGirl2 project root containing project.godot.
+3. Let the scripts/ folder MERGE into your existing scripts/ folder.
+   Do not extract into a new nested folder (e.g. GhostGirl2/GhostGirl2/).
+4. Reopen Godot. The red script path should resolve after rescan.
+5. If red persists: verify the files exist at the exact paths listed below
+   and that you have opened the right project folder.
+
+FILES ADDED (EXACT ORIGINAL v1.46.4 CONTENT):
+  scripts/buried_cache_v1464.gd
+  scripts/floor_breach_v1464.gd
+
+These scripts do not change save formats, player artwork, weapon cosmetics,
+item stats or any other game settings.
+
+Static verification: all .tscn script res:// references resolve in the
+available assembled v1.54 project with v1.55 script overlay, but no Godot
+runtime launch was available.

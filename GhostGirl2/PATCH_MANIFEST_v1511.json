@@ -1,0 +1,10 @@
+{
+  "version": "v1.51.1",
+  "target": "v1.51",
+  "purpose": "missing inventory scene compatibility fix",
+  "sha256": {
+    "INSTALL_v1511.txt": "aef28dab3e55b3988a253279b296e9f25a7662d7c77e41d5d7618a9bc7128ccd",
+    "scenes/inventory_panel.tscn": "0c22ef980f6e1705d8685f47c0656dd5282ac48f94430ab1b2438049ec09a8be",
+    "tests/validate_v1511.py": "df366088f3637c0f379191077d67a5d5a4639f60bf60ca38fdf02c02a3602bf1"
+  }
+}

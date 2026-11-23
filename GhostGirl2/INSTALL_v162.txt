@@ -1,0 +1,33 @@
+GHOST GIRL v1.62 — MYTHIC PLAYTEST & WAND SPRITES
+Applies over v1.61. Small incremental overlay.
+
+1. Back up GhostGirl2 and saved games, then close Godot.
+2. Extract the ZIP into the project folder containing project.godot.
+3. Overwrite matching files and reopen Godot to import the new wand textures.
+
+NEW DEBUG TEST BUTTON:
+- Select any equippable item in the backpack during a Godot debug play session.
+- The detail pane shows PLAYTEST · MYTHIC. Click it to preview signature #4.
+- Click CLEAR MYTHIC TEST to restore its natural appearance.
+- Preview also works for dresses. Equip the item to see its glow.
+- This is an in-memory override only: it does not modify rare_visual_mod,
+  cosmetic_uid, stats, loot odds, saved favorites, or save data.
+- The button is hidden and overrides ignored in non-debug builds.
+- Normal 1/65536 mythic odds are unchanged.
+
+WAND SPRITES (FIRST PASS):
+- The original crystal rose wand is retained.
+- Moonlit Censer and Thorn Crescent add two new hand-held textured silhouettes.
+- The player's saved cosmetic look deterministically picks one of the three.
+- Each shares v1.61's animated Ghost-local parent and has a matching glow axis.
+- Static isolated sprites are used with facing rotations; these are not yet
+  individually frame-authored 8-frame attack/idle atlases.
+- Ghost Girl's original character sprites and animation atlas are unchanged.
+
+CHANGED: scripts/item_instance.gd, scripts/inventory_panel.gd,
+ scripts/equipment_visuals.gd, scripts/weapon_prestige_fx.gd,
+ scenes/inventory_panel.tscn; added 2 wand textures.
+
+LIMITATION: no Godot engine runtime/F5 test was possible here. Test both
+ backpack previews, equip/unequip, reload, held-wand alignment in 4 directions,
+ and make sure the debug appearance never gets saved.

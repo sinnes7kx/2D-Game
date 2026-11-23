@@ -1,0 +1,46 @@
+{
+  "version": "1.59",
+  "applies_on": "1.58",
+  "files": {
+    "scripts/enemy_hex_bolt.gd": {
+      "sha256": "59d81866ea6bb39c1afbf19b8d250019772015bd01507b3dbd81547f35a46567",
+      "size_bytes": 2310
+    },
+    "scripts/equipment_visuals.gd": {
+      "sha256": "a986ab6e8e33a7cd5425e83c0fb5b797083b060d9660f18bde4ae363611c1bd0",
+      "size_bytes": 7741
+    },
+    "scripts/gothic_hunter.gd": {
+      "sha256": "3847e36f3e7f55f48c8b8014f8093df7de1b402792b2eb3bf551b392d76286d8",
+      "size_bytes": 24364
+    },
+    "scripts/inventory_panel.gd": {
+      "sha256": "f2df910caae8c200dfc47bff469408d95806370f8b0e92b336b02291f4432e6c",
+      "size_bytes": 16273
+    },
+    "scripts/item_instance.gd": {
+      "sha256": "eb714eb4e0e5b04c51fc9e324f352f5abe69dc6478d7e0c506b86bae74d15057",
+      "size_bytes": 18253
+    },
+    "scripts/item_rich_text.gd": {
+      "sha256": "e269aaec3d4a6ce518c616f0f4676d881249fd5d5c3c71293fa76019345c4104",
+      "size_bytes": 6987
+    },
+    "scripts/weapon_prestige_fx.gd": {
+      "sha256": "86a8620a22c04ab2d74c8e1bb51a78008701bbf1ba1f5f5f90e559c5c78f2651",
+      "size_bytes": 22683
+    },
+    "INSTALL_v159.txt": {
+      "sha256": "bb4348e1308f87057f8621ec35062da0e79a3f664b3b72708a780ef21b5b5092",
+      "size_bytes": 2168
+    },
+    "TEST_v159.txt": {
+      "sha256": "7073cc947145a92c542b0186b4b10dd1d188fa3f7d3511c9a94a367d10b07573",
+      "size_bytes": 1533
+    },
+    "tests/validate_v159.py": {
+      "sha256": "da992ea7eb65ba16eda1a3d643ed7636bdaa1d00bbcf03ad347c3f86ae6d2066",
+      "size_bytes": 2440
+    }
+  }
+}

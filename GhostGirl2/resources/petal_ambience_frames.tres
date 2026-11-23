@@ -1,0 +1,30 @@
+[gd_resource type="SpriteFrames" load_steps=11 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animated/petal_00.png" id="f0"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_01.png" id="f1"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_02.png" id="f2"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_03.png" id="f3"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_04.png" id="f4"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_05.png" id="f5"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_06.png" id="f6"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_07.png" id="f7"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_08.png" id="f8"]
+[ext_resource type="Texture2D" path="res://assets/animated/petal_09.png" id="f9"]
+
+[resource]
+animations = [{
+"frames": [
+{"duration": 1.0, "texture": ExtResource("f0")},
+{"duration": 1.0, "texture": ExtResource("f1")},
+{"duration": 1.0, "texture": ExtResource("f2")},
+{"duration": 1.0, "texture": ExtResource("f3")},
+{"duration": 1.0, "texture": ExtResource("f4")},
+{"duration": 1.0, "texture": ExtResource("f5")},
+{"duration": 1.0, "texture": ExtResource("f6")},
+{"duration": 1.0, "texture": ExtResource("f7")},
+{"duration": 1.0, "texture": ExtResource("f8")},
+{"duration": 1.0, "texture": ExtResource("f9")}],
+"loop": true,
+"name": &"petal",
+"speed": 8.0
+}]

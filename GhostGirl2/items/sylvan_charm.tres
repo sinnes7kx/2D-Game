@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3 uid="uid://eul7wx2jaw7w"]
+
+[ext_resource type="Script" uid="uid://bmachnmkn7oe2" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://c75f3evjt4mla" path="res://assets/ui/reliquary/moon_pocketwatch.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "sylvan_charm"
+display_name = "Sylvan Charm"
+description = "A little talisman forged from fallen stars."
+icon = ExtResource("2_icon")
+equip_slot = "charm"
+stat_id = "spell_power_pct"
+min_stat = 2.0
+max_stat = 7.0
+max_sockets = 2
+item_level = 2

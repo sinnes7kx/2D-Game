@@ -1,0 +1,11 @@
+{
+  "scripts/game.gd": "e6167fe436af66cbd5b62dc842145472d987f6c411a1230974275f5031defeff",
+  "scripts/bellroot_resonance_v137.gd": "a1111e17b2db54d84a9fb4cd67cb960ccf70d731e427b84d614d87a189c5d74d",
+  "scripts/bellroot_chorus_v137.gd": "bd6017a6721c2789ae42726b09c4d8b3ffe96950c23679c90e7c08349ab4aee4",
+  "scenes/rooms/hollow_veil_moor.tscn": "efd1ccb1b85d7c954548b1561e263fa7835ad1a06daf1d94975662107aa2207a",
+  "items/v137/chimekeeper_rosary.tres": "28b35f5234fe7d01140dc1f64c2150ad41fc9526909fa101a7155bd1a8483d7d",
+  "items/v137/choral_moonbow.tres": "6543796dc651f112a57deb1af271124726bba1cab82b4fc331532b0ae9612996",
+  "assets/audio/v137_bellroot_chime.wav": "5257d4752ad05596c0cf06600a9ee334ced9de813c8f7dd731736f3ef5e9f858",
+  "tests/validate_v137.py": "ce366862dbe63e316eec3efade7e7a1a3115637aebc81ba5ea78abe9cc7eb750",
+  "V137_RELEASE_NOTES.md": "b89ed91af4d9e38c6aa50a2b925d6f82d48281e37633efa8c5a342b0dda96fec"
+}

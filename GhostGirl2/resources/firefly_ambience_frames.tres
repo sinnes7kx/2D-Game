@@ -1,0 +1,42 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://dm5nijdmeq6kf"]
+
+[ext_resource type="Texture2D" uid="uid://ceobdotcr3fja" path="res://assets/animated/firefly_00.png" id="f0"]
+[ext_resource type="Texture2D" uid="uid://cgbhpk5rtopxq" path="res://assets/animated/firefly_01.png" id="f1"]
+[ext_resource type="Texture2D" uid="uid://bgtyyu7y1c35w" path="res://assets/animated/firefly_02.png" id="f2"]
+[ext_resource type="Texture2D" uid="uid://7811470c2x4m" path="res://assets/animated/firefly_03.png" id="f3"]
+[ext_resource type="Texture2D" uid="uid://coa7vm8ekmeh7" path="res://assets/animated/firefly_04.png" id="f4"]
+[ext_resource type="Texture2D" uid="uid://b2jmpkumojh53" path="res://assets/animated/firefly_05.png" id="f5"]
+[ext_resource type="Texture2D" uid="uid://bjp3gd4wiqtxg" path="res://assets/animated/firefly_06.png" id="f6"]
+[ext_resource type="Texture2D" uid="uid://cmhsl2161n3u1" path="res://assets/animated/firefly_07.png" id="f7"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("f0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("f1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("f2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("f3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("f4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("f5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("f6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("f7")
+}],
+"loop": 1,
+"name": &"firefly",
+"speed": 15.0
+}]

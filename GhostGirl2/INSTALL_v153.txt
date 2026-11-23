@@ -1,0 +1,53 @@
+GHOST GIRL v1.53 — ACTUAL WEAPON GLOW / FULL-SPECTRUM GRADIENTS
+============================================================
+Incremental patch. REQUIREMENT: v1.52 already installed.
+
+INSTALL
+1. Close Godot.
+2. Back up your existing game folder and saved progress.
+3. Open this ZIP. Merge 'scripts' and 'scenes' into the folder that
+   contains your project's project.godot; overwrite matching files.
+4. Reopen the project. Let Godot finish importing the changes.
+
+WHAT CHANGED
+- Repairs the silent early-return paths that hid weapon glows when
+  weapon animations had no pose/axis guide. Every equipped sword, bow,
+  scythe, halberd and wand has a visible fallback glow during idle,
+  movement and attacks; guided sword frames retain proper blade tracking.
+- Moves glow onto an explicitly additive CanvasItemMaterial on the
+  existing EquippedPrestigeFX node, independent of dress shader tint.
+- Restores inventory binding automatically from the player scene tree if
+  a previous game.gd call did not connect the effects node.
+- Refreshes glows on equipped-item changes AND in-place cosmetic rerolls.
+- Glow color is no longer selected from a fixed 6- or 10-color list.
+  A full-spectrum, three-stop HSV gradient is derived using SHA-256 of
+  each independently generated CSPRNG 128-bit cosmetic UID. The same
+  saved ID always restores exactly the same gradient. No seed numbers
+  are shown to the player.
+- Tooltip cosmetic dots and favorite preview gradients now use the
+  actual three colors of the weapon effect.
+- Existing ultra-rare cosmetic signature effects remain supported.
+- No damage, stats, loot odds, hitboxes, or save schema changes.
+
+QUICK GODOT TEST (important — headless engine was unavailable here)
+1. Equip ONLY a sword (preferably Dusk Needle) and walk in all four
+   directions. Check a visible colored blade line and moving motes.
+2. Idle, light-attack, heavy-attack, then perform a jump attack.
+3. Switch to wand, bow, scythe and halberd when available; check the
+   visible glow during idle and attacks. Missing pose data now uses a
+   hand/weapon fallback rather than displaying nothing.
+4. In inventory, reroll the cosmetic look multiple times. Check the
+   swatch dots AND in-world glow colors change together. Save a favorite,
+   reroll again, restore it, and reload the game to verify exact match.
+5. For rare-effect visual verification, ALT-hover a weapon that has a
+   rare visual modifier. Confirm its distinct decorative effect.
+6. In Godot's Remote scene tree, inspect:
+      GhostGirl/Ghost/EquippedPrestigeFX
+   It should be visible, have weapon_prestige_fx.gd attached, with
+   inventory and item set after you equip a weapon. If it is missing,
+   check whether scenes/player.tscn was actually overwritten.
+
+TEST STATUS
+Static wiring / save-preservation checks passed. We could not run
+Godot F5 or inspect actual rendered frame output; brightness, pose
+alignment and the additive material must still be verified in-engine.

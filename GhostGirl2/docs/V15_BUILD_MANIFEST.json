@@ -1,0 +1,18 @@
+{
+  "version": "v1.5 gameplay development build",
+  "source": [
+    "GhostGirl2.zip",
+    "Ghostgirl2_part2.zip"
+  ],
+  "source_unchanged_png_count": 913,
+  "reference_images_added": 10,
+  "engine_test": "not run (Godot binary unavailable)",
+  "static_validators": [
+    "tests/validate_v15.py",
+    "tests/validate_v144.py"
+  ],
+  "preserved_save": "user://ghost_girl_treasures_v2.json",
+  "new_enemy_count": 19,
+  "new_switches": 2,
+  "pending": "Scythe and halberd 2048x1760 directional animation atlases missing in source"
+}

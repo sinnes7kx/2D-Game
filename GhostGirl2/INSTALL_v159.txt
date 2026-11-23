@@ -1,0 +1,40 @@
+GHOST GIRL v1.59 — FEINTS, WEAVING HEXES & MOONFALL COSMETICS
+Incremental source patch for the installed v1.58 project.
+
+INSTALL
+1. Back up the whole GhostGirl2 project and your save files.
+2. Close Godot and extract the ZIP into GhostGirl2 beside project.godot.
+3. Merge the scripts directory; replace the seven matching .gd files.
+4. Reopen Godot and let it parse/reimport. No sprites, scenes, save data
+   or combat stats are overwritten.
+5. Optional: run tests/validate_v159.py from the project root with Python 3.
+
+GAMEPLAY
+- Blade hunters occasionally feint after two normal windups, sidestepping
+  with a distinct pale broken tell. They then perform a genuine telegraphed
+  attack. The feint itself has no hitbox, damage, or dodge-counter reward.
+- Occultists periodically release a single shallow weaving hex bolt.
+  The alternate shot has a cool tracer; it retains original damage and
+  swept player/wall raycast. It does not fire extra projectiles.
+- These mechanics apply to existing encounters and the earlier combat trials.
+
+COSMETICS
+- New super-rare Moonfall Halo signature: approximately 1 in 131,072
+  independent UID looks. The older Mythic Radiance remains approx. 1/65,536.
+  Appearance UID is cryptographic 128-bit RNG; no central uniqueness registry.
+- Weapons with Moonfall Halo get dual luminous rails and color-shifting motes.
+- Dresses gain a compact lunar aura; rare wing/trinket looks shimmer.
+- Saved looks keep their signatures. Mirrored item icons mark signature
+  levels 4 and 5. The ALT item tooltip names them correctly.
+- Saved favorite gradients now preview the saved UID rather than the
+  currently selected look; clothing aura positioning is corrected.
+
+SAFETY & SCOPE
+Visual effects affect no damage, loot, hitbox, RNG for stats, or equipment slots.
+Save schema is unchanged. Legacy numeric cosmetics and saved looks still load.
+No original sprite images or art atlases were touched.
+
+KNOWN TEST LIMITATION
+The available environment does not have a Godot executable or a fully
+playtested runtime build. Source/static/regression checks do NOT demonstrate
+actual F5 gameplay. Use TEST_v159.txt for in-engine manual verification.
