@@ -91,6 +91,7 @@ func light_swing_duration() -> float:
 		"scythe": return 0.49
 		"halberd": return 0.57
 		"dagger": return 0.31
+		"dual_dagger": return 0.32
 		"spear": return 0.53
 		"maul": return 0.67
 		"twinblade": return 0.36
@@ -103,6 +104,7 @@ func light_stamina_cost() -> float:
 		"scythe": return 18.9
 		"halberd": return 20.34
 		"dagger": return 14.22
+		"dual_dagger": return 15.84
 		"spear": return 19.62
 		"maul": return 22.50
 		"twinblade": return 16.20
@@ -114,6 +116,7 @@ func weapon_reach() -> float:
 		"scythe": return 184.0
 		"halberd": return 206.0
 		"dagger": return 112.0
+		"dual_dagger": return 122.0
 		"spear": return 213.0
 		"maul": return 173.0
 		"twinblade": return 168.0
