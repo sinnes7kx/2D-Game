@@ -7,6 +7,8 @@ const STILETTO: String = "nocturne_stiletto_v171"
 const TRIDENT: String = "briarwake_trident_v171"
 var body: AnimatedSprite2D = null
 var player: Node2D = null
+var last_animation: String = ""
+var last_frame: int = -1
 
 static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 	if sprite == null or sprite.sprite_frames == null:
@@ -38,7 +40,13 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if body == null:
 		return
-	if str(body.animation).begins_with("attack_nocturne_dagger_") or str(body.animation).begins_with("attack_briarwake_spear_"):
+	var animation_now: String = str(body.animation)
+	# Explicitly redraw when leaving an attack, or its last weapon image
+	# would remain visible during walking/idle until the next attack.
+	if animation_now != last_animation or body.frame != last_frame:
+		last_animation = animation_now
+		last_frame = body.frame
+		z_index = -1 if animation_now.ends_with("back") else 5
 		queue_redraw()
 
 func _is_equipped(animation_name: String) -> bool:
@@ -114,7 +122,6 @@ func _draw() -> void:
 		return
 	var tangent: Vector2 = axis.normalized()
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
-	z_index = -1 if animation_name.ends_with("back") else 5
 	if animation_name.begins_with("attack_nocturne_dagger_"):
 		_draw_nightglass_stiletto(grip, tip, tangent, normal)
 	else:
