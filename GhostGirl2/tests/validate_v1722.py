@@ -38,7 +38,8 @@ assert "get_weapon_span" in pose and "_draw_briarwake_trident" in pose and "_dra
 
 seen_pickups = re.findall(r'pickup_id = "(v172_armory_[^"]+)"', room)
 assert len(seen_pickups) == 8 and len(set(seen_pickups)) == 8
-assert room.count('ground_display = true') == 8
+# Later armory additions may append pickups; the eight original ones must remain.
+assert room.count('ground_display = true') >= 8
 for item in expected_items:
     assert (ROOT / "items" / (item + ".tres")).exists(), item
     assert f'v172_armory_{item}' in seen_pickups
