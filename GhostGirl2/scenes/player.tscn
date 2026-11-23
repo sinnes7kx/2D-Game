@@ -30,6 +30,8 @@ shape = SubResource("CapsuleShape2D_feet")
 z_index = -1
 script = ExtResource("2_shadow")
 
+[ext_resource type="Script" path="res://scripts/v172_weapon_pose.gd" id="v172_pose"]
+
 [node name="Ghost" type="AnimatedSprite2D" parent="." unique_id=430858062]
 material = ExtResource("6_tint")
 position = Vector2(0, -57)
@@ -42,6 +44,9 @@ frame_progress = 0.48644552
 [node name="BowPaletteV139" type="AnimatedSprite2D" parent="Ghost" unique_id=800683166]
 visible = false
 script = ExtResource("v139_bow_palette")
+
+[node name="WeaponPoseV172" type="Node2D" parent="Ghost"]
+script = ExtResource("v172_pose")
 
 [node name="EquippedPrestigeFX" type="Node2D" parent="Ghost" unique_id=2052342950]
 z_index = 8
