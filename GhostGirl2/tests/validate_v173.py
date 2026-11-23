@@ -55,7 +55,7 @@ assert 'visual_signature_level in [4, 5]' in fx
 assert 'item.mythic_layer_variant()' in fx
 assert 'var a: Vector2 = grip.lerp(tip, 0.39)' in fx  # handle unlit
 assert 'for hand_index in range(2):' in fx
-assert '"user://" not in dual' and '"user://" not in blade
+assert "user://" not in dual and "user://" not in blade
 
 print("v1.73 PASS: 24 directional clips, 192 logical frames, 2 hand sprites,")
 print("  loot/armory pickup, single-hit combat, and independent seeded Mythic glows")
