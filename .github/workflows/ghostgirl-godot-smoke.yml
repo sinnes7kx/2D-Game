@@ -38,11 +38,20 @@ jobs:
       - name: Validate v1.72.3 Mythic and blade-only effects
         run: python3 GhostGirl2/tests/validate_v1723.py
 
+      - name: Validate v1.73 dual daggers
+        run: python3 GhostGirl2/tests/validate_v173.py
+
       - name: Import project resources
         run: godot --headless --editor --path GhostGirl2 --import
 
       - name: Compile weapon prestige FX script
         run: godot --headless --path GhostGirl2 --check-only --script res://scripts/weapon_prestige_fx.gd
+      
+      - name: Compile dual-dagger animation rig
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v173_dual_daggers.gd
+
+      - name: Compile both dual-dagger blade layers
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v173_dual_dagger_blade.gd
 
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
