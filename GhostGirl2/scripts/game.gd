@@ -43,7 +43,8 @@ const SWORD_LOOT_TABLE = [
 	preload("res://items/rosemirror_twinblade_v170.tres"),
 	preload("res://items/nocturne_stiletto_v171.tres"),
 	preload("res://items/briarwake_trident_v171.tres"),
-	preload("res://items/moonlace_dual_daggers_v173.tres")
+	preload("res://items/moonlace_dual_daggers_v173.tres"),
+	preload("res://items/gloamrose_dual_swords_v174.tres")
 ]
 const BOW_LOOT_TABLE = [
 	preload("res://items/thornrose_bow.tres"),
