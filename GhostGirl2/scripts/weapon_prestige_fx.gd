@@ -594,6 +594,7 @@ func _draw_mythic_signature(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 			draw_circle(comet, 1.7, Color(1.0, 1.0, 1.0, 0.56 * strength))
 	elif style == "twinblade":
 		# Mythic twinblades energize both heads and the center grip.
+		var axis: Vector2 = tip - grip
 		var fore_start: Vector2 = grip.lerp(tip, 0.10)
 		var fore_end: Vector2 = grip.lerp(tip, 0.98)
 		var aft_tip: Vector2 = grip - axis * 0.70
