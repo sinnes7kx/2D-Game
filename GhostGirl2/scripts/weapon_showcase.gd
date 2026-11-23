@@ -5,6 +5,7 @@ extends Node2D
 @export var item_data: GhostItemData
 @export var pickup_id: String = ""
 @export var item_seed: int = 230001
+@export var ground_display: bool = false
 @export_enum("normal", "magic", "rare", "set", "unique") var guaranteed_quality: String = "rare"
 var claimed: bool = false
 var pulse: float = 0.0
@@ -28,6 +29,19 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	# v1.72: armory weapons appear on the crypt floor rather than on another
+	# pedestal. The previous showcase look is unchanged unless enabled.
+	if ground_display:
+		if claimed:
+			return
+		var breath: float = 0.82 + 0.18 * sin(pulse * 1.6)
+		draw_circle(Vector2(0, 7), 33.0, Color(0.06, 0.04, 0.09, 0.32))
+		draw_arc(Vector2(0, 7), 27.0 + sin(pulse * 1.4), 0.14 * PI, 1.86 * PI, 30, Color(0.76, 0.59, 0.85, 0.20 * breath), 1.1, true)
+		if item_data != null and item_data.icon != null:
+			draw_texture_rect(item_data.icon, Rect2(-26, -45, 52, 52), false, Color(0.95, 0.88, 1.0, 0.94))
+		var ground_name: String = item_data.display_name if item_data != null else "Weapon"
+		draw_string(ThemeDB.fallback_font, Vector2(-80, 38), ground_name, HORIZONTAL_ALIGNMENT_CENTER, 160, 11, Color("dec9dc"))
+		return
 	var gold: Color = Color("b99c89") if not claimed else Color("77717e")
 	draw_circle(Vector2(0, 2), 47, Color(0.26, 0.15, 0.29, 0.28))
 	draw_rect(Rect2(-47, -14, 94, 44), Color("201a29"), true)
