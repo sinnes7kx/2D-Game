@@ -13,7 +13,7 @@ class_name GhostItemData
 @export_range(0.0, 30.0, 0.1) var max_stat: float = 0.0
 @export_range(0, 4, 1) var max_sockets: int = 0
 @export var item_level: int = 1
-@export_enum("blade", "dagger", "dual_dagger", "spear", "maul", "twinblade", "scythe", "halberd", "bow") var weapon_style: String = "blade"
+@export_enum("blade", "dagger", "dual_dagger", "dual_sword", "spear", "maul", "twinblade", "scythe", "halberd", "bow") var weapon_style: String = "blade"
 @export_range(0.0, 100.0, 0.1) var min_weapon_damage: float = 0.0
 @export_range(0.0, 100.0, 0.1) var max_weapon_damage: float = 0.0
 @export var socket_bonus_id: String = ""
