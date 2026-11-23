@@ -49,6 +49,11 @@ assert "attack_dual_sword_riposte_" in rig and "attack_dual_sword_riposte_" in p
 assert 'attack_dual_sword_light_" + ["a", "b", "c"][combo_step]' in player
 assert 'attack_dual_sword_heavy_' in rig
 assert "var riposte_advances: Array[float]" in rig
+assert "static func authored_blade_spans(" in rig
+assert "return authored_blade_spans(face, action, frame_index)" in rig
+assert "var lead_reach: Array[float]" in rig
+assert "cross_amount: float" in rig
+
 
 # A new single-item equipment class, retaining one confirmed melee hit.
 assert '"dual_sword":' in player
