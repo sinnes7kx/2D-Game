@@ -152,8 +152,6 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 		var at: Vector2 = grip + tangent * float(knot * 12 + 4)
 		draw_line(at - normal * 3.7, at + normal * 3.7, Color("d0a3b0"), 1.0, true)
 	# Three physically distinct garnet tines; the outer tines curve inward.
-	var left_base: Vector2 = head - normal * 8.4
-	var right_base: Vector2 = head + normal * 8.4
 	for side in [-1.0, 1.0]:
 		var offset: Vector2 = normal * side * 9.3
 		var fork: Vector2 = head + offset
