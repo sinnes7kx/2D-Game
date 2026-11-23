@@ -32,6 +32,9 @@ jobs:
       - name: Engine version
         run: godot --version
 
+      - name: Validate v1.72.2 structure and references
+        run: python3 GhostGirl2/tests/validate_v1722.py
+
       - name: Import project resources
         run: godot --headless --editor --path GhostGirl2 --import
 
