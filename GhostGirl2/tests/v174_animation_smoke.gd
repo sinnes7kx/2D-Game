@@ -1,5 +1,5 @@
 extends SceneTree
-const DUAL_SWORD_POSES: Script = preload("res://scripts/v174_dual_swords.gd")
+const DUAL_SWORD_POSES = preload("res://scripts/v174_dual_swords.gd")
 ## v1.74 actual Godot engine smoke check (not only regex source assertions).
 ## Instantiate approved Ghost Girl player and verify ALL directional clips.
 func _initialize() -> void:
