@@ -1,5 +1,5 @@
 extends Node2D
-## v1.70.1 — visible, sprite-frame-aligned weapon glows including distinct new-family and mythic treatments.
+## v1.72.3 — blade-only twinblade enchantments and high-visibility seeded Mythic shimmer.
 ## Axial glows track the weapon shaft/blade instead of orbiting a floating tip.
 ## Seeded colors and time-based shimmer are visual-only; no new damage paths.
 const MANIFEST_PATH: String = "res://resources/weapon_layer_manifest.json"
@@ -358,6 +358,13 @@ func _draw() -> void:
 		_draw_socketed_jewel_echo(grip, tip, normal)
 		if visual_signature_level > 0:
 			_draw_signature(grip, tip, tangent, normal, attacking, minf(intensity, 1.55))
+		_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
+		return
+	# Twinblades have *two* cutting heads. Do not run the generic shaft
+	# glow, center ring, socket orbit or mythic signature along their handle.
+	if style == "twinblade":
+		_draw_v1723_twinblade_edges(grip, tip, normal, intensity)
+		_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
 		return
 	# Bow string and body remain recognizable; its glow must not become a solid bar.
 	var radius: float = 6.0 if narrow else (8.0 if wand else 10.5)
@@ -423,6 +430,114 @@ func _draw() -> void:
 	if visual_signature_level > 0:
 		_draw_signature(grip, tip, tangent, normal, attacking, minf(intensity, 1.6))
 	_draw_v172_named_weapon_fx(grip, tip, tangent, normal, attacking, minf(intensity, 1.55))
+	_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
+
+
+# v1.72.3 - blade-region maps are normalized segments along the authored grip-to-tip
+# axis. Never brighten a twinblade's central wrapped handle.
+func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
+	var result: Array = []
+	if style == "twinblade":
+		var back_tip: Vector2 = grip - (tip - grip) * 0.68
+		result.append([grip.lerp(tip, 0.58), tip])
+		result.append([grip.lerp(back_tip, 0.56), back_tip])
+	elif style == "maul":
+		result.append([grip.lerp(tip, 0.79), tip])
+	elif style == "spear" or style == "halberd":
+		result.append([grip.lerp(tip, 0.72), tip])
+	elif style == "scythe":
+		result.append([grip.lerp(tip, 0.66), tip])
+	elif style == "dagger":
+		result.append([grip.lerp(tip, 0.43), tip])
+	else:
+		result.append([grip.lerp(tip, 0.26), tip])
+	return result
+
+
+func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, normal: Vector2, intensity: float) -> void:
+	# Silver-edged redglass cutting profiles over the two *actual* blade ends.
+	# The long, wrapped central grip is untouched (including by ambient FX).
+	var redsteel: Color = Color("ad4961") if item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170" else Color("814e73")
+	var edge: Color = _gradient_at(fposmod(elapsed * 0.032 + 0.70, 1.0)).lerp(Color.WHITE, 0.22)
+	for segment in _v1723_blade_segments(grip, tip, "twinblade"):
+		var a: Vector2 = segment[0]
+		var b: Vector2 = segment[1]
+		var direction: Vector2 = (b - a).normalized()
+		var shoulder: Vector2 = a + direction * 3.5
+		var fine_tip: Vector2 = b + direction * 2.4
+		draw_colored_polygon(PackedVector2Array([
+			shoulder - normal * 2.7,
+			a.lerp(b, 0.42) - normal * 3.5,
+			fine_tip,
+			a.lerp(b, 0.35) + normal * 2.1,
+			shoulder + normal * 1.1
+		]), Color(redsteel.r, redsteel.g, redsteel.b, 0.12 * intensity))
+		draw_line(a.lerp(b, 0.22) - normal * 1.2, fine_tip, Color(edge.r, edge.g, edge.b, 0.42 * intensity), 1.12, true)
+		draw_line(a.lerp(b, 0.40) + normal * 1.5, fine_tip, Color(1.0, 0.89, 0.94, 0.18 * intensity), 0.75, true)
+
+
+# Additional persistent, colorful MYTHIC-only halo. The loop is reproducible
+# from cosmetic UID's existing visual_seed(); it never draws or modifies damage.
+func _draw_v1723_mythic_sheen(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2, style: String, attacking: bool) -> void:
+	if item == null or visual_signature_level not in [4, 5]:
+		return
+	var seed: int = item.visual_seed()
+	var seed_shift: float = float(posmod(seed, 1009)) / 1009.0
+	var variant: int = item.mythic_layer_variant()
+	var pulse: float = 1.15 + 0.30 * sin(elapsed * 2.3 + seed_shift * TAU)
+	var strength: float = clampf(visible_glow_strength * effect_intensity * pulse * (1.14 if attacking else 1.0), 0.8, 3.4)
+	var segments: Array = []
+	if item.get_slot() == "wand":
+		# A luminous gemstone crown, not a white streak along the wand handle.
+		segments.append([grip.lerp(tip, 0.84), tip])
+	elif style == "bow":
+		# Keep the independent bowstring gradient and the 5px string offset.
+		segments.append([grip.lerp(tip, 0.14) + normal * 5.0, grip.lerp(tip, 0.91) + normal * 5.0])
+	else:
+		segments = _v1723_blade_segments(grip, tip, style)
+	for segment_i in range(segments.size()):
+		var blade_a: Vector2 = segments[segment_i][0]
+		var blade_b: Vector2 = segments[segment_i][1]
+		var blade_dir: Vector2 = (blade_b - blade_a).normalized()
+		var blade_normal: Vector2 = Vector2(-blade_dir.y, blade_dir.x)
+		# Always-visible, breathing color sweep on the sharp portion only.
+		for stripe_i in range(13):
+			var u: float = float(stripe_i) / 12.0
+			var at: Vector2 = blade_a.lerp(blade_b, u)
+			var taper: float = maxf(0.14, sin((0.12 + u * 0.86) * PI))
+			var travel: float = fposmod(u * 0.64 + elapsed * 0.105 + seed_shift + float(segment_i) * 0.29, 1.0)
+			var color: Color = _gradient_at(travel).lerp(Color.WHITE, 0.14)
+			draw_circle(at, (5.9 if style == "twinblade" else 7.0) * taper, Color(color.r, color.g, color.b, 0.11 * strength * taper))
+			draw_circle(at, 2.6 * taper, Color(color.r, color.g, color.b, 0.23 * strength * taper))
+			if stripe_i < 12:
+				var next_at: Vector2 = blade_a.lerp(blade_b, float(stripe_i + 1) / 12.0)
+				draw_line(at - blade_normal * 0.7, next_at - blade_normal * 0.7, Color(color.r, color.g, color.b, 0.39 * strength * taper), 1.45, true)
+		# Glitter sparkles follow blade segments; no jittering in the hilt.
+		for sparkle_i in range(6):
+			var slot: float = float(sparkle_i)
+			var u: float = fposmod(0.13 + slot * 0.17 + seed_shift * 0.13 + elapsed * (0.06 + slot * 0.002), 0.92)
+			var brightness: float = pow(maxf(0.0, sin(elapsed * (2.5 + slot * 0.11) + seed_shift * TAU + slot * 2.37)), 2.0)
+			if brightness < 0.14:
+				continue
+			var pos: Vector2 = blade_a.lerp(blade_b, u) + blade_normal * (sin(elapsed * 1.7 + slot) * 2.6)
+			var gleam: Color = _gradient_at(fposmod(u + elapsed * 0.15 + seed_shift, 1.0)).lerp(Color.WHITE, 0.38)
+			var alpha: float = 0.67 * strength * brightness
+			var wing: float = 1.4 + brightness * (1.5 + float(variant % 2))
+			draw_line(pos - blade_normal * wing, pos + blade_normal * wing, Color(gleam.r, gleam.g, gleam.b, alpha), 1.15, true)
+			draw_line(pos - blade_dir * wing * 0.76, pos + blade_dir * wing * 0.76, Color(1.0, 0.99, 1.0, alpha * 0.82), 1.0, true)
+			draw_circle(pos, 1.20, Color(1.0, 1.0, 1.0, 0.70 * strength * brightness))
+		# Four cosmetic-UID variants add an occasional family-consistent flourish.
+		var head_color: Color = _gradient_at(fposmod(0.85 + elapsed * 0.08 + seed_shift, 1.0))
+		match variant:
+			0: # Glass shiver: a narrow comet bead.
+				var chase: Vector2 = blade_a.lerp(blade_b, fposmod(elapsed * 0.32 + seed_shift, 1.0))
+				draw_circle(chase, 2.1, Color(head_color.r, head_color.g, head_color.b, 0.26 * strength))
+			1: # Star dust: a tiny detached moon pearl at the point.
+				draw_circle(blade_b + blade_normal * sin(elapsed * 2.1) * 2.5, 1.8, Color(1.0, 0.94, 1.0, 0.42 * strength))
+			2: # Prism sheen: a second traveling filament on the cutting edge.
+				draw_line(blade_a.lerp(blade_b, 0.28) + blade_normal * 1.4, blade_b + blade_normal * 0.4, Color(head_color.r, head_color.g, head_color.b, 0.30 * strength), 0.9, true)
+			_: # Moonburn: delicate point flare, not an oversized aura ring.
+				draw_line(blade_b - blade_normal * 3.1, blade_b + blade_normal * 3.1, Color(head_color.r, head_color.g, head_color.b, 0.35 * strength), 1.0, true)
 
 func _draw_v172_named_weapon_fx(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2, attacking: bool, power: float) -> void:
 	# Item-specific cosmetic additions. This routine draws no hitboxes and does
