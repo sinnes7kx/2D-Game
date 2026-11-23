@@ -13,6 +13,8 @@
 [ext_resource type="Script" uid="uid://822053ps0vdi" path="res://scripts/bow_palette_overlay_v139.gd" id="v139_bow_palette"]
 [ext_resource type="Script" uid="uid://dbk7xk5kx42m6" path="res://scripts/weapon_prestige_fx.gd" id="v152_prestige_fx"]
 
+[ext_resource type="Script" path="res://scripts/v172_weapon_pose.gd" id="v172_pose"]
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_feet"]
 radius = 15.0
 height = 36.0
@@ -29,8 +31,6 @@ shape = SubResource("CapsuleShape2D_feet")
 [node name="Shadow" type="Node2D" parent="." unique_id=1211915626]
 z_index = -1
 script = ExtResource("2_shadow")
-
-[ext_resource type="Script" path="res://scripts/v172_weapon_pose.gd" id="v172_pose"]
 
 [node name="Ghost" type="AnimatedSprite2D" parent="." unique_id=430858062]
 material = ExtResource("6_tint")
