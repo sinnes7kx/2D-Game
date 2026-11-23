@@ -88,6 +88,24 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 		if animation_name.ends_with(direction):
 			face = direction
 			break
+	var action: String = "idle"
+	if animation_name.begins_with("attack_dual_sword_light_a_"):
+		action = "a"
+	elif animation_name.begins_with("attack_dual_sword_light_b_"):
+		action = "b"
+	elif animation_name.begins_with("attack_dual_sword_light_c_"):
+		action = "c"
+	elif animation_name.begins_with("attack_dual_sword_heavy_"):
+		action = "heavy"
+	elif animation_name.begins_with("attack_dual_sword_riposte_"):
+		action = "riposte"
+	elif animation_name.begins_with("dual_sword_walk_"):
+		action = "walk"
+	return authored_blade_spans(face, action, frame_index)
+
+static func authored_blade_spans(face: String, action: String, frame_index: int) -> Array:
+	# Pure per-frame geometry, also exercised in CI without granting inventory
+	# items or touching persistent user:// saves.
 	var forward: Vector2 = Vector2(0, 1)
 	var across: Vector2 = Vector2(1, 0)
 	var left_grip: Vector2 = Vector2(-27, 22)
@@ -108,19 +126,6 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 			left_grip = Vector2(7, 25)
 			right_grip = Vector2(24, 20)
 	var n: int = clampi(frame_index, 0, 7)
-	var action: String = "idle"
-	if animation_name.begins_with("attack_dual_sword_light_a_"):
-		action = "a"
-	elif animation_name.begins_with("attack_dual_sword_light_b_"):
-		action = "b"
-	elif animation_name.begins_with("attack_dual_sword_light_c_"):
-		action = "c"
-	elif animation_name.begins_with("attack_dual_sword_heavy_"):
-		action = "heavy"
-	elif animation_name.begins_with("attack_dual_sword_riposte_"):
-		action = "riposte"
-	elif animation_name.begins_with("dual_sword_walk_"):
-		action = "walk"
 	var result: Array = []
 	for hand_index in range(2):
 		var side: float = -1.0 if hand_index == 0 else 1.0
@@ -161,8 +166,22 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 				var riposte_advances: Array[float] = [45.0, 40.0, 51.0, 81.0, 89.0, 70.0, 54.0, 45.0]
 				lateral = side * riposte_lateral[n]
 				advance = riposte_advances[n]
-			if n in [2, 3, 4] and (leading or action in ["c", "heavy", "riposte"]):
-				grip += forward * -3.0
+			# v1.74.1: the wrists now move with the cut instead of letting
+			# both sword tips rotate around completely stationary hands.
+			# Small offsets preserve the approved painted sleeves/body.
+			var lead_reach: Array[float] = [0.0, 1.0, 3.0, 5.0, 5.0, 3.0, 1.0, 0.0]
+			if action in ["a", "b"] and leading:
+				grip += forward * (-0.85 * lead_reach[n])
+				grip += across * (-side * lead_reach[n] * 0.48)
+			elif action in ["c", "heavy"]:
+				# Pull both hands toward the torso for the crossed finish.
+				# Back-view grips move less to keep them behind the dress.
+				var cross_amount: float = lead_reach[n] * (0.65 if face == "back" else 1.0)
+				grip += across * (-side * cross_amount)
+				grip += forward * (-lead_reach[n] * 0.48)
+			elif action == "riposte":
+				grip += forward * (-lead_reach[n] * 0.86)
+				grip += across * (-side * lead_reach[n] * 0.18)
 		var tip: Vector2 = grip + across * lateral + forward * advance
 		result.append(PackedVector2Array([grip, tip]))
 	return result
