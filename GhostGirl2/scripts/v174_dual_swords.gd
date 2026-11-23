@@ -105,7 +105,7 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 
 static func authored_blade_spans(face: String, action: String, frame_index: int) -> Array:
 	# Pure per-frame geometry, also exercised in CI without granting inventory
-	# items or touching persistent user:// saves.
+	# items or touching persistent player saves.
 	var forward: Vector2 = Vector2(0, 1)
 	var across: Vector2 = Vector2(1, 0)
 	var left_grip: Vector2 = Vector2(-27, 22)
