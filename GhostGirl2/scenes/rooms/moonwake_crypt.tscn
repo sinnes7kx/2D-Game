@@ -46,6 +46,7 @@
 
 [ext_resource type="Script" path="res://scripts/v172_armory_wing.gd" id="v172_armory_wing"]
 [ext_resource type="Resource" path="res://items/moonlace_dual_daggers_v173.tres" id="v173_dual_daggers"]
+[ext_resource type="Resource" path="res://items/gloamrose_dual_swords_v174.tres" id="v174_dual_swords"]
 
 [sub_resource type="RectangleShape2D" id="Col_00"]
 size = Vector2(104, 1590)
@@ -660,5 +661,14 @@ script = ExtResource("v123_rack")
 item_data = ExtResource("v173_dual_daggers")
 pickup_id = "v173_armory_moonlace_dual_daggers"
 item_seed = 173013
+guaranteed_quality = "unique"
+ground_display = true
+
+[node name="GloamroseDualSwordsV174" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(3180, 1380)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v174_dual_swords")
+pickup_id = "v174_armory_gloamrose_dual_swords"
+item_seed = 174021
 guaranteed_quality = "unique"
 ground_display = true
