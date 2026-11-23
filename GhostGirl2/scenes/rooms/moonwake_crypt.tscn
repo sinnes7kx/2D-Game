@@ -44,6 +44,8 @@
 [ext_resource type="Resource" path="res://items/eclipse_twinblade_v170.tres" id="v172_armory_7"]
 [ext_resource type="Resource" path="res://items/rosemirror_twinblade_v170.tres" id="v172_armory_8"]
 
+[ext_resource type="Script" path="res://scripts/v172_armory_wing.gd" id="v172_armory_wing"]
+
 [sub_resource type="RectangleShape2D" id="Col_00"]
 size = Vector2(104, 1590)
 
@@ -51,10 +53,10 @@ size = Vector2(104, 1590)
 size = Vector2(104, 1590)
 
 [sub_resource type="RectangleShape2D" id="Col_02"]
-size = Vector2(2389, 136)
+size = Vector2(3600, 136)
 
 [sub_resource type="RectangleShape2D" id="Col_03"]
-size = Vector2(2389, 64)
+size = Vector2(3600, 64)
 
 [sub_resource type="RectangleShape2D" id="Col_04"]
 size = Vector2(475, 244)
@@ -95,6 +97,11 @@ z_index = 49
 texture = ExtResource("2_fg")
 centered = false
 
+[node name="ArmoryWingV172" type="Node2D" parent="."]
+z_index = -49
+position = Vector2(2290, 0)
+script = ExtResource("v172_armory_wing")
+
 [node name="WestWall" type="StaticBody2D" parent="." unique_id=979070342]
 collision_layer = 2
 collision_mask = 0
@@ -108,7 +115,7 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EastWall" unique_id=1652848578]
-position = Vector2(2334, 796)
+position = Vector2(3548, 796)
 shape = SubResource("Col_01")
 
 [node name="NorthWall" type="StaticBody2D" parent="." unique_id=1760806956]
@@ -116,7 +123,7 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NorthWall" unique_id=2013560598]
-position = Vector2(1195, 68)
+position = Vector2(1800, 68)
 shape = SubResource("Col_02")
 
 [node name="SouthWall" type="StaticBody2D" parent="." unique_id=1483626662]
@@ -124,7 +131,7 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SouthWall" unique_id=2037369402]
-position = Vector2(1195, 1561)
+position = Vector2(1800, 1561)
 shape = SubResource("Col_03")
 
 [node name="Sarcophagus" type="StaticBody2D" parent="." unique_id=1816764123]
@@ -568,7 +575,7 @@ shape = SubResource("v150_cover_circle")
 [node name="V172ArmoryFloor" type="Node2D" parent="Gameplay/WeaponShowcases"]
 
 [node name="RoseglassDagger" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(1310, 1370)
+position = Vector2(2540, 865)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_1")
 pickup_id = "v172_armory_roseglass_dagger_v169"
@@ -578,7 +585,7 @@ ground_display = true
 
 
 [node name="NocturneStiletto" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(1540, 1370)
+position = Vector2(2795, 865)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_2")
 pickup_id = "v172_armory_nocturne_stiletto_v171"
@@ -588,7 +595,7 @@ ground_display = true
 
 
 [node name="MoonwardenSpear" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(1770, 1370)
+position = Vector2(3050, 865)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_3")
 pickup_id = "v172_armory_moonwarden_spear_v169"
@@ -598,7 +605,7 @@ ground_display = true
 
 
 [node name="BriarwakeTrident" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(2000, 1370)
+position = Vector2(3305, 865)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_4")
 pickup_id = "v172_armory_briarwake_trident_v171"
@@ -608,7 +615,7 @@ ground_display = true
 
 
 [node name="GravebellMaul" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(1310, 1460)
+position = Vector2(2540, 1180)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_5")
 pickup_id = "v172_armory_gravebell_maul_v170"
@@ -618,7 +625,7 @@ ground_display = true
 
 
 [node name="AshglassWarmaul" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(1540, 1460)
+position = Vector2(2795, 1180)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_6")
 pickup_id = "v172_armory_ashglass_warmaul_v170"
@@ -628,7 +635,7 @@ ground_display = true
 
 
 [node name="EclipseTwinblade" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(1770, 1460)
+position = Vector2(3050, 1180)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_7")
 pickup_id = "v172_armory_eclipse_twinblade_v170"
@@ -638,7 +645,7 @@ ground_display = true
 
 
 [node name="RosemirrorTwinblade" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
-position = Vector2(2000, 1460)
+position = Vector2(3305, 1180)
 script = ExtResource("v123_rack")
 item_data = ExtResource("v172_armory_8")
 pickup_id = "v172_armory_rosemirror_twinblade_v170"
