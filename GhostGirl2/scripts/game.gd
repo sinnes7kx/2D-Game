@@ -189,7 +189,8 @@ func _bind_room() -> void:
 	if room_view.has_node("Gameplay/MoonfallReliquary"):
 		room_view.get_node("Gameplay/MoonfallReliquary").call("restore_from_inventory", inventory)
 	if room_view.has_node("Gameplay/WeaponShowcases"):
-		for rack in room_view.get_node("Gameplay/WeaponShowcases").get_children():
+		# v1.72.2: nested floor-armory pickups must be restored too.
+		for rack in room_view.get_node("Gameplay/WeaponShowcases").find_children("*", "Node2D", true, false):
 			if rack.has_method("restore_from_inventory"):
 				rack.call("restore_from_inventory", inventory)
 	if room_view.has_node("Gameplay/V138FletcherShowcase"):
@@ -594,7 +595,7 @@ func interact() -> void:
 		inventory.collected_pickups[id] = true
 		inventory.save_game()
 		target.call("restore_from_inventory", inventory)
-		ui.show_pickup("RELIC SHOWCASE · " + acquired.display_name(), acquired.quality_color())
+		ui.show_pickup(("ARMORY FIND · " if bool(target.get("ground_display")) else "RELIC SHOWCASE · ") + acquired.display_name(), acquired.quality_color())
 		return
 	if target.is_in_group("treasure_chest"):
 		var chest_id: String = str(target.get("chest_id"))
@@ -746,6 +747,10 @@ func _enter_room(next_room: String) -> void:
 func _update_camera_limits() -> void:
 	var painted: Sprite2D = room_view.get_node("PaintedRoom") as Sprite2D
 	var dimensions: Vector2 = painted.texture.get_size() if painted.texture != null else Vector2(2389, 1792)
+	# Additional walkable art in the original room extends the camera limits.
+	var armory_wing: Node = room_view.get_node_or_null("ArmoryWingV172")
+	if armory_wing != null:
+		dimensions.x = maxf(dimensions.x, float(armory_wing.get("room_right_edge")))
 	var camera: Camera2D = player.get_node("Camera2D") as Camera2D
 	camera.limit_left = 0
 	camera.limit_top = 0

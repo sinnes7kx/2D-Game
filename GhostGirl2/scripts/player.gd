@@ -6,6 +6,7 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
+const V172_POSE_SCRIPT = preload("res://scripts/v172_weapon_pose.gd")
 const SWING_SFX: AudioStream = preload("res://assets/audio/melee_swing.wav")
 const HIT_SFX: AudioStream = preload("res://assets/audio/melee_hit.wav")
 const ROSE_SLASH_FX: SpriteFrames = preload("res://resources/rose_slash_fx.tres")
@@ -138,6 +139,9 @@ const LANDING_RECOIL: float = 0.145
 
 func _ready() -> void:
 	EXTRA_ANIMATIONS.install(body_art)
+	# Replace only two malformed baked-weapon ATTACKS with the untouched, approved
+	# body action frames; the v172 pose layer supplies the weapon per frame.
+	V172_POSE_SCRIPT.install_attack_frames(body_art)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()

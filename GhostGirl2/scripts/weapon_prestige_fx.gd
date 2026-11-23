@@ -202,6 +202,12 @@ func _axial_span() -> PackedVector2Array:
 				return PackedVector2Array([Vector2(float(segment[0]), float(segment[1])), Vector2(float(segment[2]), float(segment[3]))])
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 66.0 if style == "maul" else 73.0)])
 	if style in ["dagger", "spear"]:
+		# v1.72.2: glow follows exactly the weapon geometry being rendered.
+		var pose_node: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
+		if pose_node != null and pose_node.has_method("get_weapon_span"):
+			var authored: Variant = pose_node.call("get_weapon_span", animation, body.frame)
+			if authored is PackedVector2Array and authored.size() == 2:
+				return authored
 		var fresh: Array = new_weapon_axes_by_animation.get(animation, [])
 		if not fresh.is_empty():
 			var pair: Variant = fresh[clampi(body.frame, 0, fresh.size() - 1)]
