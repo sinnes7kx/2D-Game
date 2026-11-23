@@ -148,15 +148,19 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 			elif action == "c":
 				var scissor: Array[float] = [31.0, 40.0, 26.0, 2.0, -35.0, -18.0, 3.0, 29.0]
 				lateral = side * scissor[n]
-				advance = [48.0, 39.0, 33.0, 56.0, 72.0, 64.0, 55.0, 48.0][n]
+				var scissor_advances: Array[float] = [48.0, 39.0, 33.0, 56.0, 72.0, 64.0, 55.0, 48.0]
+				advance = scissor_advances[n]
 			elif action == "heavy":
 				var crossing: Array[float] = [38.0, 47.0, 36.0, 6.0, -43.0, -34.0, -10.0, 34.0]
 				lateral = side * crossing[n]
-				advance = [43.0, 32.0, 38.0, 61.0, 85.0, 81.0, 57.0, 46.0][n]
+				var heavy_advances: Array[float] = [43.0, 32.0, 38.0, 61.0, 85.0, 81.0, 57.0, 46.0]
+				advance = heavy_advances[n]
 			else:
 				# Riposte: two parallel moonsteel points, no spinning hilts.
-				lateral = side * [20.0, 18.0, 12.0, 8.0, 9.0, 13.0, 17.0, 20.0][n]
-				advance = [45.0, 40.0, 51.0, 81.0, 89.0, 70.0, 54.0, 45.0][n]
+				var riposte_lateral: Array[float] = [20.0, 18.0, 12.0, 8.0, 9.0, 13.0, 17.0, 20.0]
+				var riposte_advances: Array[float] = [45.0, 40.0, 51.0, 81.0, 89.0, 70.0, 54.0, 45.0]
+				lateral = side * riposte_lateral[n]
+				advance = riposte_advances[n]
 			if n in [2, 3, 4] and (leading or action in ["c", "heavy", "riposte"]):
 				grip += forward * -3.0
 		var tip: Vector2 = grip + across * lateral + forward * advance
