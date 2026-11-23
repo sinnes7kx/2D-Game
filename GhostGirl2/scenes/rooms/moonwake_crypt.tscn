@@ -35,6 +35,15 @@
 [ext_resource type="Script" uid="uid://bljk2wueglh14" path="res://scripts/floor_breach_v1464.gd" id="v1464_breach"]
 [ext_resource type="Script" uid="uid://bif2jcgnjgxwp" path="res://scripts/collapse_support_v135.gd" id="v1464_support"]
 
+[ext_resource type="Resource" path="res://items/roseglass_dagger_v169.tres" id="v172_armory_1"]
+[ext_resource type="Resource" path="res://items/nocturne_stiletto_v171.tres" id="v172_armory_2"]
+[ext_resource type="Resource" path="res://items/moonwarden_spear_v169.tres" id="v172_armory_3"]
+[ext_resource type="Resource" path="res://items/briarwake_trident_v171.tres" id="v172_armory_4"]
+[ext_resource type="Resource" path="res://items/gravebell_maul_v170.tres" id="v172_armory_5"]
+[ext_resource type="Resource" path="res://items/ashglass_warmaul_v170.tres" id="v172_armory_6"]
+[ext_resource type="Resource" path="res://items/eclipse_twinblade_v170.tres" id="v172_armory_7"]
+[ext_resource type="Resource" path="res://items/rosemirror_twinblade_v170.tres" id="v172_armory_8"]
+
 [sub_resource type="RectangleShape2D" id="Col_00"]
 size = Vector2(104, 1590)
 
@@ -554,3 +563,85 @@ blast_damage = 7.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V150CombatBreakables/CryptTimberSoutheast" unique_id=555443385]
 shape = SubResource("v150_cover_circle")
+
+
+[node name="V172ArmoryFloor" type="Node2D" parent="Gameplay/WeaponShowcases"]
+
+[node name="RoseglassDagger" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(1310, 1370)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_1")
+pickup_id = "v172_armory_roseglass_dagger_v169"
+item_seed = 172101
+guaranteed_quality = "rare"
+ground_display = true
+
+
+[node name="NocturneStiletto" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(1540, 1370)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_2")
+pickup_id = "v172_armory_nocturne_stiletto_v171"
+item_seed = 172102
+guaranteed_quality = "rare"
+ground_display = true
+
+
+[node name="MoonwardenSpear" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(1770, 1370)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_3")
+pickup_id = "v172_armory_moonwarden_spear_v169"
+item_seed = 172103
+guaranteed_quality = "rare"
+ground_display = true
+
+
+[node name="BriarwakeTrident" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(2000, 1370)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_4")
+pickup_id = "v172_armory_briarwake_trident_v171"
+item_seed = 172104
+guaranteed_quality = "rare"
+ground_display = true
+
+
+[node name="GravebellMaul" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(1310, 1460)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_5")
+pickup_id = "v172_armory_gravebell_maul_v170"
+item_seed = 172105
+guaranteed_quality = "rare"
+ground_display = true
+
+
+[node name="AshglassWarmaul" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(1540, 1460)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_6")
+pickup_id = "v172_armory_ashglass_warmaul_v170"
+item_seed = 172106
+guaranteed_quality = "rare"
+ground_display = true
+
+
+[node name="EclipseTwinblade" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(1770, 1460)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_7")
+pickup_id = "v172_armory_eclipse_twinblade_v170"
+item_seed = 172107
+guaranteed_quality = "rare"
+ground_display = true
+
+
+[node name="RosemirrorTwinblade" type="Node2D" parent="Gameplay/WeaponShowcases/V172ArmoryFloor"]
+position = Vector2(2000, 1460)
+script = ExtResource("v123_rack")
+item_data = ExtResource("v172_armory_8")
+pickup_id = "v172_armory_rosemirror_twinblade_v170"
+item_seed = 172108
+guaranteed_quality = "rare"
+ground_display = true
