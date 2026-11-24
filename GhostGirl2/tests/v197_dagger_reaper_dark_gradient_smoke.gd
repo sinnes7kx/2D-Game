@@ -46,6 +46,16 @@ func _verify() -> void:
     if restored_legacy == null or restored_legacy.gradient_version != 1 or restored_legacy.glow_gradient_colors() != expected_legacy_glow:
         _fail("Legacy save silently recolored")
         return
+    if not restored_legacy.save_cosmetic_look():
+        _fail("Could not favorite original v1 appearance")
+        return
+    restored_legacy.reroll_cosmetic_seed()
+    if restored_legacy.gradient_version != 2:
+        _fail("Cosmetic rerolls cannot access expanded dark families")
+        return
+    if not restored_legacy.restore_cosmetic_look(0) or restored_legacy.gradient_version != 1 or restored_legacy.glow_gradient_colors() != expected_legacy_glow:
+        _fail("Restoring an old favorite changed its historic gradient")
+        return
     item.gradient_version = 2
     var stats: Dictionary = item.all_stats()
     var item_seed: int = item.item_seed
