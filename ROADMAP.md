@@ -131,6 +131,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - Shared blade-local signature geometry, restrained motif accents, actual bow-mask signature uniforms and mirrored guide offsets; single detailed pass per twinblade end. Correct the neutral front screen-right hand anchor against the existing body art. No changes to combat or saved item data.
 - New `tests/v1923_equipped_fx_smoke.gd` exercises real dropdown, equipped/inspection look parity, bow shader parameters, neutral body shader controls and preserved item data. Registered in CI; interactive four-direction and weapon alignment checks remain release blockers.
 - PR #28 (v1.92.2 collection recovery) remains open with failed CI; this independent visual fix is based directly on main, not the failing recovery branch. M0 is not complete.
+### Current evidence and blockers (v1.92.2)
+
+- v1.92.1 PR #27 merged; GitHub Actions run [45381388211](https://github.com/sinnes7kx/2D-Game/actions/runs/45381388211) succeeded, including the current/legacy/missing TestMythic control smoke. The local F5 confirmation and release-export UI check remain outstanding.
+- v1.92.2 source: backpack records that cannot load (missing definitions or insufficient space/capacity) now persist in an additive `unresolved_backpack` array and are retried on later loads. Recovery never evicts an active item or auto-equips an inaccessible record. Original saved equipment indices remap only to successfully loaded original backpack records. Unknown raw fields are retained while a record is unresolved; once it becomes playable, the normal serializer applies. Inventory reports pending recovery. Invalid top-level save/container structure disables saving rather than overwriting the original file. Old v2 grid migration backs up the original bytes; legacy v1 stays intact.
+- New synthetic fixture test `tests/v1922_collection_recovery_smoke.gd` covers missing resources, overflow, grid migration, identity, duplicate cosmetic UID with distinct item seeds, invalid containers, and isolated backup creation. Added to CI; result pending at commit time. No private saves used.
+- Keep the ignored `scripts - Copy/` backup unchanged until its conflict-marked contents receive explicit cleanup review; it already has `.gdignore`. Do not replace live scripts with this directory.
+- Remaining P0 gates: interactive F5, real older-save corpus, full disk-write failure handling for ordinary pickups/destruction/equipment, broader malformed nested-record validation, appearance versioning, and a full tracked resource/node-path audit. Do not mark M0 complete yet.
 
 ### Done means
 
