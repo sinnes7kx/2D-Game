@@ -148,6 +148,46 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 				advance = 13.0 + 4.0 * sin(float(n) * PI * 0.25)
 			if n in [2, 3, 4]:
 				grip += forward * (-2.0 if is_lead or crossing else 1.0)
-		var tip: Vector2 = grip + sweep * lateral + forward * advance
+		# v1.80: actual visible hand centers measured on the approved v14
+		# 256x220 body images. The v175 installer remaps idle/walk frames.
+		var source_frame: int = n
+		if action == "idle":
+			source_frame = [0, 0, 1, 0, 0, 1, 0, 0][n]
+		elif action == "walk":
+			source_frame = [0, 1, 2, 1, 0, 1, 2, 1][n]
+		var anchor: Vector2 = hand_anchor(face, source_frame, hand_index)
+		if anchor == Vector2.INF:
+			# Hair/body occludes this hand. Do not float a second knife
+			# outside the visible character silhouette.
+			result.append(PackedVector2Array())
+			continue
+		grip = anchor
+		var aim: Vector2 = (sweep * lateral + forward * advance).normalized()
+		if aim.is_zero_approx():
+			aim = forward
+		var tip: Vector2 = grip + aim * 30.0
 		result.append(PackedVector2Array([grip, tip]))
 	return result
+
+# Pixel centers in the original 256x220 artwork, converted to centered
+# Ghost-local coordinates. Occluded hands are not rendered.
+static func hand_anchor(face: String, frame: int, hand: int) -> Vector2:
+	var near: Array[Vector2] = []
+	var far: Array[Vector2] = []
+	match face:
+		"front":
+			near = [Vector2(111,141),Vector2(118,129),Vector2(143,121),Vector2(119,118),Vector2(172,120),Vector2(183,128),Vector2(145,129),Vector2(113,141)]
+			far = [Vector2(181,141),Vector2(178,124),Vector2(194,114),Vector2(205,107),Vector2(187,105),Vector2(208,129),Vector2(190,145),Vector2(181,141)]
+		"left":
+			near = [Vector2(93,134),Vector2(97,117),Vector2(98,107),Vector2(83,106),Vector2(76,102),Vector2(80,103),Vector2(101,134),Vector2(96,137)]
+			far = [Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF]
+		"right":
+			far = [Vector2(177,135),Vector2(178,114),Vector2(180,91),Vector2(204,97),Vector2(191,104),Vector2(201,99),Vector2(185,129),Vector2(177,135)]
+			near = [Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF]
+		"back":
+			near = [Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF]
+			far = [Vector2.INF,Vector2(192,136),Vector2(203,87),Vector2(214,82),Vector2(202,103),Vector2(210,112),Vector2(191,150),Vector2.INF]
+		_:
+			return Vector2.INF
+	var point: Vector2 = (near if hand == 0 else far)[clampi(frame, 0, 7)]
+	return point if point == Vector2.INF else point - Vector2(128, 110)
