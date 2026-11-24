@@ -146,10 +146,10 @@ func weapon_reach() -> float:
 		_: return 106.0
 
 func weapon_base_color() -> Color:
-	return GhostPaletteLibrary.color_for_slot("sword", weapon_base_index if weapon_base_index >= 0 else palette_index)
+	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword"), 0.5)
 
 func weapon_gradient_color() -> Color:
-	return GhostPaletteLibrary.weapon_gradient_color(weapon_gradient_index)
+	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword-accent"), 0.5)
 
 func weapon_appearance_labels() -> Array[String]:
 	return [GhostPaletteLibrary.palette_label("sword", weapon_base_index if weapon_base_index >= 0 else palette_index),
@@ -246,15 +246,15 @@ func apply_cosmetic_uid(uid: String) -> void:
 
 # V1.53: complete-spectrum, per-look gradients. Never change the combat seed.
 func glow_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_colors(cosmetic_uid, visual_seed())
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel())
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
 # Saving/restoring the cosmetic UID reproduces both without new schema fields.
 func bow_limb_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs")
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel())
 
 func bow_string_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string")
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string:" + effect_palette_channel())
 
 func mythic_layer_variant() -> int:
 	if OS.is_debug_build() and debug_mythic_variant >= 0:
@@ -417,6 +417,7 @@ func collector_appearance() -> Dictionary:
 			look["glow_motif"] = debug_glow_motif
 		if debug_surface_mode >= 0:
 			look["surface_mode"] = clampi(debug_surface_mode, 0, 6)
+	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
 	return look
 
 func collector_material_label() -> String:
@@ -424,7 +425,7 @@ func collector_material_label() -> String:
 	return COLLECTOR_LOOK.rarity_label(look) if not look.is_empty() else ""
 
 func palette_color() -> Color:
-	return weapon_base_color() if get_slot() == "sword" else GhostPaletteLibrary.color_for_slot(get_slot(), palette_index)
+	return weapon_base_color() if get_slot() == "sword" else COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical:" + get_slot()), 0.5)
 
 func palette_name() -> String:
 	return GhostPaletteLibrary.palette_label(get_slot(), weapon_base_index if get_slot() == "sword" and weapon_base_index >= 0 else palette_index)
@@ -548,3 +549,17 @@ func discovery_label() -> String:
 	if tier == 4 or signature >= 2:
 		return "EXTRAORDINARY DISCOVERY"
 	return ""
+
+# Each special effect gets an independent color domain. Debug tier/signature
+# changes select the matching domain, not a fixed color set.
+func effect_palette_channel() -> String:
+	var signature: int = visual_signature()
+	var tier: int = COLLECTOR_LOOK.tier_for_ticket(COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "material-rarity"))
+	var particles: int = COLLECTOR_LOOK.tier_for_ticket(COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "particle-rarity"))
+	if OS.is_debug_build() and debug_collector_tier >= 0:
+		tier = debug_collector_tier
+		particles = debug_collector_tier
+	return "effect:%d:%d:%d:%d" % [signature, tier, particles, mythic_layer_variant() if signature == 4 else 0]
+
+func effect_palette_motion() -> Dictionary:
+	return COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel())
