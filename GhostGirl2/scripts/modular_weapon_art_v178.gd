@@ -120,9 +120,18 @@ static func weapon_profile(look: Dictionary, item_id: String, hand: int = 0) -> 
 		return p
 	if item_id == "eclipse_twinblade_v170":
 		p["shape"] = 2
-		p["width_scale"] = float(p["width_scale"]) * 0.73
+		p["width_scale"] = float(p["width_scale"]) * 0.94
 	elif item_id == "rosemirror_twinblade_v170":
 		p["shape"] = 1
-		p["width_scale"] = float(p["width_scale"]) * 0.88
+		p["width_scale"] = float(p["width_scale"]) * 1.02
 		p["ornament"] = 6 + int(p["ornament"]) % 3
 	return p
+
+# Single source for the target double-ended sword silhouette. Both equipped
+# and display models use these exact endpoints, with no old crystal-head art.
+static func twinblade_width(rose: bool) -> float:
+	return 5.8 if rose else 4.6
+
+static func twinblade_spans(grip: Vector2, tip: Vector2) -> Array[PackedVector2Array]:
+	var rear: Vector2 = grip - (tip - grip) * 0.90
+	return [PackedVector2Array([grip.lerp(tip, 0.16), tip]), PackedVector2Array([grip.lerp(rear, 0.18), rear])]
