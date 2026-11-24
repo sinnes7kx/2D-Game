@@ -92,5 +92,8 @@ jobs:
       - name: Verify collector inspection modal and item preservation
         run: godot --headless --path GhostGirl2 --script res://tests/v179_lens_smoke.gd
 
+      - name: Verify preloaded core animation resource and repeatable installation
+        run: godot --headless --path GhostGirl2 --script res://tests/v1791_core_animation_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
