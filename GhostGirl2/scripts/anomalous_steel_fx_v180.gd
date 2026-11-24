@@ -1,5 +1,6 @@
 extends RefCounted
 ## Shared animated color and blade-local motif renderer. All effects are cosmetic.
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const PALETTE = preload("res://scripts/cosmetic_rng_v152.gd")
 
 static func color_at(colors: Array[Color], look: Dictionary, t: float, time: float) -> Color:
@@ -49,7 +50,7 @@ static func color_at(colors: Array[Color], look: Dictionary, t: float, time: flo
 	return ink
 
 static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Color], look: Dictionary, time: float, strength: float = 1.0, details: bool = true) -> void:
-	if path.size() < 2:
+	if path.size() < 2 or FX_LEVEL.intensity <= 0.0:
 		return
 	var tier: int = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0)))
 	var motif: int = int(look.get("glow_motif", 0))
@@ -61,8 +62,8 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 			var a: Vector2 = path[i].lerp(path[i + 1], float(j) / 5.0)
 			var b: Vector2 = path[i].lerp(path[i + 1], float(j + 1) / 5.0)
 			var ink: Color = color_at(colors, look, u, time)
-			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, 0.075 * power), 2.7, true)
-			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, minf(0.38, 0.30 * power)), 0.95, true)
+			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.075 * power)), 2.7, true)
+			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, minf(0.38, 0.30 * power))), 0.95, true)
 	if not details:
 		return
 	var root: Vector2 = path[0]
@@ -74,7 +75,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 		var p: Vector2 = point_on_path(path, u)
 		var ink: Color = color_at(colors, look, u, time)
 		ink = ink.lerp(Color.WHITE, 0.24)
-		ink.a = sin(u * PI) * 0.55
+		ink.a = FX_LEVEL.edge_alpha(canvas, sin(u * PI) * 0.55)
 		var wiggle: Vector2 = normal * sin(u * TAU * 2.0 + time * 3.0) * 3.0
 		match motif:
 			0: canvas.draw_circle(p, 1.3, ink)
@@ -97,7 +98,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 		for i in range(region_rank + 1):
 			var u: float = fposmod(time * 0.16 + float(i) / float(region_rank + 1), 1.0)
 			var p: Vector2 = point_on_path(path, u)
-			local.a = sin(u * PI) * 0.34
+			local.a = FX_LEVEL.edge_alpha(canvas, sin(u * PI) * 0.34)
 			match region:
 				"moonwake_crypt":
 					canvas.draw_arc(p + normal * 2.0, 3.0, time, time + PI, 10, local, 1.1, true)
@@ -144,7 +145,7 @@ static func draw_signature(canvas: Node2D, path: PackedVector2Array, colors: Arr
 		var u: float = 0.12 + 0.76 * fposmod(time * 0.16 + float(i) / 3.0, 1.0)
 		var center: Vector2 = point_on_path(path, u)
 		var ink: Color = color_at(colors, look, u, time).lerp(Color.WHITE, 0.22)
-		ink.a = 0.38 + 0.14 * sin(u * PI)
+		ink.a = FX_LEVEL.edge_alpha(canvas, 0.38 + 0.14 * sin(u * PI))
 		var offset: Vector2 = normal * (2.5 + 1.5 * sin(time * 2.0 + float(i)))
 		var p: Vector2 = center + offset
 		match kind:
