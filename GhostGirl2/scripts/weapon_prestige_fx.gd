@@ -1,4 +1,5 @@
 extends Node2D
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.3 — blade-only twinblade enchantments and high-visibility seeded Mythic shimmer.
@@ -48,9 +49,9 @@ func _ready() -> void:
 	# Additive light is independent from Ghost Girl's fabric shader.
 	# Unlike the previous faint transparent line, this is visibly luminous.
 	var glow_material: CanvasItemMaterial = CanvasItemMaterial.new()
-	glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX
 	material = glow_material
-	self_modulate.a = 0.88 # Effects only; never fade the actual character or metal.
+	self_modulate.a = GENTLE.EFFECT_ALPHA # Effects only; keep opaque metal readable.
 	show()
 	set_process(true)
 	if FileAccess.file_exists(MANIFEST_PATH):
@@ -196,11 +197,11 @@ func _axial_span() -> PackedVector2Array:
 			guide_data = wand_pose_by_animation.get("wand_idle_" + face, {})
 		var guides: Array = guide_data.get("guides", [])
 		if not guides.is_empty():
-			var line: Variant = guides[clampi(body.frame, 0, guides.size() - 1)]
+			var idle: bool = animation.begins_with("wand_idle_") and GENTLE.modular_idle(str(body.animation))
+			var line: Variant = guides[0 if idle else clampi(body.frame, 0, guides.size() - 1)]
 			if line is Array and line.size() == 4:
-				return PackedVector2Array([
-					Vector2(float(line[0]), float(line[1])),
-					Vector2(float(line[2]), float(line[3]))])
+				var wand_span: PackedVector2Array = PackedVector2Array([Vector2(float(line[0]), float(line[1])), Vector2(float(line[2]), float(line[3]))])
+				return GENTLE.smooth(body, str(body.animation), wand_span) if idle else wand_span
 		# Explicit fallback only if the new guides have not imported yet.
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
 	if style == "dual_sword":
@@ -424,7 +425,11 @@ func _draw() -> void:
 	# Twinblades have *two* cutting heads. Do not run the generic shaft
 	# glow, center ring, socket orbit or mythic signature along their handle.
 	if style == "twinblade":
-		_draw_v1723_twinblade_edges(grip, tip, normal, intensity)
+		# The physical twinblade layer already draws its two cutting edges.
+		# Preserve the independent signature, but never double up the glow.
+		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
+		if physical == null or not bool(physical.call("_is_equipped", animation)):
+			_draw_v1723_twinblade_edges(grip, tip, normal, intensity)
 		_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
 		return
 	# Bow string and body remain recognizable; its glow must not become a solid bar.
@@ -792,8 +797,8 @@ func _draw_v1723_mythic_sheen(grip: Vector2, tip: Vector2, tangent: Vector2, nor
 			var taper: float = maxf(0.14, sin((0.12 + u * 0.86) * PI))
 			var travel: float = fposmod(u * 0.64 + elapsed * 0.105 + seed_shift + float(segment_i) * 0.29, 1.0)
 			var color: Color = _gradient_at(travel).lerp(Color.WHITE, 0.14)
-			draw_circle(at, (5.9 if style == "twinblade" else 7.0) * taper, Color(color.r, color.g, color.b, 0.11 * strength * taper))
-			draw_circle(at, 2.6 * taper, Color(color.r, color.g, color.b, 0.23 * strength * taper))
+			draw_circle(at, (5.9 if style == "twinblade" else 7.0) * taper, Color(color.r, color.g, color.b, 0.055 * strength * taper))
+			draw_circle(at, 2.6 * taper, Color(color.r, color.g, color.b, 0.10 * strength * taper))
 			if stripe_i < 12:
 				var next_at: Vector2 = blade_a.lerp(blade_b, float(stripe_i + 1) / 12.0)
 				draw_line(at - blade_normal * 0.7, next_at - blade_normal * 0.7, Color(color.r, color.g, color.b, 0.39 * strength * taper), 1.45, true)
@@ -942,7 +947,7 @@ func _draw_signature(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vect
 			var u: float = 0.35 + 0.55 * float(k) / 6.0
 			var at: Vector2 = grip.lerp(tip, u) + normal * sin(elapsed * 1.9 + float(k) * 1.7) * 3.8
 			var star: Color = _gradient_at(u)
-			draw_circle(at, 2.1, Color(star.r, star.g, star.b, 0.29 * strength))
+			draw_circle(at, 2.1, Color(star.r, star.g, star.b, 0.20 * strength))
 			if k % 3 == 0:
 				draw_line(at - tangent * 3.5, at + tangent * 3.5, Color(star.r, star.g, star.b, 0.24 * strength), 0.9, true)
 		draw_circle(tip, 3.0, Color(1.0, 0.95, 1.0, 0.37 * strength))
