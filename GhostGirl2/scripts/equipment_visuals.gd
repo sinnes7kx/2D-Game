@@ -3,6 +3,7 @@ extends Node2D
 ## Weapon artwork is integrated in the approved directional body animations.
 ## v1.60 also enables a dedicated wand-hand overlay to replace the placeholder look.
 var inventory
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 var wand_surface_key: String = ""
 var wand_surface: ShaderMaterial
@@ -97,7 +98,7 @@ func _draw_firefly_cluster(anchor: Vector2, radius: Vector2, color: Color, count
         var glow: float = 0.45 + 0.55 * (0.5 + 0.5 * sin(t * 2.2 + float(i) * 0.7))
         draw_circle(p, 4.1, Color(color.r, color.g, color.b, 0.010 * glow))
         draw_circle(p, 2.1, Color(color.r, color.g, color.b, 0.020 * glow))
-        draw_circle(p, 0.95 + 0.25 * float(i % 2), Color(color.r, color.g, color.b, 0.145 * glow))
+        draw_circle(p, 0.95 + 0.25 * float(i % 2), Color(color.r, color.g, color.b, 0.085 * glow))
 
 func _load_wand_pose_rows() -> void:
     if not FileAccess.file_exists(WAND_POSE_GUIDES_PATH):
@@ -118,6 +119,8 @@ func _apply_wand_pose() -> void:
     var row_data: Dictionary = wand_pose_rows.get(anim, {})
     var row: int = int(row_data.get("row", 0))
     var count: int = maxi(1, int(row_data.get("count", 1)))
+    if GENTLE.modular_idle(str(player_art.animation)):
+        frame_index = 0
     frame_index = clampi(frame_index, 0, count - 1)
     if last_wand_animation == anim and last_wand_frame == frame_index:
         return
@@ -258,6 +261,14 @@ func _process(delta: float) -> void:
         # All poses are painted into Ghost-local coordinates. The actual
         # animation frame, not a static facing rotation, selects the artwork.
         _apply_wand_pose()
+        if str(player_art.animation).begins_with("wand_idle_"):
+            var guide: Dictionary = wand_pose_rows.get(str(player_art.animation), {})
+            var lines: Array = guide.get("guides", [])
+            if not lines.is_empty() and lines[0].size() == 4:
+                var grip: Vector2 = Vector2(float(lines[0][0]), float(lines[0][1]))
+                var angle: float = GENTLE.angle_at(GENTLE.phase_of(player_art))
+                wand_visual.rotation = angle
+                wand_visual.position = grip - grip.rotated(angle)
         wand_visual.show_behind_parent = facing == "back"
         wand_visual.z_index = -2 if facing == "back" else 6
     if dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty():
