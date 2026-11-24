@@ -4,6 +4,7 @@ extends Node2D
 ## No dialogue, lore pop-ups, or runtime construction of puzzle props.
 
 const ROOMS = {
+	"lanternhaven": preload("res://scenes/rooms/lanternhaven.tscn"),
 	"moonwake_crypt": preload("res://scenes/rooms/moonwake_crypt.tscn"),
 	"hollow_veil_moor": preload("res://scenes/rooms/hollow_veil_moor.tscn"),
 	"garden": preload("res://scenes/rooms/garden.tscn"),
@@ -59,6 +60,7 @@ const WORLD_DROP_SCENE: PackedScene = preload("res://scenes/world_drop.tscn")
 const WORLD_SAVE_FILE: String = "user://ghost_girl_world_v1.json"
 const GROUND_SAVE_FILE: String = "user://ghost_girl_ground_loot_v1.json"
 const ROOM_TITLES = {
+	"lanternhaven": "LANTERNHAVEN · SAFE HAVEN",
 	"moonwake_crypt": "MOONWAKE CRYPT",
 	"hollow_veil_moor": "HOLLOW VEIL MOOR",
 	"garden": "THE WAKING GARDEN",
@@ -93,7 +95,7 @@ const MIRROR_ANSWERS = [2, 0, 3]
 @onready var reticle = $MouseThrowAim
 @onready var inventory = $Inventory
 
-var room: String = "moonwake_crypt"
+var room: String = "lanternhaven"
 var ground_records: Array[Dictionary] = []
 var portals: Dictionary = {}
 var puzzle_tokens: Dictionary = {}
@@ -114,7 +116,7 @@ var final_star_seen: bool = false
 var bell_progress: int = 0
 var flower_progress: int = 0
 # The first activated lantern shrine is used for in-session recovery.
-var last_shrine_room: String = "moonwake_crypt"
+var last_shrine_room: String = "lanternhaven"
 var last_shrine_point: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
@@ -377,6 +379,7 @@ func refresh_vigil_hud() -> void:
 
 func _portal_unlocked(destination: String) -> bool:
 	match room:
+		"lanternhaven": return cloister_solved if destination == "sanctum" else destination == "moonwake_crypt"
 		"moonwake_crypt": return true
 		"garden": return garden_key_used if destination == "chapel" else true
 		"chapel": return bells_solved if destination == "cloister" else true
@@ -418,6 +421,8 @@ func _process(_delta: float) -> void:
 		if switch_hint.is_empty() and player.carrying == null:
 			switch_hint = _rose_weight_hint()
 		ui.set_prompt("G  DROP    R  THROW" if player.carrying != null else switch_hint)
+	elif current_target.is_in_group("town_stash"):
+		ui.set_prompt("E  OPEN STASH")
 	elif current_target.is_in_group("moor_vigil_memory"):
 		ui.set_prompt("E  AWAKEN MEMORIAL")
 	elif current_target.is_in_group("moor_vigil_altar"):
@@ -458,7 +463,7 @@ func _process(_delta: float) -> void:
 		elif room == "garden" and str(current_target.get("destination")) == "chapel" and not garden_key_used:
 			ui.set_prompt("E  USE KEY" if inventory.has_item("moon_rose_key") else "")
 		else:
-			ui.set_prompt("E  ENTER" if bool(current_target.get("opened")) else "")
+			ui.set_prompt("E  " + str(current_target.get("interaction_name")).to_upper() if bool(current_target.get("opened")) else "")
 	elif current_target.is_in_group("v182_exhibition"):
 		ui.set_prompt("E  INSPECT DISPLAY")
 	elif current_target.is_in_group("interactable"):
@@ -520,6 +525,9 @@ func _choose_target():
 func interact() -> void:
 	var target = _choose_target()
 	if target == null:
+		return
+	if target.is_in_group("town_stash") and can_access_town_stash():
+		ui.call("open_town_stash")
 		return
 	if target.is_in_group("v182_exhibition"):
 		var displayed: GhostItemInstance = target.call("get_displayed_item") as GhostItemInstance
@@ -723,6 +731,7 @@ func _touch_memory(id: String) -> void:
 func _enter_room(next_room: String) -> void:
 	if not ROOMS.has(next_room):
 		return
+	ui.call("close_town_stash")
 	var previous_room: String = room
 	if player.carrying != null:
 		var held_item = player.carrying
@@ -1192,3 +1201,10 @@ func _announce_discovery(item: GhostItemInstance, ordinary: String, natural: boo
 	add_child(chime)
 	chime.finished.connect(chime.queue_free)
 	chime.play()
+
+# The chest owns no item data: all operations use the existing inventory vault.
+func can_access_town_stash() -> bool:
+	if room != "lanternhaven" or not is_instance_valid(room_view) or not is_instance_valid(player):
+		return false
+	var chest: Node2D = room_view.get_node_or_null("Gameplay/Stashes/TownStash") as Node2D
+	return chest != null and chest.global_position.distance_to(player.global_position) <= 115.0
