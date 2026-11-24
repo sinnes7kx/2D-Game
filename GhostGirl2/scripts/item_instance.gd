@@ -506,7 +506,7 @@ func origin_label() -> String:
 # Only independently drawn weapon families are eligible in this release.
 # Never make Ghost Girl's body transparent to imitate a spectral weapon.
 func supports_ethereal() -> bool:
-	return get_slot() == "wand" or (get_slot() == "sword" and weapon_style() in ["twinblade", "dual_dagger", "dual_sword"])
+	return get_slot() == "wand" or (get_slot() == "sword" and weapon_style() in ["twinblade", "dual_dagger", "dual_sword", "scythe"])
 
 func roll_ethereal() -> void:
 	if not supports_ethereal() or ethereal:
