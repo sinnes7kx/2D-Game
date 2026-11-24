@@ -8,6 +8,7 @@ const DUAL = preload("res://scripts/v173_dual_daggers.gd")
 const POSE = preload("res://scripts/v172_weapon_pose.gd")
 const BOW = preload("res://scripts/bow_palette_overlay_v139.gd")
 const AIR_WAKE = preload("res://scripts/swing_wake_v198.gd")
+const BLADE_EXT = preload("res://scripts/weapon_tip_extension_v198.gd")
 
 func _initialize() -> void:
     call_deferred("_verify")
@@ -34,6 +35,9 @@ func _verify() -> void:
     if not is_equal_approx(SCYTHE.REAPER_SPAN, 86.0) or POSE.TRIDENT_SHAFT_BACK < 25.0 or DUAL.BLADE_LENGTH < 34.0:
         _fail("Longer Reaper/trident/paired-dagger art lengths missing")
         return
+    if not is_equal_approx(BLADE_EXT.dagger_extra_tip(Vector2.ZERO, Vector2(40, 0)).x, 46.0) or not is_equal_approx(BLADE_EXT.trident_extra_tail(Vector2.ZERO, Vector2(40, 0)).x, -26.0):
+        _fail("Idle/walk extension endpoints drifted from the authored weapon guides")
+        return
     var scythe: PackedVector2Array = SCYTHE.span("scythe_idle_right", 0, {})
     if scythe.size() != 2 or not is_equal_approx(scythe[0].distance_to(scythe[1]), SCYTHE.REAPER_SPAN):
         _fail("Reaper shaft length or hand anchor changed unexpectedly")
@@ -52,6 +56,9 @@ func _verify() -> void:
     var player: Node = (load("res://scenes/player.tscn") as PackedScene).instantiate()
     root.add_child(player)
     var body: AnimatedSprite2D = player.get_node("Ghost")
+    if player.get_node_or_null("Ghost/WeaponTipExtensionV198") == null:
+        _fail("Missing equipment-sensitive idle/walk tip renderer")
+        return
     var palette: AnimatedSprite2D = player.get_node("Ghost/BowPaletteV139")
     var carry: AnimatedSprite2D = player.get_node("Ghost/BowCarryV166")
     for art_name in ["thornrose", "moonveil"]:
