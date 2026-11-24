@@ -373,6 +373,9 @@ func _gradient_at(t: float) -> Color:
 func _draw() -> void:
 	if item == null or body == null:
 		return
+	# Modular heavy weapons own their actual edge/rim glow; do not double it.
+	if item.weapon_style() in ["halberd", "maul"] and player != null and player.has_node("Ghost/ScytheRigV190") and preload("res://scripts/heavy_weapon_art_v192.gd").matches(str(body.animation)):
+		return
 	# The new scythe rig owns the curved cutting-edge light, not the old baked shaft.
 	if item.weapon_style() == "scythe" and player != null and player.has_node("Ghost/ScytheRigV190") and preload("res://scripts/scythe_art_v190.gd").matches(str(body.animation)):
 		return
