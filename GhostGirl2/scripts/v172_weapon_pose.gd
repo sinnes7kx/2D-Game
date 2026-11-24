@@ -145,7 +145,7 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 		var guide: Array = guides[clampi(frame_index, 0, guides.size() - 1)]
 		var grip: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 		var tip: Vector2 = Vector2(float(guide[2]), float(guide[3]))
-		return PackedVector2Array([grip, grip + (tip - grip) * 1.45])
+		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 60.0])
 	var spear: bool = animation_name.begins_with("attack_briarwake_spear_")
 	var heavy: bool = animation_name.contains("_heavy_")
 	var face: String = "front"
@@ -266,11 +266,11 @@ func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 # Opaque metal, not additive glow. The rear blade has its own cutting
 # direction; the wrapped central grip remains visibly separate.
 func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
-	var rear: Vector2 = grip - (tip - grip) * 0.68
-	var front_root: Vector2 = grip.lerp(tip, 0.58)
-	var rear_root: Vector2 = grip.lerp(rear, 0.56)
-	draw_line(rear_root, front_root, Color("271e30"), 7.0, true)
-	draw_line(rear_root, front_root, Color("78596d"), 4.0, true)
+	var rear: Vector2 = grip - (tip - grip) * 0.90
+	var front_root: Vector2 = grip.lerp(tip, 0.20)
+	var rear_root: Vector2 = grip.lerp(rear, 0.22)
+	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
+	draw_line(rear_root, front_root, Color("78596d"), 3.0, true)
 	var axis: Vector2 = (tip - grip).normalized()
 	var normal: Vector2 = Vector2(-axis.y, axis.x)
 	for i in range(7):
@@ -283,12 +283,20 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 func _draw_v176_razor(root: Vector2, tip: Vector2, rose: bool) -> void:
 	var axis: Vector2 = (tip - root).normalized()
 	var normal: Vector2 = Vector2(-axis.y, axis.x)
-	var steel: Color = Color("a74468") if rose else Color("777caa")
-	var shadow: Color = Color("4c243b") if rose else Color("37364f")
-	var shoulder: Vector2 = root.lerp(tip, 0.26)
-	var ridge: Vector2 = root.lerp(tip, 0.53)
-	draw_colored_polygon(PackedVector2Array([root - normal * 2.0, shoulder - normal * 6.0, tip, shoulder + normal * 4.5, root + normal * 2.0]), steel)
-	draw_colored_polygon(PackedVector2Array([root, ridge, tip, shoulder + normal * 4.5, root + normal * 2.0]), shadow)
-	draw_line(shoulder - normal * 6.0, tip, Color("e9d3ec"), 1.25, true)
-	draw_line(root, tip, Color("c5b0d2"), 0.8, true)
-	draw_line(root - normal * 5.0, root + normal * 5.0, Color("b49bbd"), 2.1, true)
+	var steel: Color = Color("c57a93") if rose else Color("a6b2dc")
+	var shadow: Color = Color("67364e") if rose else Color("505775")
+	var edge: Color = Color("ffe1e9") if rose else Color("edf3ff")
+	# Straight sword cutting edges, long central bevel, acute point.
+	# No swollen shoulder, club head or crescent bulb.
+	var shoulder: Vector2 = root.lerp(tip, 0.08)
+	var taper: Vector2 = root.lerp(tip, 0.76)
+	var width: float = 3.8 if rose else 3.2
+	draw_colored_polygon(PackedVector2Array([root - normal * width, shoulder - normal * width, taper - normal * width * 0.72, tip, taper + normal * width * 0.72, shoulder + normal * width, root + normal * width]), steel)
+	draw_colored_polygon(PackedVector2Array([root, tip, taper + normal * width * 0.72, root + normal * width]), shadow)
+	draw_line(root - normal * width, taper - normal * width * 0.72, edge, 0.85, true)
+	draw_line(taper - normal * width * 0.72, tip, edge, 0.85, true)
+	draw_line(root + normal * width, taper + normal * width * 0.72, Color("bfb0d5"), 0.65, true)
+	draw_line(taper + normal * width * 0.72, tip, Color("bfb0d5"), 0.65, true)
+	draw_line(root, tip, Color("e2d4ef"), 0.65, true)
+	# Small crossguard separates the sword from the short leather grip.
+	draw_line(root - normal * 6.0, root + normal * 6.0, Color("a993b5"), 1.7, true)
