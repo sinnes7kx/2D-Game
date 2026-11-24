@@ -16,6 +16,8 @@ var rare_visual_mod: int = -1
 # In-memory debug inspection only. Intentionally omitted from save dictionaries,
 # cosmetic snapshots and normal RNG; never changes genuine rare rolls.
 var debug_visual_override: int = -1
+var collector_favorite: bool = false
+var collector_locked: bool = false
 var debug_collector_tier: int = -1
 var debug_color_mode: int = -1
 var debug_glow_motif: int = -1
