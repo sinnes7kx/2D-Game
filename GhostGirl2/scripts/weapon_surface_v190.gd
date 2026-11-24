@@ -31,7 +31,7 @@ static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, over
 	mat.set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
 
 static func key(item: GhostItemInstance) -> String:
-	return "%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank, item.debug_glow_motif, item.debug_color_mode, FX_LEVEL.revision]
+	return "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.gradient_version, item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank, item.debug_glow_motif, item.debug_color_mode, FX_LEVEL.revision]
 
 static func bow_pigment(item: GhostItemInstance, look: Dictionary) -> Array[Color]:
 	var limbs: Array[Color] = item.bow_limb_gradient_colors()
