@@ -126,6 +126,8 @@ func bind_inventory(value: Node) -> void:
 	inventory = value
 	if inventory != null and not inventory.equipment_changed.is_connected(refresh):
 		inventory.equipment_changed.connect(refresh)
+	if inventory != null and not inventory.contents_changed.is_connected(refresh):
+		inventory.contents_changed.connect(refresh)
 	refresh()
 
 func refresh() -> void:
