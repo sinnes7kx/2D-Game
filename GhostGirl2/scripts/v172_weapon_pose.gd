@@ -1,4 +1,6 @@
 extends Node2D
+const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
+var v180_elapsed: float = 0.0
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.2 — authored four-facing weapon strike poses.
 ## Uses the approved unarmed attack BODY frames; renders physical weapon
@@ -109,9 +111,12 @@ func _ready() -> void:
 	set_process(true)
 
 func _process(_delta: float) -> void:
+	v180_elapsed += _delta
 	if body == null:
 		return
 	var animation_now: String = str(body.animation)
+	if animation_now.contains("twinblade"):
+		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
 	if animation_now != last_animation or body.frame != last_frame:
@@ -302,6 +307,22 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 		var width: float = 3.8 if rose else 3.2
 		MODULAR.draw_blade(self, front_root, tip, width, look)
 		MODULAR.draw_blade(self, rear_root, rear, width, look)
+		# Render light in the very same draw pass as both physical blades.
+		# Independent of the separate prestige overlay's readiness/visibility.
+		var world: Node = player.get("world") as Node if player != null else null
+		var inventory: Node = world.get("inventory") as Node if world != null else null
+		var equipped: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
+		if equipped != null:
+			var key: String = "%s:%s:%s:%s:%s" % [equipped.get_instance_id(), equipped.cosmetic_uid, equipped.visual_seed(), equipped.debug_collector_tier, equipped.debug_color_mode * 10 + equipped.debug_glow_motif]
+			if str(get_meta("v180_fx_key", "")) != key:
+				set_meta("v180_fx_key", key)
+				set_meta("v180_fx_look", equipped.collector_appearance())
+				set_meta("v180_fx_colors", equipped.glow_gradient_colors())
+			var fx_look: Dictionary = get_meta("v180_fx_look")
+			var colors: Array[Color] = get_meta("v180_fx_colors")
+			for side in [-1.0, 1.0]:
+				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 1.4)
+				ANOMALOUS.draw_edge(self, MODULAR.edge_points(rear_root, rear, width, look, side), colors, fx_look, v180_elapsed, 1.4)
 		draw_circle(grip, 3.7, Color("d8c7d6"))
 		return
 	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
