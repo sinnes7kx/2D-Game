@@ -3,7 +3,6 @@ extends RefCounted
 ## Do not print stat/loot/cosmetic seed numbers or cosmetic palette names by default.
 const GOLD = "#e4c88f"
 const ROLL_CODE = preload("res://scripts/collector_roll_code_v1931.gd")
-const GOLD = "#dfc38e"
 const MUTED = "#a19aa4"
 const GREEN = "#9bcfb4"
 const RED = "#e6a2a2"
