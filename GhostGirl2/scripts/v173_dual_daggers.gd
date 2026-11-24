@@ -3,6 +3,7 @@ extends Node2D
 ## 8 frames x 4 directions for idle, walk, A/B/C light combo and heavy.
 ## Each hand gets an independently authored tip path, driven by frame index.
 const ITEM_ID: String = "moonlace_dual_daggers_v173"
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const BLADE_SCRIPT = preload("res://scripts/v173_dual_dagger_blade.gd")
 var body: AnimatedSprite2D = null
@@ -75,6 +76,14 @@ func is_active(animation_name: String) -> bool:
 	return _equipped() and (animation_name.begins_with("dual_dagger_") or animation_name.begins_with("attack_dual_dagger_"))
 
 func get_blade_spans(animation_name: String, frame_index: int) -> Array:
+	var idle: bool = GENTLE.modular_idle(animation_name)
+	var spans: Array = _authored_blade_spans(animation_name, 0 if idle else frame_index)
+	if idle:
+		for hand in range(spans.size()):
+			spans[hand] = GENTLE.smooth(body, animation_name, spans[hand], hand)
+	return spans
+
+func _authored_blade_spans(animation_name: String, frame_index: int) -> Array:
 	# Array of two PackedVector2Array [grip, tip], in Ghost sprite-local space.
 	if not is_active(animation_name):
 		return []
