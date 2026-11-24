@@ -11,6 +11,9 @@ var item_seed: int = 0
 var cosmetic_seed: int = -1
 # Opaque 128-bit appearance ID; intentionally never shown in tooltips.
 var cosmetic_uid: String = ""
+# Recorded once for new finds; empty on legacy items with unknown birth appearance.
+var birth_roll_code_v1: String = ""
+var birth_roll_uid_v1: String = ""
 # Independent, extremely rare VISUAL-only signature (0 none, 1..5 effects).
 var rare_visual_mod: int = -1
 # In-memory debug inspection only. Intentionally omitted from save dictionaries,
@@ -427,6 +430,14 @@ func collector_appearance() -> Dictionary:
 	look["signature_variant"] = mythic_layer_variant()
 	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
 	return look
+
+# Only independently rolled collector-level cosmetics earn the tooltip star.
+# Ignore debug overrides, item quality, and ordinary stat/affix rarity.
+func has_rare_seeded_appearance() -> bool:
+	if get_slot() not in ["sword", "wand"]:
+		return false
+	var natural: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	return maxi(int(natural.get("material", 0)), int(natural.get("particle_tier", 0))) >= 4 or genuine_visual_signature() >= 4
 
 func collector_material_label() -> String:
 	var look: Dictionary = collector_appearance()
