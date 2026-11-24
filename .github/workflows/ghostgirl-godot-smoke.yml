@@ -83,5 +83,8 @@ jobs:
       - name: Verify v1.76 polearm thrust and Sanctum armory
         run: godot --headless --path GhostGirl2 --script res://tests/v176_polearm_smoke.gd
 
+      - name: Validate independent collector appearance rolls
+        run: godot --headless --path GhostGirl2 --script res://tests/v177_collector_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

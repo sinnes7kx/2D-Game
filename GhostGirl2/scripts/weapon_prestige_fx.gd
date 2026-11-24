@@ -26,6 +26,7 @@ var v170_axes_by_animation: Dictionary = {}
 var wand_pose_by_animation: Dictionary = {}
 @export_range(0.0, 1.5, 0.05) var effect_intensity: float = 1.0
 var generated: Dictionary = {}
+var collector_look: Dictionary = {}
 var paint_c: Color = Color("efbfe0")
 var bow_string_colors: Array[Color] = [Color("a9c4fb"), Color("f7c3ed"), Color("ddc9ff")]
 var last_uid: String = ""
@@ -93,6 +94,7 @@ func refresh() -> void:
 	style_index = -1
 	visual_signature_level = 0
 	generated = {}
+	collector_look = {}
 	last_uid = ""
 	last_seed = -9223372036854775807
 	last_signature = -1
@@ -108,6 +110,7 @@ func refresh() -> void:
 		last_uid = item.cosmetic_uid
 		last_seed = item.visual_seed()
 		last_signature = item.visual_signature()
+		collector_look = item.collector_appearance()
 		# Every equipped weapon gets baseline illumination, regardless of
 		# quality or whether it rolled a named prestige motif.
 		style_index = GhostWeaponFXLibrary.prestige_variant(item.visual_seed(), item.quality)
@@ -374,6 +377,12 @@ func _draw() -> void:
 	if visual_signature_level >= 4:
 		intensity *= 1.22
 	var style: String = item.weapon_style()
+	# New independent intensity and rhythm rolls affect light only, never damage.
+	if not collector_look.is_empty():
+		intensity *= float(collector_look.get("glow_strength", 1.0))
+		intensity *= 0.91 + 0.09 * sin(elapsed * float(collector_look.get("glow_speed", 0.8)) * TAU)
+		if style not in ["dual_sword", "dual_dagger"]:
+			_draw_v177_collector_finish(grip, tip, style, intensity)
 	if style == "dual_sword":
 		# Glow is applied to BOTH physical sword blades, never across the grips.
 		var paired_swords: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
@@ -1213,3 +1222,44 @@ func _draw_wand_hold_cosmetics(grip: Vector2, tip: Vector2, tangent: Vector2, no
 			var at: Vector2 = head - tangent * (2.0 + float(i)) + offset
 			var c: Color = _gradient_at(fposmod(seed_phase + float(i) * 0.19, 1.0))
 			draw_circle(at, 0.95 + 0.22 * float(i % 2), Color(c.r, c.g, c.b, 0.18 * base_alpha))
+
+# Small independent material accents, visible on the cutting region only.
+# The physical shape/material replacement for all weapon families follows in v1.78.
+func _draw_v177_collector_finish(grip: Vector2, tip: Vector2, style: String, intensity: float) -> void:
+	var tier: int = int(collector_look.get("material", 0))
+	var particle_tier: int = int(collector_look.get("particle_tier", 0))
+	var finish: int = int(collector_look.get("finish", 0))
+	var pattern: int = int(collector_look.get("pattern", 0))
+	var particle: int = int(collector_look.get("particle", 0))
+	var colors: Array = collector_look.get("accent_colors", [])
+	if colors.size() < 3:
+		return
+	var segments: Array = _v1723_blade_segments(grip, tip, style)
+	if style in ["bow", "wand"]:
+		# Restrict the new accents to the tip/gem; existing bowstring is separate.
+		segments = [[grip.lerp(tip, 0.86), tip]]
+	for segment in segments:
+		var a: Vector2 = segment[0]
+		var b: Vector2 = segment[1]
+		var axis: Vector2 = (b - a).normalized()
+		var normal: Vector2 = Vector2(-axis.y, axis.x)
+		var tone: Color = colors[finish % 3]
+		if tier >= 1:
+			var count: int = 2 + mini(tier, 4)
+			for j in range(count):
+				var u: float = (float(j) + 0.5) / float(count)
+				if tier >= 3:
+					u = fposmod(u + elapsed * 0.045 * float(1 + pattern % 3), 1.0)
+				var at: Vector2 = a.lerp(b, u)
+				var half: float = 1.0 + float(finish % 3) * 0.45
+				draw_line(at - normal * half, at + normal * half, Color(tone.r, tone.g, tone.b, 0.16 * minf(intensity, 1.8)), 0.8, true)
+		if particle_tier >= 2:
+			for j in range(1 + mini(particle_tier, 4)):
+				var u: float = fposmod(float(j) * 0.31 + elapsed * 0.12 + float(pattern) * 0.07, 1.0)
+				var at: Vector2 = a.lerp(b, u) + normal * sin(u * TAU + float(particle)) * (1.5 + float(particle_tier) * 0.6)
+				var alpha: float = sin(u * PI) * 0.55
+				var ink: Color = colors[(j + particle) % 3]
+				if particle % 2 == 0:
+					draw_circle(at, 0.8 + float(particle_tier) * 0.16, Color(ink.r, ink.g, ink.b, alpha))
+				else:
+					draw_line(at - axis * 1.8, at + axis * 1.8, Color(ink.r, ink.g, ink.b, alpha), 0.8, true)
