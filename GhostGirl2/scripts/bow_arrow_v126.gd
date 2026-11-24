@@ -29,6 +29,7 @@ var hit_ids: Dictionary = {}
 var trail_points: Array[Vector2] = []
 const BOW_IMPACT_V129: Script = preload("res://scripts/bow_impact_v129.gd")
 const ARROW_GLOW_V154: Script = preload("res://scripts/arrow_glow_v154.gd")
+var full_palette: Array[Color] = []
 var glow_a: Color = Color("efb3d7")
 var glow_b: Color = Color("c09df2")
 var glow_c: Color = Color("a6dbfa")
@@ -232,6 +233,8 @@ func _draw() -> void:
 	var p: Vector2 = Vector2(-direction.y, direction.x)
 	var element_ink: Color = GhostBowImprintsV138.color_for_element(element_index)
 	var glow_ink: Color = GhostWeaponFXLibrary.color(bow_glow_index)
+	if not full_palette.is_empty():
+		glow_ink = GhostCosmeticRNGV152.sample_palette(full_palette, time_pulse * 0.13, true)
 	if not procedural_look.is_empty():
 		glow_ink = RelicPaletteV139.color_at(procedural_look, time_pulse, 0.33)
 	var mixed: Color = element_ink.lerp(glow_ink, 0.23 + 0.17 * sin(time_pulse))
