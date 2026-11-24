@@ -810,9 +810,10 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		# Cosmetic colour is entirely independent from damage/loot rolls.
 		# Each saved 128-bit appearance reproduces its own full-spectrum palette.
 		var wand_gradient: Array[Color] = wand.glow_gradient_colors()
-		bolt.effect_color = wand_gradient[0]
-		bolt.accent_color = wand_gradient[1]
-		bolt.gradient_c = wand_gradient[2]
+		bolt.full_palette = wand_gradient
+		bolt.effect_color = GhostCosmeticRNGV152.sample_palette(wand_gradient, 0.0)
+		bolt.accent_color = GhostCosmeticRNGV152.sample_palette(wand_gradient, 0.5)
+		bolt.gradient_c = GhostCosmeticRNGV152.sample_palette(wand_gradient, 1.0)
 		bolt.rare_signature = wand.visual_signature()
 		bolt.mythic_layer_variant = wand.mythic_layer_variant()
 		bolt.trail_style = int(appearance["trail"])
@@ -825,7 +826,7 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		release_fx.set_script(WAND_RELEASE_SCRIPT_V156)
 		add_child(release_fx)
 		release_fx.global_position = bolt.global_position
-		release_fx.call("configure", wand_gradient[0], wand_gradient[1], wand_gradient[2], wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
+		release_fx.call("configure", bolt.effect_color, bolt.accent_color, bolt.gradient_c, wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
 
 	_wear_cast_wand(wand)
 
