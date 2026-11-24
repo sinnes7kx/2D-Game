@@ -46,8 +46,8 @@ func _ready() -> void:
 		player = body.get_parent() as Node2D
 	z_index = 8
 	z_as_relative = true
-	# Additive light is independent from Ghost Girl's fabric shader.
-	# Unlike the previous faint transparent line, this is visibly luminous.
+	# Transparent light is independent from Ghost Girl's fabric shader.
+	# Alpha blending keeps layered colors legible instead of clipping to white.
 	var glow_material: CanvasItemMaterial = CanvasItemMaterial.new()
 	glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX
 	material = glow_material
