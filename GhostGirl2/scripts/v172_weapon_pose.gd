@@ -138,7 +138,7 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
-	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade") and twin_axes.has(animation_name):
+	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade")  :
 		return true
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
@@ -146,12 +146,20 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 	var empty: PackedVector2Array = PackedVector2Array()
 	if not _is_equipped(animation_name):
 		return empty
-	if animation_name.contains("twinblade") and twin_axes.has(animation_name):
-		var guides: Array = twin_axes[animation_name]
+	if animation_name.contains("twinblade"):
+		var guides: Array = twin_axes.get(animation_name, [])
+		if guides.is_empty():
+			var facing: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
+			var anchor: Vector2 = Vector2(35, 25)
+			match facing:
+				"left": anchor = Vector2(-35, 25)
+				"right": anchor = Vector2(35, 25)
+				"back": anchor = Vector2(27, 15)
+			return PackedVector2Array([anchor, anchor + Vector2(-40 if facing == "left" else 40, -55)])
 		var guide: Array = guides[clampi(frame_index, 0, guides.size() - 1)]
 		var grip: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 		var tip: Vector2 = Vector2(float(guide[2]), float(guide[3]))
-		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 60.0])
+		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 68.0])
 	var spear: bool = animation_name.begins_with("attack_briarwake_spear_")
 	var heavy: bool = animation_name.contains("_heavy_")
 	var face: String = "front"
@@ -298,13 +306,14 @@ func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 # Opaque metal, not additive glow. The rear blade has its own cutting
 # direction; the wrapped central grip remains visibly separate.
 func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
-	var rear: Vector2 = grip - (tip - grip) * 0.90
-	var front_root: Vector2 = grip.lerp(tip, 0.20)
-	var rear_root: Vector2 = grip.lerp(rear, 0.22)
+	var spans: Array[PackedVector2Array] = MODULAR.twinblade_spans(grip, tip)
+	var rear: Vector2 = spans[1][1]
+	var front_root: Vector2 = spans[0][0]
+	var rear_root: Vector2 = spans[1][0]
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():
 		MODULAR.draw_grip(self, rear_root, front_root, 3.0, look)
-		var width: float = 3.8 if rose else 3.2
+		var width: float = MODULAR.twinblade_width(rose)
 		MODULAR.draw_blade(self, front_root, tip, width, look)
 		MODULAR.draw_blade(self, rear_root, rear, width, look)
 		# Render light in the very same draw pass as both physical blades.
