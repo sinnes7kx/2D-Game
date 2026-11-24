@@ -71,6 +71,7 @@ func _ready() -> void:
 	collection_vault.name = "CollectionVaultV181"
 	$Overlay.add_child(collection_vault)
 	collection_vault.z_index = 90
+	$Overlay.move_child(collector_lens, -1) # Inspector also owns GUI input above vault.
 	collection_vault.connect("inspect_requested", Callable(self, "_open_collector_lens"))
 	inventory_panel.connect("vault_requested", Callable(self, "_open_collection_vault"))
 
