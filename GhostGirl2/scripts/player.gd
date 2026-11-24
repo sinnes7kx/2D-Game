@@ -6,6 +6,7 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
+const DAGGER_THRUST_V186 = preload("res://scripts/dagger_thrust_v186.gd")
 const V172_POSE_SCRIPT = preload("res://scripts/v172_weapon_pose.gd")
 const V173_DUAL_DAGGER_SCRIPT = preload("res://scripts/v173_dual_daggers.gd")
 const V174_DUAL_SWORD_SCRIPT = preload("res://scripts/v174_dual_swords.gd")
@@ -148,6 +149,7 @@ func _ready() -> void:
 	V173_DUAL_DAGGER_SCRIPT.install_animations(body_art)
 	V174_DUAL_SWORD_SCRIPT.install_animations(body_art)
 	V175_CLEAN_WEAPON_BODY.install(body_art)
+	DAGGER_THRUST_V186.install(body_art)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
@@ -874,7 +876,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
 	if holding_sword:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-			attack_animation = "attack_" + _weapon_art_style() + "_heavy_" + facing_name
+			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if active_attack_style in ["dagger", "dual_dagger"] else "_heavy_") + facing_name
 		else:
 			attack_animation = "attack_sword_heavy_" + facing_name
 	else:
@@ -1211,7 +1213,9 @@ func _begin_attack(heavy: bool) -> void:
 		attack_animation = "attack_counter_" + facing_name
 	elif holding_sword:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-			if active_attack_style == "dual_dagger" and not heavy:
+			if active_attack_style in ["dagger", "dual_dagger"] and (heavy or combo_step == 2 or counter_window > 0.0):
+				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
+			elif active_attack_style == "dual_dagger" and not heavy:
 				attack_animation = "attack_dual_dagger_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
 			elif active_attack_style == "dual_sword" and not heavy:
 				attack_animation = "attack_dual_sword_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
