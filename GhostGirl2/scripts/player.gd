@@ -25,6 +25,7 @@ const IMPACT_PRESTIGE: Script = preload("res://scripts/impact_prestige_v116.gd")
 const PHYSICAL_FEEL: Script = preload("res://scripts/impact_spawner_v149.gd")
 const COMBAT_JUICE: Script = preload("res://scripts/combat_juice_v194.gd")
 const SWING_WAKE: Script = preload("res://scripts/swing_wake_v198.gd")
+const TIP_EXTENSION_V198: Script = preload("res://scripts/weapon_tip_extension_v198.gd")
 const RIPOSTE_SFX: AudioStream = preload("res://assets/audio/riposte_chime_v113.wav")
 const COMBAT_RESPONSE_V157: Script = preload("res://scripts/combat_response_v157.gd")
 const DODGE_SFX: AudioStream = preload("res://assets/audio/dodge_wisp.wav")
@@ -168,6 +169,9 @@ func _ready() -> void:
 	var scythe_rig: Node2D = SCYTHE_RIG_V190.new()
 	scythe_rig.name = "ScytheRigV190"
 	body_art.add_child(scythe_rig)
+	var blade_tips: Node2D = TIP_EXTENSION_V198.new() as Node2D
+	blade_tips.name = "WeaponTipExtensionV198"
+	body_art.add_child(blade_tips)
 	if equipment_preview_only:
 		collision_layer = 0
 		collision_mask = 0
