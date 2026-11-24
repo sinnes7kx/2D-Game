@@ -364,7 +364,11 @@ func _ink(progress: float, opacity: float) -> Color:
 
 func _gradient_at(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
+<<<<<<< Updated upstream
 	var colors: Array[Color] = effect_palette
+=======
+	var colors: Array[Color] = [paint_a, paint_b, paint_c]
+>>>>>>> Stashed changes
 	return ANOMALOUS.color_at(colors, collector_look, u, elapsed)
 
 # v1.54 -- soft bloom sampled around the approved weapon silhouette.
@@ -618,7 +622,11 @@ func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) 
 		var edge_offset: float = -1.3 if hand_index == 0 else 1.3
 		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.16) * power * pulse), 1.45, true)
 		_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)
+<<<<<<< Updated upstream
 		var colors: Array[Color] = effect_palette
+=======
+		var colors: Array[Color] = [paint_a, paint_b, paint_c]
+>>>>>>> Stashed changes
 		ANOMALOUS.draw_edge(self, PackedVector2Array([blade_root, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
@@ -683,7 +691,11 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 		var shine: Color = _gradient_at(fposmod(0.73 + seed_phase + elapsed * 0.09 + hand_phase, 1.0))
 		draw_line(a - blade_normal * 1.1, tip, Color(shine.r, shine.g, shine.b, (0.45 if mythic else 0.14) * power * pulse), 1.35, true)
 		_v175_visible_edge(a, tip, intensity, float(hand_index) * 0.31)
+<<<<<<< Updated upstream
 		var colors: Array[Color] = effect_palette
+=======
+		var colors: Array[Color] = [paint_a, paint_b, paint_c]
+>>>>>>> Stashed changes
 		ANOMALOUS.draw_edge(self, PackedVector2Array([a, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
@@ -744,7 +756,11 @@ func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, 
 			var chroma: Color = _gradient_at(fposmod(elapsed * 0.052 + (0.41 if direction.x < 0.0 else 0.06), 1.0))
 			for side in [-1.0, 1.0]:
 				var edge_path: PackedVector2Array = MODULAR.edge_points(a, b, width, physical_profile, side)
+<<<<<<< Updated upstream
 				var colors: Array[Color] = effect_palette
+=======
+				var colors: Array[Color] = [paint_a, paint_b, paint_c]
+>>>>>>> Stashed changes
 				ANOMALOUS.draw_edge(self, edge_path, colors, collector_look, elapsed, intensity)
 				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.16 * minf(intensity, 2.0)), 2.2, true)
 				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.55 * minf(intensity, 1.5)), 0.85, true)
@@ -1271,7 +1287,11 @@ func _draw_v177_collector_finish(grip: Vector2, tip: Vector2, style: String, int
 		var a: Vector2 = segment[0]
 		var b: Vector2 = segment[1]
 		if style != "twinblade":
+<<<<<<< Updated upstream
 			var shift_colors: Array[Color] = effect_palette
+=======
+			var shift_colors: Array[Color] = [paint_a, paint_b, paint_c]
+>>>>>>> Stashed changes
 			ANOMALOUS.draw_edge(self, PackedVector2Array([a, b]), shift_colors, collector_look, elapsed, intensity)
 		var axis: Vector2 = (b - a).normalized()
 		var normal: Vector2 = Vector2(-axis.y, axis.x)

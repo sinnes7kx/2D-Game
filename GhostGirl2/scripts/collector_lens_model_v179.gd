@@ -119,6 +119,7 @@ func _draw_trident() -> void:
 func _draw_light() -> void:
 	for path in segments:
 		ANOMALOUS.draw_edge(self, path, gradients, look, elapsed, float(look.get("glow_strength", 1.0)))
+<<<<<<< Updated upstream
 
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.
@@ -194,3 +195,5 @@ func _update_painted_preview() -> void:
 	painted_preview.material = mat
 	painted_preview.self_modulate.a = item.weapon_opacity()
 	painted_preview.show()
+=======
+>>>>>>> Stashed changes

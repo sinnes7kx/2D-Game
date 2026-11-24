@@ -23,10 +23,13 @@ static func roll(uid: String, legacy_seed: int) -> Dictionary:
 	var material: int = tier_for_ticket(ticket(uid, legacy_seed, "material-rarity"))
 	return {
 		"material": material,
+<<<<<<< Updated upstream
 		"surface_mode": SURFACE.surface_for_ticket(ticket(uid, legacy_seed, "v187-surface-family"), material),
 		"surface_phase": float(ticket(uid, legacy_seed, "v187-surface-phase")) / 10000.0,
 		"surface_speed": 0.35 + float(ticket(uid, legacy_seed, "v187-surface-speed")) / 10000.0 * 0.65,
 		"surface_colors": RNG.gradient_for_channel(uid, legacy_seed, "v187-surface-pigment"),
+=======
+>>>>>>> Stashed changes
 		"color_mode": ticket(uid, legacy_seed, "v180-color-mode") % 7,
 		"glow_motif": ticket(uid, legacy_seed, "v180-glow-motif") % 8,
 		"shift_rate": 0.055 + float(ticket(uid, legacy_seed, "v180-shift-rate")) / 9999.0 * 0.24,

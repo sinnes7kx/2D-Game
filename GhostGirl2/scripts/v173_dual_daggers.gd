@@ -176,4 +176,26 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 # Pixel centers in the original 256x220 artwork, converted to centered
 # Ghost-local coordinates. Occluded hands are not rendered.
 static func hand_anchor(face: String, frame: int, hand: int) -> Vector2:
+<<<<<<< Updated upstream
 	return THRUST.hand_anchor(face, frame, hand)
+=======
+	var near: Array[Vector2] = []
+	var far: Array[Vector2] = []
+	match face:
+		"front":
+			near = [Vector2(111,141),Vector2(118,129),Vector2(143,121),Vector2(119,118),Vector2(172,120),Vector2(183,128),Vector2(145,129),Vector2(113,141)]
+			far = [Vector2(181,141),Vector2(178,124),Vector2(194,114),Vector2(205,107),Vector2(187,105),Vector2(208,129),Vector2(190,145),Vector2(181,141)]
+		"left":
+			near = [Vector2(93,134),Vector2(97,117),Vector2(98,107),Vector2(83,106),Vector2(76,102),Vector2(80,103),Vector2(101,134),Vector2(96,137)]
+			far = [Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF]
+		"right":
+			far = [Vector2(177,135),Vector2(178,114),Vector2(180,91),Vector2(204,97),Vector2(191,104),Vector2(201,99),Vector2(185,129),Vector2(177,135)]
+			near = [Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF]
+		"back":
+			near = [Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF]
+			far = [Vector2.INF,Vector2(192,136),Vector2(203,87),Vector2(214,82),Vector2(202,103),Vector2(210,112),Vector2(191,150),Vector2.INF]
+		_:
+			return Vector2.INF
+	var point: Vector2 = (near if hand == 0 else far)[clampi(frame, 0, 7)]
+	return point if point == Vector2.INF else point - Vector2(128, 110)
+>>>>>>> Stashed changes

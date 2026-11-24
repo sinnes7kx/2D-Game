@@ -213,11 +213,14 @@ func _input(event: InputEvent) -> void:
 			collector_lens.call("close_lens")
 			get_viewport().set_input_as_handled()
 		return
+<<<<<<< Updated upstream
 	if is_instance_valid(collection_vault) and collection_vault.visible:
 		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
 			collection_vault.hide()
 			get_viewport().set_input_as_handled()
 		return
+=======
+>>>>>>> Stashed changes
 	if is_menu_open():
 		var inspect: bool = false
 		if event is InputEventMouseButton:
@@ -226,8 +229,13 @@ func _input(event: InputEvent) -> void:
 			inspect = event.pressed and not event.echo and event.physical_keycode == KEY_P
 		if inspect:
 			var candidate: GhostItemInstance = hovered_item as GhostItemInstance
+<<<<<<< Updated upstream
 			if candidate == null or candidate.definition == null:
 				candidate = inventory_panel.call("selected_item_for_inspection") as GhostItemInstance
+=======
+			if candidate == null or candidate.get_slot() not in ["sword", "wand"]:
+				candidate = inventory_panel.call("selected_weapon_for_inspection") as GhostItemInstance
+>>>>>>> Stashed changes
 			if candidate != null:
 				_open_collector_lens(candidate)
 				get_viewport().set_input_as_handled()
@@ -340,7 +348,11 @@ func set_lock_target(target_name: String) -> void:
 	lock_label.visible = not target_name.is_empty()
 
 func _open_collector_lens(item: GhostItemInstance) -> void:
+<<<<<<< Updated upstream
 	if item == null or item.definition == null or not is_instance_valid(collector_lens):
+=======
+	if item == null or item.get_slot() not in ["sword", "wand"] or not is_instance_valid(collector_lens):
+>>>>>>> Stashed changes
 		return
 	# Clicking an inventory item can leave it on the cursor. Cancel the
 	# temporary cursor state, not the actual item, before opening the modal.
@@ -348,6 +360,7 @@ func _open_collector_lens(item: GhostItemInstance) -> void:
 		_cancel_cursor_item()
 	_hide_item_hover()
 	collector_lens.call("open_item", item)
+<<<<<<< Updated upstream
 
 func _open_collection_vault(item: GhostItemInstance) -> void:
 	if inventory_data == null:
@@ -364,3 +377,5 @@ func open_exhibition(slot: int, item: GhostItemInstance) -> void:
 	collection_vault.call("open_vault", inventory_data, item, slot)
 	if item != null:
 		_open_collector_lens(item)
+=======
+>>>>>>> Stashed changes

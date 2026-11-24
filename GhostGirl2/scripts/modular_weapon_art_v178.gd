@@ -57,7 +57,11 @@ static func equipped_profile(owner: Node, body: AnimatedSprite2D, hand: int = 0)
 	var item: GhostItemInstance = inventory.get_equipped("sword")
 	if item == null:
 		return {}
+<<<<<<< Updated upstream
 	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand, item.debug_collector_tier, item.debug_surface_mode, item.origin_room, item.regional_rank, item.debug_forge_guard, item.debug_forge_grip]
+=======
+	var key: String = "%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand, item.debug_collector_tier]
+>>>>>>> Stashed changes
 	if str(owner.get_meta("v178_profile_key", "")) != key:
 		owner.set_meta("v178_profile_key", key)
 		owner.set_meta("v178_profile", weapon_profile(item.collector_appearance(), str(item.definition.item_id), hand))
@@ -130,6 +134,7 @@ static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float
 	canvas.draw_line(root, tip, edge, 0.55, true)
 	var axis: Vector2 = (tip - root).normalized()
 	var normal: Vector2 = Vector2(-axis.y, axis.x)
+<<<<<<< Updated upstream
 	# Every etching is sampled from the real cross section, so narrow blades
 	# cannot have floating markings. Separate from surface and glow rolls.
 	var ink: Color = p.get("ornament_ink", accent)
@@ -184,6 +189,26 @@ static func _draw_guard(canvas: Node2D, root: Vector2, axis: Vector2, normal: Ve
 		6:
 			canvas.draw_circle(center, size, trim.darkened(0.30))
 			canvas.draw_circle(center - axis * size * 0.3, size * 0.42, trim.lightened(0.55))
+=======
+	var tier: int = int(p["material"])
+	var finish: int = int(p["finish"])
+	# Etching / facets are opaque surface marks, not glow.
+	for i in range(2 + tier):
+		var at: Vector2 = root.lerp(tip, 0.18 + float(i) * 0.58 / float(2 + tier))
+		var extent: float = width * (0.18 + float(finish % 3) * 0.07)
+		canvas.draw_line(at - normal * extent, at + normal * extent + axis * 1.1, accent.lerp(steel, 0.38), 0.7, true)
+	# Nine ornament rolls independently alter guard profile and inset.
+	var ornament: int = int(p["ornament"])
+	var guard: float = width * (1.25 + float(ornament % 3) * 0.25)
+	canvas.draw_line(root - normal * guard, root + normal * guard, edge.darkened(0.12), 1.6, true)
+	if ornament >= 3:
+		var sweep: float = -2.0 if ornament < 6 else 2.0
+		for side in [-1.0, 1.0]:
+			var at: Vector2 = root + normal * guard * side
+			canvas.draw_line(at, at + axis * sweep - normal * side, edge, 1.0, true)
+	if ornament % 3 != 0:
+		canvas.draw_circle(root - axis * 1.5, 1.4 + float(ornament % 3) * 0.35, accent)
+>>>>>>> Stashed changes
 
 # Distinct base silhouette families: Eclipse is a narrow needle, Rosemirror
 # is a slender leaf with an ornate swept guard. Rolls still change widths/colors.
@@ -208,6 +233,7 @@ static func twinblade_width(rose: bool) -> float:
 static func twinblade_spans(grip: Vector2, tip: Vector2) -> Array[PackedVector2Array]:
 	var rear: Vector2 = grip - (tip - grip) * 0.90
 	return [PackedVector2Array([grip.lerp(tip, 0.16), tip]), PackedVector2Array([grip.lerp(rear, 0.18), rear])]
+<<<<<<< Updated upstream
 
 # Apply only to a weapon-specific CanvasItem, not the parent body.
 static func apply_equipped_opacity(canvas: Node2D, body: AnimatedSprite2D) -> void:
@@ -222,3 +248,5 @@ static func apply_equipped_opacity(canvas: Node2D, body: AnimatedSprite2D) -> vo
 static func surface_is_animated(owner: Node, body: AnimatedSprite2D, hand: int = 0) -> bool:
 	var p: Dictionary = equipped_profile(owner, body, hand)
 	return not p.is_empty() and SURFACE.animated(int(p.get("surface_mode", 0)))
+=======
+>>>>>>> Stashed changes
