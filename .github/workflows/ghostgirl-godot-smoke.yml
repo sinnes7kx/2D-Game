@@ -137,5 +137,8 @@ jobs:
       - name: Verify modular halberds and warmauls
         run: godot --headless --path GhostGirl2 --script res://tests/v192_heavy_weapons_smoke.gd
 
+      - name: Verify legacy inventory dropdown compatibility
+        run: godot --headless --path GhostGirl2 --script res://tests/v1921_dropdown_compat_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
