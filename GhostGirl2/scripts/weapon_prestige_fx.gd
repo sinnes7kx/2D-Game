@@ -1,4 +1,5 @@
 extends Node2D
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
@@ -52,7 +53,8 @@ func _ready() -> void:
 	var glow_material: CanvasItemMaterial = CanvasItemMaterial.new()
 	glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX
 	material = glow_material
-	self_modulate.a = GENTLE.EFFECT_ALPHA # Effects only; keep opaque metal readable.
+	set_meta("v1924_fx_scaled", true)
+	self_modulate.a = FX_LEVEL.alpha(GENTLE.EFFECT_ALPHA) # Effects only; keep opaque metal readable.
 	show()
 	set_process(true)
 	if FileAccess.file_exists(MANIFEST_PATH):
@@ -350,6 +352,7 @@ func _fallback_tip(grip: Vector2, face: String, distance: float) -> Vector2:
 		_: return grip + Vector2(distance * 0.45, -distance * 0.9)
 
 func _process(delta: float) -> void:
+	self_modulate.a = FX_LEVEL.alpha(GENTLE.EFFECT_ALPHA)
 	elapsed += delta
 	if inventory == null and player != null:
 		# Self-heal when an older game.gd forgot to call bind_inventory().

@@ -8,6 +8,7 @@ uniform int color_mode = 0;
 uniform float surface_phase = 0.0;
 uniform float surface_speed = 0.5;
 uniform float strength = 0.35;
+uniform float fx_intensity = 1.0;
 uniform vec2 cell_size = vec2(176.0);
 uniform bool overlay_only = false;
 varying vec4 vertex_tint;
@@ -48,7 +49,7 @@ void fragment() {
         motif = max(motif, pow(max(0.0, line), 9.0));
     }
     tinted = mix(tinted, mix(pigment, vec3(1.0), 0.30), motif * 0.42);
-    amount = min(0.52, amount + motif * (signature_kind > 0 ? 0.22 : 0.10));
+    amount = min(0.76, min(0.52, amount + motif * (signature_kind > 0 ? 0.22 : 0.10)) * fx_intensity);
     vec3 result = mix(art.rgb, tinted, amount);
     float alpha = art.a * vertex_tint.a;
     if (overlay_only) {
