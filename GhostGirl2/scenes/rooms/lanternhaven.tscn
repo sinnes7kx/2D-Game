@@ -1,0 +1,246 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/lanternhaven_v193.svg" id="1_bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="2_portal"]
+[ext_resource type="Script" path="res://scripts/town_stash_v193.gd" id="3_stash"]
+[ext_resource type="Script" path="res://scripts/lantern_shrine.gd" id="4_shrine"]
+
+[sub_resource type="RectangleShape2D" id="WestWallShape"]
+size = Vector2(160, 2400)
+
+[sub_resource type="RectangleShape2D" id="EastWallShape"]
+size = Vector2(160, 2400)
+
+[sub_resource type="RectangleShape2D" id="NorthWallShape"]
+size = Vector2(3600, 200)
+
+[sub_resource type="RectangleShape2D" id="SouthWallShape"]
+size = Vector2(3600, 200)
+
+[sub_resource type="RectangleShape2D" id="StashHouseShape"]
+size = Vector2(650, 390)
+
+[sub_resource type="RectangleShape2D" id="ChapelShape"]
+size = Vector2(800, 380)
+
+[sub_resource type="RectangleShape2D" id="EastHouseShape"]
+size = Vector2(690, 410)
+
+[sub_resource type="RectangleShape2D" id="WorkshopShape"]
+size = Vector2(640, 360)
+
+[sub_resource type="RectangleShape2D" id="FutureMerchantShape"]
+size = Vector2(610, 370)
+
+[sub_resource type="RectangleShape2D" id="FountainShape"]
+size = Vector2(215, 138)
+
+[sub_resource type="RectangleShape2D" id="StashCollisionShape"]
+size = Vector2(84, 52)
+
+[node name="Lanternhaven" type="Node2D"]
+y_sort_enabled = true
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+z_index = -50
+texture = ExtResource("1_bg")
+centered = false
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1800, 1740)
+
+[node name="From_moonwake_crypt" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1800, 2050)
+
+[node name="From_sanctum" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(2300, 720)
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="WestWall" type="StaticBody2D" parent="Collision"]
+position = Vector2(110, 1200)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/WestWall"]
+shape = SubResource("WestWallShape")
+
+[node name="EastWall" type="StaticBody2D" parent="Collision"]
+position = Vector2(3490, 1200)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/EastWall"]
+shape = SubResource("EastWallShape")
+
+[node name="NorthWall" type="StaticBody2D" parent="Collision"]
+position = Vector2(1800, 100)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/NorthWall"]
+shape = SubResource("NorthWallShape")
+
+[node name="SouthWall" type="StaticBody2D" parent="Collision"]
+position = Vector2(1800, 2300)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/SouthWall"]
+shape = SubResource("SouthWallShape")
+
+[node name="StashHouse" type="StaticBody2D" parent="Collision"]
+position = Vector2(675, 675)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/StashHouse"]
+shape = SubResource("StashHouseShape")
+
+[node name="Chapel" type="StaticBody2D" parent="Collision"]
+position = Vector2(1680, 500)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/Chapel"]
+shape = SubResource("ChapelShape")
+
+[node name="EastHouse" type="StaticBody2D" parent="Collision"]
+position = Vector2(2875, 625)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/EastHouse"]
+shape = SubResource("EastHouseShape")
+
+[node name="Workshop" type="StaticBody2D" parent="Collision"]
+position = Vector2(670, 1690)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/Workshop"]
+shape = SubResource("WorkshopShape")
+
+[node name="FutureMerchant" type="StaticBody2D" parent="Collision"]
+position = Vector2(2905, 1705)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/FutureMerchant"]
+shape = SubResource("FutureMerchantShape")
+
+[node name="Fountain" type="StaticBody2D" parent="Collision"]
+position = Vector2(1800, 1190)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/Fountain"]
+shape = SubResource("FountainShape")
+
+[node name="StashCollision" type="StaticBody2D" parent="Collision"]
+position = Vector2(1090, 900)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/StashCollision"]
+shape = SubResource("StashCollisionShape")
+
+[node name="Gameplay" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="RestShrines" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Stashes" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="moonwake_crypt" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1800, 2130)
+script = ExtResource("2_portal")
+destination = "moonwake_crypt"
+interaction_name = "Beyond the lanterns — Moonwake Crypt"
+opened = true
+
+[node name="sanctum" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(2300, 610)
+script = ExtResource("2_portal")
+destination = "sanctum"
+interaction_name = "The Moonlit Sanctum"
+
+[node name="TownStash" type="Node2D" parent="Gameplay/Stashes"]
+position = Vector2(1090, 900)
+script = ExtResource("3_stash")
+
+[node name="TownEmber" type="Node2D" parent="Gameplay/RestShrines"]
+position = Vector2(1550, 1450)
+script = ExtResource("4_shrine")
+shrine_id = "lanternhaven_ember"
+interaction_name = "Rest at the town ember"
+
+[node name="StashSign" type="Label" parent="."]
+offset_left = 1015.0
+offset_top = 970.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.83, 0.73, 0.62, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "STASH COURTYARD"
+
+[node name="SanctumSign" type="Label" parent="."]
+offset_left = 2170.0
+offset_top = 520.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.83, 0.73, 0.62, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "SANCTUM"
+
+[node name="ExitSign" type="Label" parent="."]
+offset_left = 1600.0
+offset_top = 2010.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.83, 0.73, 0.62, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "BEYOND THE LANTERNS"
+
+[node name="Welcome" type="Label" parent="."]
+offset_left = 1625.0
+offset_top = 1570.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.83, 0.73, 0.62, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "LANTERNHAVEN"
+
+[node name="WorkshopSign" type="Label" parent="."]
+offset_left = 510.0
+offset_top = 1880.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.83, 0.73, 0.62, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "WORKSHOP"
+
+[node name="MarketSign" type="Label" parent="."]
+offset_left = 2740.0
+offset_top = 1900.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.83, 0.73, 0.62, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "MARKET COURTYARD"
