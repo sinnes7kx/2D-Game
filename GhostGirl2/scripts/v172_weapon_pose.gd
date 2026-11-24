@@ -235,6 +235,19 @@ func _draw_nightglass_stiletto(grip: Vector2, tip: Vector2, tangent: Vector2, no
 func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2) -> void:
 	var shaft_base: Vector2 = grip - tangent * 18.0
 	var head: Vector2 = tip - tangent * 17.0
+	var look: Dictionary = MODULAR.equipped_profile(self, body)
+	if not look.is_empty():
+		MODULAR.draw_grip(self, shaft_base, head, 4.5, look)
+		for side in [-1.0, 1.0]:
+			var fork: Vector2 = head + normal * side * 8.0
+			var prong: Vector2 = tip - tangent * 2.0 + normal * side * 7.0
+			var accent: Color = look["accent"]
+			draw_line(head, fork, accent.darkened(0.25), 2.5, true)
+			MODULAR.draw_blade(self, fork, prong, 1.8, look)
+		MODULAR.draw_blade(self, head, tip, 2.6, look)
+		draw_circle(grip - tangent * 9.0, 4.8, Color("d8c7d6"))
+		draw_circle(grip + tangent * 12.0, 4.5, Color("cab9cf"))
+		return
 	# Rosewood haft with a pale winding thread and a second grip.
 	draw_line(shaft_base, head, Color("2d1a2c"), 7.7, true)
 	draw_line(shaft_base, head, Color("86526a"), 5.2, true)
