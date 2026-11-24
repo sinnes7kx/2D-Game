@@ -186,6 +186,13 @@ Fresh source imports, headless tests pass, **real F5 playtesting** confirms core
 - [ ] Offer opt-in appearance “before / after” confirmation and a cancel path for expensive or irreversible operations.
 - [ ] Audit inventory/tooltips so compact default swatches remain uncluttered; place seed IDs, channels, motifs, and technical provenance behind an explicit Inspect/Advanced action.
 
+#### Collector Roll Code (user-requested, design proposal)
+- [ ] Introduce a separate, shareable, fixed-width ten-character decimal **Roll Code** as a readable rarity fingerprint, not a replacement RNG seed, owned-instance ID or verified provenance. Preserve leading zeros. Each position corresponds to an actual applicable rolled trait/channel, with 0 reserved for its highest rarity outcome, 1–3 for increasingly less exceptional outcomes, and 4–9 for more common outcomes. Exact thresholds and family-specific mappings require an audit and deterministic simulations; do not publish arbitrary odds or treat raw uniform ticket digits as trait rarity.
+- [ ] Prototype weapon position meanings: material, effect signature, particles, surface, palette, motion, glow motif, silhouette, grip and ornament. These are provisional: some traits are uniform, dependent, or unsupported on particular families; define documented family-specific applicable mappings before shipping, do not invent rarity for a color or absent feature. Only permit an all-zero perfect pattern for a family with ten real top-tier outcomes; use an explicit unavailable/legacy label until all positions are meaningful.
+- [ ] Store/version the original natural-drop roll snapshot separately from the current customizable look. Show compact roll code on playtest hover and in Inspect/Advanced with per-digit explanations, source/version, natural vs rerolled labels, and separate debug-only overlay clearly marked TEST. Reroll preview must show the resulting genuine current-look code without changing the original discovery code, stats, ownership or protected saved looks. Debug forced effects must not change either genuine code. Old saves without reliable birth evidence must be labeled legacy/unknown rather than inventing history.
+- [ ] Support recognizable patterns such as 0000000000 (all ten highest-tier traits), 0000001234 and repeated digits as collector goals. Never claim a particular joint probability or worldwide uniqueness without tested distributions, dependencies and ownership evidence. Preserve code version and meaning across saves, graphics settings, inspection, stash, exhibition and future trade. Expose copy/share in collector-facing UI; ordinary production tooltip can remain compact.
+
+
 ### 4.4 Deep equipment variation, without visual sloppiness
 
 - [ ] Expand original authored weapon families (swords, daggers, spears, scythes, halberds, bows, wands, dual weapons), keeping authentic shapes and combat timing.
@@ -222,6 +229,7 @@ Fresh source imports, headless tests pass, **real F5 playtesting** confirms core
 ### 5.2 A collector-grade vault
 
 - [ ] Build on the existing Collection Vault with reliable deposits, withdrawals, favorites, locks, searches, and exhibition assignment.
+- [ ] Move normal deposit/withdraw access to a physical stash chest in the starting town. Reuse the existing Collection Vault UI, inventory.vault, unresolved records and serialization; do not create a second store or duplicate items. Preserve current vault contents, locks, favorites, display assignment, exact seeds and stats. Once town access is reliable, remove normal remote stash access, retaining read-only inspection if useful; close the chest UI on exit/range/room change. Keep recoverable fallback for old saves and test capacity, protected records, failed writes, and repeated interaction. Current storage limits/family eligibility remain until separately validated expansion; exhibition remains a display reference, never another owned copy.
 - [ ] Add filters for item family, quality, intrinsic visual rarity, color family, material, region, acquisition source, and favorite status as the underlying metadata supports them.
 - [ ] Add sorting by acquisition time, rarity, item family, appearance, stat desirability, and user-defined collections (avoid invented sortable metadata).
 - [ ] Support a protected “never accidentally sell/destroy/trade” flag and double confirmation for irreversible collector actions.
@@ -284,6 +292,10 @@ A cherished item can be picked up, saved, protected, moved to the vault, display
 - [ ] Design sink/crafting/reroll systems carefully: no silent deletion of rare original properties, no conversion of debug rolls into prestige finds.
 
 ### 6.4 Exploration and rose-hook interaction
+
+- [ ] Starting town hub: replace the starting area's role with a safe, genuinely walkable gothic town approximately the usable scale/feel of Diablo II Act I's Rogue Encampment (reference for scale, not copied geometry/art). Original authored streets, landmarks, town square, stash chest near arrival/waypoint, clear wilderness exits, access to the existing Sanctum, and reserved spaces for NPCs, merchants and workshops. No functional NPC systems required for the initial town slice. No combat pressure in the town.
+- [ ] Town migration: new games begin in town; existing saves retain their inventory, discovered areas, quest flags and safe return route. Do not strand old characters or relocate items by copying. First deliver minimal functional town/stash/waypoint connectivity after collection-safety gates, then polish original artwork and expand via M3; broader NPC content remains later.
+
 
 - [ ] Add the early-room support-beam puzzle: hook the beam, collapse debris, open a persistent hole in the floor, and make the route physically traversable.
 - [ ] Expand anchors, objects, switches, movable obstacles, traversal gaps, enemy staggers, and hidden paths as **loot-finding opportunities**.
@@ -560,6 +572,7 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 
 - [ ] Inventory audit: document current stat seed, cosmetic seed/UID, birth appearance, saved-look behavior, rarity rolls, and serialization rules.
 - [ ] Build a small **item identity regression suite** for unchanged stats, look, seed, protection, and display through save/reload.
+- [ ] Audit and prototype versioned Collector Roll Code with real trait rarity mapping and birth/current/test separation, including leading-zero and all-zero pattern tests.
 - [ ] Improve the prized-item Inspect presentation, with numeric seed in Advanced only and uncluttered default tooltips.
 - [ ] Confirm favorite/look save and reroll behavior; do not write a parallel implementation when an existing path works.
 - [ ] Prototype at least one genuinely rare, understated, memorable visual combination using deterministic seeded art and tested rarity boundaries; Glowing Eyes is the requested first head-slot candidate after the M0 and identity gates.
@@ -567,12 +580,14 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 **Sprint C: the collection showcase loop**
 
 - [ ] Polish Collection Vault filtering, protection and persistence; do not corrupt items on failed transfers.
+- [ ] Deliver the first safe starting-town/stash chest slice with the existing vault backend and reliable return path before retiring remote stash access.
 - [ ] Enhance Sanctum exhibition and faithful item zoom/inspection.
 - [ ] Add local share-card/export for prized finds without implying online provenance.
 - [ ] Playtest the loop: farm → discover → inspect → favorite → vault → exhibit → reopen game.
 
 **Sprint D: the light hunt**
 
+- [ ] Polish the original town's walkable scale, landmark layout and routes into the wilderness; leave NPC spaces reserved for later.
 - [ ] Tune accessible enemy density, drop pacing, and one rewarding collector route.
 - [ ] Add the support-beam hook puzzle and a genuinely original walkable connected room.
 - [ ] Confirm puzzles, loot, and item identity survive reload.
