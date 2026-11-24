@@ -45,10 +45,10 @@ static func equipped_profile(owner: Node, body: AnimatedSprite2D, hand: int = 0)
 	var item: GhostItemInstance = inventory.get_equipped("sword")
 	if item == null:
 		return {}
-	var key: String = "%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand]
+	var key: String = "%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand, item.debug_collector_tier]
 	if str(owner.get_meta("v178_profile_key", "")) != key:
 		owner.set_meta("v178_profile_key", key)
-		owner.set_meta("v178_profile", profile(item.collector_appearance(), hand))
+		owner.set_meta("v178_profile", weapon_profile(item.collector_appearance(), str(item.definition.item_id), hand))
 	return owner.get_meta("v178_profile", {}) as Dictionary
 
 # Both edges terminate at the exact authored point. All profiles stay
@@ -111,3 +111,18 @@ static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float
 			canvas.draw_line(at, at + axis * sweep - normal * side, edge, 1.0, true)
 	if ornament % 3 != 0:
 		canvas.draw_circle(root - axis * 1.5, 1.4 + float(ornament % 3) * 0.35, accent)
+
+# Distinct base silhouette families: Eclipse is a narrow needle, Rosemirror
+# is a slender leaf with an ornate swept guard. Rolls still change widths/colors.
+static func weapon_profile(look: Dictionary, item_id: String, hand: int = 0) -> Dictionary:
+	var p: Dictionary = profile(look, hand)
+	if p.is_empty():
+		return p
+	if item_id == "eclipse_twinblade_v170":
+		p["shape"] = 2
+		p["width_scale"] = float(p["width_scale"]) * 0.73
+	elif item_id == "rosemirror_twinblade_v170":
+		p["shape"] = 1
+		p["width_scale"] = float(p["width_scale"]) * 0.88
+		p["ornament"] = 6 + int(p["ornament"]) % 3
+	return p
