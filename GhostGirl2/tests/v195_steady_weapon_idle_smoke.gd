@@ -28,22 +28,23 @@ func _verify() -> void:
     for prefix in families:
         for face in ["front", "back", "left", "right"]:
             var name: String = prefix + face
-            if not frames.has_animation(name) or frames.get_frame_count(name) != 8:
-                _fail("Missing eight-frame idle " + name)
+            var expected: int = STEADY.SWORD_STEPS if name.begins_with("sword_idle_") else 8
+            if not frames.has_animation(name) or frames.get_frame_count(name) != expected:
+                _fail("Missing stabilized idle frames: " + name)
                 return
             if not frames.get_animation_loop(name):
                 _fail("Idle does not loop: " + name)
                 return
             var refs: Dictionary = {}
             var total: float = 0.0
-            for i in range(8):
+            for i in range(expected):
                 var texture: Texture2D = frames.get_frame_texture(name, i)
                 if texture == null or texture.get_size() != Vector2(256, 220):
                     _fail("Invalid idle texture dimensions: " + name)
                     return
                 refs[texture.get_instance_id()] = true
                 total += frames.get_frame_duration(name, i)
-            if refs.size() != 8:
+            if refs.size() != expected:
                 _fail("Idle has repeated frame references: " + name)
                 return
             if not is_equal_approx(total / frames.get_animation_speed(name), STEADY.CYCLE_SECONDS):
@@ -58,7 +59,7 @@ func _verify() -> void:
     if checked != 20 or STEADY.matches("attack_briarwake_spear_heavy_front") or STEADY.matches("thornrose_walk_left"):
         _fail("Wrong animation coverage")
         return
-    print("v1.95 PASS: 20 four-direction idle loops, eight generated frames, steady 3.45s cycle, no attack/walk changes")
+    print("v1.96 PASS: 20 four-direction idle loops, 16 sword / 8 other generated frames, steady 3.45s cycle, no attack/walk changes")
     actor.free()
     quit(0)
 

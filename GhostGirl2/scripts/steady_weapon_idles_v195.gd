@@ -5,6 +5,7 @@ extends RefCounted
 ## No animation manifest, source PNG, hitbox, equipment or save data is changed.
 const CYCLE_SECONDS: float = 3.45
 const STEPS: int = 8
+const SWORD_STEPS: int = 16 # Twice the idle samples for a smoother, weapon-still sword pose.
 const BLEND_STEPS: Array = [0.0, 0.024, 0.055, 0.095, 0.145, 0.112, 0.069, 0.027]
 static var _textures_by_key: Dictionary = {}
 static var _atlas_images: Dictionary = {}
@@ -35,19 +36,30 @@ static func install(sprite: AnimatedSprite2D) -> void:
         if neutral == null or alternate == null:
             continue
         var key: String = "%s:%d:%d" % [name, neutral.get_rid().get_id(), alternate.get_rid().get_id()]
+        var requested_steps: int = SWORD_STEPS if name.begins_with("sword_idle_") else STEPS
+        key += ":%d" % requested_steps
         var generated: Array = _textures_by_key.get(key, [])
         if generated.is_empty():
-            generated = _create_steps(neutral, alternate)
-            if generated.size() != STEPS:
+            generated = _create_steps(neutral, alternate, requested_steps)
+            if generated.size() != requested_steps:
                 push_warning("v1.95 could not smooth " + name + "; original frames retained")
                 continue
             _textures_by_key[key] = generated
-        var total_duration: float = 0.0
-        for i in range(STEPS):
-            var duration: float = frames.get_frame_duration(name, i)
-            total_duration += duration
-            frames.set_frame(name, i, generated[i] as Texture2D, duration)
-        frames.set_animation_speed(name, total_duration / CYCLE_SECONDS)
+        if requested_steps == SWORD_STEPS:
+            # Rebuild only the sword idle timeline; all attacks/walks and
+            # every original source frame remain untouched in project files.
+            for i in range(STEPS):
+                frames.set_frame(name, i, generated[i] as Texture2D, 1.0)
+            for i in range(STEPS, SWORD_STEPS):
+                frames.add_frame(name, generated[i] as Texture2D, 1.0)
+            frames.set_animation_speed(name, float(SWORD_STEPS) / CYCLE_SECONDS)
+        else:
+            var total_duration: float = 0.0
+            for i in range(STEPS):
+                var duration: float = frames.get_frame_duration(name, i)
+                total_duration += duration
+                frames.set_frame(name, i, generated[i] as Texture2D, duration)
+            frames.set_animation_speed(name, total_duration / CYCLE_SECONDS)
     _atlas_images.clear() # Do not keep large decompressed 2048x1760 atlases.
     frames.set_meta("v195_stable_idle_installed", true)
 
@@ -70,7 +82,7 @@ static func _source_image(texture: Texture2D) -> Image:
         return whole.get_region(region)
     return texture.get_image()
 
-static func _create_steps(neutral: Texture2D, alternate: Texture2D) -> Array[Texture2D]:
+static func _create_steps(neutral: Texture2D, alternate: Texture2D, steps: int = STEPS) -> Array[Texture2D]:
     var base: Image = _source_image(neutral)
     var breath: Image = _source_image(alternate)
     var results: Array[Texture2D] = []
@@ -87,8 +99,9 @@ static func _create_steps(neutral: Texture2D, alternate: Texture2D) -> Array[Tex
     if original.size() != other.size():
         return results
     results.append(neutral) # Exact approved pixels on the resting beat.
-    for i in range(1, STEPS):
-        var blended: PackedByteArray = _mix_rgba(original, other, float(BLEND_STEPS[i]))
+    for i in range(1, steps):
+        var amount: float = float(BLEND_STEPS[i]) if steps == STEPS else 0.18 * (0.5 - 0.5 * cos(TAU * float(i) / float(steps)))
+        var blended: PackedByteArray = _mix_rgba(original, other, amount)
         var image: Image = Image.create_from_data(base.get_width(), base.get_height(), false, Image.FORMAT_RGBA8, blended)
         results.append(ImageTexture.create_from_image(image))
     return results
