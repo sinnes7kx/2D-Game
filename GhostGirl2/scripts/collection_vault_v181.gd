@@ -58,7 +58,9 @@ func _ready() -> void:
 	source_view.add_item("Stored")
 	source_view.add_item("Backpack")
 	filters.add_child(source_view)
-	source_view.item_selected.connect(func(_index: int) -> void: refresh())
+	source_view.item_selected.connect(func(_index: int) -> void:
+		selected_item = null
+		refresh())
 	search = LineEdit.new()
 	search.placeholder_text = "Search weapon, rarity or region"
 	search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -177,6 +179,7 @@ func _store() -> void:
 		return
 	var idx: int = inventory.contents.find(selected_item)
 	if inventory.vault_store(idx):
+		source_view.select(0)
 		refresh()
 	else:
 		details.text = "Cannot store: unequip first, check vault space or save access."
@@ -187,6 +190,7 @@ func _withdraw() -> void:
 		return
 	var idx: int = inventory.vault.find(selected_item)
 	if inventory.vault_withdraw(idx):
+		source_view.select(1)
 		refresh()
 	else:
 		details.text = "Cannot withdraw: backpack full or save unavailable. Weapon remains in vault."
