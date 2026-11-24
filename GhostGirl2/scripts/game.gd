@@ -944,7 +944,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F6:
 			_enter_room("hollow_veil_moor")
 		elif event.physical_keycode == KEY_F7:
-			_give_weapon_test_samples()
+			if OS.is_debug_build() and event.shift_pressed:
+				_give_ethereal_trial()
+			else:
+				_give_weapon_test_samples()
 		elif event.physical_keycode == KEY_F9:
 			_enter_room("blackbrick_court")
 		elif event.physical_keycode == KEY_F10:
@@ -1156,3 +1159,17 @@ func _wear_cast_wand(wand: GhostItemInstance) -> void:
 		ui.show_pickup("ETHEREAL WAND BROKEN · " + wand.definition.display_name, Color("d9b6cf"))
 	elif wand.durability == 10:
 		ui.show_pickup("ETHEREAL WAND · 10 CASTS REMAIN", Color("d9b6cf"))
+
+# Explicit debug trial, never mutates an existing collectible.
+func _give_ethereal_trial() -> void:
+	if not OS.is_debug_build():
+		return
+	var template: GhostItemData = load("res://items/rosemirror_twinblade_v170.tres") as GhostItemData
+	var sample: GhostItemInstance = GhostItemGenerator.create(template, 184001, "rare")
+	sample.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
+	sample.make_ethereal()
+	sample.durability = 3
+	if inventory.add_existing_item(sample) != null:
+		ui.show_pickup("ETHEREAL TEST TWINBLADE · 3 USES · OPEN I", Color("c1d8e4"))
+	else:
+		ui.show_pickup("BACKPACK FULL")
