@@ -40,14 +40,10 @@ static func surface_color(profile: Dictionary, u: float, v: float, phase: float)
 	var metal: Color = profile["metal"] if v < 0.5 else profile["shade"]
 	var accent: Color = profile["accent"]
 	var colors: Array = profile.get("surface_colors", [])
-	if colors.size() == 3:
-		var shift: float = fposmod(u + (phase * 0.035 if animated(mode) else 0.0), 1.0)
-		var i: int = 0 if shift < 0.5 else 1
-		var first: Color = colors[i]
-		var second: Color = colors[i+1]
-		accent = first.lerp(second, shift * 2.0 - float(i))
-	if mode == 6:
-		accent = Color.from_hsv(fposmod(accent.h + phase * 0.04 + u * 0.25, 1.0), accent.s, accent.v)
+	if not colors.is_empty():
+		var shift: float = u + (phase * float(profile.get("surface_speed",0.5)) * 0.12 if animated(mode) else 0.0)
+		accent = GhostCosmeticRNGV152.sample_palette(colors, shift, animated(mode))
+
 	return metal.lerp(accent, weight * (0.18 if mode < 2 else 0.48))
 
 static func draw_surface(canvas: Node2D, left: PackedVector2Array, right: PackedVector2Array, profile: Dictionary, phase: float) -> void:

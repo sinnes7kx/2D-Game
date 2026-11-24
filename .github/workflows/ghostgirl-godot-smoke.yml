@@ -122,5 +122,8 @@ jobs:
       - name: Verify Living Metal material patterns
         run: godot --headless --path GhostGirl2 --script res://tests/v187_surface_smoke.gd
 
+      - name: Verify variable palettes and bounded special effects
+        run: godot --headless --path GhostGirl2 --script res://tests/v188_palette_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

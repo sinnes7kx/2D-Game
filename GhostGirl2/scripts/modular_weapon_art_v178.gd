@@ -16,9 +16,9 @@ static func profile(look: Dictionary, hand: int = 0) -> Dictionary:
 	var handles: Array = look.get("handle_colors", [])
 	if metals.size() < 3 or accents.size() < 3 or handles.size() < 3:
 		return {}
-	var tint: Color = metals[posmod(hand, 3)]
-	var accent: Color = accents[posmod(hand + 1, 3)]
-	var grip: Color = handles[posmod(hand + 2, 3)]
+	var tint: Color = GhostCosmeticRNGV152.sample_palette(metals, 0.23 + float(hand) * 0.54)
+	var accent: Color = GhostCosmeticRNGV152.sample_palette(accents, 0.41 + float(hand) * 0.46)
+	var grip: Color = GhostCosmeticRNGV152.sample_palette(handles, 0.72 - float(hand) * 0.44)
 	var steel: Color = Color("b5b9ca").lerp(tint, 0.25 + float(tier) * 0.095)
 	if finish == 1:
 		steel = steel.darkened(0.42)
