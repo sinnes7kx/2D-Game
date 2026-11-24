@@ -3,6 +3,7 @@ const DAGGER_THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 var v180_elapsed: float = 0.0
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const STEADY = preload("res://scripts/steady_weapon_idles_v195.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.2 — authored four-facing weapon strike poses.
 ## Uses the approved unarmed attack BODY frames; renders physical weapon
@@ -148,7 +149,7 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
-	var idle: bool = GENTLE.modular_idle(animation_name)
+	var idle: bool = GENTLE.modular_idle(animation_name) or STEADY.is_smooth_blade_idle(animation_name)
 	var span: PackedVector2Array = _authored_weapon_span(animation_name, 0 if idle else frame_index)
 	return GENTLE.smooth(body, animation_name, span) if idle else span
 
