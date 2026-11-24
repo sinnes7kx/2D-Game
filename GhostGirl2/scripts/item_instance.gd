@@ -16,6 +16,7 @@ var rare_visual_mod: int = -1
 # In-memory debug inspection only. Intentionally omitted from save dictionaries,
 # cosmetic snapshots and normal RNG; never changes genuine rare rolls.
 var debug_visual_override: int = -1
+var debug_mythic_variant: int = -1
 var collector_favorite: bool = false
 var collector_locked: bool = false
 const REGIONAL = preload("res://scripts/regional_treasures_v183.gd")
@@ -255,6 +256,8 @@ func bow_string_gradient_colors() -> Array[Color]:
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string")
 
 func mythic_layer_variant() -> int:
+	if OS.is_debug_build() and debug_mythic_variant >= 0:
+		return clampi(debug_mythic_variant, 0, 3)
 	# Four reproducible, visual-only signature layers. No combat RNG draws.
 	var material: String = cosmetic_uid if COSMETIC_RNG.is_valid_uid(cosmetic_uid) else "legacy-%d" % visual_seed()
 	var digest: PackedByteArray = ("ghost-girl-v168-mythic-layer:" + material).sha256_buffer()
@@ -263,6 +266,9 @@ func mythic_layer_variant() -> int:
 func visual_signature() -> int:
 	if OS.is_debug_build() and debug_visual_override >= 0:
 		return debug_visual_override
+	return genuine_visual_signature()
+
+func genuine_visual_signature() -> int:
 	if rare_visual_mod >= 0:
 		return rare_visual_mod
 	var base_sig: int = COSMETIC_RNG.signature(cosmetic_uid, get_slot())
@@ -516,3 +522,26 @@ func wear_once() -> bool:
 		return false
 	durability = maxi(0, durability - 1)
 	return is_broken()
+
+# Discovery feedback is based exclusively on genuine persisted properties.
+func discovery_label() -> String:
+	if get_slot() not in ["sword", "wand"]:
+		return ""
+	var genuine: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	var tier: int = maxi(int(genuine["material"]), int(genuine["particle_tier"]))
+	if tier == 6:
+		return "ANOMALY DISCOVERED"
+	var signature: int = genuine_visual_signature()
+	if signature == 5:
+		return "MOONFALL DISCOVERED"
+	if signature == 4:
+		return "MYTHIC DISCOVERED"
+	if tier == 5:
+		return "ETHEREAL APPEARANCE DISCOVERED"
+	if regional_rank == 3:
+		return "RADIANT REGIONAL DISCOVERY"
+	if ethereal:
+		return "ETHEREAL WEAPON DISCOVERED"
+	if tier == 4 or signature >= 2:
+		return "EXTRAORDINARY DISCOVERY"
+	return ""
