@@ -19,14 +19,14 @@ static func tier_for_ticket(value: int) -> int:
 			return i
 	return 6
 
-static func roll(uid: String, legacy_seed: int) -> Dictionary:
+static func roll(uid: String, legacy_seed: int, gradient_version: int = 1) -> Dictionary:
 	var material: int = tier_for_ticket(ticket(uid, legacy_seed, "material-rarity"))
 	return {
 		"material": material,
 		"surface_mode": SURFACE.surface_for_ticket(ticket(uid, legacy_seed, "v187-surface-family"), material),
 		"surface_phase": float(ticket(uid, legacy_seed, "v187-surface-phase")) / 10000.0,
 		"surface_speed": 0.35 + float(ticket(uid, legacy_seed, "v187-surface-speed")) / 10000.0 * 0.65,
-		"surface_colors": RNG.gradient_for_channel(uid, legacy_seed, "v187-surface-pigment"),
+		"surface_colors": RNG.gradient_for_channel(uid, legacy_seed, "v187-surface-pigment", gradient_version),
 		"color_mode": ticket(uid, legacy_seed, "v180-color-mode") % 7,
 		"glow_motif": ticket(uid, legacy_seed, "v180-glow-motif") % 8,
 		"shift_rate": 0.055 + float(ticket(uid, legacy_seed, "v180-shift-rate")) / 9999.0 * 0.24,
@@ -48,15 +48,15 @@ static func roll(uid: String, legacy_seed: int) -> Dictionary:
 		"forge_inset_scale": 0.70 + float(ticket(uid, legacy_seed, "v189-inset-scale")) / 9999.0 * 0.50,
 		"forge_etch": ticket(uid, legacy_seed, "v189-etch") % 5,
 		"forge_etch_count": 2 + ticket(uid, legacy_seed, "v189-etch-count") % 6,
-		"forge_ornament_colors": RNG.gradient_for_channel(uid, legacy_seed, "v189-ornament"),
+		"forge_ornament_colors": RNG.gradient_for_channel(uid, legacy_seed, "v189-ornament", gradient_version),
 		"ornament": ticket(uid, legacy_seed, "ornament") % 9,
 		"particle": ticket(uid, legacy_seed, "particle") % 8,
 		"particle_tier": tier_for_ticket(ticket(uid, legacy_seed, "particle-rarity")),
 		"glow_strength": 0.72 + float(ticket(uid, legacy_seed, "glow-strength")) / 9999.0 * 0.56,
 		"glow_speed": 0.35 + float(ticket(uid, legacy_seed, "glow-speed")) / 9999.0 * 0.95,
-		"metal_colors": RNG.gradient_for_channel(uid, legacy_seed, "collector-v1-metal"),
-		"accent_colors": RNG.gradient_for_channel(uid, legacy_seed, "collector-v1-accent"),
-		"handle_colors": RNG.gradient_for_channel(uid, legacy_seed, "collector-v1-handle")
+		"metal_colors": RNG.gradient_for_channel(uid, legacy_seed, "collector-v1-metal", gradient_version),
+		"accent_colors": RNG.gradient_for_channel(uid, legacy_seed, "collector-v1-accent", gradient_version),
+		"handle_colors": RNG.gradient_for_channel(uid, legacy_seed, "collector-v1-handle", gradient_version)
 	}
 
 static func rarity_label(look: Dictionary) -> String:

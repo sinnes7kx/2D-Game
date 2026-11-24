@@ -11,6 +11,8 @@ var item_seed: int = 0
 var cosmetic_seed: int = -1
 # Opaque 128-bit appearance ID; intentionally never shown in tooltips.
 var cosmetic_uid: String = ""
+# V1 reproduces the exact historic ramp. Only new drops/re-rolled looks opt in.
+var gradient_version: int = 1
 # Recorded once for new finds; empty on legacy items with unknown birth appearance.
 var birth_roll_code_v1: String = ""
 var birth_roll_uid_v1: String = ""
@@ -151,10 +153,10 @@ func weapon_reach() -> float:
 		_: return 106.0
 
 func weapon_base_color() -> Color:
-	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword"), 0.5)
+	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword", gradient_version), 0.5)
 
 func weapon_gradient_color() -> Color:
-	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword-accent"), 0.5)
+	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword-accent", gradient_version), 0.5)
 
 func weapon_appearance_labels() -> Array[String]:
 	return [GhostPaletteLibrary.palette_label("sword", weapon_base_index if weapon_base_index >= 0 else palette_index),
@@ -169,7 +171,7 @@ func cosmetic_seed_number() -> int:
 	return visual_seed()
 
 func _cosmetic_fields() -> Array[String]:
-	return ["palette_index", "decoration_index", "weapon_base_index",
+	return ["gradient_version", "palette_index", "decoration_index", "weapon_base_index",
 		"weapon_gradient_index", "weapon_detail_a_index", "weapon_detail_b_index",
 		"weapon_fx_style_index", "weapon_fx_color_index", "weapon_fx_accent_index",
 		"weapon_fx_trail_index", "weapon_impact_style_index", "wand_cast_style_index",
@@ -205,6 +207,7 @@ func restore_cosmetic_look(index: int) -> bool:
 		return false
 	cosmetic_seed = int(snapshot.get("cosmetic_seed", -1))
 	cosmetic_uid = str(snapshot.get("cosmetic_uid", ""))
+	gradient_version = clampi(int(snapshot.get("gradient_version", 1)), 1, 2)
 	rare_visual_mod = int(snapshot.get("rare_visual_mod", -1))
 	for field in _cosmetic_fields():
 		if snapshot.has(field):
@@ -226,6 +229,7 @@ func reroll_cosmetic_seed() -> int:
 		if uid.is_empty() or uid == old_uid:
 			continue
 		apply_cosmetic_uid(uid)
+		gradient_version = 2 # Deliberately requested reroll can discover onyx/black.
 		var new_color: int = weapon_fx_color_index if get_slot() in ["sword", "wand"] else palette_index
 		if get_slot() in ["sword", "wand"]:
 			var new_gradient: Array[Color] = glow_gradient_colors()
@@ -251,15 +255,15 @@ func apply_cosmetic_uid(uid: String) -> void:
 
 # V1.53: complete-spectrum, per-look gradients. Never change the combat seed.
 func glow_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel())
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel(), gradient_version)
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
 # Saving/restoring the cosmetic UID reproduces both without new schema fields.
 func bow_limb_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel())
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel(), gradient_version)
 
 func bow_string_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string:" + effect_palette_channel())
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string:" + effect_palette_channel(), gradient_version)
 
 func mythic_layer_variant() -> int:
 	if OS.is_debug_build() and debug_mythic_variant >= 0:
@@ -411,7 +415,7 @@ func effect_description() -> String:
 func collector_appearance() -> Dictionary:
 	if get_slot() not in ["sword", "wand"]:
 		return {}
-	var look: Dictionary = REGIONAL.apply(COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed()), origin_room, regional_rank)
+	var look: Dictionary = REGIONAL.apply(COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed(), gradient_version), origin_room, regional_rank)
 	if OS.is_debug_build():
 		if debug_collector_tier >= 0:
 			look["material"] = debug_collector_tier
@@ -444,7 +448,7 @@ func collector_material_label() -> String:
 	return COLLECTOR_LOOK.rarity_label(look) if not look.is_empty() else ""
 
 func palette_color() -> Color:
-	return weapon_base_color() if get_slot() == "sword" else COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical:" + get_slot()), 0.5)
+	return weapon_base_color() if get_slot() == "sword" else COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical:" + get_slot(), gradient_version), 0.5)
 
 func palette_name() -> String:
 	return GhostPaletteLibrary.palette_label(get_slot(), weapon_base_index if get_slot() == "sword" and weapon_base_index >= 0 else palette_index)

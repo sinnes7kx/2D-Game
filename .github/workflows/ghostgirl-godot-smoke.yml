@@ -166,5 +166,8 @@ jobs:
       - name: Verify compact tooltip and interactive visual swatches
         run: godot --headless --path GhostGirl2 --script res://tests/v196_compact_tooltip_smoke.gd
 
+      - name: Verify dagger idle, Reaper glow and versioned dark gradients
+        run: godot --headless --path GhostGirl2 --script res://tests/v197_dagger_reaper_dark_gradient_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

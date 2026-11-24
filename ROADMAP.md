@@ -501,6 +501,15 @@ Choose incremental wrappers around working code before introducing sweeping repl
 - [ ] Cross-check the Moonveil/Thornrose bow limb tint dots against the actual `weapon_surface_v190.gd` shader input after mixing its material ramp, including different effects intensity/debug appearance. Do not imply that the full bow inherits the glow color.
 - [ ] Run v1.95 and v1.96 Godot smoke regressions, open equipped preview, and manually check mouse interaction and resource/memory costs on older hardware. Neither the item RNG/save schema nor combat damage may change.
 
+### v1.97: steady daggers, readable Reaper light, dark-gradient generation (source implemented; playtest pending)
+
+- [ ] Verify Roseglass Dagger and Nocturne Stiletto idle presentation across all four directions: 16 gentle interpolated frames over a 3.45-second cycle, fixed approved weapon silhouette and hand anchor, while walking/attacking/dodging remain unchanged. Review startup-time texture cost and visible appearance in equipment preview.
+- [ ] Verify Rose Reaper and Veilkeeper's Reaper scythe blade-edge illumination in dark rooms and with black/charcoal appearance rolls. Keep the narrow crescent rim visible without washing out the original metal/shaft. Session FX intensity (including 0%) must still apply. Confirm no combat or item rarity changes.
+- [ ] The new **opt-in gradient version 2** adds seeded onyx, true black, charcoal, shadow-to-jewel and slate ramps; legacy items, prior favorite appearances, and missing-version old saves continue using unchanged version 1 colors. Only new drops and deliberate cosmetic rerolls move to V2. Current-look version is serialized and captured in favorite snapshots. Collector material/signature rarity odds and ten-digit Roll Codes are unchanged.
+- [ ] Run v1.95/v1.96/v1.97 regressions, reload older saves and saved favorite looks, test surface/FX color swatches, inventory → vault → exhibition continuity, four-facing weapon FX, and performance on older hardware.
+- [ ] Back up existing saves before upgrading. Downgrading and saving through an older build that doesn't recognize `gradient_version` may reset V2 looks to V1; do not overwrite a cherished V2 look via downgrade.
+- [ ] In future authored-art work, prefer dedicated body-breathing frames over crossfading painted pixels when a weapon needs more visible motion.
+
 ### Art and audio principles
 
 - [ ] Preserve the approved Ghost Girl silhouette, facial appearance, and dark painterly 2D aesthetic.
