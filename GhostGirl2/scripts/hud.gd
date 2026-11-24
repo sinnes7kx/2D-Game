@@ -1,6 +1,8 @@
 extends CanvasLayer
 const COLLECTOR_LENS = preload("res://scripts/collector_lens_v179.gd")
 var collector_lens: Control
+const COLLECTION_VAULT = preload("res://scripts/collection_vault_v181.gd")
+var collection_vault: Control
 ## Minimal node-authored HUD. No dialogue, no lore overlays, no objectives.
 ## Every onscreen element can be selected, moved or styled in hud.tscn.
 
@@ -65,6 +67,12 @@ func _ready() -> void:
 	collector_lens.name = "CollectorLensV179"
 	$Overlay.add_child(collector_lens)
 	collector_lens.z_index = 100
+	collection_vault = COLLECTION_VAULT.new()
+	collection_vault.name = "CollectionVaultV181"
+	$Overlay.add_child(collection_vault)
+	collection_vault.z_index = 90
+	collection_vault.connect("inspect_requested", Callable(self, "_open_collector_lens"))
+	inventory_panel.connect("vault_requested", Callable(self, "_open_collection_vault"))
 
 func bind_inventory(value: Node) -> void:
 	inventory_data = value
@@ -204,6 +212,11 @@ func _input(event: InputEvent) -> void:
 			collector_lens.call("close_lens")
 			get_viewport().set_input_as_handled()
 		return
+	if is_instance_valid(collection_vault) and collection_vault.visible:
+		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+			collection_vault.hide()
+			get_viewport().set_input_as_handled()
+		return
 	if is_menu_open():
 		var inspect: bool = false
 		if event is InputEventMouseButton:
@@ -239,6 +252,9 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if is_instance_valid(collection_vault) and collection_vault.visible:
+		get_viewport().set_input_as_handled()
+		return
 	if is_instance_valid(collector_lens) and collector_lens.visible:
 		get_viewport().set_input_as_handled()
 		return
@@ -308,7 +324,7 @@ func set_health(current: float, maximum: float) -> void:
 	health_meter.visible = current < maximum
 
 func is_menu_open() -> bool:
-	return inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible)
+	return inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible) or (is_instance_valid(collection_vault) and collection_vault.visible)
 
 func set_stamina(current: float, maximum: float) -> void:
 	stamina_meter.max_value = maximum
@@ -331,3 +347,11 @@ func _open_collector_lens(item: GhostItemInstance) -> void:
 		_cancel_cursor_item()
 	_hide_item_hover()
 	collector_lens.call("open_item", item)
+
+func _open_collection_vault(item: GhostItemInstance) -> void:
+	if inventory_data == null:
+		return
+	if cursor_item_index >= 0:
+		_cancel_cursor_item()
+	_hide_item_hover()
+	collection_vault.call("open_vault", inventory_data, item)
