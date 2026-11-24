@@ -5,6 +5,7 @@ extends Node
 signal contents_changed
 signal equipment_changed
 
+const ROLL_CODE_V1931 = preload("res://scripts/collector_roll_code_v1931.gd")
 const SAVE_FILE: String = "user://ghost_girl_treasures_v2.json"
 const LEGACY_SAVE_FILE: String = "user://ghost_girl_treasures_v1.json"
 const GRID_COLUMNS: int = 10
@@ -365,6 +366,8 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"bow_detail_index": item.bow_detail_index,
 		"cosmetic_seed": item.cosmetic_seed,
 		"cosmetic_uid": item.cosmetic_uid,
+		"birth_roll_code_v1": item.birth_roll_code_v1,
+		"birth_roll_uid_v1": item.birth_roll_uid_v1,
 		"rare_visual_mod": item.rare_visual_mod,
 		"saved_cosmetic_looks": item.saved_cosmetic_looks.duplicate(true),
 		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked, "exhibition_slot": item.exhibition_slot, "origin_room": item.origin_room, "regional_rank": item.regional_rank,
@@ -530,6 +533,11 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	# Old saves without an ID retain their original seed-derived visual look.
 	item.cosmetic_uid = str(saved.get("cosmetic_uid", ""))
 	item.rare_visual_mod = int(saved.get("rare_visual_mod", -1))
+	var birth_code: String = str(saved.get("birth_roll_code_v1", ""))
+	var birth_uid: String = str(saved.get("birth_roll_uid_v1", ""))
+	if ROLL_CODE_V1931.valid_code(birth_code) and GhostCosmeticRNGV152.is_valid_uid(birth_uid):
+		item.birth_roll_code_v1 = birth_code
+		item.birth_roll_uid_v1 = birth_uid
 	item.saved_cosmetic_looks.clear()
 	var saved_looks: Variant = saved.get("saved_cosmetic_looks", [])
 	if saved_looks is Array:
@@ -696,4 +704,8 @@ func generate_find(template: GhostItemData, seed_value: int, forced_quality: Str
 	item.stamp_origin(origin)
 	if not origin.is_empty():
 		item.roll_ethereal()
+	if GhostCosmeticRNGV152.is_valid_uid(item.cosmetic_uid):
+		item.birth_roll_code_v1 = ROLL_CODE_V1931.current(item)
+		if not item.birth_roll_code_v1.is_empty():
+			item.birth_roll_uid_v1 = item.cosmetic_uid
 	return item
