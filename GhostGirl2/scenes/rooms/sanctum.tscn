@@ -18,6 +18,8 @@
 [ext_resource type="Resource" path="res://items/moonlace_dual_daggers_v173.tres" id="v176_item_8"]
 [ext_resource type="Resource" path="res://items/gloamrose_dual_swords_v174.tres" id="v176_item_9"]
 
+[ext_resource type="Script" path="res://scripts/sanctum_exhibition_v182.gd" id="v182_display"]
+
 [sub_resource type="RectangleShape2D" id="shape_0"]
 size = Vector2(2389, 248)
 
@@ -253,3 +255,41 @@ pickup_id = "v176_sanctum_gloamrose_dual_swords_v174"
 item_seed = 176110
 guaranteed_quality = "rare"
 ground_display = true
+
+[node name="CollectionExhibition" type="Node2D" parent="Gameplay"]
+
+[node name="Display1" type="Node2D" parent="Gameplay/CollectionExhibition"]
+position = Vector2(1640, 855)
+z_index = 2
+script = ExtResource("v182_display")
+slot = 0
+
+[node name="Display2" type="Node2D" parent="Gameplay/CollectionExhibition"]
+position = Vector2(1800, 855)
+z_index = 2
+script = ExtResource("v182_display")
+slot = 1
+
+[node name="Display3" type="Node2D" parent="Gameplay/CollectionExhibition"]
+position = Vector2(1960, 855)
+z_index = 2
+script = ExtResource("v182_display")
+slot = 2
+
+[node name="Display4" type="Node2D" parent="Gameplay/CollectionExhibition"]
+position = Vector2(1640, 1055)
+z_index = 2
+script = ExtResource("v182_display")
+slot = 3
+
+[node name="Display5" type="Node2D" parent="Gameplay/CollectionExhibition"]
+position = Vector2(1800, 1055)
+z_index = 2
+script = ExtResource("v182_display")
+slot = 4
+
+[node name="Display6" type="Node2D" parent="Gameplay/CollectionExhibition"]
+position = Vector2(1960, 1055)
+z_index = 2
+script = ExtResource("v182_display")
+slot = 5
