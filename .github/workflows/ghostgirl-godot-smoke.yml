@@ -104,5 +104,8 @@ jobs:
       - name: Verify collection vault transfer and item protection
         run: godot --headless --path GhostGirl2 --script res://tests/v181_vault_smoke.gd
 
+      - name: Verify Sanctum collection exhibition and persistent assignments
+        run: godot --headless --path GhostGirl2 --script res://tests/v182_exhibition_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
