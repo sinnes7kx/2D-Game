@@ -3,6 +3,7 @@ extends Node2D
 ## 8 frames x 4 directions for idle, walk, A/B/C light combo and heavy.
 ## Each hand gets an independently authored tip path, driven by frame index.
 const ITEM_ID: String = "moonlace_dual_daggers_v173"
+const THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const BLADE_SCRIPT = preload("res://scripts/v173_dual_dagger_blade.gd")
 var body: AnimatedSprite2D = null
 var player: Node2D = null
@@ -101,6 +102,9 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 			sweep = Vector2(0, 1)
 			left_grip = Vector2(7, 25)
 			right_grip = Vector2(24, 19)
+	if animation_name.contains("_pierce_"):
+		var heavy_pierce: bool = animation_name.contains("_heavy_pierce_")
+		return [THRUST.span(face, frame_index, 0, heavy_pierce, true), THRUST.span(face, frame_index, 1, heavy_pierce, true)]
 	var n: int = clampi(frame_index, 0, 7)
 	var action: String = "idle"
 	if animation_name.begins_with("attack_dual_dagger_light_a_"):
@@ -148,6 +152,28 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 				advance = 13.0 + 4.0 * sin(float(n) * PI * 0.25)
 			if n in [2, 3, 4]:
 				grip += forward * (-2.0 if is_lead or crossing else 1.0)
-		var tip: Vector2 = grip + sweep * lateral + forward * advance
+		# v1.80: actual visible hand centers measured on the approved v14
+		# 256x220 body images. The v175 installer remaps idle/walk frames.
+		var source_frame: int = n
+		if action == "idle":
+			source_frame = [0, 0, 1, 0, 0, 1, 0, 0][n]
+		elif action == "walk":
+			source_frame = [0, 1, 2, 1, 0, 1, 2, 1][n]
+		var anchor: Vector2 = hand_anchor(face, source_frame, hand_index)
+		if anchor == Vector2.INF:
+			# Hair/body occludes this hand. Do not float a second knife
+			# outside the visible character silhouette.
+			result.append(PackedVector2Array())
+			continue
+		grip = anchor
+		var aim: Vector2 = (sweep * lateral + forward * advance).normalized()
+		if aim.is_zero_approx():
+			aim = forward
+		var tip: Vector2 = grip + aim * 30.0
 		result.append(PackedVector2Array([grip, tip]))
 	return result
+
+# Pixel centers in the original 256x220 artwork, converted to centered
+# Ghost-local coordinates. Occluded hands are not rendered.
+static func hand_anchor(face: String, frame: int, hand: int) -> Vector2:
+	return THRUST.hand_anchor(face, frame, hand)

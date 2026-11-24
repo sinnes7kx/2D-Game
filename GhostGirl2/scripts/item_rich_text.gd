@@ -18,13 +18,13 @@ static func _label(text_value: String) -> String:
 	return "[font_size=12][color=%s]%s[/color][/font_size]" % [MUTED, escape(text_value)]
 
 static func _cosmetic_dots(item: Variant) -> String:
-	var colors: Array[Color] = [item.palette_color()]
+	var colors: Array[Color] = item.glow_gradient_colors()
 	if item.get_slot() in ["sword", "wand"]:
 		colors = item.bow_limb_gradient_colors() if item.weapon_style() == "bow" else item.glow_gradient_colors()
 	var pieces: Array[String] = []
 	for ink in colors:
 		pieces.append("[font_size=16][color=%s]●[/color][/font_size]" % color_to_tag(ink))
-	return "  ".join(pieces)
+	return " ".join(pieces)
 
 static func _swatch_colors(colors: Array[Color]) -> String:
 	var pieces: Array[String] = []
@@ -43,6 +43,9 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
 	if slot == "sword":
 		out.append("[font_size=15][color=%s]%.1f Damage[/color][color=%s]   ·   %.0f Reach[/color][/font_size]" % [GOLD, item.weapon_damage(), MUTED, item.weapon_reach()])
+	if item.ethereal:
+		out.append("[font_size=13][color=#c1d8e4]ETHEREAL · %s[/color][/font_size]" % ("BROKEN" if item.is_broken() else "%d/%d durability" % [item.durability, item.max_durability]))
+		out.append(_label("Cannot be repaired · " + ("Display only" if item.is_broken() else "Enhanced power")))
 	var stats: Dictionary = item.all_stats()
 	if not stats.is_empty():
 		var ids: Array = stats.keys()
@@ -64,6 +67,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append("[font_size=14][color=%s]+%.1f%% %s[/color][/font_size]" % [GOLD if unique_socketable else BLUE, item.definition.socket_bonus_value, escape(GhostPaletteLibrary.stat_label(item.definition.socket_bonus_id))])
 	if slot != "none":
 		out.append(_cosmetic_dots(item))
+	if slot in ["sword", "wand"] and not item.regional_imprint_label().is_empty():
+		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, escape(item.regional_imprint_label())])
 	if not advanced:
 		if slot in ["sword", "wand"]:
 			out.append("[font_size=11][color=%s]P  ·  Inspect weapon[/color][/font_size]" % MUTED)
@@ -79,6 +84,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, "Moonfall Halo" if item.visual_signature() == 5 else "Mythic Radiance"])
 		out.append(_label("Luminous dress aura" if slot == "dress" else "Spectral accessory glimmer"))
 	if slot in ["sword", "wand"]:
+		if not item.origin_label().is_empty():
+			out.append(_label("Found in " + item.origin_label()))
 		var fx: Dictionary = item.effect_rolls()
 		# ALT reveals what the item *does visually*, not its internal RNG identifiers.
 		if item.visual_signature() > 0:

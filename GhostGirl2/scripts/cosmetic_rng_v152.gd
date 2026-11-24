@@ -50,37 +50,60 @@ static func signature_name(level: int) -> String:
 # deterministic for saved looks while keeping the draw unrelated to item stats.
 # Old items with no UID use their existing cosmetic seed as a stable fallback.
 static func gradient_colors(uid: String, legacy_seed: int) -> Array[Color]:
-    var material: String = uid.to_lower() if is_valid_uid(uid) else "legacy-cosmetic-%d" % legacy_seed
-    var ctx: HashingContext = HashingContext.new()
-    ctx.start(HashingContext.HASH_SHA256)
-    ctx.update(("ghost-girl-gradient-v153:" + material).to_utf8_buffer())
-    var bytes: PackedByteArray = ctx.finish()
-    # Hue has 65,536 possible levels per stop. The stops are separately
-    # randomized and may be complementary, analogous or wildly different.
-    var hue_a: float = float(int(bytes[0]) * 256 + int(bytes[1])) / 65536.0
-    var hue_b: float = float(int(bytes[8]) * 256 + int(bytes[9])) / 65536.0
-    var hue_c: float = float(int(bytes[16]) * 256 + int(bytes[17])) / 65536.0
-    var sat_a: float = 0.67 + float(bytes[2]) / 255.0 * 0.31
-    var sat_b: float = 0.65 + float(bytes[10]) / 255.0 * 0.33
-    var sat_c: float = 0.69 + float(bytes[18]) / 255.0 * 0.29
-    var val_a: float = 0.87 + float(bytes[3]) / 255.0 * 0.13
-    var val_b: float = 0.85 + float(bytes[11]) / 255.0 * 0.15
-    var val_c: float = 0.87 + float(bytes[19]) / 255.0 * 0.13
-    return [Color.from_hsv(hue_a, sat_a, val_a),
-            Color.from_hsv(hue_b, sat_b, val_b),
-            Color.from_hsv(hue_c, sat_c, val_c)]
+    return gradient_for_channel(uid, legacy_seed, "glow")
 
-
-# v1.68: independent equipment appearance layers. Each channel has a distinct
-# SHA-256 domain, all derived from the persisted 128-bit cosmetic UID. There
-# are no named palettes, finite seeds, new stat rolls, or new save fields.
+# Each channel derives a variable number of stops from the complete UID.
+# No named color sets or forced rainbow. A continuous hue span can be almost
+# monochrome, complementary, muted, jewel-bright, pastel, dark or broad.
 static func gradient_for_channel(uid: String, legacy_seed: int, channel: String) -> Array[Color]:
     var identity: String = uid.to_lower() if is_valid_uid(uid) else "legacy-%d" % legacy_seed
-    var digest: PackedByteArray = ("ghost-girl-v168:" + channel + ":" + identity).sha256_buffer()
+    var domain: String = "ghost-girl-v188:" + channel + ":" + identity
+    var header: PackedByteArray = domain.sha256_buffer()
+    var count: int = 3 + int(header[0]) % 7
+    var center: float = _unit16(header, 1)
+    var span: float = 0.012 + pow(_unit16(header, 3), 1.65) * 0.94
+    var sat: float = 0.10 + 0.87 * _unit16(header, 5)
+    var value: float = 0.30 + 0.68 * _unit16(header, 7)
+    var drift: float = _unit16(header, 9) * 2.0 - 1.0
     var colors: Array[Color] = []
-    for offset in [0, 9, 18]:
-        var hue: float = float(int(digest[offset]) * 256 + int(digest[offset + 1])) / 65536.0
-        var sat: float = 0.67 + float(digest[offset + 2]) / 255.0 * 0.29
-        var brightness: float = 0.83 + float(digest[offset + 3]) / 255.0 * 0.17
-        colors.append(Color.from_hsv(hue, sat, brightness))
+    for i in range(count):
+        var bytes: PackedByteArray = (domain + ":stop:" + str(i)).sha256_buffer()
+        var u: float = float(i) / float(count - 1)
+        var hue: float = fposmod(center + span * ((_unit16(bytes, 0) - 0.5) * 0.78 + (u - 0.5) * drift * 0.42), 1.0)
+        var saturation: float = clampf(sat + (_unit16(bytes, 2) - 0.5) * 0.42, 0.025, 0.99)
+        var brightness: float = clampf(value + (_unit16(bytes, 4) - 0.5) * 0.48, 0.16, 1.0)
+        colors.append(Color.from_hsv(hue, saturation, brightness))
     return colors
+
+static func _unit16(bytes: PackedByteArray, offset: int) -> float:
+    return float(int(bytes[offset]) * 256 + int(bytes[offset + 1])) / 65535.0
+
+# Open ramps for metal and string, closed ramps for moving effects. At the
+# loop boundary interpolate last→first, never jump or leave the rolled palette.
+static func sample_palette(colors: Array, u: float, cyclic: bool = false, smooth: bool = true) -> Color:
+    if colors.is_empty():
+        return Color.WHITE
+    if colors.size() == 1:
+        return colors[0]
+    var count: int = colors.size()
+    var at: float = fposmod(u, 1.0) * float(count) if cyclic else clampf(u, 0.0, 1.0) * float(count - 1)
+    var first: int = mini(floori(at), count - 1)
+    var second: int = (first + 1) % count if cyclic else mini(first + 1, count - 1)
+    var weight: float = at - float(first)
+    if smooth:
+        weight = weight * weight * (3.0 - 2.0 * weight)
+    var a: Color = colors[first]
+    var b: Color = colors[second]
+    return a.lerp(b, weight)
+
+static func animation_profile(uid: String, legacy_seed: int, channel: String) -> Dictionary:
+    var identity: String = uid.to_lower() if is_valid_uid(uid) else "legacy-%d" % legacy_seed
+    var bytes: PackedByteArray = ("ghost-girl-v188-motion:" + channel + ":" + identity).sha256_buffer()
+    return {
+        "palette_offset": _unit16(bytes, 0),
+        "palette_speed": 0.035 + _unit16(bytes, 2) * 0.22,
+        "palette_span": 0.24 + _unit16(bytes, 4) * 1.5,
+        "palette_direction": -1.0 if int(bytes[6]) % 2 == 0 else 1.0,
+        "palette_curve": int(bytes[7]) % 4,
+        "palette_pulse": 0.06 + _unit16(bytes, 8) * 0.24
+    }

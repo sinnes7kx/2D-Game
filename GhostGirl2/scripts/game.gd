@@ -190,6 +190,9 @@ func _bind_room() -> void:
 				shrine.call("restore_from_inventory", inventory)
 	if room_view.has_node("Gameplay/MoonfallReliquary"):
 		room_view.get_node("Gameplay/MoonfallReliquary").call("restore_from_inventory", inventory)
+	if room_view.has_node("Gameplay/CollectionExhibition"):
+		for display in room_view.get_node("Gameplay/CollectionExhibition").get_children():
+			display.call("bind_inventory", inventory)
 	if room_view.has_node("Gameplay/WeaponShowcases"):
 		# v1.72.2: nested floor-armory pickups must be restored too.
 		for rack in room_view.get_node("Gameplay/WeaponShowcases").find_children("*", "Node2D", true, false):
@@ -456,6 +459,8 @@ func _process(_delta: float) -> void:
 			ui.set_prompt("E  USE KEY" if inventory.has_item("moon_rose_key") else "")
 		else:
 			ui.set_prompt("E  ENTER" if bool(current_target.get("opened")) else "")
+	elif current_target.is_in_group("v182_exhibition"):
+		ui.set_prompt("E  INSPECT DISPLAY")
 	elif current_target.is_in_group("interactable"):
 		ui.set_prompt("E  INTERACT")
 	else:
@@ -516,6 +521,10 @@ func interact() -> void:
 	var target = _choose_target()
 	if target == null:
 		return
+	if target.is_in_group("v182_exhibition"):
+		var displayed: GhostItemInstance = target.call("get_displayed_item") as GhostItemInstance
+		ui.call("open_exhibition", int(target.get("slot")), displayed)
+		return
 	if target.is_in_group("moor_vigil_memory"):
 		if target.call("awaken", inventory):
 			ui.show_pickup("LAMENT AWAKENED · " + str(target.get("memory_title")), Color("e7c6e7"))
@@ -574,12 +583,12 @@ func interact() -> void:
 		return
 	if target.is_in_group("world_loot"):
 		var original: GhostItemInstance = target.get("dropped_instance") as GhostItemInstance
-		var found: GhostItemInstance = inventory.add_existing_item(original) if original != null else inventory.add_loot(target.get("item_data") as GhostItemData, int(target.get("loot_seed")), "" if str(target.get("guaranteed_quality")) == "random" else str(target.get("guaranteed_quality")))
+		var found: GhostItemInstance = inventory.add_existing_item(original) if original != null else inventory.add_loot(target.get("item_data") as GhostItemData, int(target.get("loot_seed")), "" if str(target.get("guaranteed_quality")) == "random" else str(target.get("guaranteed_quality")), room)
 		if found != null:
 			var saved_drop_id: String = str(target.get("persistent_drop_id"))
 			if not saved_drop_id.is_empty():
 				_forget_ground_record(saved_drop_id)
-			ui.show_pickup("%s · %s" % [found.quality.to_upper(), found.display_name()], found.quality_color())
+			_announce_discovery(found, "%s · %s" % [found.quality.to_upper(), found.display_name()], saved_drop_id.is_empty())
 			target.remove_from_group("interactable")
 			target.queue_free()
 		else:
@@ -590,33 +599,33 @@ func interact() -> void:
 		if id.is_empty() or inventory.has_collected(id):
 			return
 		var template: GhostItemData = target.get("item_data") as GhostItemData
-		var acquired: GhostItemInstance = inventory.add_loot(template, int(target.get("item_seed")), str(target.get("guaranteed_quality")))
+		var acquired: GhostItemInstance = inventory.add_loot(template, int(target.get("item_seed")), str(target.get("guaranteed_quality")), room)
 		if acquired == null:
 			ui.show_pickup("BACKPACK FULL")
 			return
 		inventory.collected_pickups[id] = true
 		inventory.save_game()
 		target.call("restore_from_inventory", inventory)
-		ui.show_pickup(("ARMORY FIND · " if bool(target.get("ground_display")) else "RELIC SHOWCASE · ") + acquired.display_name(), acquired.quality_color())
+		_announce_discovery(acquired, ("ARMORY FIND · " if bool(target.get("ground_display")) else "RELIC SHOWCASE · ") + acquired.display_name())
 		return
 	if target.is_in_group("treasure_chest"):
 		var chest_id: String = str(target.get("chest_id"))
 		if not inventory.has_collected(chest_id):
 			var forced: String = str(target.get("guaranteed_quality"))
 			var data: GhostItemData = target.get("loot_data") as GhostItemData
-			var rolled: GhostItemInstance = inventory.add_loot(data, int(target.get("loot_seed")), "" if forced == "random" else forced)
+			var rolled: GhostItemInstance = inventory.add_loot(data, int(target.get("loot_seed")), "" if forced == "random" else forced, room)
 			if rolled != null:
 				inventory.collected_pickups[chest_id] = true
 				inventory.save_game()
 				target.set("opened", true)
 				target.remove_from_group("interactable")
-				ui.show_pickup("%s  ·  %s" % [rolled.quality.to_upper(), rolled.display_name()], rolled.quality_color())
+				_announce_discovery(rolled, "%s  ·  %s" % [rolled.quality.to_upper(), rolled.display_name()])
 			else:
 				ui.show_pickup("BACKPACK FULL")
 		return
 	if target.is_in_group("collectible"):
 		var data: Resource = target.get("item_data") as Resource
-		var found: GhostItemInstance = inventory.add_pickup(data as GhostItemData, str(target.get("pickup_id")), int(target.get("item_seed")))
+		var found: GhostItemInstance = inventory.add_pickup(data as GhostItemData, str(target.get("pickup_id")), int(target.get("item_seed")), room)
 		if found != null:
 			ui.show_pickup(found.display_name())
 			target.queue_free()
@@ -787,7 +796,7 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 	bolt.direction = (intended - bolt.global_position).normalized() if intended.distance_squared_to(bolt.global_position) > 25.0 else aim
 	bolt.owner_rid = player.get_rid()
 	bolt.caster = player
-	bolt.damage = (35.0 if charged else 14.0) * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0)
+	bolt.damage = (35.0 if charged else 14.0) * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power()
 	if charged:
 		bolt.damage *= 1.0 + inventory.get_stat_total("charged_spell_pct") / 100.0
 	bolt.charged = charged
@@ -801,9 +810,10 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		# Cosmetic colour is entirely independent from damage/loot rolls.
 		# Each saved 128-bit appearance reproduces its own full-spectrum palette.
 		var wand_gradient: Array[Color] = wand.glow_gradient_colors()
-		bolt.effect_color = wand_gradient[0]
-		bolt.accent_color = wand_gradient[1]
-		bolt.gradient_c = wand_gradient[2]
+		bolt.full_palette = wand_gradient
+		bolt.effect_color = GhostCosmeticRNGV152.sample_palette(wand_gradient, 0.0)
+		bolt.accent_color = GhostCosmeticRNGV152.sample_palette(wand_gradient, 0.5)
+		bolt.gradient_c = GhostCosmeticRNGV152.sample_palette(wand_gradient, 1.0)
 		bolt.rare_signature = wand.visual_signature()
 		bolt.mythic_layer_variant = wand.mythic_layer_variant()
 		bolt.trail_style = int(appearance["trail"])
@@ -816,7 +826,9 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		release_fx.set_script(WAND_RELEASE_SCRIPT_V156)
 		add_child(release_fx)
 		release_fx.global_position = bolt.global_position
-		release_fx.call("configure", wand_gradient[0], wand_gradient[1], wand_gradient[2], wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
+		release_fx.call("configure", bolt.effect_color, bolt.accent_color, bolt.gradient_c, wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
+
+	_wear_cast_wand(wand)
 
 func cast_moonfall(target_position: Vector2) -> void:
 	var wand: GhostItemInstance = inventory.get_equipped("wand")
@@ -836,7 +848,7 @@ func cast_moonfall(target_position: Vector2) -> void:
 		point = obstruction.get("position", point)
 	var storm: Node2D = MOONFALL_SCENE.instantiate() as Node2D
 	storm.set("appearance_seed", wand.visual_seed())
-	storm.set("damage_per_pulse", 7.8 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0))
+	storm.set("damage_per_pulse", 7.8 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
 	storm.set("style_index", GhostWeaponFXLibrary.moonfall_style(wand.visual_seed(), wand.quality))
 	var signature: Dictionary = wand.effect_rolls()
 	storm.set("main_color", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("b9dfff"), 0.58))
@@ -844,6 +856,8 @@ func cast_moonfall(target_position: Vector2) -> void:
 	add_child(storm)
 	removed_room_items.append(storm)
 	storm.global_position = point
+
+	_wear_cast_wand(wand)
 
 func _v127_aimed_area_point(target_position: Vector2) -> Vector2:
 	# The target cannot be summoned through masonry or movable cover.
@@ -868,12 +882,14 @@ func _v127_spawn_area(scene: PackedScene, target_position: Vector2, is_astral: b
 	effect.set("primary", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("d6b9ed"), 0.48))
 	effect.set("secondary", GhostWeaponFXLibrary.color(int(signature["accent"])).lerp(Color("efd1eb"), 0.38))
 	if is_astral:
-		effect.set("pulse_damage", 10.5 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0))
+		effect.set("pulse_damage", 10.5 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
 	else:
-		effect.set("one_hit_damage", 14.0 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0))
+		effect.set("one_hit_damage", 14.0 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
 	add_child(effect)
 	removed_room_items.append(effect)
 	effect.global_position = _v127_aimed_area_point(target_position)
+
+	_wear_cast_wand(wand)
 
 func cast_astral_rain(target_position: Vector2) -> void:
 	if inventory.has_collected("v127_astral_rain_unlocked"):
@@ -887,9 +903,9 @@ func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: Stri
 	if data == null:
 		return
 	var quality: String = "" if quality_choice == "random" else quality_choice
-	var reward: GhostItemInstance = inventory.add_loot(_roll_sword_drop(data, seed_value), seed_value, quality)
+	var reward: GhostItemInstance = inventory.add_loot(_roll_sword_drop(data, seed_value), seed_value, quality, room)
 	if reward != null:
-		ui.show_pickup("%s  ·  %s" % [reward.quality.to_upper(), reward.display_name()], reward.quality_color())
+		_announce_discovery(reward, "%s  ·  %s" % [reward.quality.to_upper(), reward.display_name()])
 	else:
 		ui.show_pickup("BACKPACK FULL")
 
@@ -929,7 +945,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F6:
 			_enter_room("hollow_veil_moor")
 		elif event.physical_keycode == KEY_F7:
-			_give_weapon_test_samples()
+			if OS.is_debug_build() and event.shift_pressed:
+				_give_ethereal_trial()
+			else:
+				_give_weapon_test_samples()
 		elif event.physical_keycode == KEY_F9:
 			_enter_room("blackbrick_court")
 		elif event.physical_keycode == KEY_F10:
@@ -948,7 +967,11 @@ func spawn_world_loot(data: GhostItemData, seed_value: int, quality: String, poi
 	if data == null:
 		return
 	var drop: Node2D = WORLD_DROP_SCENE.instantiate() as Node2D
-	drop.set("item_data", _roll_sword_drop(data, seed_value))
+	var template: GhostItemData = _roll_sword_drop(data, seed_value)
+	drop.set("item_data", template)
+	# Natural non-unique weapons are rolled once, before any floor heraldry.
+	if template != null and not template.unique and template.equip_slot in ["sword", "wand"]:
+		drop.set("dropped_instance", inventory.generate_find(template, seed_value, "" if quality == "random" else quality, room))
 	drop.set("loot_seed", seed_value)
 	drop.set("guaranteed_quality", quality)
 	drop.global_position = point
@@ -959,7 +982,7 @@ func spawn_world_loot(data: GhostItemData, seed_value: int, quality: String, poi
 # transferred to the world, never rerolled or discarded on a failed placement.
 func drop_inventory_item(index: int) -> bool:
 	if not inventory.can_drop(index):
-		ui.show_pickup("QUEST TREASURES CANNOT BE DROPPED")
+		ui.show_pickup("PROTECTED OR QUEST TREASURES CANNOT BE DROPPED")
 		return false
 	var item: GhostItemInstance = inventory.get_item(index)
 	if item == null or item.definition == null or item.definition.resource_path.is_empty():
@@ -990,12 +1013,12 @@ func drop_inventory_item(index: int) -> bool:
 	return true
 
 func _ground_record(item: GhostItemInstance, key: String, room_name: String, point: Vector2) -> Dictionary:
-	return {
-		"id": key, "room": room_name,
-		"resource": item.definition.resource_path, "seed": item.item_seed,
-		"quality": item.quality, "socketed": item.socketed.duplicate(true),
-		"x": point.x, "y": point.y
-	}
+	var record: Dictionary = inventory._serialize_item(item, Vector2i(-1,-1))
+	record["id"] = key
+	record["room"] = room_name
+	record["x"] = point.x
+	record["y"] = point.y
+	return record
 
 func _save_ground_records() -> void:
 	var output: FileAccess = FileAccess.open(GROUND_SAVE_FILE, FileAccess.WRITE)
@@ -1029,10 +1052,9 @@ func _spawn_saved_ground_records() -> void:
 		var data: GhostItemData = load(res_path) as GhostItemData
 		if data == null:
 			continue
-		var item: GhostItemInstance = GhostItemGenerator.create(data, int(record.get("seed", 0)), str(record.get("quality", "normal")))
-		for socket in record.get("socketed", []):
-			if socket is Dictionary and item.socketed.size() < item.sockets:
-				item.socketed.append(socket.duplicate(true))
+		var item: GhostItemInstance = inventory._deserialize_item(record)
+		if item == null:
+			continue
 		var ground: Node2D = WORLD_DROP_SCENE.instantiate() as Node2D
 		if ground == null:
 			continue
@@ -1129,3 +1151,44 @@ func _restore_world_progress() -> void:
 	var coords: Variant = saved.get("last_shrine_point", [])
 	if coords is Array and coords.size() >= 2:
 		last_shrine_point = Vector2(float(coords[0]), float(coords[1]))
+
+func _ethereal_wand_power() -> float:
+	var wand: GhostItemInstance = inventory.get_equipped("wand")
+	return 1.25 if wand != null and wand.ethereal else 1.0
+
+func _wear_cast_wand(wand: GhostItemInstance) -> void:
+	if wand == null or not wand.ethereal:
+		return
+	# One cost per successful spell creation, never per pulse or target.
+	if inventory.wear_ethereal(wand):
+		ui.show_pickup("ETHEREAL WAND BROKEN · " + wand.definition.display_name, Color("d9b6cf"))
+	elif wand.durability == 10:
+		ui.show_pickup("ETHEREAL WAND · 10 CASTS REMAIN", Color("d9b6cf"))
+
+# Explicit debug trial, never mutates an existing collectible.
+func _give_ethereal_trial() -> void:
+	if not OS.is_debug_build():
+		return
+	var template: GhostItemData = load("res://items/rosemirror_twinblade_v170.tres") as GhostItemData
+	var sample: GhostItemInstance = GhostItemGenerator.create(template, 184001, "rare")
+	sample.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
+	sample.make_ethereal()
+	sample.durability = 3
+	if inventory.add_existing_item(sample) != null:
+		ui.show_pickup("ETHEREAL TEST TWINBLADE · 3 USES · OPEN I", Color("c1d8e4"))
+	else:
+		ui.show_pickup("BACKPACK FULL")
+
+func _announce_discovery(item: GhostItemInstance, ordinary: String, natural: bool = true) -> void:
+	var label_text: String = item.discovery_label() if natural else ""
+	if label_text.is_empty():
+		ui.show_pickup(ordinary, item.quality_color())
+		return
+	ui.show_pickup(label_text + " · " + item.display_name(), Color("d5c0eb"))
+	var chime: AudioStreamPlayer = AudioStreamPlayer.new()
+	chime.stream = preload("res://assets/audio/hook_chime.wav")
+	chime.volume_db = -16.0
+	chime.pitch_scale = 0.84
+	add_child(chime)
+	chime.finished.connect(chime.queue_free)
+	chime.play()

@@ -6,6 +6,10 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
+const SCYTHE_V190 = preload("res://scripts/scythe_art_v190.gd")
+const SCYTHE_RIG_V190 = preload("res://scripts/scythe_rig_v190.gd")
+const FRAME_GUARD_V186 = preload("res://scripts/frame_guard_v186.gd")
+const DAGGER_THRUST_V186 = preload("res://scripts/dagger_thrust_v186.gd")
 const V172_POSE_SCRIPT = preload("res://scripts/v172_weapon_pose.gd")
 const V173_DUAL_DAGGER_SCRIPT = preload("res://scripts/v173_dual_daggers.gd")
 const V174_DUAL_SWORD_SCRIPT = preload("res://scripts/v174_dual_swords.gd")
@@ -34,9 +38,9 @@ const HOOK_GESTURE_TIME: float = 0.42
 const SPELL_CAST_DURATION: float = 0.48
 const SPELL_SHOT_TIME: float = 0.22
 const MAX_STAMINA: float = 100.0
-const LIGHT_ATTACK_COST: float = 18.0
-const HEAVY_ATTACK_COST: float = 38.0
-const DODGE_COST: float = 31.0
+const LIGHT_ATTACK_COST: float = 14.0
+const HEAVY_ATTACK_COST: float = 30.0
+const DODGE_COST: float = 24.0
 const DODGE_DURATION: float = 0.33
 const DODGE_SPEED: float = 362.0
 const JUMP_COST: float = 16.0
@@ -50,7 +54,7 @@ const HEAL_WINDUP: float = 0.63
 const LOCK_RANGE: float = 620.0
 const INPUT_BUFFER: float = 0.38
 const AIR_LANDING_BUFFER: float = 0.19  # Accept dodge/follow-up just before feet touch the ground.
-const STAMINA_RECOVERY_WAIT: float = 0.76
+const STAMINA_RECOVERY_WAIT: float = 0.50
 
 
 var world
@@ -148,6 +152,12 @@ func _ready() -> void:
 	V173_DUAL_DAGGER_SCRIPT.install_animations(body_art)
 	V174_DUAL_SWORD_SCRIPT.install_animations(body_art)
 	V175_CLEAN_WEAPON_BODY.install(body_art)
+	DAGGER_THRUST_V186.install(body_art)
+	FRAME_GUARD_V186.install(body_art)
+	SCYTHE_V190.install(body_art)
+	var scythe_rig: Node2D = SCYTHE_RIG_V190.new()
+	scythe_rig.name = "ScytheRigV190"
+	body_art.add_child(scythe_rig)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
@@ -874,7 +884,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
 	if holding_sword:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-			attack_animation = "attack_" + _weapon_art_style() + "_heavy_" + facing_name
+			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if active_attack_style in ["dagger", "dual_dagger"] else "_heavy_") + facing_name
 		else:
 			attack_animation = "attack_sword_heavy_" + facing_name
 	else:
@@ -1129,15 +1139,16 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	arrow.set("procedural_look", bow_look["procedural"])
 	# Match the physical arrow's light to the equipped bow's saved 128-bit look.
 	var shot_gradient: Array[Color] = equipped.glow_gradient_colors()
-	arrow.set("glow_a", shot_gradient[0])
-	arrow.set("glow_b", shot_gradient[1])
-	arrow.set("glow_c", shot_gradient[2])
+	arrow.set("full_palette", shot_gradient)
+	arrow.set("glow_a", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
+	arrow.set("glow_b", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.5))
+	arrow.set("glow_c", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
 	var release: Node2D = Node2D.new()
 	release.set_script(BOW_RELEASE_FX)
 	release.set("direction", heading)
 	release.set("charged", charged)
-	release.set("ink", GhostWeaponFXLibrary.color(int(rolls["color"])))
-	release.set("accent", GhostWeaponFXLibrary.color(int(rolls["accent"])))
+	release.set("ink", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
+	release.set("accent", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
 	release.set("rare_variant", visual_variant)
 	root.add_child(release)
 	release.global_position = global_position + Vector2(0, -39) + heading.normalized() * 26.0
@@ -1211,7 +1222,9 @@ func _begin_attack(heavy: bool) -> void:
 		attack_animation = "attack_counter_" + facing_name
 	elif holding_sword:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-			if active_attack_style == "dual_dagger" and not heavy:
+			if active_attack_style in ["dagger", "dual_dagger"] and (heavy or combo_step == 2 or counter_window > 0.0):
+				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
+			elif active_attack_style == "dual_dagger" and not heavy:
 				attack_animation = "attack_dual_dagger_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
 			elif active_attack_style == "dual_sword" and not heavy:
 				attack_animation = "attack_dual_sword_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
@@ -1394,6 +1407,12 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		rally_pool -= gained
 		health = minf(maximum_health(), health + gained)
 		world.ui.set_health(health, maximum_health())
+
+	if (struck or struck_world) and sword != null and sword.ethereal:
+		if world.inventory.wear_ethereal(sword):
+			world.ui.show_pickup("ETHEREAL WEAPON BROKEN · " + sword.definition.display_name, Color("d9b6cf"))
+		elif sword.durability == 10:
+			world.ui.show_pickup("ETHEREAL WEAPON · 10 USES REMAIN", Color("d9b6cf"))
 
 func on_world_impact(point: Vector2, strength: float) -> void:
 	# Physical sources can shake the camera, but only if close enough to matter.

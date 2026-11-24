@@ -1,7 +1,7 @@
 [
   {
     "name": "attack_light_back",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v12/attack_light_back_00.png",
@@ -16,7 +16,7 @@
   },
   {
     "name": "attack_light_front",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v12/attack_light_front_00.png",
@@ -31,7 +31,7 @@
   },
   {
     "name": "attack_light_left",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v12/attack_light_left_00.png",
@@ -46,7 +46,7 @@
   },
   {
     "name": "attack_light_right",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v12/attack_light_right_00.png",
@@ -61,67 +61,67 @@
   },
   {
     "name": "attack_heavy_back",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_back_00.png",
-      "assets/ghost/combat_v12/attack_heavy_back_01.png",
-      "assets/ghost/combat_v12/attack_heavy_back_02.png",
-      "assets/ghost/combat_v12/attack_heavy_back_03.png",
-      "assets/ghost/combat_v12/attack_heavy_back_04.png",
-      "assets/ghost/combat_v12/attack_heavy_back_05.png",
-      "assets/ghost/combat_v12/attack_heavy_back_06.png",
-      "assets/ghost/combat_v12/attack_heavy_back_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
     ]
   },
   {
     "name": "attack_heavy_front",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_front_00.png",
-      "assets/ghost/combat_v12/attack_heavy_front_01.png",
-      "assets/ghost/combat_v12/attack_heavy_front_02.png",
-      "assets/ghost/combat_v12/attack_heavy_front_03.png",
-      "assets/ghost/combat_v12/attack_heavy_front_04.png",
-      "assets/ghost/combat_v12/attack_heavy_front_05.png",
-      "assets/ghost/combat_v12/attack_heavy_front_06.png",
-      "assets/ghost/combat_v12/attack_heavy_front_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
     ]
   },
   {
     "name": "attack_heavy_left",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_left_00.png",
-      "assets/ghost/combat_v12/attack_heavy_left_01.png",
-      "assets/ghost/combat_v12/attack_heavy_left_02.png",
-      "assets/ghost/combat_v12/attack_heavy_left_03.png",
-      "assets/ghost/combat_v12/attack_heavy_left_04.png",
-      "assets/ghost/combat_v12/attack_heavy_left_05.png",
-      "assets/ghost/combat_v12/attack_heavy_left_06.png",
-      "assets/ghost/combat_v12/attack_heavy_left_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
     ]
   },
   {
     "name": "attack_heavy_right",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_right_00.png",
-      "assets/ghost/combat_v12/attack_heavy_right_01.png",
-      "assets/ghost/combat_v12/attack_heavy_right_02.png",
-      "assets/ghost/combat_v12/attack_heavy_right_03.png",
-      "assets/ghost/combat_v12/attack_heavy_right_04.png",
-      "assets/ghost/combat_v12/attack_heavy_right_05.png",
-      "assets/ghost/combat_v12/attack_heavy_right_06.png",
-      "assets/ghost/combat_v12/attack_heavy_right_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
     ]
   },
   {
     "name": "dodge_back",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/dodge_back_00.png",
@@ -144,7 +144,7 @@
   },
   {
     "name": "dodge_front",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/dodge_front_00.png",
@@ -167,7 +167,7 @@
   },
   {
     "name": "dodge_left",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/dodge_left_00.png",
@@ -190,7 +190,7 @@
   },
   {
     "name": "dodge_right",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/dodge_right_00.png",
@@ -213,7 +213,7 @@
   },
   {
     "name": "hurt_back",
-    "speed": 15.0,
+    "speed": 15,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/hurt_back_00.png",
@@ -228,7 +228,7 @@
   },
   {
     "name": "hurt_front",
-    "speed": 15.0,
+    "speed": 15,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/hurt_front_00.png",
@@ -243,7 +243,7 @@
   },
   {
     "name": "hurt_left",
-    "speed": 15.0,
+    "speed": 15,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/hurt_left_00.png",
@@ -258,7 +258,7 @@
   },
   {
     "name": "hurt_right",
-    "speed": 15.0,
+    "speed": 15,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/hurt_right_00.png",
@@ -273,7 +273,7 @@
   },
   {
     "name": "attack_sword_front",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_sword_front_00.png",
@@ -296,7 +296,7 @@
   },
   {
     "name": "attack_sword_back",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_sword_back_00.png",
@@ -319,7 +319,7 @@
   },
   {
     "name": "attack_sword_left",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_sword_left_00.png",
@@ -342,7 +342,7 @@
   },
   {
     "name": "attack_sword_right",
-    "speed": 20.0,
+    "speed": 20,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_sword_right_00.png",
@@ -365,7 +365,7 @@
   },
   {
     "name": "hook_launch_front",
-    "speed": 24.0,
+    "speed": 24,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/hook_launch_front_00.png",
@@ -388,7 +388,7 @@
   },
   {
     "name": "hook_launch_back",
-    "speed": 24.0,
+    "speed": 24,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/hook_launch_back_00.png",
@@ -411,7 +411,7 @@
   },
   {
     "name": "attack_light_alt_front",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_light_alt_front_00.png",
@@ -426,7 +426,7 @@
   },
   {
     "name": "attack_light_alt_back",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_light_alt_back_00.png",
@@ -441,7 +441,7 @@
   },
   {
     "name": "attack_light_alt_left",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_light_alt_left_00.png",
@@ -456,7 +456,7 @@
   },
   {
     "name": "attack_light_alt_right",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_light_alt_right_00.png",
@@ -471,7 +471,7 @@
   },
   {
     "name": "attack_counter_front",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_counter_front_00.png",
@@ -486,7 +486,7 @@
   },
   {
     "name": "attack_counter_back",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_counter_back_00.png",
@@ -501,7 +501,7 @@
   },
   {
     "name": "attack_counter_left",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_counter_left_00.png",
@@ -516,7 +516,7 @@
   },
   {
     "name": "attack_counter_right",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v13/attack_counter_right_00.png",
@@ -531,7 +531,7 @@
   },
   {
     "name": "attack_unarmed_light_front",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
@@ -546,7 +546,7 @@
   },
   {
     "name": "attack_unarmed_light_back",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
@@ -561,7 +561,7 @@
   },
   {
     "name": "attack_unarmed_light_left",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
@@ -576,7 +576,7 @@
   },
   {
     "name": "attack_unarmed_light_right",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
@@ -591,67 +591,67 @@
   },
   {
     "name": "attack_unarmed_heavy_front",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
     ]
   },
   {
     "name": "attack_unarmed_heavy_back",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
     ]
   },
   {
     "name": "attack_unarmed_heavy_left",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
     ]
   },
   {
     "name": "attack_unarmed_heavy_right",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
     ]
   },
   {
     "name": "attack_sword_light_front",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_sword_light_front_00.png",
@@ -666,7 +666,7 @@
   },
   {
     "name": "attack_sword_light_back",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_sword_light_back_00.png",
@@ -681,7 +681,7 @@
   },
   {
     "name": "attack_sword_light_left",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_sword_light_left_00.png",
@@ -696,7 +696,7 @@
   },
   {
     "name": "attack_sword_light_right",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
       "assets/ghost/combat_v14/attack_sword_light_right_00.png",
@@ -711,67 +711,67 @@
   },
   {
     "name": "attack_sword_heavy_front",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_front_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_front_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_07.png"
     ]
   },
   {
     "name": "attack_sword_heavy_back",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_back_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_back_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_07.png"
     ]
   },
   {
     "name": "attack_sword_heavy_left",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_left_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_left_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_07.png"
     ]
   },
   {
     "name": "attack_sword_heavy_right",
-    "speed": 16.0,
+    "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_right_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_right_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_07.png"
     ]
   },
   {
     "name": "sword_idle_front",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_idle_front_00.png",
@@ -786,7 +786,7 @@
   },
   {
     "name": "sword_walk_front",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_walk_front_00.png",
@@ -801,7 +801,7 @@
   },
   {
     "name": "sword_idle_back",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_idle_back_00.png",
@@ -816,7 +816,7 @@
   },
   {
     "name": "sword_walk_back",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_walk_back_00.png",
@@ -831,7 +831,7 @@
   },
   {
     "name": "sword_idle_left",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_idle_left_00.png",
@@ -846,7 +846,7 @@
   },
   {
     "name": "sword_walk_left",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_walk_left_00.png",
@@ -861,7 +861,7 @@
   },
   {
     "name": "sword_idle_right",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_idle_right_00.png",
@@ -876,7 +876,7 @@
   },
   {
     "name": "sword_walk_right",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "textures": [
       "assets/ghost/combat_v14/sword_walk_right_00.png",
@@ -891,7 +891,7 @@
   },
   {
     "name": "attack_scythe_light_front",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -901,7 +901,7 @@
   },
   {
     "name": "attack_scythe_light_back",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -911,7 +911,7 @@
   },
   {
     "name": "attack_scythe_light_left",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -921,7 +921,7 @@
   },
   {
     "name": "attack_scythe_light_right",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -931,7 +931,7 @@
   },
   {
     "name": "attack_scythe_heavy_front",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -941,7 +941,7 @@
   },
   {
     "name": "attack_scythe_heavy_back",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -951,7 +951,7 @@
   },
   {
     "name": "attack_scythe_heavy_left",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -961,7 +961,7 @@
   },
   {
     "name": "attack_scythe_heavy_right",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_combat_2048x1760.png",
     "frame_width": 256,
@@ -971,7 +971,7 @@
   },
   {
     "name": "scythe_idle_front",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -981,7 +981,7 @@
   },
   {
     "name": "scythe_idle_back",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -991,7 +991,7 @@
   },
   {
     "name": "scythe_idle_left",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1001,7 +1001,7 @@
   },
   {
     "name": "scythe_idle_right",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1011,7 +1011,7 @@
   },
   {
     "name": "scythe_walk_front",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1021,7 +1021,7 @@
   },
   {
     "name": "scythe_walk_back",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1031,7 +1031,7 @@
   },
   {
     "name": "scythe_walk_left",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1041,7 +1041,7 @@
   },
   {
     "name": "scythe_walk_right",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/scythe_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1051,7 +1051,7 @@
   },
   {
     "name": "attack_halberd_light_front",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1061,7 +1061,7 @@
   },
   {
     "name": "attack_halberd_light_back",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1071,7 +1071,7 @@
   },
   {
     "name": "attack_halberd_light_left",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1081,7 +1081,7 @@
   },
   {
     "name": "attack_halberd_light_right",
-    "speed": 14.0,
+    "speed": 14,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1091,7 +1091,7 @@
   },
   {
     "name": "attack_halberd_heavy_front",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1101,7 +1101,7 @@
   },
   {
     "name": "attack_halberd_heavy_back",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1111,7 +1111,7 @@
   },
   {
     "name": "attack_halberd_heavy_left",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1121,7 +1121,7 @@
   },
   {
     "name": "attack_halberd_heavy_right",
-    "speed": 11.0,
+    "speed": 11,
     "loop": false,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_combat_2048x1760.png",
     "frame_width": 256,
@@ -1131,7 +1131,7 @@
   },
   {
     "name": "halberd_idle_front",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1141,7 +1141,7 @@
   },
   {
     "name": "halberd_idle_back",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1151,7 +1151,7 @@
   },
   {
     "name": "halberd_idle_left",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1161,7 +1161,7 @@
   },
   {
     "name": "halberd_idle_right",
-    "speed": 5.0,
+    "speed": 5,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1171,7 +1171,7 @@
   },
   {
     "name": "halberd_walk_front",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1181,7 +1181,7 @@
   },
   {
     "name": "halberd_walk_back",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1191,7 +1191,7 @@
   },
   {
     "name": "halberd_walk_left",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1201,7 +1201,7 @@
   },
   {
     "name": "halberd_walk_right",
-    "speed": 8.0,
+    "speed": 8,
     "loop": true,
     "atlas": "assets/ghost/weapon_baked_v122/halberd_locomotion_2048x1760.png",
     "frame_width": 256,
@@ -1296,7 +1296,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1306,7 +1306,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1316,7 +1316,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1326,7 +1326,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1336,7 +1336,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1346,7 +1346,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1356,7 +1356,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1366,7 +1366,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1456,7 +1456,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1466,7 +1466,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1476,7 +1476,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1486,7 +1486,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 14.0,
+    "speed": 14,
     "loop": false
   },
   {
@@ -1496,7 +1496,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1506,7 +1506,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1516,7 +1516,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1526,7 +1526,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": false
   },
   {
@@ -1536,7 +1536,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1546,7 +1546,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1556,7 +1556,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1566,7 +1566,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1576,7 +1576,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1586,7 +1586,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1596,7 +1596,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1606,7 +1606,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1616,7 +1616,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1626,7 +1626,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1636,7 +1636,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1646,7 +1646,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1656,7 +1656,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1666,7 +1666,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1676,7 +1676,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1686,7 +1686,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 18.0,
+    "speed": 18,
     "loop": false
   },
   {
@@ -1696,7 +1696,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1706,7 +1706,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1716,7 +1716,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1726,7 +1726,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1736,7 +1736,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1746,7 +1746,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1756,7 +1756,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1766,7 +1766,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1776,7 +1776,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1786,7 +1786,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1796,7 +1796,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1806,7 +1806,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1816,7 +1816,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1826,7 +1826,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1836,7 +1836,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1846,7 +1846,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1856,7 +1856,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1866,7 +1866,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1876,7 +1876,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1886,7 +1886,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -1896,7 +1896,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1906,7 +1906,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1916,7 +1916,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1926,7 +1926,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -1936,7 +1936,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1946,7 +1946,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1956,7 +1956,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1966,7 +1966,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1976,7 +1976,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1986,7 +1986,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -1996,7 +1996,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2006,7 +2006,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2016,7 +2016,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2026,7 +2026,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2036,7 +2036,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2046,7 +2046,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2056,7 +2056,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -2066,7 +2066,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -2076,7 +2076,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -2086,7 +2086,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 13.0,
+    "speed": 13,
     "loop": true
   },
   {
@@ -2096,7 +2096,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2106,7 +2106,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2116,7 +2116,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2126,7 +2126,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2136,7 +2136,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2146,7 +2146,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2156,7 +2156,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2166,328 +2166,488 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
     "name": "twinblade_idle_front",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 0,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png"
+    ]
   },
   {
     "name": "twinblade_idle_back",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 1,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png"
+    ]
   },
   {
     "name": "twinblade_idle_left",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 2,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png"
+    ]
   },
   {
     "name": "twinblade_idle_right",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 3,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png"
+    ]
   },
   {
     "name": "twinblade_walk_front",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 4,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png"
+    ]
   },
   {
     "name": "twinblade_walk_back",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 5,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png"
+    ]
   },
   {
     "name": "twinblade_walk_left",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 6,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png"
+    ]
   },
   {
     "name": "twinblade_walk_right",
-    "atlas": "assets/equipment/weapons_v170/twinblade_locomotion_2048x1760.png",
-    "row": 7,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png"
+    ]
   },
   {
     "name": "attack_twinblade_light_front",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 0,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
+    ]
   },
   {
     "name": "attack_twinblade_light_back",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 1,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
+    ]
   },
   {
     "name": "attack_twinblade_light_left",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 2,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
+    ]
   },
   {
     "name": "attack_twinblade_light_right",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 3,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
+    ]
   },
   {
     "name": "attack_twinblade_heavy_front",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 4,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
+    ]
   },
   {
     "name": "attack_twinblade_heavy_back",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 5,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
+    ]
   },
   {
     "name": "attack_twinblade_heavy_left",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 6,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
+    ]
   },
   {
     "name": "attack_twinblade_heavy_right",
-    "atlas": "assets/equipment/weapons_v170/twinblade_combat_2048x1760.png",
-    "row": 7,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_idle_front",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 0,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_idle_back",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 1,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_idle_left",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 2,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_idle_right",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 3,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 10.0,
-    "loop": true
+    "speed": 10,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_walk_front",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 4,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_walk_back",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 5,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_walk_left",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 6,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png"
+    ]
   },
   {
     "name": "rosemirror_twinblade_walk_right",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_locomotion_2048x1760.png",
-    "row": 7,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 13.0,
-    "loop": true
+    "speed": 13,
+    "loop": true,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_light_front",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 0,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_light_back",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 1,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_light_left",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 2,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_light_right",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 3,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_heavy_front",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 4,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_heavy_back",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 5,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_heavy_left",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 6,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
+    ]
   },
   {
     "name": "attack_rosemirror_twinblade_heavy_right",
-    "atlas": "assets/equipment/weapons_v170/rosemirror_twinblade_combat_2048x1760.png",
-    "row": 7,
-    "frame_count": 8,
-    "frame_width": 256,
-    "frame_height": 220,
-    "speed": 17.0,
-    "loop": false
+    "speed": 17,
+    "loop": false,
+    "textures": [
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
+    ]
   },
   {
     "name": "nocturne_dagger_idle_front",
@@ -2496,7 +2656,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2506,7 +2666,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2516,7 +2676,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2526,7 +2686,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2536,7 +2696,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2546,7 +2706,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2556,7 +2716,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2566,7 +2726,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2576,7 +2736,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2586,7 +2746,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2596,7 +2756,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2606,7 +2766,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2616,7 +2776,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2626,7 +2786,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2636,7 +2796,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2646,7 +2806,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2656,7 +2816,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2666,7 +2826,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2676,7 +2836,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2686,7 +2846,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 10.0,
+    "speed": 10,
     "loop": true
   },
   {
@@ -2696,7 +2856,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2706,7 +2866,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2716,7 +2876,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2726,7 +2886,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": true
   },
   {
@@ -2736,7 +2896,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2746,7 +2906,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2756,7 +2916,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2766,7 +2926,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 16.0,
+    "speed": 16,
     "loop": false
   },
   {
@@ -2776,7 +2936,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2786,7 +2946,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2796,7 +2956,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   },
   {
@@ -2806,7 +2966,7 @@
     "frame_count": 8,
     "frame_width": 256,
     "frame_height": 220,
-    "speed": 12.0,
+    "speed": 12,
     "loop": false
   }
 ]

@@ -16,6 +16,23 @@ var rare_visual_mod: int = -1
 # In-memory debug inspection only. Intentionally omitted from save dictionaries,
 # cosmetic snapshots and normal RNG; never changes genuine rare rolls.
 var debug_visual_override: int = -1
+var debug_mythic_variant: int = -1
+var collector_favorite: bool = false
+var collector_locked: bool = false
+const REGIONAL = preload("res://scripts/regional_treasures_v183.gd")
+var origin_room: String = ""
+var regional_rank: int = 0
+# Physical Ethereal condition, not the cosmetic rarity tier.
+var ethereal: bool = false
+var durability: int = 0
+var max_durability: int = 0
+var exhibition_slot: int = -1 # Only assigned while in collection vault.
+var debug_collector_tier: int = -1
+var debug_color_mode: int = -1
+var debug_glow_motif: int = -1
+var debug_surface_mode: int = -1
+var debug_forge_guard: int = -1
+var debug_forge_grip: int = -1
 # Favorite presets store exact appearance fields, including existing altar rolls.
 var saved_cosmetic_looks: Array[Dictionary] = []
 var palette_index: int = 0
@@ -61,6 +78,8 @@ func display_name() -> String:
 	if definition == null:
 		return "Unknown"
 	var base: String = definition.display_name
+	if ethereal:
+		base = ("Broken Ethereal " if is_broken() else "Ethereal ") + base
 	match quality:
 		"magic":
 			if affixes.size() > 0:
@@ -80,7 +99,7 @@ func weapon_damage() -> float:
 		return 0.0
 	var damage_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	damage_rng.seed = absi(item_seed) + 612746
-	return snappedf(damage_rng.randf_range(definition.min_weapon_damage, definition.max_weapon_damage), 0.1)
+	return 0.0 if is_broken() else snappedf(damage_rng.randf_range(definition.min_weapon_damage, definition.max_weapon_damage) * (1.5 if ethereal else 1.0), 0.1)
 
 func weapon_style() -> String:
 	if definition != null and get_slot() == "sword":
@@ -129,10 +148,10 @@ func weapon_reach() -> float:
 		_: return 106.0
 
 func weapon_base_color() -> Color:
-	return GhostPaletteLibrary.color_for_slot("sword", weapon_base_index if weapon_base_index >= 0 else palette_index)
+	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword"), 0.5)
 
 func weapon_gradient_color() -> Color:
-	return GhostPaletteLibrary.weapon_gradient_color(weapon_gradient_index)
+	return COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical-sword-accent"), 0.5)
 
 func weapon_appearance_labels() -> Array[String]:
 	return [GhostPaletteLibrary.palette_label("sword", weapon_base_index if weapon_base_index >= 0 else palette_index),
@@ -229,17 +248,19 @@ func apply_cosmetic_uid(uid: String) -> void:
 
 # V1.53: complete-spectrum, per-look gradients. Never change the combat seed.
 func glow_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_colors(cosmetic_uid, visual_seed())
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel())
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
 # Saving/restoring the cosmetic UID reproduces both without new schema fields.
 func bow_limb_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs")
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel())
 
 func bow_string_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string")
+	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string:" + effect_palette_channel())
 
 func mythic_layer_variant() -> int:
+	if OS.is_debug_build() and debug_mythic_variant >= 0:
+		return clampi(debug_mythic_variant, 0, 3)
 	# Four reproducible, visual-only signature layers. No combat RNG draws.
 	var material: String = cosmetic_uid if COSMETIC_RNG.is_valid_uid(cosmetic_uid) else "legacy-%d" % visual_seed()
 	var digest: PackedByteArray = ("ghost-girl-v168-mythic-layer:" + material).sha256_buffer()
@@ -248,6 +269,9 @@ func mythic_layer_variant() -> int:
 func visual_signature() -> int:
 	if OS.is_debug_build() and debug_visual_override >= 0:
 		return debug_visual_override
+	return genuine_visual_signature()
+
+func genuine_visual_signature() -> int:
 	if rare_visual_mod >= 0:
 		return rare_visual_mod
 	var base_sig: int = COSMETIC_RNG.signature(cosmetic_uid, get_slot())
@@ -384,26 +408,47 @@ func effect_description() -> String:
 func collector_appearance() -> Dictionary:
 	if get_slot() not in ["sword", "wand"]:
 		return {}
-	return COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	var look: Dictionary = REGIONAL.apply(COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed()), origin_room, regional_rank)
+	if OS.is_debug_build():
+		if debug_collector_tier >= 0:
+			look["material"] = debug_collector_tier
+			look["particle_tier"] = debug_collector_tier
+		if debug_color_mode >= 0:
+			look["color_mode"] = debug_color_mode
+		if debug_glow_motif >= 0:
+			look["glow_motif"] = debug_glow_motif
+		if debug_surface_mode >= 0:
+			look["surface_mode"] = clampi(debug_surface_mode, 0, 6)
+		if debug_forge_guard >= 0:
+			look["forge_guard"] = clampi(debug_forge_guard, 0, 7)
+		if debug_forge_grip >= 0:
+			look["forge_grip"] = clampi(debug_forge_grip, 0, 5)
+	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
+	return look
 
 func collector_material_label() -> String:
 	var look: Dictionary = collector_appearance()
 	return COLLECTOR_LOOK.rarity_label(look) if not look.is_empty() else ""
 
 func palette_color() -> Color:
-	return weapon_base_color() if get_slot() == "sword" else GhostPaletteLibrary.color_for_slot(get_slot(), palette_index)
+	return weapon_base_color() if get_slot() == "sword" else COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical:" + get_slot()), 0.5)
 
 func palette_name() -> String:
 	return GhostPaletteLibrary.palette_label(get_slot(), weapon_base_index if get_slot() == "sword" and weapon_base_index >= 0 else palette_index)
 
 func all_stats() -> Dictionary:
 	var totals: Dictionary = {}
+	if is_broken():
+		return totals
 	if definition != null and not definition.stat_id.is_empty():
 		totals[definition.stat_id] = stat_value
 	for affix in affixes:
 		var stat: String = str(affix.get("stat", ""))
 		if not stat.is_empty():
 			totals[stat] = float(totals.get(stat, 0.0)) + float(affix.get("value", 0.0))
+	if ethereal:
+		for key in totals.keys():
+			totals[key] = snappedf(float(totals[key]) * 1.25, 0.1)
 	for jewel in socketed:
 		var stat: String = str(jewel.get("stat", ""))
 		if not stat.is_empty():
@@ -445,3 +490,82 @@ func details(advanced: bool = false) -> String:
 			if get_slot() == "wand":
 				lines.append("Spell: " + GhostWeaponFXLibrary.spell_form_name(int(fx["form"])))
 	return "\n".join(lines)
+
+func stamp_origin(room_id: String) -> void:
+	if not origin_room.is_empty() or room_id.is_empty() or get_slot() not in ["sword", "wand"]:
+		return
+	origin_room = room_id
+	regional_rank = REGIONAL.roll_rank(room_id, cosmetic_uid, visual_seed())
+
+func regional_imprint_label() -> String:
+	return REGIONAL.imprint_label(origin_room, regional_rank)
+
+func origin_label() -> String:
+	return REGIONAL.origin_label(origin_room) if not origin_room.is_empty() else ""
+
+# Only independently drawn weapon families are eligible in this release.
+# Never make Ghost Girl's body transparent to imitate a spectral weapon.
+func supports_ethereal() -> bool:
+	return get_slot() == "wand" or (get_slot() == "sword" and weapon_style() in ["twinblade", "dual_dagger", "dual_sword", "scythe"])
+
+func roll_ethereal() -> void:
+	if not supports_ethereal() or ethereal:
+		return
+	if COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "v184-ethereal-condition") < 500:
+		make_ethereal()
+
+func make_ethereal() -> void:
+	if not supports_ethereal() or ethereal:
+		return
+	ethereal = true
+	max_durability = 80 + COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "v184-durability") % 61
+	durability = max_durability
+
+func is_broken() -> bool:
+	return ethereal and durability <= 0
+
+func weapon_opacity() -> float:
+	return 0.28 if is_broken() else (0.52 if ethereal else 1.0)
+
+func wear_once() -> bool:
+	if not ethereal or is_broken():
+		return false
+	durability = maxi(0, durability - 1)
+	return is_broken()
+
+# Discovery feedback is based exclusively on genuine persisted properties.
+func discovery_label() -> String:
+	if get_slot() not in ["sword", "wand"]:
+		return ""
+	var genuine: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	var tier: int = maxi(int(genuine["material"]), int(genuine["particle_tier"]))
+	if tier == 6:
+		return "ANOMALY DISCOVERED"
+	var signature: int = genuine_visual_signature()
+	if signature == 5:
+		return "MOONFALL DISCOVERED"
+	if signature == 4:
+		return "MYTHIC DISCOVERED"
+	if tier == 5:
+		return "ETHEREAL APPEARANCE DISCOVERED"
+	if regional_rank == 3:
+		return "RADIANT REGIONAL DISCOVERY"
+	if ethereal:
+		return "ETHEREAL WEAPON DISCOVERED"
+	if tier == 4 or signature >= 2:
+		return "EXTRAORDINARY DISCOVERY"
+	return ""
+
+# Each special effect gets an independent color domain. Debug tier/signature
+# changes select the matching domain, not a fixed color set.
+func effect_palette_channel() -> String:
+	var signature: int = visual_signature()
+	var tier: int = COLLECTOR_LOOK.tier_for_ticket(COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "material-rarity"))
+	var particles: int = COLLECTOR_LOOK.tier_for_ticket(COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "particle-rarity"))
+	if OS.is_debug_build() and debug_collector_tier >= 0:
+		tier = debug_collector_tier
+		particles = debug_collector_tier
+	return "effect:%d:%d:%d:%d" % [signature, tier, particles, mythic_layer_variant() if signature == 4 else 0]
+
+func effect_palette_motion() -> Dictionary:
+	return COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel())

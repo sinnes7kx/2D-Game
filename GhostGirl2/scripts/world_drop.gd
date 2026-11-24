@@ -21,6 +21,7 @@ var near_player: bool = false
 # Ground-dropped gear keeps its original affixes, quality and socket contents.
 var dropped_instance: GhostItemInstance = null
 var persistent_drop_id: String = ""
+var discovery_title: String = ""
 
 func _ready() -> void:
     if not Engine.is_editor_hint():
@@ -31,6 +32,12 @@ func _ready() -> void:
         if sample != null:
             aura = sample.quality_color()
             display_title = sample.display_name().to_upper()
+            if dropped_instance != null and persistent_drop_id.is_empty():
+                discovery_title = sample.discovery_label()
+                if not discovery_title.is_empty():
+                    var gradient: Array[Color] = sample.glow_gradient_colors()
+                    spectral_color = gradient[0]
+                    spectral_accent = gradient[1]
             # Floor loot reveals the item's rolled *cosmetic signature* before
             # pickup, but never changes rarity or its drop probability.
             if sample.get_slot() in ["sword", "wand"]:
@@ -117,6 +124,17 @@ func _draw() -> void:
             _: # Eclipse halo.
                 draw_arc(center, 36.0, phase, phase + PI * 1.70, 40, secondary, 2.6, true)
                 draw_arc(center + Vector2(6, -5), 28.0, -phase * 0.68, -phase * 0.68 + PI * 1.25, 36, primary, 1.8, true)
+    if not discovery_title.is_empty():
+        var phase: float = time_counter * 0.48
+        var ink: Color = spectral_color.lerp(spectral_accent, 0.5 + 0.5 * sin(phase))
+        ink.a = 0.48
+        draw_arc(Vector2(0,-16), 43.0, phase, phase + PI * 1.28, 40, ink, 1.6, true)
+        for i in range(4):
+            var p: Vector2 = Vector2(0,-16) + Vector2.from_angle(phase + float(i) * TAU / 4.0) * 43.0
+            draw_line(p - Vector2(3,0), p + Vector2(3,0), ink, 1.1, true)
+            draw_line(p - Vector2(0,3), p + Vector2(0,3), ink, 1.1, true)
+        if near_player:
+            draw_string(ThemeDB.fallback_font, Vector2(-140,-103), discovery_title, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 11, Color("d5c0eb"))
     if near_player and not Engine.is_editor_hint():
         draw_string(ThemeDB.fallback_font, Vector2(-112, -83), display_title, HORIZONTAL_ALIGNMENT_CENTER, 224.0, 13, Color(aura.r, aura.g, aura.b, 0.82))
         if spectral_tier >= 2:

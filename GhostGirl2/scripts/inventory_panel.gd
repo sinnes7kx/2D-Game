@@ -2,6 +2,8 @@ extends PanelContainer
 signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal cursor_pick_requested(index: int)
+signal inspect_requested(item: GhostItemInstance)
+signal vault_requested(item: GhostItemInstance)
 signal cursor_place_requested(page: int, col: int, row: int)
 signal cursor_cancel_requested
 signal cursor_drop_requested(index: int)
@@ -14,12 +16,14 @@ var selected_alt_down: bool = false
 var pending_gear_index: int = -1
 var active_page: int = 0
 var pending_delete_item: Variant = null
+var test_looks: OptionButton
+@onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
 @onready var description: RichTextLabel = $Layout/DetailsWell/DetailsVBox/ItemDescription
 @onready var seed_row: HBoxContainer = $Layout/DetailsWell/DetailsVBox/SeedRow
 @onready var seed_display: TextureRect = $Layout/DetailsWell/DetailsVBox/SeedRow/SeedDisplay
 @onready var saved_seeds: OptionButton = $Layout/DetailsWell/DetailsVBox/SeedRow/SavedSeeds
-@onready var test_mythic: Button = $Layout/DetailsHeader/TestMythic
+@onready var test_mythic: OptionButton = $Layout/DetailsHeader/TestMythic
 @onready var equip_button: Button = $Layout/Actions/EquipSelected
 @onready var socket_button: Button = $Layout/Actions/SocketSelected
 @onready var destroy_button: Button = $Layout/Actions/DestroySelected
@@ -38,15 +42,19 @@ func _ready() -> void:
 	$Layout/Header/NextPage.pressed.connect(_change_page.bind(1))
 	$Layout/Header/SortBackpack.pressed.connect(_sort_backpack)
 	equip_button.pressed.connect(_equip)
+	inspect_button.pressed.connect(_inspect_selected)
+	$Layout/Header/VaultButton.pressed.connect(func() -> void: vault_requested.emit(selected_weapon_for_inspection()))
 	socket_button.pressed.connect(_select_socket)
 	destroy_button.pressed.connect(_request_delete)
 	$Layout/DetailsWell/DetailsVBox/SeedRow/RerollSeed.pressed.connect(_reroll_selected_seed)
 	$Layout/DetailsWell/DetailsVBox/SeedRow/SaveSeed.pressed.connect(_save_selected_seed)
 	saved_seeds.item_selected.connect(_restore_selected_seed)
 	# Never surface the tester in release exports.
-	test_mythic.visible = false
+	test_mythic.hide()
 	if OS.is_debug_build():
-		test_mythic.pressed.connect(_toggle_mythic_preview)
+		test_looks = test_mythic
+		_setup_effect_menu()
+		test_looks.item_selected.connect(_preview_look)
 	$Layout/Actions/DropSelected.pressed.connect(_drop_selected)
 	description.bbcode_enabled = true
 	confirmation.confirmed.connect(_confirm_delete)
@@ -175,26 +183,30 @@ func _show_details(index: int) -> void:
 	description.text = "[font_size=19][color=%s]%s[/color][/font_size]\n" % [title_ink, ITEM_MARKUP.escape(item.display_name())] + ITEM_MARKUP.item_info(item, selected_alt_down)
 	description.scroll_to_line(0)
 	_refresh_seed_controls(item)
-	test_mythic.visible = OS.is_debug_build() and item.get_slot() != "none"
+	test_mythic.visible = OS.is_debug_build()
 	if test_mythic.visible:
-		test_mythic.text = "CLEAR MYTHIC TEST" if item.debug_visual_override == 4 else "PLAYTEST · MYTHIC"
+		test_mythic.select(0)
 	# Details remain compact; the side-by-side floating compare popup owns long
 	# affix differences and never participates in VBox layout calculations.
 	var worn: Variant = inventory.get_equipped(item.get_slot()) if item.get_slot() != "none" else null
 	if worn != null and worn != item:
 		description.text += "\n[font_size=12][color=#c8a98a]HOLD CTRL WHILE HOVERING TO COMPARE[/color][/font_size]"
+	inspect_button.visible = true
 	equip_button.visible = item.get_slot() != "none"
 	if equip_button.visible:
 		var equipped: bool = inventory.equipped_index(item.get_slot()) == index
 		equip_button.text = "EQUIPPED" if equipped else "EQUIP"
-		equip_button.disabled = equipped
+		equip_button.disabled = equipped or item.is_broken()
+		if item.is_broken():
+			equip_button.text = "BROKEN"
 	socket_button.visible = item.get_slot() != "none" and item.sockets > item.socketed.size()
 	if socket_button.visible:
 		socket_button.text = "SELECT GEM OR RUNE" if pending_gear_index < 0 else "CHOOSE A GEM / RUNE"
 	destroy_button.visible = true
 	$Layout/Actions/DropSelected.visible = true
+	$Layout/Actions/DropSelected.disabled = not inventory.can_drop(index)
 	destroy_button.disabled = not inventory.can_destroy(index)
-	destroy_button.tooltip_text = "Unequip first; quest items cannot be destroyed" if destroy_button.disabled else "Permanently destroy selected item"
+	destroy_button.tooltip_text = "Protected item" if item.collector_locked else ("Unequip first; quest items cannot be destroyed" if destroy_button.disabled else "Permanently destroy selected item")
 
 func _appearance_colors(item: GhostItemInstance, look: Dictionary) -> Array[Color]:
 	# Saved full-spectrum colors are derived from THAT look's UID, not the
@@ -408,8 +420,12 @@ func _clear() -> void:
 		seed_row.visible = false
 	if is_instance_valid(test_mythic):
 		test_mythic.visible = false
+	if is_instance_valid(test_looks):
+		test_looks.hide()
 	if is_instance_valid(description):
 		description.text = "[font_size=15][color=#a99fae]HOVER for details  ·  ALT advanced  ·  CTRL compare  ·  CLICK to hold[/color][/font_size]"
+	if is_instance_valid(inspect_button):
+		inspect_button.hide()
 	if is_instance_valid(equip_button):
 		equip_button.visible = false
 	if is_instance_valid(socket_button):
@@ -440,3 +456,93 @@ func _local_stat_label(stat_id: String) -> String:
 		"stamina_recovery_pct": return "stamina regeneration"
 		"find_bonus_pct": return "item discovery"
 		_: return stat_id.replace("_", " ")
+
+func _setup_effect_menu() -> void:
+	test_looks.clear()
+	test_looks.add_item("TEST EFFECTS", 0)
+	test_looks.add_item("Clear all previews", 1)
+	test_looks.add_separator("Signature effects")
+	for i in range(6):
+		test_looks.add_item(["No signature", "Aether Thorns", "Void Eclipse", "Astral Seraph", "Mythic Radiance", "Moonfall Halo"][i], 10 + i)
+	test_looks.add_separator("Mythic variants")
+	for i in range(4):
+		test_looks.add_item(["Lightning arcs", "Cinder motes", "Astral pulses", "Spectral petals"][i], 20 + i)
+	test_looks.add_separator("Cosmetic rarity")
+	for i in range(7):
+		test_looks.add_item(["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"][i], 30 + i)
+	test_looks.add_separator("Color behavior")
+	for i in range(7):
+		test_looks.add_item(["Static", "Pulse", "Drift", "Iridescent", "Phase", "Moonwash", "Prism"][i], 40 + i)
+	test_looks.add_separator("Glow motifs")
+	for i in range(8):
+		test_looks.add_item(["Motes", "Crossbars", "Petals", "Zigzag", "Arcs", "Comets", "Stars", "Wisps"][i], 50 + i)
+	test_looks.add_separator("Blade surface")
+	for i in range(7):
+		test_looks.add_item(preload("res://scripts/living_metal_v187.gd").LABELS[i], 60 + i)
+	test_looks.add_separator("Forged guards")
+	for i in range(8):
+		test_looks.add_item(["Straight", "Swept back", "Swept forward", "Winged", "Scroll", "Diamond", "Thorn", "Beaded"][i], 70 + i)
+	test_looks.add_separator("Forged grips")
+	for i in range(6):
+		test_looks.add_item(["Leather wrap", "Metal collars", "Silk lacing", "Inlaid", "Riveted", "Carved"][i], 80 + i)
+	test_looks.select(0)
+
+func _preview_look(index: int) -> void:
+	if not OS.is_debug_build():
+		return
+	var item: GhostItemInstance = selected_item_for_inspection()
+	if item == null:
+		return
+	var id: int = test_looks.get_item_id(index)
+	if id == 1:
+		item.debug_visual_override = -1
+		item.debug_mythic_variant = -1
+		item.debug_collector_tier = -1
+		item.debug_color_mode = -1
+		item.debug_glow_motif = -1
+		item.debug_surface_mode = -1
+		item.debug_forge_guard = -1
+		item.debug_forge_grip = -1
+	elif id >= 10 and id <= 15:
+		item.debug_visual_override = id - 10
+		item.debug_mythic_variant = -1
+	elif id >= 20 and id <= 23:
+		item.debug_visual_override = 4
+		item.debug_mythic_variant = id - 20
+	elif id >= 30 and id <= 36:
+		item.debug_collector_tier = id - 30
+	elif id >= 40 and id <= 46:
+		item.debug_color_mode = id - 40
+	elif id >= 50 and id <= 57:
+		item.debug_glow_motif = id - 50
+	elif id >= 60 and id <= 66:
+		if item.get_slot() not in ["sword", "wand"]:
+			notice.text = "Surface preview requires a supported weapon"
+			test_looks.select(0)
+			return
+		item.debug_surface_mode = id - 60
+	elif id >= 70 and id <= 77:
+		item.debug_forge_guard = id - 70
+	elif id >= 80 and id <= 85:
+		item.debug_forge_grip = id - 80
+	else:
+		return
+	var chosen: String = test_looks.get_item_text(index)
+	test_looks.select(0)
+	inventory.contents_changed.emit()
+	inventory.equipment_changed.emit()
+	notice.text = "TEST ONLY · " + chosen + " · NOT SAVED"
+
+func selected_item_for_inspection() -> GhostItemInstance:
+	if inventory == null or selected_index < 0:
+		return null
+	return inventory.get_item(selected_index)
+
+func selected_weapon_for_inspection() -> GhostItemInstance:
+	var item: GhostItemInstance = _selected_cosmetic_item()
+	return item if item != null and item.get_slot() in ["sword", "wand"] else null
+
+func _inspect_selected() -> void:
+	var item: GhostItemInstance = selected_item_for_inspection()
+	if item != null:
+		inspect_requested.emit(item)

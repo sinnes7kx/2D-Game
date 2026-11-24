@@ -1,4 +1,5 @@
 extends Node2D
+const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.3 — blade-only twinblade enchantments and high-visibility seeded Mythic shimmer.
 ## Axial glows track the weapon shaft/blade instead of orbiting a floating tip.
@@ -16,6 +17,7 @@ var item: GhostItemInstance = null
 var style_index: int = -1
 var rarity_tier: int = 0
 var visual_signature_level: int = 0
+var effect_palette: Array[Color] = [Color("f0cced"), Color("b4d6f7"), Color("efbfe0")]
 var paint_a: Color = Color("f0cced")
 var paint_b: Color = Color("b4d6f7")
 var elapsed: float = 0.0
@@ -48,6 +50,7 @@ func _ready() -> void:
 	var glow_material: CanvasItemMaterial = CanvasItemMaterial.new()
 	glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	material = glow_material
+	self_modulate.a = 0.88 # Effects only; never fade the actual character or metal.
 	show()
 	set_process(true)
 	if FileAccess.file_exists(MANIFEST_PATH):
@@ -120,9 +123,10 @@ func refresh() -> void:
 		generated = item.procedural_visuals() if style_index >= 0 else {}
 		var rolls: Dictionary = item.effect_rolls()
 		var gradient: Array[Color] = item.bow_limb_gradient_colors() if item.weapon_style() == "bow" else item.glow_gradient_colors()
-		paint_a = gradient[0]
-		paint_b = gradient[1]
-		paint_c = gradient[2]
+		effect_palette = gradient
+		paint_a = GhostCosmeticRNGV152.sample_palette(gradient, 0.0)
+		paint_b = GhostCosmeticRNGV152.sample_palette(gradient, 0.5)
+		paint_c = GhostCosmeticRNGV152.sample_palette(gradient, 1.0)
 		if item.weapon_style() == "bow":
 			bow_string_colors = item.bow_string_gradient_colors()
 	queue_redraw()
@@ -177,6 +181,9 @@ func _axial_span() -> PackedVector2Array:
 	if body == null or item == null:
 		return empty
 	var animation: String = str(body.animation)
+	if body.sprite_frames != null:
+		var repaired: Dictionary = body.sprite_frames.get_meta("v186_heavy_fallbacks", {})
+		animation = str(repaired.get(animation, animation))
 	var face: String = _facing(animation)
 	var grip: Vector2 = _hand_anchor(face)
 	var end_point: Vector2 = _fallback_tip(grip, face, 46.0)
@@ -213,6 +220,9 @@ func _axial_span() -> PackedVector2Array:
 				var first: PackedVector2Array = spans[0]
 				if first.size() == 2:
 					return first
+				var second: PackedVector2Array = spans[1]
+				if second.size() == 2:
+					return second
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 35.0)])
 	if style == "twinblade":
 		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
@@ -354,12 +364,16 @@ func _ink(progress: float, opacity: float) -> Color:
 
 func _gradient_at(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
-	return paint_a.lerp(paint_b, u * 2.0) if u <= 0.5 else paint_b.lerp(paint_c, (u - 0.5) * 2.0)
+	var colors: Array[Color] = effect_palette
+	return ANOMALOUS.color_at(colors, collector_look, u, elapsed)
 
 # v1.54 -- soft bloom sampled around the approved weapon silhouette.
 # Round, feathered light replaces the old large square-ended 26px line strips.
 func _draw() -> void:
 	if item == null or body == null:
+		return
+	# The new scythe rig owns the curved cutting-edge light, not the old baked shaft.
+	if item.weapon_style() == "scythe" and player != null and player.has_node("Ghost/ScytheRigV190") and preload("res://scripts/scythe_art_v190.gd").matches(str(body.animation)):
 		return
 	var points: PackedVector2Array = _axial_span()
 	if points.size() != 2:
@@ -604,6 +618,8 @@ func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) 
 		var edge_offset: float = -1.3 if hand_index == 0 else 1.3
 		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.16) * power * pulse), 1.45, true)
 		_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)
+		var colors: Array[Color] = effect_palette
+		ANOMALOUS.draw_edge(self, PackedVector2Array([blade_root, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
 		_v175_mythic_signature(blade_root, tip, "dual_sword", hand_index, attacking)
@@ -667,6 +683,8 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 		var shine: Color = _gradient_at(fposmod(0.73 + seed_phase + elapsed * 0.09 + hand_phase, 1.0))
 		draw_line(a - blade_normal * 1.1, tip, Color(shine.r, shine.g, shine.b, (0.45 if mythic else 0.14) * power * pulse), 1.35, true)
 		_v175_visible_edge(a, tip, intensity, float(hand_index) * 0.31)
+		var colors: Array[Color] = effect_palette
+		ANOMALOUS.draw_edge(self, PackedVector2Array([a, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
 		_v175_mythic_signature(a, tip, "dual_dagger", hand_index, attacking)
@@ -697,9 +715,9 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 	var result: Array = []
 	if style == "twinblade":
-		var back_tip: Vector2 = grip - (tip - grip) * 0.90
-		result.append([grip.lerp(tip, 0.20), tip])
-		result.append([grip.lerp(back_tip, 0.22), back_tip])
+		var spans: Array[PackedVector2Array] = MODULAR.twinblade_spans(grip, tip)
+		for span in spans:
+			result.append([span[0], span[1]])
 	elif style == "maul":
 		result.append([grip.lerp(tip, 0.79), tip])
 	elif style == "spear" or style == "halberd":
@@ -715,7 +733,7 @@ func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 
 func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, intensity: float) -> void:
 	# Narrow bevel highlights, not broad luminous heads. Keep metal visible.
-	var width: float = 3.8 if item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170" else 3.2
+	var width: float = MODULAR.twinblade_width(item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170")
 	for segment in _v1723_blade_segments(grip, tip, "twinblade"):
 		var a: Vector2 = segment[0]
 		var b: Vector2 = segment[1]
@@ -726,6 +744,8 @@ func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, 
 			var chroma: Color = _gradient_at(fposmod(elapsed * 0.052 + (0.41 if direction.x < 0.0 else 0.06), 1.0))
 			for side in [-1.0, 1.0]:
 				var edge_path: PackedVector2Array = MODULAR.edge_points(a, b, width, physical_profile, side)
+				var colors: Array[Color] = effect_palette
+				ANOMALOUS.draw_edge(self, edge_path, colors, collector_look, elapsed, intensity)
 				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.16 * minf(intensity, 2.0)), 2.2, true)
 				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.55 * minf(intensity, 1.5)), 0.85, true)
 			continue
@@ -817,7 +837,7 @@ func _draw_v172_named_weapon_fx(grip: Vector2, tip: Vector2, tangent: Vector2, n
 	var shimmer: float = 0.70 + 0.30 * sin(elapsed * 1.65 + seed_phase)
 	if weapon_id == "nocturne_stiletto_v171":
 		# Nightglass: a thin cold edge, kept close to the SHORT dagger blade.
-		var ink: Color = Color("a7a2f2").lerp(_gradient_at(0.8), 0.34)
+		var ink: Color = _gradient_at(0.8)
 		var a: Vector2 = grip.lerp(tip, 0.58)
 		draw_line(a, tip, Color(ink.r, ink.g, ink.b, 0.18 * power * shimmer), 1.15, true)
 		_soft_orb(tip, 2.1, ink, power * 0.40)
@@ -830,7 +850,7 @@ func _draw_v172_named_weapon_fx(grip: Vector2, tip: Vector2, tangent: Vector2, n
 				draw_line(tip - tangent * 4.0, tip + normal * (2.0 + shift), Color(0.92, 0.92, 1.0, 0.25 * power), 0.9, true)
 	else:
 		# Briarwake: light runs up the haft toward its garnet three-pronged head.
-		var garnet: Color = Color("ef9bad").lerp(_gradient_at(0.86), 0.27)
+		var garnet: Color = _gradient_at(0.86)
 		var run: float = fposmod(elapsed * 0.23 + seed_phase / TAU, 1.0)
 		var shaft_point: Vector2 = grip.lerp(tip, 0.36 + 0.54 * run)
 		draw_line(grip.lerp(tip, 0.42), tip, Color(garnet.r, garnet.g, garnet.b, 0.10 * power), 1.1, true)
@@ -847,7 +867,7 @@ func _draw_v172_named_weapon_fx(grip: Vector2, tip: Vector2, tangent: Vector2, n
 
 func _bow_string_at(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
-	return bow_string_colors[0].lerp(bow_string_colors[1], u * 2.0) if u <= 0.5 else bow_string_colors[1].lerp(bow_string_colors[2], (u - 0.5) * 2.0)
+	return GhostCosmeticRNGV152.sample_palette(bow_string_colors, u)
 
 func _draw_bow_dual_glow(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2, intensity: float) -> void:
 	# Two independent RNG gradients: preserved painted limbs + luminous string.
@@ -921,7 +941,7 @@ func _draw_signature(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vect
 		for k in range(7):
 			var u: float = 0.35 + 0.55 * float(k) / 6.0
 			var at: Vector2 = grip.lerp(tip, u) + normal * sin(elapsed * 1.9 + float(k) * 1.7) * 3.8
-			var star: Color = c1.lerp(c2, u)
+			var star: Color = _gradient_at(u)
 			draw_circle(at, 2.1, Color(star.r, star.g, star.b, 0.29 * strength))
 			if k % 3 == 0:
 				draw_line(at - tangent * 3.5, at + tangent * 3.5, Color(star.r, star.g, star.b, 0.24 * strength), 0.9, true)
@@ -1250,9 +1270,12 @@ func _draw_v177_collector_finish(grip: Vector2, tip: Vector2, style: String, int
 	for segment in segments:
 		var a: Vector2 = segment[0]
 		var b: Vector2 = segment[1]
+		if style != "twinblade":
+			var shift_colors: Array[Color] = effect_palette
+			ANOMALOUS.draw_edge(self, PackedVector2Array([a, b]), shift_colors, collector_look, elapsed, intensity)
 		var axis: Vector2 = (b - a).normalized()
 		var normal: Vector2 = Vector2(-axis.y, axis.x)
-		var tone: Color = colors[finish % 3]
+		var tone: Color = colors[finish % colors.size()]
 		if tier >= 1:
 			var count: int = 2 + mini(tier, 4)
 			for j in range(count):
@@ -1267,7 +1290,7 @@ func _draw_v177_collector_finish(grip: Vector2, tip: Vector2, style: String, int
 				var u: float = fposmod(float(j) * 0.31 + elapsed * 0.12 + float(pattern) * 0.07, 1.0)
 				var at: Vector2 = a.lerp(b, u) + normal * sin(u * TAU + float(particle)) * (1.5 + float(particle_tier) * 0.6)
 				var alpha: float = sin(u * PI) * 0.55
-				var ink: Color = colors[(j + particle) % 3]
+				var ink: Color = colors[(j + particle) % colors.size()]
 				if particle % 2 == 0:
 					draw_circle(at, 0.8 + float(particle_tier) * 0.16, Color(ink.r, ink.g, ink.b, alpha))
 				else:

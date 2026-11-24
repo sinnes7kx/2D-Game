@@ -1,7 +1,8 @@
 extends AnimatedSprite2D
 ## Aligned *only-bow* texture masks colorized by an item-seeded shader.
 ## The baked bow underneath remains visible if this node cannot load.
-const SHADE: Shader = preload("res://assets/equipment/bow_palette_v139.gdshader")
+const SHADE: Shader = preload("res://assets/equipment/weapon_surface_v190.gdshader")
+const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 var inventory: Node = null
 var body: AnimatedSprite2D = null
 var last_bow_cosmetic_key: String = ""
@@ -75,6 +76,7 @@ func _ready() -> void:
 					for col in range(8):
 						var tile: AtlasTexture = AtlasTexture.new()
 						tile.atlas = atlas
+						tile.filter_clip = true
 						tile.region = Rect2(col * 256, (phase_index * 4 + face_index) * 220, 256, 220)
 						sprite_frames.add_frame(key, tile)
 	var shader_material: ShaderMaterial = ShaderMaterial.new()
@@ -116,6 +118,7 @@ func _create_bow_carry_art() -> void:
 				for frame_idx in range(8):
 					var tile: AtlasTexture = AtlasTexture.new()
 					tile.atlas = atlas
+					tile.filter_clip = true
 					tile.region = Rect2(frame_idx * 256, (motion_index * 4 + face_index) * 220, 256, 220)
 					bow_carry_visual.sprite_frames.add_frame(anim_name, tile)
 
@@ -133,25 +136,12 @@ func refresh() -> void:
 	if item == null or item.weapon_style() != "bow":
 		visible = false
 		return
-	var bow_roll: Dictionary = item.bow_rolls()
-	var paint: Dictionary = bow_roll["procedural"]
-	var limb_gradient: Array[Color] = item.bow_limb_gradient_colors()
-	last_bow_cosmetic_key = item.cosmetic_uid + ":" + str(item.visual_seed()) + ":" + str(item.visual_signature())
+	last_bow_cosmetic_key = WEAPON_SURFACE.key(item)
 	var mat: ShaderMaterial = material as ShaderMaterial
-	mat.set_shader_parameter("primary_color", limb_gradient[0])
-	mat.set_shader_parameter("secondary_color", limb_gradient[2])
-	mat.set_shader_parameter("gradient_angle", float(paint["gradient_angle"]))
-	mat.set_shader_parameter("gradient_speed", float(paint["gradient_speed"]))
-	mat.set_shader_parameter("pulse_speed", float(paint["pulse_speed"]))
-	var signature_level: int = item.visual_signature() if item.has_method("visual_signature") else 0
-	var glow_power: float = 0.07
-	if item.quality in ["rare", "set", "unique"]:
-		glow_power = 0.13
-	if signature_level > 0:
-		glow_power = 0.16
-	if signature_level >= 4:
-		glow_power = 0.22
-	mat.set_shader_parameter("glow_power", glow_power)
+	var look: Dictionary = item.collector_appearance()
+	# The real bow limb palette is independent from the string. Blend its
+	# full ramp with the separately rolled living surface pigment.
+	WEAPON_SURFACE.configure(mat, look, Vector2(256, 220), true, WEAPON_SURFACE.bow_pigment(item, look))
 
 func _process(_delta: float) -> void:
 	if body == null or inventory == null:
@@ -160,7 +150,7 @@ func _process(_delta: float) -> void:
 	var item: GhostItemInstance = inventory.get_equipped("sword")
 	var source_animation: String = str(body.animation)
 	if item != null and item.weapon_style() == "bow":
-		var key: String = item.cosmetic_uid + ":" + str(item.visual_seed()) + ":" + str(item.visual_signature())
+		var key: String = WEAPON_SURFACE.key(item)
 		if key != last_bow_cosmetic_key:
 			refresh()
 	if item == null or item.weapon_style() != "bow":

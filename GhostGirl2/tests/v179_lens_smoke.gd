@@ -17,7 +17,7 @@ func _verify() -> void:
 	lens.call("open_item", item)
 	var model: Node2D = lens.get("model")
 	var profiles: Array = model.get("profiles")
-	if not lens.visible or not bool(model.call("is_modular")) or profiles.size() != 2 or profiles[0] != ART.profile(item.collector_appearance(), 0):
+	if not lens.visible or not bool(model.call("is_modular")) or profiles.size() != 2 or profiles[0] != ART.weapon_profile(item.collector_appearance(), str(item.definition.item_id), 0):
 		push_error("Collector Lens does not use the equipped appearance profile")
 		quit(1)
 		return

@@ -3,6 +3,9 @@ extends Node2D
 ## Weapon artwork is integrated in the approved directional body animations.
 ## v1.60 also enables a dedicated wand-hand overlay to replace the placeholder look.
 var inventory
+const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
+var wand_surface_key: String = ""
+var wand_surface: ShaderMaterial
 @onready var player_art: AnimatedSprite2D = get_parent().get_node("Ghost") as AnimatedSprite2D
 @onready var wings: Sprite2D = $Wings
 @onready var pendant: Sprite2D = $Trinket
@@ -31,6 +34,7 @@ var accessories_glow: bool = false
 var accessory_color: Color = Color("ceb5ee")
 var dress_glow_color: Color = Color("d9c4ff")
 var dress_glow_color_b: Color = Color("f8dbff")
+var dress_palette: Array[Color] = [Color("d9c4ff"), Color("f8dbff")]
 var ambient_particle_sources: Array = []
 # Stable, sprite-attached halo instead of repeated broad circles that shimmer
 # against different walking frames. Visual-only; never saved.
@@ -163,7 +167,8 @@ func refresh() -> void:
     if fabric != null:
         var cloth_gradient: Array[Color] = fabric.glow_gradient_colors()
         dress_glow_color = cloth_gradient[0]
-        dress_glow_color_b = cloth_gradient[2]
+        dress_glow_color_b = cloth_gradient[-1]
+        dress_palette = cloth_gradient
     # Signature 4 owns a constant halo. The old blinking drawn-body aura is
     # skipped for this signature, while small firefly particles remain.
     if mythic_dress_halo != null:
@@ -235,9 +240,17 @@ func _process(delta: float) -> void:
             wand_visual.texture = WAND_POSE_ATLASES[visual_index]
             last_wand_animation = ""
             last_wand_frame = -1
+        var surface_key: String = WEAPON_SURFACE.key(wand_item)
+        if wand_surface == null or surface_key != wand_surface_key:
+            wand_surface_key = surface_key
+            if wand_surface == null:
+                wand_surface = ShaderMaterial.new()
+            WEAPON_SURFACE.configure(wand_surface, wand_item.collector_appearance(), WAND_FRAME_SIZE, false)
+            wand_visual.material = wand_surface
+        wand_visual.region_filter_clip_enabled = true
         wand_visual.region_enabled = true
         wand_visual.show()
-        wand_visual.modulate = Color(1.0, 1.0, 1.0, 0.98)
+        wand_visual.modulate = Color(1.0, 1.0, 1.0, 0.98 * wand_item.weapon_opacity())
         wand_visual.position = Vector2.ZERO
         wand_visual.rotation = 0.0
         wand_visual.scale = Vector2.ONE
@@ -268,7 +281,7 @@ func _draw() -> void:
         for k in range(5):
             var phase: float = aura_time * (0.34 + 0.045 * float(k)) + float(k) * 1.65
             var point: Vector2 = Vector2(sin(phase) * (8.0 + float(k)), 36.0 - float(k) * 17.0 + cos(phase * 0.7) * 3.0)
-            var ink: Color = dress_glow_color.lerp(dress_glow_color_b, float(k) / 4.0).lightened(0.28)
+            var ink: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, float(k) / 4.0).lightened(0.28)
             draw_circle(point, 3.2, Color(ink.r, ink.g, ink.b, 0.031))
             draw_circle(point, 1.1, Color(ink.r, ink.g, ink.b, 0.24))
         return
@@ -283,7 +296,7 @@ func _draw() -> void:
     # a rare blessing, not a giant fog effect.
     for i in range(8):
         var t: float = float(i) / 7.0
-        var col: Color = dress_glow_color.lerp(dress_glow_color_b, t)
+        var col: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, t)
         var at: Vector2 = center + Vector2(sin(aura_time * 0.9 + t * 5.0) * 6.0, 18.0 - t * 56.0)
         draw_circle(at, (12.0 + t * 13.0) * pulse, Color(col.r, col.g, col.b, (0.010 + 0.006 * pulse) * aura_alpha_mul))
     draw_circle(center + Vector2(0, -4), 20.0 * pulse, Color(dress_glow_color.r, dress_glow_color.g, dress_glow_color.b, 0.022 * aura_alpha_mul))
@@ -293,7 +306,7 @@ func _draw() -> void:
         for s in range(6):
             var st: float = aura_time * (0.9 + 0.08 * s) + s * 1.31
             var shimmer: Vector2 = center + Vector2(cos(st) * (10.0 + s), -8.0 + sin(st * 1.2) * (18.0 + 2.0 * s))
-            var c: Color = dress_glow_color.lerp(dress_glow_color_b, float(s) / 5.0).lerp(Color.WHITE, 0.22)
+            var c: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, float(s) / 5.0).lerp(Color.WHITE, 0.22)
             draw_circle(shimmer, 5.2, Color(c.r, c.g, c.b, 0.018 + 0.010 * pulse))
             draw_circle(shimmer, 2.0, Color(c.r, c.g, c.b, 0.10 + 0.04 * pulse))
             draw_circle(shimmer, 0.95, Color(1.0, 0.98, 1.0, 0.30 + 0.08 * pulse))
@@ -310,11 +323,11 @@ func _draw() -> void:
         for j in range(6):
             var f: float = float(j) / 5.0
             var tail: Vector2 = center + Vector2(sin(aura_time * 1.1 + j * 1.65) * 18.0, 28.0 - f * 67.0)
-            var c: Color = dress_glow_color.lerp(dress_glow_color_b, f)
+            var c: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, f)
             draw_circle(tail, 2.0 + 0.4 * sin(aura_time * 2.0 + j), Color(c.r, c.g, c.b, 0.22 * pulse))
     for i in range(4 + (2 if dress_signature == 4 else 0)):
         var ang: float = aura_time * (0.55 + 0.08 * i) + i * 1.57
         var mote: Vector2 = center + Vector2(cos(ang) * (8.0 + i * 2.2), -8.0 + sin(ang * 1.3) * (18.0 + i * 2.0))
-        var c: Color = dress_glow_color.lerp(dress_glow_color_b, float(i) / float(maxi(1, 3 + (2 if dress_signature == 4 else 0))))
+        var c: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, float(i) / float(maxi(1, 3 + (2 if dress_signature == 4 else 0))))
         var alpha_boost: float = 1.0 if dress_signature != 4 else 1.55
         draw_circle(mote, 1.6 + 0.3 * float(i % 2), Color(c.r, c.g, c.b, 0.18 * alpha_boost))

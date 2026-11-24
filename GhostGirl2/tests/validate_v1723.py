@@ -34,8 +34,9 @@ assert fx.index('if style == "twinblade":\n\t\t_draw_v1723_twinblade_edges(') < 
 
 # Two cutting regions; no central-handle glow.
 segment_body = fx.split('func _v1723_blade_segments(', 1)[1].split('func _draw_v1723_twinblade_edges(', 1)[0]
-assert "grip.lerp(tip, 0.20)" in segment_body
-assert "grip.lerp(back_tip, 0.22)" in segment_body
+assert "MODULAR.twinblade_spans(grip, tip)" in segment_body
+art = (ROOT / "scripts/modular_weapon_art_v178.gd").read_text(encoding="utf-8")
+assert "grip.lerp(tip, 0.16)" in art and "grip.lerp(rear, 0.18)" in art
 assert 'elif style == "maul":' in segment_body
 assert 'elif style == "spear" or style == "halberd":' in segment_body
 assert 'elif style == "scythe":' in segment_body

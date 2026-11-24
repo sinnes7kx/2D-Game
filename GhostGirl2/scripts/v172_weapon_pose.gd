@@ -1,4 +1,7 @@
 extends Node2D
+const DAGGER_THRUST = preload("res://scripts/dagger_thrust_v186.gd")
+const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
+var v180_elapsed: float = 0.0
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.2 — authored four-facing weapon strike poses.
 ## Uses the approved unarmed attack BODY frames; renders physical weapon
@@ -109,9 +112,13 @@ func _ready() -> void:
 	set_process(true)
 
 func _process(_delta: float) -> void:
+	v180_elapsed += _delta
 	if body == null:
 		return
+	MODULAR.apply_equipped_opacity(self, body)
 	var animation_now: String = str(body.animation)
+	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and MODULAR.surface_is_animated(self, body)):
+		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
 	if animation_now != last_animation or body.frame != last_frame:
@@ -133,7 +140,9 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
-	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade") and twin_axes.has(animation_name):
+	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade")  :
+		return true
+	if equipped.weapon_style() == "dagger" and animation_name.contains("_pierce_"):
 		return true
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
@@ -141,12 +150,20 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 	var empty: PackedVector2Array = PackedVector2Array()
 	if not _is_equipped(animation_name):
 		return empty
-	if animation_name.contains("twinblade") and twin_axes.has(animation_name):
-		var guides: Array = twin_axes[animation_name]
+	if animation_name.contains("twinblade"):
+		var guides: Array = twin_axes.get(animation_name, [])
+		if guides.is_empty():
+			var facing: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
+			var anchor: Vector2 = Vector2(35, 25)
+			match facing:
+				"left": anchor = Vector2(-35, 25)
+				"right": anchor = Vector2(35, 25)
+				"back": anchor = Vector2(27, 15)
+			return PackedVector2Array([anchor, anchor + Vector2(-40 if facing == "left" else 40, -55)])
 		var guide: Array = guides[clampi(frame_index, 0, guides.size() - 1)]
 		var grip: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 		var tip: Vector2 = Vector2(float(guide[2]), float(guide[3]))
-		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 60.0])
+		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 68.0])
 	var spear: bool = animation_name.begins_with("attack_briarwake_spear_")
 	var heavy: bool = animation_name.contains("_heavy_")
 	var face: String = "front"
@@ -155,6 +172,8 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 			face = direction
 			break
 	if animation_name.contains("_pierce_"):
+		if animation_name.begins_with("attack_dagger_") or animation_name.begins_with("attack_nocturne_dagger_"):
+			return DAGGER_THRUST.single_span(face, frame_index, heavy)
 		return pierce_span(face, frame_index, heavy)
 	var n: int = clampi(frame_index, 0, 7)
 	var anchor: Vector2 = Vector2(29, 24)
@@ -205,7 +224,7 @@ func _draw() -> void:
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
 	if animation_name.contains("twinblade"):
 		_draw_v176_twinblade(grip, tip, animation_name.contains("rosemirror"))
-	elif animation_name.begins_with("attack_nocturne_dagger_"):
+	elif animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_"):
 		_draw_nightglass_stiletto(grip, tip, tangent, normal)
 	elif animation_name.begins_with("attack_spear_"):
 		_draw_moonwarden_spear(grip, tip, tangent, normal)
@@ -293,16 +312,32 @@ func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 # Opaque metal, not additive glow. The rear blade has its own cutting
 # direction; the wrapped central grip remains visibly separate.
 func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
-	var rear: Vector2 = grip - (tip - grip) * 0.90
-	var front_root: Vector2 = grip.lerp(tip, 0.20)
-	var rear_root: Vector2 = grip.lerp(rear, 0.22)
+	var spans: Array[PackedVector2Array] = MODULAR.twinblade_spans(grip, tip)
+	var rear: Vector2 = spans[1][1]
+	var front_root: Vector2 = spans[0][0]
+	var rear_root: Vector2 = spans[1][0]
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():
 		MODULAR.draw_grip(self, rear_root, front_root, 3.0, look)
-		var width: float = 3.8 if rose else 3.2
+		var width: float = MODULAR.twinblade_width(rose)
 		MODULAR.draw_blade(self, front_root, tip, width, look)
 		MODULAR.draw_blade(self, rear_root, rear, width, look)
-		draw_circle(grip, 3.7, Color("d8c7d6"))
+		# Render light in the very same draw pass as both physical blades.
+		# Independent of the separate prestige overlay's readiness/visibility.
+		var world: Node = player.get("world") as Node if player != null else null
+		var inventory: Node = world.get("inventory") as Node if world != null else null
+		var equipped: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
+		if equipped != null:
+			var key: String = "%s:%s:%s:%s:%s:%s:%s" % [equipped.get_instance_id(), equipped.cosmetic_uid, equipped.visual_seed(), equipped.debug_collector_tier, equipped.debug_color_mode * 10 + equipped.debug_glow_motif, equipped.visual_signature(), equipped.mythic_layer_variant()]
+			if str(get_meta("v180_fx_key", "")) != key:
+				set_meta("v180_fx_key", key)
+				set_meta("v180_fx_look", equipped.collector_appearance())
+				set_meta("v180_fx_colors", equipped.glow_gradient_colors())
+			var fx_look: Dictionary = get_meta("v180_fx_look")
+			var colors: Array[Color] = get_meta("v180_fx_colors")
+			for side in [-1.0, 1.0]:
+				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 1.4)
+				ANOMALOUS.draw_edge(self, MODULAR.edge_points(rear_root, rear, width, look, side), colors, fx_look, v180_elapsed, 1.4)
 		return
 	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
 	draw_line(rear_root, front_root, Color("78596d"), 3.0, true)

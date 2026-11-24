@@ -92,5 +92,44 @@ jobs:
       - name: Verify collector inspection modal and item preservation
         run: godot --headless --path GhostGirl2 --script res://tests/v179_lens_smoke.gd
 
+      - name: Verify preloaded core animation resource and repeatable installation
+        run: godot --headless --path GhostGirl2 --script res://tests/v1791_core_animation_smoke.gd
+
+      - name: Verify anomalous steel color modes and hand anchor regression
+        run: godot --headless --path GhostGirl2 --script res://tests/v180_anomalous_smoke.gd
+
+      - name: Verify actual inventory inspect button and twinblade assets
+        run: godot --headless --path GhostGirl2 --script res://tests/v1801_twinblade_inspect_smoke.gd
+
+      - name: Verify collection vault transfer and item protection
+        run: godot --headless --path GhostGirl2 --script res://tests/v181_vault_smoke.gd
+
+      - name: Verify Sanctum collection exhibition and persistent assignments
+        run: godot --headless --path GhostGirl2 --script res://tests/v182_exhibition_smoke.gd
+
+      - name: Verify regional weapon appearance and provenance
+        run: godot --headless --path GhostGirl2 --script res://tests/v183_regional_smoke.gd
+
+      - name: Verify Ethereal weapon durability and preservation
+        run: godot --headless --path GhostGirl2 --script res://tests/v184_ethereal_smoke.gd
+
+      - name: Verify universal inspection and effect menu
+        run: godot --headless --path GhostGirl2 --script res://tests/v185_inspection_smoke.gd
+
+      - name: Verify dagger thrusts and repaired animation frames
+        run: godot --headless --path GhostGirl2 --script res://tests/v186_animation_smoke.gd
+
+      - name: Verify Living Metal material patterns
+        run: godot --headless --path GhostGirl2 --script res://tests/v187_surface_smoke.gd
+
+      - name: Verify variable palettes and bounded special effects
+        run: godot --headless --path GhostGirl2 --script res://tests/v188_palette_smoke.gd
+
+      - name: Verify independent forged weapon identities
+        run: godot --headless --path GhostGirl2 --script res://tests/v189_forging_smoke.gd
+
+      - name: Verify enchanted arsenal weapon material integration
+        run: godot --headless --path GhostGirl2 --script res://tests/v190_arsenal_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

@@ -1,6 +1,8 @@
 extends CanvasLayer
 const COLLECTOR_LENS = preload("res://scripts/collector_lens_v179.gd")
 var collector_lens: Control
+const COLLECTION_VAULT = preload("res://scripts/collection_vault_v181.gd")
+var collection_vault: Control
 ## Minimal node-authored HUD. No dialogue, no lore overlays, no objectives.
 ## Every onscreen element can be selected, moved or styled in hud.tscn.
 
@@ -52,6 +54,7 @@ func _ready() -> void:
 	inventory_panel.connect("cursor_place_requested", Callable(self, "_place_cursor_item"))
 	inventory_panel.connect("cursor_cancel_requested", Callable(self, "_cancel_cursor_item"))
 	inventory_panel.connect("cursor_drop_requested", Callable(self, "_drop_selected_item"))
+	inventory_panel.connect("inspect_requested", Callable(self, "_open_collector_lens"))
 	vigil_label.visible = false
 	prompt_label.visible = false
 	carrying_label.visible = false
@@ -64,6 +67,13 @@ func _ready() -> void:
 	collector_lens.name = "CollectorLensV179"
 	$Overlay.add_child(collector_lens)
 	collector_lens.z_index = 100
+	collection_vault = COLLECTION_VAULT.new()
+	collection_vault.name = "CollectionVaultV181"
+	$Overlay.add_child(collection_vault)
+	collection_vault.z_index = 90
+	$Overlay.move_child(collector_lens, -1) # Inspector also owns GUI input above vault.
+	collection_vault.connect("inspect_requested", Callable(self, "_open_collector_lens"))
+	inventory_panel.connect("vault_requested", Callable(self, "_open_collection_vault"))
 
 func bind_inventory(value: Node) -> void:
 	inventory_data = value
@@ -203,17 +213,25 @@ func _input(event: InputEvent) -> void:
 			collector_lens.call("close_lens")
 			get_viewport().set_input_as_handled()
 		return
-	if is_menu_open() and cursor_item_index < 0 and hovered_item != null:
+	if is_instance_valid(collection_vault) and collection_vault.visible:
+		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+			collection_vault.hide()
+			get_viewport().set_input_as_handled()
+		return
+	if is_menu_open():
 		var inspect: bool = false
 		if event is InputEventMouseButton:
 			inspect = event.pressed and event.shift_pressed and event.button_index == MOUSE_BUTTON_RIGHT
 		elif event is InputEventKey:
 			inspect = event.pressed and not event.echo and event.physical_keycode == KEY_P
-		if inspect and hovered_item.get_slot() in ["sword", "wand"]:
-			collector_lens.call("open_item", hovered_item)
-			_hide_item_hover()
-			get_viewport().set_input_as_handled()
-			return
+		if inspect:
+			var candidate: GhostItemInstance = hovered_item as GhostItemInstance
+			if candidate == null or candidate.definition == null:
+				candidate = inventory_panel.call("selected_item_for_inspection") as GhostItemInstance
+			if candidate != null:
+				_open_collector_lens(candidate)
+				get_viewport().set_input_as_handled()
+				return
 	if cursor_item_index < 0 or not (event is InputEventMouseButton):
 		return
 	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
@@ -235,6 +253,9 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if is_instance_valid(collection_vault) and collection_vault.visible:
+		get_viewport().set_input_as_handled()
+		return
 	if is_instance_valid(collector_lens) and collector_lens.visible:
 		get_viewport().set_input_as_handled()
 		return
@@ -304,7 +325,7 @@ func set_health(current: float, maximum: float) -> void:
 	health_meter.visible = current < maximum
 
 func is_menu_open() -> bool:
-	return inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible)
+	return inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible) or (is_instance_valid(collection_vault) and collection_vault.visible)
 
 func set_stamina(current: float, maximum: float) -> void:
 	stamina_meter.max_value = maximum
@@ -317,3 +338,29 @@ func set_dew(current: int, maximum: int) -> void:
 func set_lock_target(target_name: String) -> void:
 	lock_label.text = "L  TARGET  ·  " + target_name if not target_name.is_empty() else ""
 	lock_label.visible = not target_name.is_empty()
+
+func _open_collector_lens(item: GhostItemInstance) -> void:
+	if item == null or item.definition == null or not is_instance_valid(collector_lens):
+		return
+	# Clicking an inventory item can leave it on the cursor. Cancel the
+	# temporary cursor state, not the actual item, before opening the modal.
+	if cursor_item_index >= 0:
+		_cancel_cursor_item()
+	_hide_item_hover()
+	collector_lens.call("open_item", item)
+
+func _open_collection_vault(item: GhostItemInstance) -> void:
+	if inventory_data == null:
+		return
+	if cursor_item_index >= 0:
+		_cancel_cursor_item()
+	_hide_item_hover()
+	collection_vault.call("open_vault", inventory_data, item)
+
+func open_exhibition(slot: int, item: GhostItemInstance) -> void:
+	if inventory_data == null:
+		return
+	_hide_item_hover()
+	collection_vault.call("open_vault", inventory_data, item, slot)
+	if item != null:
+		_open_collector_lens(item)

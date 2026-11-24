@@ -104,25 +104,29 @@ func _ready() -> void:
 	hide()
 
 func open_item(value: GhostItemInstance) -> void:
-	if value == null or value.definition == null or value.get_slot() not in ["sword", "wand"]:
+	if value == null or value.definition == null:
 		return
 	inspected = value
 	model.call("set_item", value)
 	heading.text = value.display_name()
 	heading.add_theme_color_override("font_color", value.quality_color())
 	var look: Dictionary = value.collector_appearance()
-	info.text = "[color=#dfc38e]MATERIAL  ·  %s[/color]\n[color=#c8b6db]PARTICLES  ·  %s[/color]\n\n" % [value.collector_material_label().to_upper(), ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"][clampi(int(look.get("particle_tier", 0)), 0, 6)]]
+	info.text = ""
+	if not look.is_empty():
+		info.text = "[color=#dfc38e]MATERIAL  ·  %s[/color]\n[color=#c8b6db]PARTICLES  ·  %s[/color]\n\n" % [value.collector_material_label().to_upper(), ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"][clampi(int(look.get("particle_tier", 0)), 0, 6)]]
+	if (bool(model.call("is_modular")) or bool(model.call("has_painted_surface"))) and not look.is_empty():
+		info.text += "[color=#bfc9dd]SURFACE  ·  %s[/color]\n\n" % preload("res://scripts/living_metal_v187.gd").LABELS[clampi(int(look.get("surface_mode", 0)), 0, 6)]
 	info.text += MARKUP.item_info(value, true)
 	info.scroll_to_line(0)
-	glow_button.disabled = not bool(model.call("is_modular"))
-	motion_button.disabled = glow_button.disabled
+	glow_button.disabled = false
+	motion_button.disabled = false
 	glow_button.set_pressed_no_signal(true)
 	motion_button.set_pressed_no_signal(false)
 	model.set("glow_enabled", true)
 	_reset_view()
 	show()
 	_position_model()
-	status.text = "Drag to rotate  ·  Wheel to zoom  ·  Display-only motion" if not glow_button.disabled else "Base artwork preview  ·  This weapon is not yet modular"
+	status.text = "Drag to rotate  ·  Wheel to zoom  ·  Display-only motion" if bool(model.call("is_modular")) else "Original artwork + animated effects  ·  Drag to rotate  ·  Wheel to zoom"
 
 func close_lens() -> void:
 	hide()
