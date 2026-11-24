@@ -280,6 +280,12 @@ A cherished item can be picked up, saved, protected, moved to the vault, display
 
 ### 6.1 Ordinary combat should be light and satisfying
 
+**Next feedback pass (source implemented on feature branch; not yet playtested):**
+- [ ] Verify layered original audio transients for melee swing versus confirmed contact, counter-riposte, precisely confirmed dodge evasion, spell casting and contact, warder guard breaks, and falling debris. Normal whiffs must not produce impact sounds.
+- [ ] Tune transient loudness, event density, particles, and brief camera kicks in a real Godot playtest; avoid auditory fatigue in repeated farming. F8 cycles 100/50/0% shake and F9 cycles 100/50/0% new impact audio (session-only).
+- [ ] Design a **real enemy parry/deflection mechanic** separately, with an explicit defensive window and outcome callback; a poise-break clang is not evidence of a successful parry.
+
+
 - [ ] Make common enemies readable, beatable, and brisk to farm without demanding repeated precision dodges.
 - [ ] Retain deliberate attacks, good hit feedback, short recoveries appropriate to each weapon, and meaningful risk; “light” does not mean empty or automatic combat.
 - [ ] Make most collector routes approachable with ordinary gear and accessible movement/controls.

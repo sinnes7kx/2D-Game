@@ -157,5 +157,8 @@ jobs:
       - name: Verify Collector Roll Code and item identity
         run: godot --headless --path GhostGirl2 --script res://tests/v1931_roll_code_smoke.gd
 
+      - name: Verify original combat impact audio and controls
+        run: godot --headless --path GhostGirl2 --script res://tests/v194_impact_audio_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

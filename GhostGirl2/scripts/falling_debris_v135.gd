@@ -1,6 +1,7 @@
 extends Node2D
 const IMPACT_SOUND: AudioStream = preload("res://assets/audio/v135_debris_impact.wav")
 const PHYSICAL_FEEL: Script = preload("res://scripts/impact_spawner_v149.gd")
+const COMBAT_JUICE: Script = preload("res://scripts/combat_juice_v194.gd")
 ## One telegraphed fall. One hit per victim; the remaining pile temporarily
 ## blocks projectiles and creates improvised cover. No repeating damage ticks.
 var warning_seconds: float = 0.76
@@ -29,7 +30,8 @@ func _process(delta: float) -> void:
 
 func _impact() -> void:
     PHYSICAL_FEEL.burst(get_parent(), global_position, "stone", clampf(radius / 75.0, 1.0, 2.25), Vector2.DOWN, source_site_id.hash())
-    PHYSICAL_FEEL.rumble(global_position, clampf(radius / 12.0, 5.0, 10.0))
+    PHYSICAL_FEEL.rumble(global_position, clampf(radius / 10.0, 6.0, 12.0))
+    COMBAT_JUICE.play(get_tree().current_scene, global_position, "debris", -12.0)
     var crack: AudioStreamPlayer2D = AudioStreamPlayer2D.new()
     crack.stream = IMPACT_SOUND
     crack.volume_db = -8.0
