@@ -64,14 +64,14 @@
     "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_back_00.png",
-      "assets/ghost/combat_v12/attack_heavy_back_01.png",
-      "assets/ghost/combat_v12/attack_heavy_back_02.png",
-      "assets/ghost/combat_v12/attack_heavy_back_03.png",
-      "assets/ghost/combat_v12/attack_heavy_back_04.png",
-      "assets/ghost/combat_v12/attack_heavy_back_05.png",
-      "assets/ghost/combat_v12/attack_heavy_back_06.png",
-      "assets/ghost/combat_v12/attack_heavy_back_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
     ]
   },
   {
@@ -79,14 +79,14 @@
     "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_front_00.png",
-      "assets/ghost/combat_v12/attack_heavy_front_01.png",
-      "assets/ghost/combat_v12/attack_heavy_front_02.png",
-      "assets/ghost/combat_v12/attack_heavy_front_03.png",
-      "assets/ghost/combat_v12/attack_heavy_front_04.png",
-      "assets/ghost/combat_v12/attack_heavy_front_05.png",
-      "assets/ghost/combat_v12/attack_heavy_front_06.png",
-      "assets/ghost/combat_v12/attack_heavy_front_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
     ]
   },
   {
@@ -94,14 +94,14 @@
     "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_left_00.png",
-      "assets/ghost/combat_v12/attack_heavy_left_01.png",
-      "assets/ghost/combat_v12/attack_heavy_left_02.png",
-      "assets/ghost/combat_v12/attack_heavy_left_03.png",
-      "assets/ghost/combat_v12/attack_heavy_left_04.png",
-      "assets/ghost/combat_v12/attack_heavy_left_05.png",
-      "assets/ghost/combat_v12/attack_heavy_left_06.png",
-      "assets/ghost/combat_v12/attack_heavy_left_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
     ]
   },
   {
@@ -109,14 +109,14 @@
     "speed": 11,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v12/attack_heavy_right_00.png",
-      "assets/ghost/combat_v12/attack_heavy_right_01.png",
-      "assets/ghost/combat_v12/attack_heavy_right_02.png",
-      "assets/ghost/combat_v12/attack_heavy_right_03.png",
-      "assets/ghost/combat_v12/attack_heavy_right_04.png",
-      "assets/ghost/combat_v12/attack_heavy_right_05.png",
-      "assets/ghost/combat_v12/attack_heavy_right_06.png",
-      "assets/ghost/combat_v12/attack_heavy_right_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
     ]
   },
   {
@@ -594,14 +594,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_front_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_front_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_front_07.png"
     ]
   },
   {
@@ -609,14 +609,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_back_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_back_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_back_07.png"
     ]
   },
   {
@@ -624,14 +624,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_left_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_left_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_left_07.png"
     ]
   },
   {
@@ -639,14 +639,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_00.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_01.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_02.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_03.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_04.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_05.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_06.png",
-      "assets/ghost/combat_v14/attack_unarmed_heavy_right_07.png"
+      "assets/ghost/combat_v14/attack_unarmed_light_right_00.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_01.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_02.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_03.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_04.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_05.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_06.png",
+      "assets/ghost/combat_v14/attack_unarmed_light_right_07.png"
     ]
   },
   {
@@ -714,14 +714,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_front_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_front_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_front_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_front_07.png"
     ]
   },
   {
@@ -729,14 +729,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_back_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_back_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_back_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_back_07.png"
     ]
   },
   {
@@ -744,14 +744,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_left_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_left_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_left_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_left_07.png"
     ]
   },
   {
@@ -759,14 +759,14 @@
     "speed": 16,
     "loop": false,
     "textures": [
-      "assets/ghost/combat_v14/attack_sword_heavy_right_00.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_01.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_02.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_03.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_04.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_05.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_06.png",
-      "assets/ghost/combat_v14/attack_sword_heavy_right_07.png"
+      "assets/ghost/combat_v14/attack_sword_light_right_00.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_01.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_02.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_03.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_04.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_05.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_06.png",
+      "assets/ghost/combat_v14/attack_sword_light_right_07.png"
     ]
   },
   {
