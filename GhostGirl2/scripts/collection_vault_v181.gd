@@ -16,6 +16,9 @@ var shown: Array[GhostItemInstance] = []
 var display_slot: OptionButton
 var display_button: Button
 var clear_display: Button
+var source_view: OptionButton
+var transfer_access: Callable
+var header_title: Label
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -42,6 +45,7 @@ func _ready() -> void:
 	var layout: VBoxContainer = VBoxContainer.new()
 	panel.add_child(layout)
 	var title: Label = Label.new()
+	header_title = title
 	title.text = "THE COLLECTION VAULT"
 	title.add_theme_font_size_override("font_size", 23)
 	title.add_theme_color_override("font_color", Color("dfc38e"))
@@ -50,6 +54,11 @@ func _ready() -> void:
 	layout.add_child(count_label)
 	var filters: HBoxContainer = HBoxContainer.new()
 	layout.add_child(filters)
+	source_view = OptionButton.new()
+	source_view.add_item("Stored")
+	source_view.add_item("Backpack")
+	filters.add_child(source_view)
+	source_view.item_selected.connect(func(_index: int) -> void: refresh())
 	search = LineEdit.new()
 	search.placeholder_text = "Search weapon, rarity or region"
 	search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -92,9 +101,12 @@ func _button(parent: HBoxContainer, label_text: String, callback: Callable) -> B
 	b.pressed.connect(callback)
 	return b
 
-func open_vault(value: Node, candidate: GhostItemInstance, preferred_slot: int = -1) -> void:
+func open_vault(value: Node, candidate: GhostItemInstance, preferred_slot: int = -1, access: Callable = Callable()) -> void:
+	transfer_access = access
+	header_title.text = "LANTERNHAVEN STASH" if _can_transfer() else "COLLECTION VIEW · STASH IN TOWN"
 	inventory = value
 	selected_item = candidate
+	source_view.select(1 if candidate != null and inventory.contents.has(candidate) else 0)
 	search.clear()
 	favorites.set_pressed_no_signal(false)
 	show()
@@ -108,7 +120,10 @@ func refresh() -> void:
 	list.clear()
 	shown.clear()
 	var query: String = search.text.strip_edges().to_lower()
-	for item in inventory.vault:
+	var candidates: Array = inventory.vault if source_view.selected == 0 else inventory.contents
+	for item in candidates:
+		if item.get_slot() not in ["sword", "wand"]:
+			continue
 		if favorites.button_pressed and not item.collector_favorite:
 			continue
 		var label_text: String = "%s%s%s  ·  %s%s" % ["★ " if item.collector_favorite else "", "[Protected] " if item.collector_locked else "", item.display_name(), item.collector_material_label(), " · Display %d" % (item.exhibition_slot + 1) if item.exhibition_slot >= 0 else ""]
@@ -135,10 +150,10 @@ func _select(index: int) -> void:
 func _update_buttons() -> void:
 	var stored: bool = selected_item != null and inventory.vault.has(selected_item)
 	var carried: bool = selected_item != null and inventory.contents.has(selected_item)
-	deposit.disabled = not carried or selected_item.get_slot() not in ["sword", "wand"] if carried else true
+	deposit.disabled = not _can_transfer() or not carried or (selected_item.get_slot() not in ["sword", "wand"] if carried else true)
 	display_button.disabled = not stored
 	clear_display.disabled = not stored or selected_item.exhibition_slot < 0 if stored else true
-	withdraw.disabled = not stored
+	withdraw.disabled = not stored or not _can_transfer()
 	inspect.disabled = not (stored or carried)
 	favorite.disabled = not (stored or carried)
 	lock.disabled = not (stored or carried)
@@ -150,11 +165,14 @@ func _update_buttons() -> void:
 			details.text += " · Sanctum display %d" % (selected_item.exhibition_slot + 1)
 			display_slot.select(selected_item.exhibition_slot)
 	else:
-		details.text = "Select a weapon to inspect or retrieve. Select one in your backpack before opening to store it."
+		details.text = "Choose Stored or Backpack above, then select an item. Transfers require the town stash."
 		favorite.text = "Favorite"
 		lock.text = "Protect"
 
 func _store() -> void:
+	if not _can_transfer():
+		details.text = "Return to the town stash to transfer items."
+		return
 	if selected_item == null:
 		return
 	var idx: int = inventory.contents.find(selected_item)
@@ -164,6 +182,9 @@ func _store() -> void:
 		details.text = "Cannot store: unequip first, check vault space or save access."
 
 func _withdraw() -> void:
+	if not _can_transfer():
+		details.text = "Return to the town stash to transfer items."
+		return
 	var idx: int = inventory.vault.find(selected_item)
 	if inventory.vault_withdraw(idx):
 		refresh()
@@ -201,3 +222,6 @@ func _assign_display() -> void:
 func _remove_display() -> void:
 	if selected_item != null and inventory.set_exhibition(selected_item, -1):
 		refresh()
+
+func _can_transfer() -> bool:
+	return bool(transfer_access.call()) if transfer_access.is_valid() else true
