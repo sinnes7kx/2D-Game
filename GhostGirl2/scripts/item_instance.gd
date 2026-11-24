@@ -423,6 +423,8 @@ func collector_appearance() -> Dictionary:
 			look["forge_guard"] = clampi(debug_forge_guard, 0, 7)
 		if debug_forge_grip >= 0:
 			look["forge_grip"] = clampi(debug_forge_grip, 0, 5)
+	look["signature"] = visual_signature()
+	look["signature_variant"] = mythic_layer_variant()
 	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
 	return look
 

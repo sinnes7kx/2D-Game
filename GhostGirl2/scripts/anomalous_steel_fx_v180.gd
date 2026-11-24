@@ -48,7 +48,7 @@ static func color_at(colors: Array[Color], look: Dictionary, t: float, time: flo
 		ink = ink.lerp(local.lerp(dusk, wave), 0.18 + 0.08 * float(look["region_rank"]))
 	return ink
 
-static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Color], look: Dictionary, time: float, strength: float = 1.0) -> void:
+static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Color], look: Dictionary, time: float, strength: float = 1.0, details: bool = true) -> void:
 	if path.size() < 2:
 		return
 	var tier: int = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0)))
@@ -63,15 +63,18 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 			var ink: Color = color_at(colors, look, u, time)
 			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, 0.075 * power), 2.7, true)
 			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, minf(0.38, 0.30 * power)), 0.95, true)
+	if not details:
+		return
 	var root: Vector2 = path[0]
 	var tip: Vector2 = path[path.size() - 1]
 	var axis: Vector2 = (tip - root).normalized()
 	var normal: Vector2 = Vector2(-axis.y, axis.x)
-	for j in range(3 + mini(tier, 4)):
+	for j in range(2 + mini(tier, 3)):
 		var u: float = fposmod(float(j) * 0.23 + time * (0.13 + float(motif) * 0.018), 1.0)
-		var p: Vector2 = root.lerp(tip, u)
+		var p: Vector2 = point_on_path(path, u)
 		var ink: Color = color_at(colors, look, u, time)
-		ink.a = sin(u * PI) * 0.42
+		ink = ink.lerp(Color.WHITE, 0.24)
+		ink.a = sin(u * PI) * 0.55
 		var wiggle: Vector2 = normal * sin(u * TAU * 2.0 + time * 3.0) * 3.0
 		match motif:
 			0: canvas.draw_circle(p, 1.3, ink)
@@ -93,7 +96,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 		var region: String = str(look.get("region", ""))
 		for i in range(region_rank + 1):
 			var u: float = fposmod(time * 0.16 + float(i) / float(region_rank + 1), 1.0)
-			var p: Vector2 = root.lerp(tip, u)
+			var p: Vector2 = point_on_path(path, u)
 			local.a = sin(u * PI) * 0.34
 			match region:
 				"moonwake_crypt":
@@ -109,3 +112,63 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 					canvas.draw_line(p - normal * 3.0, p + normal * 3.0, local, 1.0, true)
 				"lily_pond":
 					canvas.draw_arc(p, 2.8, 0.0, TAU, 12, local, 0.9, true)
+
+	draw_signature(canvas, path, colors, look, time)
+
+static func point_on_path(path: PackedVector2Array, u: float) -> Vector2:
+	if path.size() < 2:
+		return path[0] if not path.is_empty() else Vector2.ZERO
+	var at: float = clampf(u, 0.0, 1.0) * float(path.size() - 1)
+	var i: int = mini(floori(at), path.size() - 2)
+	return path[i].lerp(path[i + 1], at - float(i))
+
+static func signature_kind(look: Dictionary) -> int:
+	var sig: int = int(look.get("signature", 0))
+	if maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0))) == 6:
+		return 10
+	if sig == 4:
+		return 6 + clampi(int(look.get("signature_variant", 0)), 0, 3)
+	return sig
+
+static func draw_signature(canvas: Node2D, path: PackedVector2Array, colors: Array[Color], look: Dictionary, time: float) -> void:
+	if path.size() < 2:
+		return
+	var kind: int = signature_kind(look)
+	if kind == 0:
+		return
+	var axis: Vector2 = (path[-1] - path[0]).normalized()
+	if axis.is_zero_approx():
+		return
+	var normal: Vector2 = Vector2(-axis.y, axis.x)
+	for i in range(3):
+		var u: float = 0.12 + 0.76 * fposmod(time * 0.16 + float(i) / 3.0, 1.0)
+		var center: Vector2 = point_on_path(path, u)
+		var ink: Color = color_at(colors, look, u, time).lerp(Color.WHITE, 0.22)
+		ink.a = 0.38 + 0.14 * sin(u * PI)
+		var offset: Vector2 = normal * (2.5 + 1.5 * sin(time * 2.0 + float(i)))
+		var p: Vector2 = center + offset
+		match kind:
+			1:
+				canvas.draw_polyline(PackedVector2Array([center-axis*3.0,p,center+axis*2.0]),ink,1.0,true)
+			2:
+				canvas.draw_arc(p,3.3,time,time+PI*1.5,12,ink,1.0,true)
+			3:
+				canvas.draw_line(p-axis*3.0,p+axis*3.0,ink,1.0,true)
+				canvas.draw_line(p-normal*2.6,p+normal*2.6,ink,1.0,true)
+			5:
+				canvas.draw_arc(p,3.7,time,time+PI*1.2,14,ink,1.1,true)
+				canvas.draw_circle(center,0.9,ink)
+			6:
+				canvas.draw_polyline(PackedVector2Array([center-axis*4.0,p-axis,p+axis,center+axis*4.0]),ink,1.0,true)
+			7:
+				canvas.draw_circle(p,1.5,ink)
+				canvas.draw_line(p-axis*3.0,p,ink,0.8,true)
+			8:
+				canvas.draw_arc(p,2.0+1.6*sin(u*PI),0.0,TAU,14,ink,0.9,true)
+			9:
+				canvas.draw_colored_polygon(PackedVector2Array([center,p-axis*2.0,p+normal*1.5,p+axis*2.0]),ink)
+			10:
+				var zig: Vector2 = normal * sin(time*2.4+float(i)*2.0)*3.0
+				canvas.draw_polyline(PackedVector2Array([center-axis*4.0,p-axis*2.0,p+zig,center+axis*4.0]),ink,1.1,true)
+				ink.a *= 0.65
+				canvas.draw_circle(p+zig,1.2,ink)

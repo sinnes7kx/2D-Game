@@ -2,6 +2,9 @@ shader_type canvas_item;
 render_mode unshaded, blend_mix;
 uniform sampler2D pigment_ramp : source_color, filter_linear, repeat_disable;
 uniform int surface_mode = 0;
+uniform int signature_kind = 0;
+uniform int glow_motif = 0;
+uniform int color_mode = 0;
 uniform float surface_phase = 0.0;
 uniform float surface_speed = 0.5;
 uniform float strength = 0.35;
@@ -31,13 +34,21 @@ void fragment() {
     } else if (surface_mode == 6) {
         weight = 0.5 + 0.5 * sin(u * 27.0 + v * 11.0 + t * 1.5 + sin(u * 59.0 - t));
     }
-    float shift = surface_mode >= 2 ? TIME * surface_speed * 0.12 : 0.0;
+    float shift = surface_mode >= 2 || color_mode >= 2 || signature_kind == 10 ? TIME * surface_speed * 0.12 : 0.0;
     // Smooth ping-pong along the actual rolled ramp, never a forced hue wheel.
     float sample_at = 1.0 - abs(mod(u + shift, 2.0) - 1.0);
     vec3 pigment = texture(pigment_ramp, vec2(sample_at, 0.5)).rgb;
     float lum = dot(art.rgb, vec3(0.299, 0.587, 0.114));
     vec3 tinted = pigment * (0.42 + 0.58 * lum);
     float amount = strength * (0.22 + 0.78 * clamp(weight, 0.0, 1.0));
+    // Small moving engraved flashes, restricted to the original weapon alpha.
+    float motif = pow(max(0.0, sin(u * (28.0 + float(glow_motif) * 7.0) - t * 2.0 + sin(v * 30.0) * float(glow_motif) * 0.35)), 10.0);
+    if (signature_kind > 0) {
+        float line = sin(u * (19.0 + float(signature_kind) * 5.0) - t * 2.0 + sin(v * 45.0 + t) * 2.0);
+        motif = max(motif, pow(max(0.0, line), 9.0));
+    }
+    tinted = mix(tinted, mix(pigment, vec3(1.0), 0.30), motif * 0.42);
+    amount = min(0.52, amount + motif * (signature_kind > 0 ? 0.22 : 0.10));
     vec3 result = mix(art.rgb, tinted, amount);
     float alpha = art.a * vertex_tint.a;
     if (overlay_only) {

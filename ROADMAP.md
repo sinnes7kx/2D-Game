@@ -125,6 +125,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
 
+### Current visual defect slice (v1.92.3, source implementation)
+
+- User screenshots show cyan/purple hair and inconsistent dress dye, missing held-weapon preview effects (especially bows), and a front-facing screen-right dagger grip offset. The body shader used whole-texture UVs and violet-pixel weapon classification; both are unsafe for mixed body atlases. Disable both color passes pending authored per-frame fabric masks; dress palette data and accessory/halo effects remain. This intentionally suspends dress fabric dye rather than risking recoloring hair/skin.
+- Shared blade-local signature geometry, restrained motif accents, actual bow-mask signature uniforms and mirrored guide offsets; single detailed pass per twinblade end. Correct the neutral front screen-right hand anchor against the existing body art. No changes to combat or saved item data.
+- New `tests/v1923_equipped_fx_smoke.gd` exercises real dropdown, equipped/inspection look parity, bow shader parameters, neutral body shader controls and preserved item data. Registered in CI; interactive four-direction and weapon alignment checks remain release blockers.
+- PR #28 (v1.92.2 collection recovery) remains open with failed CI; this independent visual fix is based directly on main, not the failing recovery branch. M0 is not complete.
 ### Current evidence and blockers (v1.92.2)
 
 - v1.92.1 PR #27 merged; GitHub Actions run [45381388211](https://github.com/sinnes7kx/2D-Game/actions/runs/45381388211) succeeded, including the current/legacy/missing TestMythic control smoke. The local F5 confirmation and release-export UI check remain outstanding.

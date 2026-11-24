@@ -112,7 +112,7 @@ func _draw() -> void:
 				_blade(Vector2(0, 5), Vector2(0, -35), 3.2, 0)
 	if glow_enabled:
 		_draw_light()
-		_draw_signature(Vector2.ZERO, 60.0)
+		# Weapon signatures are drawn along the same edge as equipped art.
 
 func _draw_trident() -> void:
 	_grip(Vector2(0, 55), Vector2(0, -36), 4.5, 0)
@@ -123,8 +123,8 @@ func _draw_trident() -> void:
 	_blade(Vector2(0, -36), Vector2(0, -53), 2.6, 0)
 
 func _draw_light() -> void:
-	for path in segments:
-		ANOMALOUS.draw_edge(self, path, gradients, look, elapsed, float(look.get("glow_strength", 1.0)) * 0.80)
+	for i in range(segments.size()):
+		ANOMALOUS.draw_edge(self, segments[i], gradients, look, elapsed, float(look.get("glow_strength", 1.0)) * 0.80, i % 2 == 1)
 
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.

@@ -60,7 +60,7 @@ static func hand_anchor(face: String, frame: int, hand: int) -> Vector2:
 	match face:
 		"front":
 			near = [Vector2(111,141),Vector2(118,129),Vector2(143,121),Vector2(119,118),Vector2(172,120),Vector2(183,128),Vector2(145,129),Vector2(113,141)]
-			far = [Vector2(181,141),Vector2(178,124),Vector2(194,114),Vector2(205,107),Vector2(187,105),Vector2(208,129),Vector2(190,145),Vector2(181,141)]
+			far = [Vector2(179,137),Vector2(178,124),Vector2(194,114),Vector2(205,107),Vector2(187,105),Vector2(208,129),Vector2(190,145),Vector2(179,137)]
 		"left":
 			near = [Vector2(93,134),Vector2(97,117),Vector2(98,107),Vector2(83,106),Vector2(76,102),Vector2(80,103),Vector2(101,134),Vector2(96,137)]
 			far = [Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF,Vector2.INF]

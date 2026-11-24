@@ -36,6 +36,7 @@ var bow_string_colors: Array[Color] = [Color("a9c4fb"), Color("f7c3ed"), Color("
 var last_uid: String = ""
 var last_seed: int = -9223372036854775807
 var last_signature: int = -1
+var last_fx_key: String = ""
 # Inspector value also provides a useful live test; must never be zero by default.
 @export_range(0.5, 3.0, 0.1) var visible_glow_strength: float = 1.95
 
@@ -115,6 +116,7 @@ func refresh() -> void:
 		last_uid = item.cosmetic_uid
 		last_seed = item.visual_seed()
 		last_signature = item.visual_signature()
+		last_fx_key = _fx_key(item)
 		collector_look = item.collector_appearance()
 		# Every equipped weapon gets baseline illumination, regardless of
 		# quality or whether it rolled a named prestige motif.
@@ -268,15 +270,25 @@ func _axial_span() -> PackedVector2Array:
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 68.0)])
 	if style == "bow":
 		var bow_animation: String = _resolved_bow_animation_name(animation)
+		var frame_index: int = body.frame
+		var mirrored: bool = false
+		var offset: Vector2 = Vector2.ZERO
+		var mask: AnimatedSprite2D = body.get_node_or_null("BowPaletteV139") as AnimatedSprite2D
+		if mask != null and mask.visible and bow_axes_by_animation.has(str(mask.animation)):
+			bow_animation = str(mask.animation)
+			frame_index = mask.frame
+			mirrored = mask.flip_h
+			offset = mask.position
 		var axes: Array = bow_axes_by_animation.get(bow_animation, [])
 		if not axes.is_empty():
-			var guide: Variant = axes[clampi(body.frame, 0, axes.size() - 1)]
+			var guide: Variant = axes[clampi(frame_index, 0, axes.size() - 1)]
 			if guide is Array and guide.size() == 4:
 				var start_pos: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 				var end_pos: Vector2 = Vector2(float(guide[2]), float(guide[3]))
-				# The dedicated bow body frames are already correctly
-				# oriented, unlike the previous hook-body+carry-overlay path.
-				return PackedVector2Array([start_pos, end_pos])
+				if mirrored:
+					start_pos.x *= -1.0
+					end_pos.x *= -1.0
+				return PackedVector2Array([start_pos + offset, end_pos + offset])
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 46.0)])
 	# Every equipment category that actually occupies the weapon slot
 	# receives a visible fallback aura, not an empty array.
@@ -353,10 +365,13 @@ func _process(delta: float) -> void:
 	var selected: GhostItemInstance = (wand if wand != null else sword) if casting else (sword if sword != null else wand)
 	if selected != item:
 		refresh()
-	elif item != null and (last_uid != item.cosmetic_uid or last_seed != item.visual_seed() or last_signature != item.visual_signature()):
+	elif item != null and (last_uid != item.cosmetic_uid or last_seed != item.visual_seed() or last_signature != item.visual_signature() or last_fx_key != _fx_key(item)):
 		refresh()
 	if item != null:
 		queue_redraw()
+
+func _fx_key(value: GhostItemInstance) -> String:
+	return "%s:%s:%s:%s:%s:%s" % [value.effect_palette_channel(), value.debug_color_mode, value.debug_glow_motif, value.debug_surface_mode, value.debug_forge_guard, value.debug_forge_grip]
 
 func _ink(progress: float, opacity: float) -> Color:
 	var tint: Color = paint_a.lerp(paint_b, clampf(progress, 0.0, 1.0))
@@ -418,7 +433,8 @@ func _draw() -> void:
 	var narrow: bool = style == "bow"
 	var wand: bool = item.get_slot() == "wand"
 	if narrow:
-		_draw_bow_dual_glow(grip, tip, tangent, normal, minf(intensity, 1.85))
+		ANOMALOUS.draw_edge(self, PackedVector2Array([grip, tip]), effect_palette, collector_look, elapsed, 1.1)
+		_draw_bow_dual_glow(grip, tip, tangent, normal, minf(intensity, 1.15))
 		_draw_ambient_fireflies(grip, tip, tangent, normal, minf(intensity, 1.35))
 		_draw_socketed_jewel_echo(grip, tip, normal)
 		if visual_signature_level > 0:
@@ -433,8 +449,9 @@ func _draw() -> void:
 		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
 		if physical == null or not bool(physical.call("_is_equipped", animation)):
 			_draw_v1723_twinblade_edges(grip, tip, normal, intensity)
-		_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
+			_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
 		return
+	ANOMALOUS.draw_edge(self, PackedVector2Array([grip.lerp(tip, 0.25), tip]), effect_palette, collector_look, elapsed, 1.0)
 	# Bow string and body remain recognizable; its glow must not become a solid bar.
 	var radius: float = 6.0 if narrow else (8.0 if wand else 10.5)
 	var opaque_factor: float = 0.71 if narrow else 1.0
