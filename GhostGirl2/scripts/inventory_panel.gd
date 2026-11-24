@@ -23,7 +23,7 @@ var test_looks: OptionButton
 @onready var seed_row: HBoxContainer = $Layout/DetailsWell/DetailsVBox/SeedRow
 @onready var seed_display: TextureRect = $Layout/DetailsWell/DetailsVBox/SeedRow/SeedDisplay
 @onready var saved_seeds: OptionButton = $Layout/DetailsWell/DetailsVBox/SeedRow/SavedSeeds
-@onready var test_mythic: OptionButton = $Layout/DetailsHeader/TestMythic
+var test_mythic: OptionButton
 @onready var equip_button: Button = $Layout/Actions/EquipSelected
 @onready var socket_button: Button = $Layout/Actions/SocketSelected
 @onready var destroy_button: Button = $Layout/Actions/DestroySelected
@@ -49,6 +49,8 @@ func _ready() -> void:
 	$Layout/DetailsWell/DetailsVBox/SeedRow/RerollSeed.pressed.connect(_reroll_selected_seed)
 	$Layout/DetailsWell/DetailsVBox/SeedRow/SaveSeed.pressed.connect(_save_selected_seed)
 	saved_seeds.item_selected.connect(_restore_selected_seed)
+	# Upgrade older locally saved scenes before assigning the typed reference.
+	test_mythic = _ensure_effect_dropdown()
 	# Never surface the tester in release exports.
 	test_mythic.hide()
 	if OS.is_debug_build():
@@ -60,6 +62,36 @@ func _ready() -> void:
 	confirmation.confirmed.connect(_confirm_delete)
 	confirmation.canceled.connect(_cancel_delete)
 	_clear()
+
+# Older project copies can still have a Button at the same scene path.
+# Replace only that control at runtime, preserving its layout. A valid
+# OptionButton is reused unchanged; no scene or save is written to disk.
+func _ensure_effect_dropdown() -> OptionButton:
+	var header: Control = $Layout/DetailsHeader
+	var old: Node = header.get_node_or_null("TestMythic")
+	if old is OptionButton:
+		return old as OptionButton
+	var dropdown: OptionButton = OptionButton.new()
+	dropdown.name = "TestMythic"
+	dropdown.add_theme_font_size_override("font_size", 12)
+	dropdown.tooltip_text = "Debug build only: select visual effects. Nothing is saved."
+	dropdown.hide()
+	var index: int = header.get_child_count()
+	if old != null:
+		index = old.get_index()
+		if old is Control:
+			var control: Control = old as Control
+			dropdown.custom_minimum_size = control.custom_minimum_size
+			dropdown.size_flags_horizontal = control.size_flags_horizontal
+			dropdown.size_flags_vertical = control.size_flags_vertical
+			dropdown.size_flags_stretch_ratio = control.size_flags_stretch_ratio
+			dropdown.theme = control.theme
+			dropdown.focus_mode = control.focus_mode
+		header.remove_child(old)
+		old.queue_free()
+	header.add_child(dropdown)
+	header.move_child(dropdown, index)
+	return dropdown
 
 func _process(_delta: float) -> void:
 	if not visible or inventory == null or selected_index < 0:
