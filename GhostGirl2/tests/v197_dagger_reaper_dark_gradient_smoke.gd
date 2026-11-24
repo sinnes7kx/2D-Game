@@ -35,14 +35,15 @@ func _verify() -> void:
     var definition: GhostItemData = load("res://items/rose_reaper_scythe.tres") as GhostItemData
     var item: GhostItemInstance = GhostItemGenerator.create(definition, seed, "rare")
     item.apply_cosmetic_uid(uid)
-    if item.gradient_version != 1 or item.glow_gradient_colors() != old:
+    var expected_legacy_glow: Array[Color] = RNG.gradient_for_channel(item.cosmetic_uid, item.visual_seed(), item.effect_palette_channel(), 1)
+    if item.gradient_version != 1 or item.glow_gradient_colors() != expected_legacy_glow:
         _fail("Legacy object was not v1 by default")
         return
     var inv: Node = INVENTORY.new()
     var legacy: Dictionary = inv._serialize_item(item, Vector2i.ZERO)
     legacy.erase("gradient_version")
     var restored_legacy: GhostItemInstance = inv._deserialize_item(legacy)
-    if restored_legacy == null or restored_legacy.gradient_version != 1 or restored_legacy.glow_gradient_colors() != old:
+    if restored_legacy == null or restored_legacy.gradient_version != 1 or restored_legacy.glow_gradient_colors() != expected_legacy_glow:
         _fail("Legacy save silently recolored")
         return
     item.gradient_version = 2
