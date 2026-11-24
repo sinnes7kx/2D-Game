@@ -143,5 +143,8 @@ jobs:
       - name: Verify equipped visual effect consistency
         run: godot --headless --path GhostGirl2 --script res://tests/v1923_equipped_fx_smoke.gd
 
+      - name: Verify live equipment preview and effect intensity
+        run: godot --headless --path GhostGirl2 --script res://tests/v1924_live_preview_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
