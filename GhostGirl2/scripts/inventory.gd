@@ -414,6 +414,8 @@ func load_game() -> void:
 # Validate before touching live state. Reject malformed containers instead
 # of quietly rewriting a partial collection over the original file.
 func _restore_save_data(data: Dictionary) -> bool:
+	if not data.has("items"):
+		return false
 	for key in ["items", "vault", "unresolved_backpack"]:
 		var records: Variant = data.get(key, [])
 		if not records is Array:
