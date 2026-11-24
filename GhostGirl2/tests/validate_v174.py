@@ -50,7 +50,8 @@ assert 'attack_dual_sword_light_" + ["a", "b", "c"][combo_step]' in player
 assert 'attack_dual_sword_heavy_' in rig
 assert "var riposte_advances: Array[float]" in rig
 assert "static func authored_blade_spans(" in rig
-assert "return authored_blade_spans(face, action, frame_index)" in rig
+assert 'authored_blade_spans(face, action, 0 if action == "idle" else frame_index)' in rig
+assert "GENTLE.smooth(body, animation_name, spans[hand], hand)" in rig
 assert "var lead_reach: Array[float]" in rig
 assert "cross_amount: float" in rig
 
