@@ -59,18 +59,23 @@ func _carry_transform_for_animation(source_animation: String, frame_index: int) 
 # The image is a full 256x220 bow-only atlas tile; rotate about the *source
 # handle*, then translate that pivot onto Ghost Girl's genuine hand.
 # Front/back share the horizontal side-silhouette; left mirrors right.
-const RIGHT_BOW_SOURCE_GRIP: Vector2 = Vector2(49.0, 25.0)
-
 static func idle_hold_pose(face: String) -> Dictionary:
 	var flip: bool = face == "left"
+	# Front/back use the matching authored bow view. Only left uses the
+	# mirrored right-bow source, preserving the approved right/left handedness.
+	var source_face: String = "right" if flip else face
 	var hand: Vector2 = HAND.hand_anchor(face, 0, 0 if flip else 1)
 	if hand == Vector2.INF:
-		# Back-facing neutral body hides the hand partly behind her hair;
-		# keep the grip near the concealed right wrist, not on the torso center.
+		# Back hair occludes the original hand at pose zero.
 		hand = Vector2(34.0, 27.0)
+	var source: Vector2 = HAND.hand_anchor(source_face, 0, 1)
+	if source == Vector2.INF:
+		source = Vector2(34.0, 27.0)
+	if flip:
+		source.x = -source.x
 	var angle: float = 80.0 if flip else (-82.0 if face != "back" else -78.0)
-	var source: Vector2 = Vector2(-RIGHT_BOW_SOURCE_GRIP.x if flip else RIGHT_BOW_SOURCE_GRIP.x, RIGHT_BOW_SOURCE_GRIP.y)
 	return {
+		"source_face": source_face,
 		"flip_h": flip,
 		"rotation_deg": angle,
 		"position": hand - source.rotated(deg_to_rad(angle)),
@@ -86,12 +91,10 @@ func _show_idle_bow(item: GhostItemInstance, source_animation: String) -> bool:
 		if source_animation.ends_with(suffix):
 			face = suffix
 			break
-	# The same bow-only silhouette rotates to the reference chest carry,
-	# avoiding different uncalibrated pivot points for each source atlas row.
-	var carry_name: String = _bow_style_name(item) + "_idle_right"
+	var pose: Dictionary = idle_hold_pose(face)
+	var carry_name: String = _bow_style_name(item) + "_idle_" + str(pose["source_face"])
 	if not bow_carry_visual.sprite_frames.has_animation(carry_name) or not sprite_frames.has_animation(carry_name):
 		return false
-	var pose: Dictionary = idle_hold_pose(face)
 	for layer in [bow_carry_visual, self]:
 		layer.visible = true
 		layer.flip_h = bool(pose["flip_h"])
