@@ -1,5 +1,6 @@
 extends Node2D
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const HEAVY = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 const SURFACE = preload("res://scripts/weapon_surface_v190.gd")
@@ -10,6 +11,8 @@ var look: Dictionary = {}
 var profile: Dictionary = {}
 var colors: Array[Color] = []
 var key: String = ""
+var style: String = ""
+var ashglass: bool = false
 var phase: float = 0.0
 
 func _ready() -> void:
@@ -18,13 +21,17 @@ func _ready() -> void:
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://resources/long_weapon_glow_axes_v143.json"))
 	if raw is Dictionary:
 		guides = raw
+	var maul_guides: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://resources/new_weapon_axes_v170.json"))
+	if maul_guides is Dictionary:
+		guides.merge(maul_guides, false)
 
 func _process(delta: float) -> void:
 	phase += delta
 	var world: Node = player.get("world") as Node
 	var inventory: Node = world.get("inventory") as Node if world != null else null
 	var item: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
-	visible = item != null and item.weapon_style() == "scythe" and SCYTHE.matches(str(body.animation))
+	style = item.weapon_style() if item != null else ""
+	visible = item != null and ((style == "scythe" and SCYTHE.matches(str(body.animation))) or (style in ["halberd", "maul"] and HEAVY.matches(str(body.animation))))
 	if not visible:
 		return
 	var next: String = SURFACE.key(item) + ":%d:%d:%d:%d" % [item.debug_color_mode, item.debug_glow_motif, item.debug_forge_guard, item.debug_forge_grip]
@@ -32,6 +39,9 @@ func _process(delta: float) -> void:
 		key = next
 		look = item.collector_appearance()
 		profile = ART.weapon_profile(look, item.definition.item_id)
+		ashglass = str(item.definition.item_id) == "ashglass_warmaul_v170"
+		profile["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
+		profile["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
 		profile["scythe_span"] = float(look.get("scythe_span", 1.0))
 		profile["scythe_curve"] = float(look.get("scythe_curve", 0.7))
 		colors = item.glow_gradient_colors()
@@ -45,8 +55,13 @@ func _draw() -> void:
 		return
 	var name_now: String = str(body.animation)
 	var idle: bool = GENTLE.modular_idle(name_now)
-	var points: PackedVector2Array = SCYTHE.span(name_now, 0 if idle else body.frame, guides)
+	var index: int = 0 if idle else body.frame
+	var points: PackedVector2Array = SCYTHE.span(name_now, index, guides) if style == "scythe" else HEAVY.span(name_now, index, guides)
 	if idle:
 		points = GENTLE.smooth(body, name_now, points)
 	if points.size() == 2:
-		SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, -1.0 if name_now.ends_with("_left") else 1.0, true)
+		var side: float = -1.0 if name_now.ends_with("_left") else 1.0
+		if style == "scythe":
+			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, true)
+		else:
+			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, true)
