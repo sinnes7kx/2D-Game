@@ -11,6 +11,7 @@ func _verify() -> void:
 	item.collector_locked = true
 	var snapshot: Dictionary = item.cosmetic_snapshot()
 	var damage: float = item.weapon_damage()
+	var stats: Dictionary = item.all_stats()
 	inv.contents.append(item)
 	inv.grid_positions.append(Vector2i.ZERO)
 	if inv.can_drop(0) or inv.can_destroy(0):
@@ -26,7 +27,11 @@ func _verify() -> void:
 		return
 	var stored: Dictionary = inv._serialize_item(item, Vector2i(-1, -1))
 	var restored: GhostItemInstance = inv._deserialize_item(JSON.parse_string(JSON.stringify(stored)))
-	if restored == null or restored.cosmetic_snapshot() != snapshot or restored.weapon_damage() != damage or not restored.collector_favorite or not restored.collector_locked:
+	if restored == null or restored.cosmetic_snapshot() != snapshot or restored.weapon_damage() != damage or restored.all_stats() != stats or not restored.collector_favorite or not restored.collector_locked:
+		if restored != null:
+			for key in snapshot:
+				if snapshot[key] != restored.cosmetic_snapshot().get(key):
+					print("Roundtrip mismatch: ", key, ": ", snapshot[key], " -> ", restored.cosmetic_snapshot().get(key))
 		_fail("Save round trip lost appearance, stats or protection")
 		return
 	inv.capacity = 0
