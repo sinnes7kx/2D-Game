@@ -163,5 +163,8 @@ jobs:
       - name: Verify smooth eight-frame sword, trident and bow idles
         run: godot --headless --path GhostGirl2 --script res://tests/v195_steady_weapon_idle_smoke.gd
 
+      - name: Verify compact tooltip and interactive visual swatches
+        run: godot --headless --path GhostGirl2 --script res://tests/v196_compact_tooltip_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
