@@ -583,7 +583,7 @@ func interact() -> void:
 		return
 	if target.is_in_group("world_loot"):
 		var original: GhostItemInstance = target.get("dropped_instance") as GhostItemInstance
-		var found: GhostItemInstance = inventory.add_existing_item(original) if original != null else inventory.add_loot(target.get("item_data") as GhostItemData, int(target.get("loot_seed")), "" if str(target.get("guaranteed_quality")) == "random" else str(target.get("guaranteed_quality")))
+		var found: GhostItemInstance = inventory.add_existing_item(original) if original != null else inventory.add_loot(target.get("item_data") as GhostItemData, int(target.get("loot_seed")), "" if str(target.get("guaranteed_quality")) == "random" else str(target.get("guaranteed_quality")), room)
 		if found != null:
 			var saved_drop_id: String = str(target.get("persistent_drop_id"))
 			if not saved_drop_id.is_empty():
@@ -599,7 +599,7 @@ func interact() -> void:
 		if id.is_empty() or inventory.has_collected(id):
 			return
 		var template: GhostItemData = target.get("item_data") as GhostItemData
-		var acquired: GhostItemInstance = inventory.add_loot(template, int(target.get("item_seed")), str(target.get("guaranteed_quality")))
+		var acquired: GhostItemInstance = inventory.add_loot(template, int(target.get("item_seed")), str(target.get("guaranteed_quality")), room)
 		if acquired == null:
 			ui.show_pickup("BACKPACK FULL")
 			return
@@ -613,7 +613,7 @@ func interact() -> void:
 		if not inventory.has_collected(chest_id):
 			var forced: String = str(target.get("guaranteed_quality"))
 			var data: GhostItemData = target.get("loot_data") as GhostItemData
-			var rolled: GhostItemInstance = inventory.add_loot(data, int(target.get("loot_seed")), "" if forced == "random" else forced)
+			var rolled: GhostItemInstance = inventory.add_loot(data, int(target.get("loot_seed")), "" if forced == "random" else forced, room)
 			if rolled != null:
 				inventory.collected_pickups[chest_id] = true
 				inventory.save_game()
@@ -625,7 +625,7 @@ func interact() -> void:
 		return
 	if target.is_in_group("collectible"):
 		var data: Resource = target.get("item_data") as Resource
-		var found: GhostItemInstance = inventory.add_pickup(data as GhostItemData, str(target.get("pickup_id")), int(target.get("item_seed")))
+		var found: GhostItemInstance = inventory.add_pickup(data as GhostItemData, str(target.get("pickup_id")), int(target.get("item_seed")), room)
 		if found != null:
 			ui.show_pickup(found.display_name())
 			target.queue_free()
@@ -896,7 +896,7 @@ func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: Stri
 	if data == null:
 		return
 	var quality: String = "" if quality_choice == "random" else quality_choice
-	var reward: GhostItemInstance = inventory.add_loot(_roll_sword_drop(data, seed_value), seed_value, quality)
+	var reward: GhostItemInstance = inventory.add_loot(_roll_sword_drop(data, seed_value), seed_value, quality, room)
 	if reward != null:
 		ui.show_pickup("%s  ·  %s" % [reward.quality.to_upper(), reward.display_name()], reward.quality_color())
 	else:
@@ -999,12 +999,12 @@ func drop_inventory_item(index: int) -> bool:
 	return true
 
 func _ground_record(item: GhostItemInstance, key: String, room_name: String, point: Vector2) -> Dictionary:
-	return {
-		"id": key, "room": room_name,
-		"resource": item.definition.resource_path, "seed": item.item_seed,
-		"quality": item.quality, "socketed": item.socketed.duplicate(true),
-		"x": point.x, "y": point.y
-	}
+	var record: Dictionary = inventory._serialize_item(item, Vector2i(-1,-1))
+	record["id"] = key
+	record["room"] = room_name
+	record["x"] = point.x
+	record["y"] = point.y
+	return record
 
 func _save_ground_records() -> void:
 	var output: FileAccess = FileAccess.open(GROUND_SAVE_FILE, FileAccess.WRITE)
@@ -1038,10 +1038,9 @@ func _spawn_saved_ground_records() -> void:
 		var data: GhostItemData = load(res_path) as GhostItemData
 		if data == null:
 			continue
-		var item: GhostItemInstance = GhostItemGenerator.create(data, int(record.get("seed", 0)), str(record.get("quality", "normal")))
-		for socket in record.get("socketed", []):
-			if socket is Dictionary and item.socketed.size() < item.sockets:
-				item.socketed.append(socket.duplicate(true))
+		var item: GhostItemInstance = inventory._deserialize_item(record)
+		if item == null:
+			continue
 		var ground: Node2D = WORLD_DROP_SCENE.instantiate() as Node2D
 		if ground == null:
 			continue

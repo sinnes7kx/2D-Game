@@ -17,6 +17,11 @@ static func color_at(colors: Array[Color], look: Dictionary, t: float, time: flo
 		6: ink = Color.from_hsv(fposmod(ink.h + phase + t * 0.35, 1.0), 0.85, 1.0)
 	if int(look.get("material", 0)) == 6 or int(look.get("particle_tier", 0)) == 6:
 		ink = Color.from_hsv(fposmod(ink.h + phase * 0.65 + t * 0.45, 1.0), 0.78, 1.0)
+	if int(look.get("region_rank", 0)) > 0:
+		var local: Color = look.get("region_color", Color.WHITE)
+		var dusk: Color = look.get("region_shadow", Color.WHITE)
+		var wave: float = 0.5 + 0.5 * sin(time * 1.7 + t * TAU)
+		ink = ink.lerp(local.lerp(dusk, wave), 0.18 + 0.08 * float(look["region_rank"]))
 	return ink
 
 static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Color], look: Dictionary, time: float, strength: float = 1.0) -> void:
@@ -24,6 +29,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 		return
 	var tier: int = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0)))
 	var motif: int = int(look.get("glow_motif", 0))
+	var region_rank: int = int(look.get("region_rank", 0))
 	var power: float = clampf(strength, 0.65, 2.4)
 	for i in range(path.size() - 1):
 		for j in range(5):
@@ -56,3 +62,26 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 			7: canvas.draw_circle(p + wiggle, 1.7, ink)
 		if tier == 6:
 			canvas.draw_line(p + wiggle * 1.8, p - wiggle * 1.8 + axis * 2.0, ink, 0.9, true)
+
+	# A distinct local signature accompanies the independent original motif.
+	if region_rank > 0:
+		var local: Color = look.get("region_color", Color.WHITE)
+		var region: String = str(look.get("region", ""))
+		for i in range(region_rank + 1):
+			var u: float = fposmod(time * 0.16 + float(i) / float(region_rank + 1), 1.0)
+			var p: Vector2 = root.lerp(tip, u)
+			local.a = sin(u * PI) * 0.68
+			match region:
+				"moonwake_crypt":
+					canvas.draw_arc(p + normal * 2.0, 3.0, time, time + PI, 10, local, 1.1, true)
+				"hollow_veil_moor":
+					canvas.draw_line(p - axis * 4.0 + normal * 3.0, p + axis * 2.0 + normal * 3.0, local, 2.2, true)
+				"ashglass_vault":
+					canvas.draw_polyline(PackedVector2Array([p - axis * 3.0, p + normal * 3.0, p + axis * 2.0]), local, 1.3, true)
+				"briar_hollow":
+					canvas.draw_colored_polygon(PackedVector2Array([p, p + normal * 4.0 - axis * 2.0, p + normal * 3.0 + axis * 2.0]), local)
+				"observatory":
+					canvas.draw_line(p - axis * 3.0, p + axis * 3.0, local, 1.0, true)
+					canvas.draw_line(p - normal * 3.0, p + normal * 3.0, local, 1.0, true)
+				"lily_pond":
+					canvas.draw_arc(p, 2.8, 0.0, TAU, 12, local, 0.9, true)

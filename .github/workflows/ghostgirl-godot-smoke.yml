@@ -107,5 +107,8 @@ jobs:
       - name: Verify Sanctum collection exhibition and persistent assignments
         run: godot --headless --path GhostGirl2 --script res://tests/v182_exhibition_smoke.gd
 
+      - name: Verify regional weapon appearance and provenance
+        run: godot --headless --path GhostGirl2 --script res://tests/v183_regional_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
