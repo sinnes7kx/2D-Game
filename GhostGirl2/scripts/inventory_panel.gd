@@ -2,6 +2,7 @@ extends PanelContainer
 signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal cursor_pick_requested(index: int)
+signal inspect_requested(item: GhostItemInstance)
 signal cursor_place_requested(page: int, col: int, row: int)
 signal cursor_cancel_requested
 signal cursor_drop_requested(index: int)
@@ -14,6 +15,8 @@ var selected_alt_down: bool = false
 var pending_gear_index: int = -1
 var active_page: int = 0
 var pending_delete_item: Variant = null
+var test_looks: OptionButton
+@onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
 @onready var description: RichTextLabel = $Layout/DetailsWell/DetailsVBox/ItemDescription
 @onready var seed_row: HBoxContainer = $Layout/DetailsWell/DetailsVBox/SeedRow
@@ -38,6 +41,7 @@ func _ready() -> void:
 	$Layout/Header/NextPage.pressed.connect(_change_page.bind(1))
 	$Layout/Header/SortBackpack.pressed.connect(_sort_backpack)
 	equip_button.pressed.connect(_equip)
+	inspect_button.pressed.connect(_inspect_selected)
 	socket_button.pressed.connect(_select_socket)
 	destroy_button.pressed.connect(_request_delete)
 	$Layout/DetailsWell/DetailsVBox/SeedRow/RerollSeed.pressed.connect(_reroll_selected_seed)
@@ -47,6 +51,13 @@ func _ready() -> void:
 	test_mythic.visible = false
 	if OS.is_debug_build():
 		test_mythic.pressed.connect(_toggle_mythic_preview)
+		test_looks = OptionButton.new()
+		test_looks.add_theme_font_size_override("font_size", 12)
+		$Layout/DetailsHeader.add_child(test_looks)
+		for label in ["TEST LOOKS", "Clear previews", "Anomaly", "Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Next color mode", "Next glow motif"]:
+			test_looks.add_item(label)
+		test_looks.item_selected.connect(_preview_look)
+		test_looks.hide()
 	$Layout/Actions/DropSelected.pressed.connect(_drop_selected)
 	description.bbcode_enabled = true
 	confirmation.confirmed.connect(_confirm_delete)
@@ -176,6 +187,8 @@ func _show_details(index: int) -> void:
 	description.scroll_to_line(0)
 	_refresh_seed_controls(item)
 	test_mythic.visible = OS.is_debug_build() and item.get_slot() != "none"
+	if is_instance_valid(test_looks):
+		test_looks.visible = item.get_slot() in ["sword", "wand"]
 	if test_mythic.visible:
 		test_mythic.text = "CLEAR MYTHIC TEST" if item.debug_visual_override == 4 else "PLAYTEST · MYTHIC"
 	# Details remain compact; the side-by-side floating compare popup owns long
@@ -183,6 +196,7 @@ func _show_details(index: int) -> void:
 	var worn: Variant = inventory.get_equipped(item.get_slot()) if item.get_slot() != "none" else null
 	if worn != null and worn != item:
 		description.text += "\n[font_size=12][color=#c8a98a]HOLD CTRL WHILE HOVERING TO COMPARE[/color][/font_size]"
+	inspect_button.visible = item.get_slot() in ["sword", "wand"]
 	equip_button.visible = item.get_slot() != "none"
 	if equip_button.visible:
 		var equipped: bool = inventory.equipped_index(item.get_slot()) == index
@@ -408,8 +422,12 @@ func _clear() -> void:
 		seed_row.visible = false
 	if is_instance_valid(test_mythic):
 		test_mythic.visible = false
+	if is_instance_valid(test_looks):
+		test_looks.hide()
 	if is_instance_valid(description):
 		description.text = "[font_size=15][color=#a99fae]HOVER for details  ·  ALT advanced  ·  CTRL compare  ·  CLICK to hold[/color][/font_size]"
+	if is_instance_valid(inspect_button):
+		inspect_button.hide()
 	if is_instance_valid(equip_button):
 		equip_button.visible = false
 	if is_instance_valid(socket_button):
@@ -440,3 +458,40 @@ func _local_stat_label(stat_id: String) -> String:
 		"stamina_recovery_pct": return "stamina regeneration"
 		"find_bonus_pct": return "item discovery"
 		_: return stat_id.replace("_", " ")
+
+func _preview_look(index: int) -> void:
+	if not OS.is_debug_build():
+		return
+	var item: GhostItemInstance = _selected_cosmetic_item()
+	if item == null or item.get_slot() not in ["sword", "wand"]:
+		return
+	match index:
+		1:
+			item.debug_collector_tier = -1
+			item.debug_color_mode = -1
+			item.debug_glow_motif = -1
+			item.debug_visual_override = -1
+		2:
+			item.debug_collector_tier = 6
+			item.debug_color_mode = 6
+		3, 4, 5, 6, 7, 8:
+			item.debug_collector_tier = index - 3
+		9:
+			item.debug_color_mode = (int(item.collector_appearance().get("color_mode", 0)) + 1) % 7
+		10:
+			item.debug_glow_motif = (int(item.collector_appearance().get("glow_motif", 0)) + 1) % 8
+		_:
+			return
+	test_looks.select(0)
+	inventory.contents_changed.emit()
+	inventory.equipment_changed.emit()
+	notice.text = "TEST ONLY · %s · COLOR %d/7 · GLOW %d/8" % [item.collector_material_label(), int(item.collector_appearance().get("color_mode", 0)) + 1, int(item.collector_appearance().get("glow_motif", 0)) + 1]
+
+func selected_weapon_for_inspection() -> GhostItemInstance:
+	var item: GhostItemInstance = _selected_cosmetic_item()
+	return item if item != null and item.get_slot() in ["sword", "wand"] else null
+
+func _inspect_selected() -> void:
+	var item: GhostItemInstance = selected_weapon_for_inspection()
+	if item != null:
+		inspect_requested.emit(item)

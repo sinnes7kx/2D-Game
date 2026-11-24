@@ -52,6 +52,7 @@ func _ready() -> void:
 	inventory_panel.connect("cursor_place_requested", Callable(self, "_place_cursor_item"))
 	inventory_panel.connect("cursor_cancel_requested", Callable(self, "_cancel_cursor_item"))
 	inventory_panel.connect("cursor_drop_requested", Callable(self, "_drop_selected_item"))
+	inventory_panel.connect("inspect_requested", Callable(self, "_open_collector_lens"))
 	vigil_label.visible = false
 	prompt_label.visible = false
 	carrying_label.visible = false
@@ -203,17 +204,20 @@ func _input(event: InputEvent) -> void:
 			collector_lens.call("close_lens")
 			get_viewport().set_input_as_handled()
 		return
-	if is_menu_open() and cursor_item_index < 0 and hovered_item != null:
+	if is_menu_open():
 		var inspect: bool = false
 		if event is InputEventMouseButton:
 			inspect = event.pressed and event.shift_pressed and event.button_index == MOUSE_BUTTON_RIGHT
 		elif event is InputEventKey:
 			inspect = event.pressed and not event.echo and event.physical_keycode == KEY_P
-		if inspect and hovered_item.get_slot() in ["sword", "wand"]:
-			collector_lens.call("open_item", hovered_item)
-			_hide_item_hover()
-			get_viewport().set_input_as_handled()
-			return
+		if inspect:
+			var candidate: GhostItemInstance = hovered_item as GhostItemInstance
+			if candidate == null or candidate.get_slot() not in ["sword", "wand"]:
+				candidate = inventory_panel.call("selected_weapon_for_inspection") as GhostItemInstance
+			if candidate != null:
+				_open_collector_lens(candidate)
+				get_viewport().set_input_as_handled()
+				return
 	if cursor_item_index < 0 or not (event is InputEventMouseButton):
 		return
 	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
@@ -317,3 +321,13 @@ func set_dew(current: int, maximum: int) -> void:
 func set_lock_target(target_name: String) -> void:
 	lock_label.text = "L  TARGET  ·  " + target_name if not target_name.is_empty() else ""
 	lock_label.visible = not target_name.is_empty()
+
+func _open_collector_lens(item: GhostItemInstance) -> void:
+	if item == null or item.get_slot() not in ["sword", "wand"] or not is_instance_valid(collector_lens):
+		return
+	# Clicking an inventory item can leave it on the cursor. Cancel the
+	# temporary cursor state, not the actual item, before opening the modal.
+	if cursor_item_index >= 0:
+		_cancel_cursor_item()
+	_hide_item_hover()
+	collector_lens.call("open_item", item)

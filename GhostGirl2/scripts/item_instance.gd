@@ -16,6 +16,9 @@ var rare_visual_mod: int = -1
 # In-memory debug inspection only. Intentionally omitted from save dictionaries,
 # cosmetic snapshots and normal RNG; never changes genuine rare rolls.
 var debug_visual_override: int = -1
+var debug_collector_tier: int = -1
+var debug_color_mode: int = -1
+var debug_glow_motif: int = -1
 # Favorite presets store exact appearance fields, including existing altar rolls.
 var saved_cosmetic_looks: Array[Dictionary] = []
 var palette_index: int = 0
@@ -384,7 +387,16 @@ func effect_description() -> String:
 func collector_appearance() -> Dictionary:
 	if get_slot() not in ["sword", "wand"]:
 		return {}
-	return COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	var look: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	if OS.is_debug_build():
+		if debug_collector_tier >= 0:
+			look["material"] = debug_collector_tier
+			look["particle_tier"] = debug_collector_tier
+		if debug_color_mode >= 0:
+			look["color_mode"] = debug_color_mode
+		if debug_glow_motif >= 0:
+			look["glow_motif"] = debug_glow_motif
+	return look
 
 func collector_material_label() -> String:
 	var look: Dictionary = collector_appearance()

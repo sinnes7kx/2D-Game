@@ -22,6 +22,9 @@ static func roll(uid: String, legacy_seed: int) -> Dictionary:
 	var material: int = tier_for_ticket(ticket(uid, legacy_seed, "material-rarity"))
 	return {
 		"material": material,
+		"color_mode": ticket(uid, legacy_seed, "v180-color-mode") % 7,
+		"glow_motif": ticket(uid, legacy_seed, "v180-glow-motif") % 8,
+		"shift_rate": 0.055 + float(ticket(uid, legacy_seed, "v180-shift-rate")) / 9999.0 * 0.24,
 		"finish": ticket(uid, legacy_seed, "surface-finish") % 7,
 		"pattern": ticket(uid, legacy_seed, "blade-pattern") % 11,
 		"ornament": ticket(uid, legacy_seed, "ornament") % 9,

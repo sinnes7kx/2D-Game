@@ -171,6 +171,12 @@ layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 11
 
+[node name="InspectSelected" type="Button" parent="Layout/Actions"]
+visible = false
+layout_mode = 2
+text = "INSPECT"
+tooltip_text = "Enlarge weapon appearance and preview its animated glow"
+
 [node name="EquipSelected" type="Button" parent="Layout/Actions"]
 visible = false
 layout_mode = 2

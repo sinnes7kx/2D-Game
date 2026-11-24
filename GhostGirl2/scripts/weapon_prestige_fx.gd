@@ -1,4 +1,5 @@
 extends Node2D
+const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.3 — blade-only twinblade enchantments and high-visibility seeded Mythic shimmer.
 ## Axial glows track the weapon shaft/blade instead of orbiting a floating tip.
@@ -213,6 +214,9 @@ func _axial_span() -> PackedVector2Array:
 				var first: PackedVector2Array = spans[0]
 				if first.size() == 2:
 					return first
+				var second: PackedVector2Array = spans[1]
+				if second.size() == 2:
+					return second
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 35.0)])
 	if style == "twinblade":
 		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
@@ -354,7 +358,8 @@ func _ink(progress: float, opacity: float) -> Color:
 
 func _gradient_at(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
-	return paint_a.lerp(paint_b, u * 2.0) if u <= 0.5 else paint_b.lerp(paint_c, (u - 0.5) * 2.0)
+	var colors: Array[Color] = [paint_a, paint_b, paint_c]
+	return ANOMALOUS.color_at(colors, collector_look, u, elapsed)
 
 # v1.54 -- soft bloom sampled around the approved weapon silhouette.
 # Round, feathered light replaces the old large square-ended 26px line strips.
@@ -604,6 +609,8 @@ func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) 
 		var edge_offset: float = -1.3 if hand_index == 0 else 1.3
 		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.16) * power * pulse), 1.45, true)
 		_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)
+		var colors: Array[Color] = [paint_a, paint_b, paint_c]
+		ANOMALOUS.draw_edge(self, PackedVector2Array([blade_root, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
 		_v175_mythic_signature(blade_root, tip, "dual_sword", hand_index, attacking)
@@ -667,6 +674,8 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 		var shine: Color = _gradient_at(fposmod(0.73 + seed_phase + elapsed * 0.09 + hand_phase, 1.0))
 		draw_line(a - blade_normal * 1.1, tip, Color(shine.r, shine.g, shine.b, (0.45 if mythic else 0.14) * power * pulse), 1.35, true)
 		_v175_visible_edge(a, tip, intensity, float(hand_index) * 0.31)
+		var colors: Array[Color] = [paint_a, paint_b, paint_c]
+		ANOMALOUS.draw_edge(self, PackedVector2Array([a, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
 		_v175_mythic_signature(a, tip, "dual_dagger", hand_index, attacking)
@@ -697,9 +706,9 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 	var result: Array = []
 	if style == "twinblade":
-		var back_tip: Vector2 = grip - (tip - grip) * 0.90
-		result.append([grip.lerp(tip, 0.20), tip])
-		result.append([grip.lerp(back_tip, 0.22), back_tip])
+		var spans: Array[PackedVector2Array] = MODULAR.twinblade_spans(grip, tip)
+		for span in spans:
+			result.append([span[0], span[1]])
 	elif style == "maul":
 		result.append([grip.lerp(tip, 0.79), tip])
 	elif style == "spear" or style == "halberd":
@@ -715,7 +724,7 @@ func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 
 func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, intensity: float) -> void:
 	# Narrow bevel highlights, not broad luminous heads. Keep metal visible.
-	var width: float = 3.8 if item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170" else 3.2
+	var width: float = MODULAR.twinblade_width(item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170")
 	for segment in _v1723_blade_segments(grip, tip, "twinblade"):
 		var a: Vector2 = segment[0]
 		var b: Vector2 = segment[1]
@@ -726,6 +735,8 @@ func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, 
 			var chroma: Color = _gradient_at(fposmod(elapsed * 0.052 + (0.41 if direction.x < 0.0 else 0.06), 1.0))
 			for side in [-1.0, 1.0]:
 				var edge_path: PackedVector2Array = MODULAR.edge_points(a, b, width, physical_profile, side)
+				var colors: Array[Color] = [paint_a, paint_b, paint_c]
+				ANOMALOUS.draw_edge(self, edge_path, colors, collector_look, elapsed, intensity)
 				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.16 * minf(intensity, 2.0)), 2.2, true)
 				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.55 * minf(intensity, 1.5)), 0.85, true)
 			continue
@@ -1250,6 +1261,9 @@ func _draw_v177_collector_finish(grip: Vector2, tip: Vector2, style: String, int
 	for segment in segments:
 		var a: Vector2 = segment[0]
 		var b: Vector2 = segment[1]
+		if style != "twinblade":
+			var shift_colors: Array[Color] = [paint_a, paint_b, paint_c]
+			ANOMALOUS.draw_edge(self, PackedVector2Array([a, b]), shift_colors, collector_look, elapsed, intensity)
 		var axis: Vector2 = (b - a).normalized()
 		var normal: Vector2 = Vector2(-axis.y, axis.x)
 		var tone: Color = colors[finish % 3]
