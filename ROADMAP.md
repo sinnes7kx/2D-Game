@@ -130,7 +130,7 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - User screenshots show cyan/purple hair and inconsistent dress dye, missing held-weapon preview effects (especially bows), and a front-facing screen-right dagger grip offset. The body shader used whole-texture UVs and violet-pixel weapon classification; both are unsafe for mixed body atlases. Disable both color passes pending authored per-frame fabric masks; dress palette data and accessory/halo effects remain. This intentionally suspends dress fabric dye rather than risking recoloring hair/skin.
 - Shared blade-local signature geometry, restrained motif accents, actual bow-mask signature uniforms and mirrored guide offsets; single detailed pass per twinblade end. Correct the neutral front screen-right hand anchor against the existing body art. No changes to combat or saved item data.
 - New `tests/v1923_equipped_fx_smoke.gd` exercises real dropdown, equipped/inspection look parity, bow shader parameters, neutral body shader controls and preserved item data. Registered in CI; interactive four-direction and weapon alignment checks remain release blockers.
-- PR #28 (v1.92.2 collection recovery) remains open with failed CI; this independent visual fix is based directly on main, not the failing recovery branch. M0 is not complete.
+- PR #28 (v1.92.2 collection recovery) is now merged, but its recorded CI run 45445026003 failed. The current main workflow does not register the collection recovery smoke; restore and verify that regression before treating recovery as validated. M0 is not complete.
 ### Current evidence and blockers (v1.92.2)
 
 - v1.92.1 PR #27 merged; GitHub Actions run [45381388211](https://github.com/sinnes7kx/2D-Game/actions/runs/45381388211) succeeded, including the current/legacy/missing TestMythic control smoke. The local F5 confirmation and release-export UI check remain outstanding.
@@ -144,7 +144,15 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - Character screen replaces the static Doll texture at runtime with an isolated SubViewport using the actual player scene, equipped-item layers, and current idle animation. Four directional views, read-only shared equipment references, no gameplay input/collision or player-group registration; processing and viewport rendering disabled when hidden. Original portrait scene remains a fallback resource.
 - In-game session-only 0–200% held weapon FX intensity slider and 100% reset affect equipped prestige overlay, shared edge/signature passes, painted weapon material overlays and inspection. Base weapon art and Ethereal condition opacity are not changed. Dress/accessory aura and combat projectile/impact effects are outside this slider's scope.
 - Debug effect menu keeps existing IDs, explains family/pose/rarity dependencies, marks unequipped items as inspect/equip-first, distinguishes visual Ethereal from durability, and disables unsupported surface/guard/grip choices. Effects and intensity do not become saved item data.
-- New `tests/v1924_live_preview_smoke.gd` tests isolated actual rig, direction, slider, selected preview, bow compatibility, no item mutation, and hidden-preview processing. CI registered, result pending at commit time. Layout and visual tuning need actual Godot F5 testing on target hardware. Prior v1.92.3 PR #29 CI succeeded and was merged; unsafe dress recoloring remains disabled.
+- New `tests/v1924_live_preview_smoke.gd` tests isolated actual rig, direction, slider, selected preview, bow compatibility, no item mutation, and hidden-preview processing. CI run [45458675481](https://github.com/sinnes7kx/2D-Game/actions/runs/45458675481) succeeded and PR #30 merged. User subsequently confirmed the preview works in their local game; full directional/visual/performance checks remain outstanding. Prior v1.92.3 PR #29 CI succeeded and was merged; unsafe dress recoloring remains disabled.
+
+### Lanternhaven town and collection access (v1.93, source implementation)
+
+- Explicit user priority: build a safe starting town with the emotional contrast of Diablo II's protected encampment and threatening world beyond. This narrow M2/M3 vertical slice is brought forward at the user's request; M0 remains an open release gate. Town is a warm, quiet collector home with no hostile spawns, clear boundaries, original artwork, a stash, restorative ember, and space for future NPCs. The initial 3600 × 2400 room is an original vector blockout, not final painterly art or verified Act I scale parity.
+- New and existing sessions start in Lanternhaven; existing story flags, world shrine checkpoints, inventory, vault and exhibition assignments are unchanged. The existing crypt remains reachable and has a return gate. Sanctum shortcut opens only after the existing cloister progression gate; its return route is available. Town NPCs, merchants, crafting and final atmosphere/audio are deferred.
+- Physical stash reuses the existing vault, not a second item store. E opens the chest; Stored/Backpack tabs select eligible weapons and wands, with deposit/withdraw restricted to chest proximity. Remote collection viewing, inspection and display management remain available. Existing vault capacity and eligibility remain unchanged. No inventory schema or loot-generation changes.
+- New town regression checks authored scene landmarks, dimensions, reciprocal route resources, absence of hostile spawns, chest interaction, transfer access, and rollback/identity/protection/display invariants. Restored omitted v1.92.2 recovery regression to CI and adjusted its JSON-number comparison to test semantic metadata preservation. CI and interactive route/collision/UI tests pending; do not mark M0 complete. If the town route cannot be accessed in real play, fix connectivity before release.
+- Roll Code and seeded head accessories remain separate M1 work (pending roadmap PR #31). The requested ten-digit rarity fingerprint must use audited meaningful trait outcomes, distinguish birth/current/test, and preserve leading zeros.
 
 ### Done means
 
@@ -186,10 +194,20 @@ Fresh source imports, headless tests pass, **real F5 playtesting** confirms core
 - [ ] Offer opt-in appearance “before / after” confirmation and a cancel path for expensive or irreversible operations.
 - [ ] Audit inventory/tooltips so compact default swatches remain uncluttered; place seed IDs, channels, motifs, and technical provenance behind an explicit Inspect/Advanced action.
 
+#### Collector Roll Code (user-requested, design proposal)
+- [ ] Introduce a separate, shareable, fixed-width ten-character decimal **Roll Code** as a readable rarity fingerprint, not a replacement RNG seed, owned-instance ID or verified provenance. Preserve leading zeros. Each position corresponds to an actual applicable rolled trait/channel, with 0 reserved for its highest rarity outcome, 1–3 for increasingly less exceptional outcomes, and 4–9 for more common outcomes. Exact thresholds and family-specific mappings require an audit and deterministic simulations; do not publish arbitrary odds or treat raw uniform ticket digits as trait rarity.
+- [ ] Prototype weapon position meanings: material, effect signature, particles, surface, palette, motion, glow motif, silhouette, grip and ornament. These are provisional: some traits are uniform, dependent, or unsupported on particular families; define documented family-specific applicable mappings before shipping, do not invent rarity for a color or absent feature. Only permit an all-zero perfect pattern for a family with ten real top-tier outcomes; use an explicit unavailable/legacy label until all positions are meaningful.
+- [ ] Store/version the original natural-drop roll snapshot separately from the current customizable look. Show compact roll code on playtest hover and in Inspect/Advanced with per-digit explanations, source/version, natural vs rerolled labels, and separate debug-only overlay clearly marked TEST. Reroll preview must show the resulting genuine current-look code without changing the original discovery code, stats, ownership or protected saved looks. Debug forced effects must not change either genuine code. Old saves without reliable birth evidence must be labeled legacy/unknown rather than inventing history.
+- [ ] Support recognizable patterns such as 0000000000 (all ten highest-tier traits), 0000001234 and repeated digits as collector goals. Never claim a particular joint probability or worldwide uniqueness without tested distributions, dependencies and ownership evidence. Preserve code version and meaning across saves, graphics settings, inspection, stash, exhibition and future trade. Expose copy/share in collector-facing UI; ordinary production tooltip can remain compact.
+
+
 ### 4.4 Deep equipment variation, without visual sloppiness
 
 - [ ] Expand original authored weapon families (swords, daggers, spears, scythes, halberds, bows, wands, dual weapons), keeping authentic shapes and combat timing.
 - [ ] Compose layers for blade/body, guard, grip, accents, trinkets, ribbons, wing accessories, glow, particles, and material patterns so independent seed channels can vary.
+- [ ] M1 head-slot collector expansion: add Glowing Eyes as the first small authored accessory family, followed by optional crescent halos, floral crowns, veils and delicate spectral ornaments. The current headpiece slot uses the legacy `wings` equipment key; reuse that key for mutually exclusive head accessories rather than silently migrating existing equipment.
+- [ ] Eye effects must use separate frame-specific, direction-aware eye anchors/masks (including concealed eyes and back-facing poses). Preserve Ghost Girl's approved facial features and original body pixels; no hue-based body recoloring. Roll independent continuous palettes, glow intensity, asymmetry, pulse speed and restrained motifs using versioned appearance channels. Natural rarity and stats remain independent; no new odds until audited. Use the dagger FX readability as the art reference, and the live equipment preview and adjustable FX control as the testing interface.
+- [ ] Verify eye/head accessories in idle, walk, attack, dodge, jump and all four preview directions; verify item identity, lock/favorite, equip/unequip, vault and save/reload. Prototype after the M0 collection-safety gates and item identity baseline, not instead of them.
 - [ ] Keep a seed-stable map from stored appearance data to *all* idle, walk, attack, dodge, jump, and inspect poses, including left/right orientation.
 - [ ] Use tapered blade-following sword glows and softer visual effects rather than square beam artifacts.
 - [ ] Cap layered effect counts for readability and older PCs; use LOD/quality controls without changing the underlying collector identity.
@@ -219,6 +237,7 @@ Fresh source imports, headless tests pass, **real F5 playtesting** confirms core
 ### 5.2 A collector-grade vault
 
 - [ ] Build on the existing Collection Vault with reliable deposits, withdrawals, favorites, locks, searches, and exhibition assignment.
+- [ ] Move normal deposit/withdraw access to a physical stash chest in the starting town. Reuse the existing Collection Vault UI, inventory.vault, unresolved records and serialization; do not create a second store or duplicate items. Preserve current vault contents, locks, favorites, display assignment, exact seeds and stats. Once town access is reliable, remove normal remote stash access, retaining read-only inspection if useful; close the chest UI on exit/range/room change. Keep recoverable fallback for old saves and test capacity, protected records, failed writes, and repeated interaction. Current storage limits/family eligibility remain until separately validated expansion; exhibition remains a display reference, never another owned copy.
 - [ ] Add filters for item family, quality, intrinsic visual rarity, color family, material, region, acquisition source, and favorite status as the underlying metadata supports them.
 - [ ] Add sorting by acquisition time, rarity, item family, appearance, stat desirability, and user-defined collections (avoid invented sortable metadata).
 - [ ] Support a protected “never accidentally sell/destroy/trade” flag and double confirmation for irreversible collector actions.
@@ -281,6 +300,10 @@ A cherished item can be picked up, saved, protected, moved to the vault, display
 - [ ] Design sink/crafting/reroll systems carefully: no silent deletion of rare original properties, no conversion of debug rolls into prestige finds.
 
 ### 6.4 Exploration and rose-hook interaction
+
+- [ ] Starting town hub: replace the starting area's role with a safe, genuinely walkable gothic town approximately the usable scale/feel of Diablo II Act I's Rogue Encampment (reference for scale, not copied geometry/art). Original authored streets, landmarks, town square, stash chest near arrival/waypoint, clear wilderness exits, access to the existing Sanctum, and reserved spaces for NPCs, merchants and workshops. No functional NPC systems required for the initial town slice. No combat pressure in the town.
+- [ ] Town migration: new games begin in town; existing saves retain their inventory, discovered areas, quest flags and safe return route. Do not strand old characters or relocate items by copying. First deliver minimal functional town/stash/waypoint connectivity after collection-safety gates, then polish original artwork and expand via M3; broader NPC content remains later.
+
 
 - [ ] Add the early-room support-beam puzzle: hook the beam, collapse debris, open a persistent hole in the floor, and make the route physically traversable.
 - [ ] Expand anchors, objects, switches, movable obstacles, traversal gaps, enemy staggers, and hidden paths as **loot-finding opportunities**.
@@ -550,25 +573,29 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 - [ ] Check current branch and reproduce/close the inventory Button → OptionButton issue with Godot.
 - [ ] Run `v1921_dropdown_compat_smoke.gd`; inspect and clean the duplicate conflict-marked inventory script.
 - [ ] Run existing smoke tests, then F5 test the full item lifecycle, vault, exhibitions, and an older save.
+- [ ] Restore the v1.92.2 collection recovery regression to the active workflow and resolve its failure; verify transfer safety and old saves before expanding loot families.
 - [ ] Document any remaining blockers and only declare completion with evidence.
 
 **Sprint B: the collector's identity**
 
 - [ ] Inventory audit: document current stat seed, cosmetic seed/UID, birth appearance, saved-look behavior, rarity rolls, and serialization rules.
 - [ ] Build a small **item identity regression suite** for unchanged stats, look, seed, protection, and display through save/reload.
+- [ ] Audit and prototype versioned Collector Roll Code with real trait rarity mapping and birth/current/test separation, including leading-zero and all-zero pattern tests.
 - [ ] Improve the prized-item Inspect presentation, with numeric seed in Advanced only and uncluttered default tooltips.
 - [ ] Confirm favorite/look save and reroll behavior; do not write a parallel implementation when an existing path works.
-- [ ] Prototype at least one genuinely rare, understated, memorable visual combination using deterministic seeded art and tested rarity boundaries.
+- [ ] Prototype at least one genuinely rare, understated, memorable visual combination using deterministic seeded art and tested rarity boundaries; Glowing Eyes is the requested first head-slot candidate after the M0 and identity gates.
 
 **Sprint C: the collection showcase loop**
 
 - [ ] Polish Collection Vault filtering, protection and persistence; do not corrupt items on failed transfers.
+- [ ] Deliver the first safe starting-town/stash chest slice with the existing vault backend and reliable return path before retiring remote stash access.
 - [ ] Enhance Sanctum exhibition and faithful item zoom/inspection.
 - [ ] Add local share-card/export for prized finds without implying online provenance.
 - [ ] Playtest the loop: farm → discover → inspect → favorite → vault → exhibit → reopen game.
 
 **Sprint D: the light hunt**
 
+- [ ] Polish the original town's walkable scale, landmark layout and routes into the wilderness; leave NPC spaces reserved for later.
 - [ ] Tune accessible enemy density, drop pacing, and one rewarding collector route.
 - [ ] Add the support-beam hook puzzle and a genuinely original walkable connected room.
 - [ ] Confirm puzzles, loot, and item identity survive reload.

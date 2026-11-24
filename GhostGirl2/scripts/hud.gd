@@ -355,12 +355,24 @@ func _open_collection_vault(item: GhostItemInstance) -> void:
 	if cursor_item_index >= 0:
 		_cancel_cursor_item()
 	_hide_item_hover()
-	collection_vault.call("open_vault", inventory_data, item)
+	collection_vault.call("open_vault", inventory_data, item, -1, _town_stash_access)
 
 func open_exhibition(slot: int, item: GhostItemInstance) -> void:
 	if inventory_data == null:
 		return
 	_hide_item_hover()
-	collection_vault.call("open_vault", inventory_data, item, slot)
+	collection_vault.call("open_vault", inventory_data, item, slot, _town_stash_access)
 	if item != null:
 		_open_collector_lens(item)
+
+func _town_stash_access() -> bool:
+	var world: Node = get_parent()
+	return world != null and world.has_method("can_access_town_stash") and bool(world.call("can_access_town_stash"))
+
+func open_town_stash() -> void:
+	if _town_stash_access():
+		_open_collection_vault(null)
+
+func close_town_stash() -> void:
+	if is_instance_valid(collection_vault):
+		collection_vault.hide()

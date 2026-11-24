@@ -198,6 +198,9 @@ position = Vector2(710, 807)
 [node name="From_hollow_veil_moor" type="Marker2D" parent="SpawnPoints" unique_id=1600152113]
 position = Vector2(1880, 1220)
 
+[node name="From_lanternhaven" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1194, 1190)
+
 [node name="Gameplay" type="Node2D" parent="." unique_id=559020987]
 
 [node name="Portals" type="Node2D" parent="Gameplay" unique_id=121952276]
@@ -220,6 +223,13 @@ position = Vector2(1615, 1018)
 script = ExtResource("3_portal")
 interaction_name = "Teleport to Hollow Veil Moor"
 destination = "hollow_veil_moor"
+opened = true
+
+[node name="lanternhaven" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1194, 1300)
+script = ExtResource("3_portal")
+destination = "lanternhaven"
+interaction_name = "Return to the lanterns"
 opened = true
 
 [node name="Collectibles" type="Node2D" parent="Gameplay" unique_id=1166832510]

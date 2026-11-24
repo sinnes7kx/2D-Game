@@ -39,7 +39,10 @@ func _verify() -> void:
 		return
 	panel.free()
 	var saved: Dictionary = JSON.parse_string(JSON.stringify(inv._build_save_data()))
-	if saved["unresolved_backpack"].size() != 2 or saved["unresolved_backpack"][0]["future_metadata"] != missing["future_metadata"]:
+	var raw_metadata: Dictionary = saved["unresolved_backpack"][0].get("future_metadata", {}) if saved["unresolved_backpack"].size() == 2 else {}
+	var custom: Array = raw_metadata.get("custom_field", [])
+	# JSON parses all numbers as floats; compare the preserved semantic fields.
+	if custom.size() != 2 or str(custom[0]) != "keep" or float(custom[1]) != 14.0:
 		_fail("Unknown raw metadata lost on serialization")
 		return
 	inv.capacity = 72

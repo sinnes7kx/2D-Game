@@ -146,5 +146,11 @@ jobs:
       - name: Verify live equipment preview and effect intensity
         run: godot --headless --path GhostGirl2 --script res://tests/v1924_live_preview_smoke.gd
 
+      - name: Verify collection recovery and legacy migration
+        run: godot --headless --path GhostGirl2 --script res://tests/v1922_collection_recovery_smoke.gd
+
+      - name: Verify Lanternhaven town and stash access
+        run: godot --headless --path GhostGirl2 --script res://tests/v193_town_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
