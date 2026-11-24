@@ -101,5 +101,8 @@ jobs:
       - name: Verify actual inventory inspect button and twinblade assets
         run: godot --headless --path GhostGirl2 --script res://tests/v1801_twinblade_inspect_smoke.gd
 
+      - name: Verify collection vault transfer and item protection
+        run: godot --headless --path GhostGirl2 --script res://tests/v181_vault_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
