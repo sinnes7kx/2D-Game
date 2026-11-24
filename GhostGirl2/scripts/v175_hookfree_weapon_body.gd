@@ -13,9 +13,13 @@ static func install(sprite: AnimatedSprite2D) -> void:
 		# The physical left bow is drawn separately and mirrored from the
 		# RIGHT bow-only layer, so these left body frames must be bow-free.
 		var left_bow: bool = anim.ends_with("_left") and (anim.begins_with("thornrose_idle_") or anim.begins_with("thornrose_walk_") or anim.begins_with("moonveil_idle_") or anim.begins_with("moonveil_walk_") or anim.begins_with("attack_thornrose_") or anim.begins_with("attack_moonveil_"))
+		# v1.98: every bow idle uses the clean approved body; the rotated,
+		# mirrored bow-only layer is the *only* held bow. Do not leave a baked
+		# second weapon under the new chest-level carry pose.
+		var bow_idle: bool = anim.begins_with("thornrose_idle_") or anim.begins_with("moonveil_idle_")
 		if anim.contains("_pierce_"):
 			continue # v1.76 thrust clips already have clean authored body timing.
-		if not dual and not newer_attack and not left_bow:
+		if not dual and not newer_attack and not left_bow and not bow_idle:
 			continue
 		var face: String = ""
 		for suffix in ["front", "back", "left", "right"]:
