@@ -15,7 +15,9 @@ func set_item(value: GhostItemInstance) -> void:
 	profiles.clear()
 	for hand in range(2):
 		profiles.append(ART.profile(look, hand))
-	gradients = item.glow_gradient_colors() if item != null else []
+	gradients.clear()
+	if item != null:
+		gradients = item.glow_gradient_colors()
 	elapsed = 0.0
 	queue_redraw()
 
