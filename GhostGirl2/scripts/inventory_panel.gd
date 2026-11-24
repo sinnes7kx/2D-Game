@@ -225,6 +225,7 @@ func _show_details(index: int) -> void:
 	_refresh_seed_controls(item)
 	test_mythic.visible = OS.is_debug_build()
 	if test_mythic.visible:
+		_update_effect_compatibility(item)
 		test_mythic.select(0)
 	# Details remain compact; the side-by-side floating compare popup owns long
 	# affix differences and never participates in VBox layout calculations.
@@ -501,28 +502,28 @@ func _setup_effect_menu() -> void:
 	test_looks.clear()
 	test_looks.add_item("TEST EFFECTS", 0)
 	test_looks.add_item("Clear all previews", 1)
-	test_looks.add_separator("Signature effects")
+	test_looks.add_separator("Signatures · weapons / inspect")
 	for i in range(6):
 		test_looks.add_item(["No signature", "Aether Thorns", "Void Eclipse", "Astral Seraph", "Mythic Radiance", "Moonfall Halo"][i], 10 + i)
-	test_looks.add_separator("Mythic variants")
+	test_looks.add_separator("Mythic · forces signature")
 	for i in range(4):
 		test_looks.add_item(["Lightning arcs", "Cinder motes", "Astral pulses", "Spectral petals"][i], 20 + i)
-	test_looks.add_separator("Cosmetic rarity")
+	test_looks.add_separator("Appearance rarity · not stats")
 	for i in range(7):
 		test_looks.add_item(["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"][i], 30 + i)
-	test_looks.add_separator("Color behavior")
+	test_looks.add_separator("Color motion · glow")
 	for i in range(7):
 		test_looks.add_item(["Static", "Pulse", "Drift", "Iridescent", "Phase", "Moonwash", "Prism"][i], 40 + i)
-	test_looks.add_separator("Glow motifs")
+	test_looks.add_separator("Glow shapes · weapons / inspect")
 	for i in range(8):
 		test_looks.add_item(["Motes", "Crossbars", "Petals", "Zigzag", "Arcs", "Comets", "Stars", "Wisps"][i], 50 + i)
-	test_looks.add_separator("Blade surface")
+	test_looks.add_separator("Surface · supported weapon art")
 	for i in range(7):
 		test_looks.add_item(preload("res://scripts/living_metal_v187.gd").LABELS[i], 60 + i)
-	test_looks.add_separator("Forged guards")
+	test_looks.add_separator("Guard · modular blades")
 	for i in range(8):
 		test_looks.add_item(["Straight", "Swept back", "Swept forward", "Winged", "Scroll", "Diamond", "Thorn", "Beaded"][i], 70 + i)
-	test_looks.add_separator("Forged grips")
+	test_looks.add_separator("Grip · modular weapons")
 	for i in range(6):
 		test_looks.add_item(["Leather wrap", "Metal collars", "Silk lacing", "Inlaid", "Riveted", "Carved"][i], 80 + i)
 	test_looks.select(0)
@@ -534,6 +535,10 @@ func _preview_look(index: int) -> void:
 	if item == null:
 		return
 	var id: int = test_looks.get_item_id(index)
+	if test_looks.is_item_disabled(index):
+		notice.text = "Not supported on this item. See TEST EFFECTS tooltips."
+		test_looks.select(0)
+		return
 	if id == 1:
 		item.debug_visual_override = -1
 		item.debug_mythic_variant = -1
@@ -571,7 +576,8 @@ func _preview_look(index: int) -> void:
 	test_looks.select(0)
 	inventory.contents_changed.emit()
 	inventory.equipment_changed.emit()
-	notice.text = "TEST ONLY · " + chosen + " · NOT SAVED"
+	var equipped: bool = inventory.get_equipped(item.get_slot()) == item if item.get_slot() != "none" else false
+	notice.text = "TEST ONLY · " + chosen + (" · EQUIPPED" if equipped else " · INSPECT / EQUIP FIRST") + " · NOT SAVED"
 
 func selected_item_for_inspection() -> GhostItemInstance:
 	if inventory == null or selected_index < 0:
@@ -586,3 +592,52 @@ func _inspect_selected() -> void:
 	var item: GhostItemInstance = selected_item_for_inspection()
 	if item != null:
 		inspect_requested.emit(item)
+
+# Explain dependencies without requiring a particular natural rarity. Debug
+# previews bypass natural rarity requirements but never grant actual stats.
+func _effect_support(item: GhostItemInstance, id: int) -> Dictionary:
+	if item == null or id <= 1:
+		return {"enabled": true, "hint": "Restore the item's genuine appearance; all temporary overrides cleared."}
+	var slot: String = item.get_slot()
+	var weapon: bool = slot in ["sword", "wand"]
+	var style: String = item.weapon_style()
+	var ident: String = str(item.definition.item_id) if item.definition != null else ""
+	var modular_blade: bool = style in ["twinblade", "dual_sword", "dual_dagger", "halberd"] or ident in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	var attack_only: bool = style in ["dagger", "spear"]
+	var grip: bool = modular_blade or style in ["scythe", "maul"]
+	var painted: bool = style == "bow" or slot == "wand"
+	var inspect_surface: bool = grip or attack_only or painted
+	var equipped: bool = slot != "none" and inventory != null and inventory.get_equipped(slot) == item
+	var context: String = " Equipped: compare live character and world." if equipped else " Inspect this item, or equip it to see supported held effects."
+	if id >= 10 and id <= 15:
+		return {"enabled": true, "hint": ("Weapon signature; no natural rarity required in debug." if weapon else ("Dress aura for Mythic/Moonfall; other signatures in Inspect." if slot == "dress" else "Inspect preview; accessories have limited in-world effects.")) + " Anomaly rarity can override the signature shape." + context}
+	if id >= 20 and id <= 23:
+		return {"enabled": true, "hint": ("Forces Mythic signature automatically. Anomaly takes precedence; clear previews first if needed." if weapon else "Forces Mythic for inspection; only supported accessory/dress auras appear in-world.") + context}
+	if id >= 30 and id <= 36:
+		return {"enabled": true, "hint": ("Changes material/particle tier only. Ethereal here is cosmetic, not the transparent durability condition. Anomaly adds fracture motion." if weapon else "Inspection-only cosmetic tier, not item quality or durability.") + context}
+	if id >= 40 and id <= 46:
+		return {"enabled": true, "hint": ("Changes the existing seeded glow palette motion. Anomaly always animates. FX slider must be above 0%." if weapon else "Inspection glow motion; not a fabric dye.") + context}
+	if id >= 50 and id <= 57:
+		return {"enabled": true, "hint": ("Changes the moving accents; use FX above 0%. Bow/wand masks use a related painted shimmer." if weapon else "Inspection motif; does not change the actual accessory art.") + context}
+	if id >= 60 and id <= 66:
+		return {"enabled": inspect_surface, "hint": ("Modular steel and bow/wand masks; legacy dagger/spear may be inspect or attack only. FX above 0%." + context) if inspect_surface else "Unsupported: this item has baked art without a living material surface."}
+	if id >= 70 and id <= 77:
+		return {"enabled": modular_blade or attack_only, "hint": ("Actual crossguard on modular blades; some dagger/spear models use modular geometry only during attacks or inspection." + context) if modular_blade or attack_only else "Unsupported: bows, wands, mauls, scythes and baked swords have no modular crossguard."}
+	if id >= 80 and id <= 85:
+		return {"enabled": grip or attack_only, "hint": ("Wrapped handle on modular weapons; some dagger/spear models are inspect or attack only." + context) if grip or attack_only else "Unsupported: this item does not have a modular grip."}
+	return {"enabled": true, "hint": ""}
+
+func _update_effect_compatibility(item: GhostItemInstance) -> void:
+	if not is_instance_valid(test_looks):
+		return
+	var popup: PopupMenu = test_looks.get_popup()
+	for i in range(test_looks.item_count):
+		if popup.is_item_separator(i):
+			continue
+		var id: int = test_looks.get_item_id(i)
+		var support: Dictionary = _effect_support(item, id)
+		test_looks.set_item_disabled(i, not bool(support["enabled"]))
+		popup.set_item_tooltip(i, str(support["hint"]))
+	var slot: String = item.get_slot()
+	var equipped: bool = slot != "none" and inventory.get_equipped(slot) == item
+	test_looks.tooltip_text = ("Testing equipped " if equipped else "Testing selected ") + item.display_name() + ". Disabled choices are unsupported. Hover a choice for requirements. Debug only; never saved."
