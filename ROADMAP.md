@@ -125,6 +125,14 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
 
+### Current evidence and blockers (v1.92.2)
+
+- v1.92.1 PR #27 merged; GitHub Actions run [45381388211](https://github.com/sinnes7kx/2D-Game/actions/runs/45381388211) succeeded, including the current/legacy/missing TestMythic control smoke. The local F5 confirmation and release-export UI check remain outstanding.
+- v1.92.2 source: backpack records that cannot load (missing definitions or insufficient space/capacity) now persist in an additive `unresolved_backpack` array and are retried on later loads. Recovery never evicts an active item or auto-equips an inaccessible record. Original saved equipment indices remap only to successfully loaded original backpack records. Unknown raw fields are retained while a record is unresolved; once it becomes playable, the normal serializer applies. Inventory reports pending recovery. Invalid top-level save/container structure disables saving rather than overwriting the original file. Old v2 grid migration backs up the original bytes; legacy v1 stays intact.
+- New synthetic fixture test `tests/v1922_collection_recovery_smoke.gd` covers missing resources, overflow, grid migration, identity, duplicate cosmetic UID with distinct item seeds, invalid containers, and isolated backup creation. Added to CI; result pending at commit time. No private saves used.
+- Keep the ignored `scripts - Copy/` backup unchanged until its conflict-marked contents receive explicit cleanup review; it already has `.gdignore`. Do not replace live scripts with this directory.
+- Remaining P0 gates: interactive F5, real older-save corpus, full disk-write failure handling for ordinary pickups/destruction/equipment, broader malformed nested-record validation, appearance versioning, and a full tracked resource/node-path audit. Do not mark M0 complete yet.
+
 ### Done means
 
 Fresh source imports, headless tests pass, **real F5 playtesting** confirms core item flow, all existing saves in the test corpus still load, and no item changes unexpectedly. Do not mark done on static checks alone.
