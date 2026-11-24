@@ -1,4 +1,5 @@
 extends Node2D
+const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.2 — authored four-facing weapon strike poses.
 ## Uses the approved unarmed attack BODY frames; renders physical weapon
 ## geometry at eight authored poses per action, not stretched inventory icons.
@@ -214,6 +215,12 @@ func _draw() -> void:
 func _draw_nightglass_stiletto(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2) -> void:
 	var guard: Vector2 = grip.lerp(tip, 0.22)
 	var steel: Vector2 = grip.lerp(tip, 0.30)
+	var look: Dictionary = MODULAR.equipped_profile(self, body)
+	if not look.is_empty():
+		MODULAR.draw_grip(self, grip - tangent * 5.0, steel, 3.2, look)
+		MODULAR.draw_blade(self, steel, tip, 3.2, look)
+		draw_circle(grip, 3.9, Color("d3c5d5"))
+		return
 	# Discrete fingers and dark hilt stay close to Ghost Girl's hand.
 	draw_line(grip - tangent * 5.0, guard, Color("4b344e"), 5.4, true)
 	draw_line(grip, guard, Color("aa829a"), 2.2, true)
@@ -254,6 +261,13 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2) -> void:
 	var root: Vector2 = tip - tangent * 24.0
 	var butt: Vector2 = grip - tangent * 22.0
+	var look: Dictionary = MODULAR.equipped_profile(self, body)
+	if not look.is_empty():
+		MODULAR.draw_grip(self, butt, root, 3.8, look)
+		MODULAR.draw_blade(self, root, tip, 4.5, look)
+		draw_circle(grip - tangent * 7.0, 4.1, Color("d8c7d6"))
+		draw_circle(grip + tangent * 10.0, 4.0, Color("cab9cf"))
+		return
 	draw_line(butt, root, Color("322638"), 6.5, true)
 	draw_line(butt, root, Color("876f84"), 3.2, true)
 	draw_line(butt + normal, root + normal, Color("b8a7c1"), 1.0, true)
@@ -269,6 +283,14 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 	var rear: Vector2 = grip - (tip - grip) * 0.90
 	var front_root: Vector2 = grip.lerp(tip, 0.20)
 	var rear_root: Vector2 = grip.lerp(rear, 0.22)
+	var look: Dictionary = MODULAR.equipped_profile(self, body)
+	if not look.is_empty():
+		MODULAR.draw_grip(self, rear_root, front_root, 3.0, look)
+		var width: float = 3.8 if rose else 3.2
+		MODULAR.draw_blade(self, front_root, tip, width, look)
+		MODULAR.draw_blade(self, rear_root, rear, width, look)
+		draw_circle(grip, 3.7, Color("d8c7d6"))
+		return
 	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
 	draw_line(rear_root, front_root, Color("78596d"), 3.0, true)
 	var axis: Vector2 = (tip - grip).normalized()
