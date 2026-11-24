@@ -34,7 +34,7 @@ func set_item(value: GhostItemInstance) -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	if is_visible_in_tree() and glow_enabled:
+	if is_visible_in_tree() and item != null and (glow_enabled or (is_modular() and int(look.get("surface_mode", 0)) >= 2)):
 		elapsed += delta
 		queue_redraw()
 
@@ -42,14 +42,14 @@ func _grip(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 	ART.draw_grip(self, a, b, width, profiles[hand])
 
 func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
-	ART.draw_blade(self, a, b, width, profiles[hand])
+	ART.draw_blade(self, a, b, width, profiles[hand], elapsed)
 	for side in [-1.0, 1.0]:
 		segments.append(ART.edge_points(a, b, width, profiles[hand], side))
 
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()

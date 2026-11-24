@@ -1,6 +1,7 @@
 extends RefCounted
 ## Collecting-first appearance rolls. Stable v1 domains: never change these
 ## for an existing look. No item quality, combat seed RNG or stats involved.
+const SURFACE = preload("res://scripts/living_metal_v187.gd")
 const RNG = preload("res://scripts/cosmetic_rng_v152.gd")
 const LABELS: Array[String] = ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"]
 const COUNTS: Array[int] = [6000, 2500, 1000, 400, 90, 9, 1]
@@ -22,6 +23,10 @@ static func roll(uid: String, legacy_seed: int) -> Dictionary:
 	var material: int = tier_for_ticket(ticket(uid, legacy_seed, "material-rarity"))
 	return {
 		"material": material,
+		"surface_mode": SURFACE.surface_for_ticket(ticket(uid, legacy_seed, "v187-surface-family"), material),
+		"surface_phase": float(ticket(uid, legacy_seed, "v187-surface-phase")) / 10000.0,
+		"surface_speed": 0.35 + float(ticket(uid, legacy_seed, "v187-surface-speed")) / 10000.0 * 0.65,
+		"surface_colors": RNG.gradient_for_channel(uid, legacy_seed, "v187-surface-pigment"),
 		"color_mode": ticket(uid, legacy_seed, "v180-color-mode") % 7,
 		"glow_motif": ticket(uid, legacy_seed, "v180-glow-motif") % 8,
 		"shift_rate": 0.055 + float(ticket(uid, legacy_seed, "v180-shift-rate")) / 9999.0 * 0.24,

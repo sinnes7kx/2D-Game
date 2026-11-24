@@ -117,7 +117,7 @@ func _process(_delta: float) -> void:
 		return
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_now: String = str(body.animation)
-	if animation_now.contains("twinblade"):
+	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and MODULAR.surface_is_animated(self, body)):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.

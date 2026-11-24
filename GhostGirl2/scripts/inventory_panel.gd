@@ -476,6 +476,9 @@ func _setup_effect_menu() -> void:
 	test_looks.add_separator("Glow motifs")
 	for i in range(8):
 		test_looks.add_item(["Motes", "Crossbars", "Petals", "Zigzag", "Arcs", "Comets", "Stars", "Wisps"][i], 50 + i)
+	test_looks.add_separator("Blade surface")
+	for i in range(7):
+		test_looks.add_item(preload("res://scripts/living_metal_v187.gd").LABELS[i], 60 + i)
 	test_looks.select(0)
 
 func _preview_look(index: int) -> void:
@@ -491,6 +494,7 @@ func _preview_look(index: int) -> void:
 		item.debug_collector_tier = -1
 		item.debug_color_mode = -1
 		item.debug_glow_motif = -1
+		item.debug_surface_mode = -1
 	elif id >= 10 and id <= 15:
 		item.debug_visual_override = id - 10
 		item.debug_mythic_variant = -1
@@ -503,6 +507,12 @@ func _preview_look(index: int) -> void:
 		item.debug_color_mode = id - 40
 	elif id >= 50 and id <= 57:
 		item.debug_glow_motif = id - 50
+	elif id >= 60 and id <= 66:
+		if item.get_slot() != "sword":
+			notice.text = "Blade surface preview requires a modular sword or dagger"
+			test_looks.select(0)
+			return
+		item.debug_surface_mode = id - 60
 	else:
 		return
 	var chosen: String = test_looks.get_item_text(index)

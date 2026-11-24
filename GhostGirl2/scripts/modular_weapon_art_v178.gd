@@ -1,6 +1,7 @@
 extends RefCounted
 ## v1.78: reusable opaque modular weapon art. The same profile can later
 ## be rendered by the inspection screen without a player or combat scene.
+const SURFACE = preload("res://scripts/living_metal_v187.gd")
 const LOOK = preload("res://scripts/collector_appearance_v177.gd")
 
 static func profile(look: Dictionary, hand: int = 0) -> Dictionary:
@@ -28,6 +29,10 @@ static func profile(look: Dictionary, hand: int = 0) -> Dictionary:
 	return {
 		"shape": pattern % 5, "width_scale": 0.78 + float(pattern % 4) * 0.16,
 		"material": tier, "finish": finish, "ornament": ornament,
+		"surface_mode": int(look.get("surface_mode", 0)),
+		"surface_phase": float(look.get("surface_phase", 0.0)),
+		"surface_speed": float(look.get("surface_speed", 0.5)),
+		"surface_colors": look.get("surface_colors", metals),
 		"metal": steel, "shade": steel.darkened(0.44), "edge": steel.lightened(0.63),
 		"accent": accent, "grip": grip.darkened(0.58)
 	}
@@ -45,7 +50,7 @@ static func equipped_profile(owner: Node, body: AnimatedSprite2D, hand: int = 0)
 	var item: GhostItemInstance = inventory.get_equipped("sword")
 	if item == null:
 		return {}
-	var key: String = "%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand, item.debug_collector_tier]
+	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand, item.debug_collector_tier, item.debug_surface_mode, item.origin_room, item.regional_rank]
 	if str(owner.get_meta("v178_profile_key", "")) != key:
 		owner.set_meta("v178_profile_key", key)
 		owner.set_meta("v178_profile", weapon_profile(item.collector_appearance(), str(item.definition.item_id), hand))
@@ -76,7 +81,7 @@ static func draw_grip(canvas: Node2D, start: Vector2, end: Vector2, width: float
 		var at: Vector2 = start.lerp(end, float(i + 1) / float(5 + finish % 4))
 		canvas.draw_line(at - normal * width * 0.40, at + normal * width * 0.40 + axis * float(finish % 2), tint.lightened(0.32), 0.8, true)
 
-static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float, p: Dictionary) -> void:
+static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float, p: Dictionary, phase: float = -1.0) -> void:
 	if root.distance_squared_to(tip) < 16.0 or p.is_empty():
 		return
 	var left: PackedVector2Array = edge_points(root, tip, width, p, -1.0)
@@ -88,6 +93,8 @@ static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float
 	var accent: Color = p["accent"]
 	canvas.draw_colored_polygon(outline, steel)
 	canvas.draw_colored_polygon(PackedVector2Array([root, tip, right[2], right[1], right[0]]), shade)
+	var time: float = float(Time.get_ticks_msec() % 3600000) / 1000.0 if phase < 0.0 else phase
+	SURFACE.draw_surface(canvas, left, right, p, time)
 	canvas.draw_polyline(left, edge, 0.85, true)
 	canvas.draw_polyline(right, edge.darkened(0.18), 0.7, true)
 	canvas.draw_line(root, tip, edge, 0.55, true)
@@ -143,3 +150,9 @@ static func apply_equipped_opacity(canvas: Node2D, body: AnimatedSprite2D) -> vo
 	var inventory: Node = world.get("inventory") as Node if world != null else null
 	var item: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
 	canvas.self_modulate.a = item.weapon_opacity() if item != null else 1.0
+
+# Only request animated surface redraws for the actual equipped weapon layer.
+# Cached profiles are reused; no new rolls or per-frame hashing.
+static func surface_is_animated(owner: Node, body: AnimatedSprite2D, hand: int = 0) -> bool:
+	var p: Dictionary = equipped_profile(owner, body, hand)
+	return not p.is_empty() and SURFACE.animated(int(p.get("surface_mode", 0)))
