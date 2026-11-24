@@ -240,8 +240,8 @@ func _draw() -> void:
 	var mixed: Color = glow_ink.lerp(element_ink, 0.15 + 0.08 * sin(time_pulse))
 	_draw_arrow_shaft(Vector2.ZERO, Color("e4dce5").lerp(element_ink, 0.43), 1.0, 1.0)
 	var pulse: float = 0.5 + 0.5 * sin(time_pulse * 3.2)
-	draw_circle(direction * 18.0, 4.5 + pulse * 2.0, Color(mixed.r, mixed.g, mixed.b, 0.22 + 0.14 * pulse))
-	draw_circle(direction * 18.0, 2.5 + pulse, Color(element_ink.r, element_ink.g, element_ink.b, 0.79))
+	draw_circle(direction * 18.0, 4.5 + pulse * 2.0, Color(mixed.r, mixed.g, mixed.b, 0.13 + 0.08 * pulse))
+	draw_circle(direction * 18.0, 2.5 + pulse, Color(element_ink.r, element_ink.g, element_ink.b, 0.46))
 	if not procedural_look.is_empty():
 		var count: int = int(procedural_look.get("spark_count", 5))
 		var motion: int = int(procedural_look.get("motion", 0))
@@ -268,7 +268,7 @@ func _draw() -> void:
 		for side in [-1.0, 1.0]:
 			var drift: float = 10.0 + sin(time_pulse * 3.0 + side) * (1.7 + float(bow_trail_index % 3))
 			var position: Vector2 = p * side * drift - direction * (5.0 + side * 2.0)
-			_draw_arrow_shaft(position, mixed, 0.53, 0.78)
+			_draw_arrow_shaft(position, mixed, 0.32, 0.78)
 			draw_circle(direction * 15.0 + position, 3.0, Color(element_ink.r, element_ink.g, element_ink.b, 0.16))
 	if element_index == 1: # Emberfire: soft cinders and a tapered flame
 		for i in range(6):
@@ -280,7 +280,7 @@ func _draw() -> void:
 			var v: Vector2 = -direction * (2.0 + float(i) * 7.0) + p * sin(time_pulse + float(i)) * 4.0
 			draw_line(v - p * 4.0, v + p * 4.0, Color(0.58, 0.89, 1.0, 0.28), 1.3, true)
 	elif element_index == 3: # Light: moon rings and pearl-white flashes
-		draw_arc(direction * 12.0, 9.0 + pulse * 3.0, time_pulse, time_pulse + PI * 1.55, 18, Color(1.0, 0.96, 0.76, 0.60), 1.6, true)
+		draw_arc(direction * 12.0, 9.0 + pulse * 3.0, time_pulse, time_pulse + PI * 1.55, 18, Color(1.0, 0.96, 0.76, 0.36), 1.6, true)
 		for i in range(3):
 			var v: Vector2 = -direction * float(i * 10 + 4) + p * sin(time_pulse * 2.0 + float(i)) * 5.0
 			draw_circle(v, 1.6, Color(1.0, 0.94, 0.81, 0.30))
