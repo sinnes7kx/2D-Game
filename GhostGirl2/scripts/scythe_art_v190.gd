@@ -4,6 +4,7 @@ const SURFACE = preload("res://scripts/living_metal_v187.gd")
 const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const REAPER_SPAN: float = 86.0
 
 static func matches(name: String) -> bool:
 	return name.begins_with("scythe_") or name.begins_with("attack_scythe_")
@@ -53,7 +54,7 @@ static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2A
 			var authored: Vector2 = Vector2(float(row[2]), float(row[3])) - Vector2(float(row[0]), float(row[1]))
 			if authored.length_squared() > 16.0:
 				direction = authored.normalized()
-	return PackedVector2Array([anchor, anchor + direction.normalized() * 86.0])
+	return PackedVector2Array([anchor, anchor + direction.normalized() * REAPER_SPAN])
 
 # Crescent cutting edge with exact pointed tip, and tapered spine. Independent
 # curvature, blade span and depth retain a recognizable agricultural silhouette.
