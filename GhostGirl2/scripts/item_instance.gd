@@ -31,6 +31,8 @@ var debug_collector_tier: int = -1
 var debug_color_mode: int = -1
 var debug_glow_motif: int = -1
 var debug_surface_mode: int = -1
+var debug_forge_guard: int = -1
+var debug_forge_grip: int = -1
 # Favorite presets store exact appearance fields, including existing altar rolls.
 var saved_cosmetic_looks: Array[Dictionary] = []
 var palette_index: int = 0
@@ -417,6 +419,10 @@ func collector_appearance() -> Dictionary:
 			look["glow_motif"] = debug_glow_motif
 		if debug_surface_mode >= 0:
 			look["surface_mode"] = clampi(debug_surface_mode, 0, 6)
+		if debug_forge_guard >= 0:
+			look["forge_guard"] = clampi(debug_forge_guard, 0, 7)
+		if debug_forge_grip >= 0:
+			look["forge_grip"] = clampi(debug_forge_grip, 0, 5)
 	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
 	return look
 
