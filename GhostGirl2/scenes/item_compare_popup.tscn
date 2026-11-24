@@ -84,6 +84,15 @@ theme_override_font_sizes/normal_font_size = 15
 fit_content = false
 text = ""
 
+[node name="VisualHint" type="Label" parent="Columns/Current/Layout"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.81, 0.74, 0.84, 1)
+theme_override_font_sizes/font_size = 12
+text = ""
+
 [node name="Equipped" type="PanelContainer" parent="Columns"]
 custom_minimum_size = Vector2(328, 0)
 layout_mode = 2
@@ -111,4 +120,13 @@ scroll_active = true
 bbcode_enabled = true
 theme_override_font_sizes/normal_font_size = 15
 fit_content = false
+text = ""
+
+[node name="VisualHint" type="Label" parent="Columns/Equipped/Layout"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.81, 0.74, 0.84, 1)
+theme_override_font_sizes/font_size = 12
 text = ""
