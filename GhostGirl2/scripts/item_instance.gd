@@ -18,6 +18,9 @@ var rare_visual_mod: int = -1
 var debug_visual_override: int = -1
 var collector_favorite: bool = false
 var collector_locked: bool = false
+const REGIONAL = preload("res://scripts/regional_treasures_v183.gd")
+var origin_room: String = ""
+var regional_rank: int = 0
 var exhibition_slot: int = -1 # Only assigned while in collection vault.
 var debug_collector_tier: int = -1
 var debug_color_mode: int = -1
@@ -390,7 +393,7 @@ func effect_description() -> String:
 func collector_appearance() -> Dictionary:
 	if get_slot() not in ["sword", "wand"]:
 		return {}
-	var look: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	var look: Dictionary = REGIONAL.apply(COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed()), origin_room, regional_rank)
 	if OS.is_debug_build():
 		if debug_collector_tier >= 0:
 			look["material"] = debug_collector_tier
@@ -460,3 +463,15 @@ func details(advanced: bool = false) -> String:
 			if get_slot() == "wand":
 				lines.append("Spell: " + GhostWeaponFXLibrary.spell_form_name(int(fx["form"])))
 	return "\n".join(lines)
+
+func stamp_origin(room_id: String) -> void:
+	if not origin_room.is_empty() or room_id.is_empty() or get_slot() not in ["sword", "wand"]:
+		return
+	origin_room = room_id
+	regional_rank = REGIONAL.roll_rank(room_id, cosmetic_uid, visual_seed())
+
+func regional_imprint_label() -> String:
+	return REGIONAL.imprint_label(origin_room, regional_rank)
+
+func origin_label() -> String:
+	return REGIONAL.origin_label(origin_room) if not origin_room.is_empty() else ""
