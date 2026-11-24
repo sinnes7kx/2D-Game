@@ -13,6 +13,8 @@ static func install(sprite: AnimatedSprite2D) -> void:
 		# The physical left bow is drawn separately and mirrored from the
 		# RIGHT bow-only layer, so these left body frames must be bow-free.
 		var left_bow: bool = anim.ends_with("_left") and (anim.begins_with("thornrose_idle_") or anim.begins_with("thornrose_walk_") or anim.begins_with("moonveil_idle_") or anim.begins_with("moonveil_walk_") or anim.begins_with("attack_thornrose_") or anim.begins_with("attack_moonveil_"))
+		if anim.contains("_pierce_"):
+			continue # v1.76 thrust clips already have clean authored body timing.
 		if not dual and not newer_attack and not left_bow:
 			continue
 		var face: String = ""
