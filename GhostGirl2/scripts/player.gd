@@ -34,9 +34,9 @@ const HOOK_GESTURE_TIME: float = 0.42
 const SPELL_CAST_DURATION: float = 0.48
 const SPELL_SHOT_TIME: float = 0.22
 const MAX_STAMINA: float = 100.0
-const LIGHT_ATTACK_COST: float = 18.0
-const HEAVY_ATTACK_COST: float = 38.0
-const DODGE_COST: float = 31.0
+const LIGHT_ATTACK_COST: float = 14.0
+const HEAVY_ATTACK_COST: float = 30.0
+const DODGE_COST: float = 24.0
 const DODGE_DURATION: float = 0.33
 const DODGE_SPEED: float = 362.0
 const JUMP_COST: float = 16.0
@@ -50,7 +50,7 @@ const HEAL_WINDUP: float = 0.63
 const LOCK_RANGE: float = 620.0
 const INPUT_BUFFER: float = 0.38
 const AIR_LANDING_BUFFER: float = 0.19  # Accept dodge/follow-up just before feet touch the ground.
-const STAMINA_RECOVERY_WAIT: float = 0.76
+const STAMINA_RECOVERY_WAIT: float = 0.50
 
 
 var world
@@ -1394,6 +1394,12 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		rally_pool -= gained
 		health = minf(maximum_health(), health + gained)
 		world.ui.set_health(health, maximum_health())
+
+	if (struck or struck_world) and sword != null and sword.ethereal:
+		if world.inventory.wear_ethereal(sword):
+			world.ui.show_pickup("ETHEREAL WEAPON BROKEN · " + sword.definition.display_name, Color("d9b6cf"))
+		elif sword.durability == 10:
+			world.ui.show_pickup("ETHEREAL WEAPON · 10 USES REMAIN", Color("d9b6cf"))
 
 func on_world_impact(point: Vector2, strength: float) -> void:
 	# Physical sources can shake the camera, but only if close enough to matter.

@@ -135,3 +135,11 @@ static func twinblade_width(rose: bool) -> float:
 static func twinblade_spans(grip: Vector2, tip: Vector2) -> Array[PackedVector2Array]:
 	var rear: Vector2 = grip - (tip - grip) * 0.90
 	return [PackedVector2Array([grip.lerp(tip, 0.16), tip]), PackedVector2Array([grip.lerp(rear, 0.18), rear])]
+
+# Apply only to a weapon-specific CanvasItem, not the parent body.
+static func apply_equipped_opacity(canvas: Node2D, body: AnimatedSprite2D) -> void:
+	var player: Node = body.get_parent() if body != null else null
+	var world: Node = player.get("world") as Node if player != null else null
+	var inventory: Node = world.get("inventory") as Node if world != null else null
+	var item: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
+	canvas.self_modulate.a = item.weapon_opacity() if item != null else 1.0

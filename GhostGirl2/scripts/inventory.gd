@@ -118,6 +118,8 @@ func add_loot(template: GhostItemData, seed_value: int, forced_quality: String =
 	if template.equip_slot != "none" and template.item_class == "equipment":
 		item.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
 	item.stamp_origin(origin)
+	if not origin.is_empty():
+		item.roll_ethereal()
 	var pos: Vector2i = _first_open(item)
 	if pos.x < 0:
 		return null
@@ -147,7 +149,7 @@ func get_equipped(slot: String) -> GhostItemInstance:
 
 func equip_at(index: int) -> bool:
 	var item: GhostItemInstance = get_item(index)
-	if item == null or item.get_slot() == "none" or not equipment.has(item.get_slot()):
+	if item == null or item.is_broken() or item.get_slot() == "none" or not equipment.has(item.get_slot()):
 		return false
 	# A sword and wand share the active hand; equipping either holsters the other.
 	if item.get_slot() == "sword":
@@ -359,7 +361,9 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"cosmetic_uid": item.cosmetic_uid,
 		"rare_visual_mod": item.rare_visual_mod,
 		"saved_cosmetic_looks": item.saved_cosmetic_looks.duplicate(true),
-		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked, "exhibition_slot": item.exhibition_slot, "origin_room": item.origin_room, "regional_rank": item.regional_rank
+		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked, "exhibition_slot": item.exhibition_slot, "origin_room": item.origin_room, "regional_rank": item.regional_rank,
+		"ethereal": item.ethereal, "durability": item.durability, "max_durability": item.max_durability,
+		"rolled_stat": item.stat_value, "rolled_affixes": item.affixes.duplicate(true), "rolled_sockets": item.sockets
 	}
 
 func load_game() -> void:
@@ -419,7 +423,7 @@ func load_game() -> void:
 		var saved_idx: int = int(equipped_saved.get(slot, -1))
 		var idx: int = int(restored_indices.get(saved_idx, -1))
 		var chosen: GhostItemInstance = get_item(idx)
-		if chosen != null and chosen.get_slot() == str(slot):
+		if chosen != null and not chosen.is_broken() and chosen.get_slot() == str(slot):
 			equipment[slot] = idx
 	contents_changed.emit()
 	equipment_changed.emit()
@@ -466,6 +470,17 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 		for look in saved_looks:
 			if look is Dictionary and look.has("seed") and item.saved_cosmetic_looks.size() < 16:
 				item.saved_cosmetic_looks.append((look as Dictionary).duplicate(true))
+	# Preserve the actual generated rolls: random-quality generation consumes
+	# an extra RNG draw compared with forced-quality reconstruction.
+	if saved.has("rolled_stat"):
+		item.stat_value = float(saved["rolled_stat"])
+	if saved.get("rolled_affixes") is Array:
+		item.affixes.clear()
+		for affix in saved["rolled_affixes"]:
+			if affix is Dictionary:
+				item.affixes.append(affix.duplicate(true))
+	if saved.has("rolled_sockets"):
+		item.sockets = clampi(int(saved["rolled_sockets"]), 0, definition.max_sockets)
 	for jewel in saved.get("socketed", []):
 		if jewel is Dictionary and item.socketed.size() < item.sockets:
 			item.socketed.append(jewel.duplicate(true))
@@ -474,6 +489,9 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	item.exhibition_slot = clampi(int(saved.get("exhibition_slot", -1)), -1, EXHIBITION_CAPACITY - 1)
 	item.origin_room = str(saved.get("origin_room", ""))
 	item.regional_rank = clampi(int(saved.get("regional_rank", 0)), 0, 3)
+	item.ethereal = bool(saved.get("ethereal", false)) and item.supports_ethereal()
+	item.max_durability = clampi(int(saved.get("max_durability", 80)), 1, 140) if item.ethereal else 0
+	item.durability = clampi(int(saved.get("durability", item.max_durability)), 0, item.max_durability)
 	return item
 
 func vault_store(index: int, persist: bool = true) -> bool:
@@ -578,3 +596,20 @@ func set_exhibition(item: GhostItemInstance, slot: int, persist: bool = true) ->
 		return false
 	contents_changed.emit()
 	return true
+
+# One use per actual melee contact action or successful wand release.
+# Broken items survive as collectible relics, but cannot be equipped.
+func wear_ethereal(item: GhostItemInstance, persist: bool = true) -> bool:
+	if item == null or not contents.has(item) or not item.ethereal or item.is_broken():
+		return false
+	var broke: bool = item.wear_once()
+	if broke:
+		var index: int = contents.find(item)
+		for slot in equipment.keys():
+			if equipped_index(str(slot)) == index:
+				equipment[slot] = -1
+		equipment_changed.emit()
+	contents_changed.emit()
+	if persist:
+		save_game()
+	return broke

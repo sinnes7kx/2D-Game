@@ -21,6 +21,10 @@ var collector_locked: bool = false
 const REGIONAL = preload("res://scripts/regional_treasures_v183.gd")
 var origin_room: String = ""
 var regional_rank: int = 0
+# Physical Ethereal condition, not the cosmetic rarity tier.
+var ethereal: bool = false
+var durability: int = 0
+var max_durability: int = 0
 var exhibition_slot: int = -1 # Only assigned while in collection vault.
 var debug_collector_tier: int = -1
 var debug_color_mode: int = -1
@@ -70,6 +74,8 @@ func display_name() -> String:
 	if definition == null:
 		return "Unknown"
 	var base: String = definition.display_name
+	if ethereal:
+		base = ("Broken Ethereal " if is_broken() else "Ethereal ") + base
 	match quality:
 		"magic":
 			if affixes.size() > 0:
@@ -89,7 +95,7 @@ func weapon_damage() -> float:
 		return 0.0
 	var damage_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	damage_rng.seed = absi(item_seed) + 612746
-	return snappedf(damage_rng.randf_range(definition.min_weapon_damage, definition.max_weapon_damage), 0.1)
+	return 0.0 if is_broken() else snappedf(damage_rng.randf_range(definition.min_weapon_damage, definition.max_weapon_damage) * (1.5 if ethereal else 1.0), 0.1)
 
 func weapon_style() -> String:
 	if definition != null and get_slot() == "sword":
@@ -416,12 +422,17 @@ func palette_name() -> String:
 
 func all_stats() -> Dictionary:
 	var totals: Dictionary = {}
+	if is_broken():
+		return totals
 	if definition != null and not definition.stat_id.is_empty():
 		totals[definition.stat_id] = stat_value
 	for affix in affixes:
 		var stat: String = str(affix.get("stat", ""))
 		if not stat.is_empty():
 			totals[stat] = float(totals.get(stat, 0.0)) + float(affix.get("value", 0.0))
+	if ethereal:
+		for key in totals.keys():
+			totals[key] = snappedf(float(totals[key]) * 1.25, 0.1)
 	for jewel in socketed:
 		var stat: String = str(jewel.get("stat", ""))
 		if not stat.is_empty():
@@ -475,3 +486,33 @@ func regional_imprint_label() -> String:
 
 func origin_label() -> String:
 	return REGIONAL.origin_label(origin_room) if not origin_room.is_empty() else ""
+
+# Only independently drawn weapon families are eligible in this release.
+# Never make Ghost Girl's body transparent to imitate a spectral weapon.
+func supports_ethereal() -> bool:
+	return get_slot() == "wand" or (get_slot() == "sword" and weapon_style() in ["twinblade", "dual_dagger", "dual_sword"])
+
+func roll_ethereal() -> void:
+	if not supports_ethereal() or ethereal:
+		return
+	if COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "v184-ethereal-condition") < 500:
+		make_ethereal()
+
+func make_ethereal() -> void:
+	if not supports_ethereal() or ethereal:
+		return
+	ethereal = true
+	max_durability = 80 + COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "v184-durability") % 61
+	durability = max_durability
+
+func is_broken() -> bool:
+	return ethereal and durability <= 0
+
+func weapon_opacity() -> float:
+	return 0.28 if is_broken() else (0.52 if ethereal else 1.0)
+
+func wear_once() -> bool:
+	if not ethereal or is_broken():
+		return false
+	durability = maxi(0, durability - 1)
+	return is_broken()

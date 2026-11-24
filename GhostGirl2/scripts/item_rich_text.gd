@@ -43,6 +43,9 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
 	if slot == "sword":
 		out.append("[font_size=15][color=%s]%.1f Damage[/color][color=%s]   ·   %.0f Reach[/color][/font_size]" % [GOLD, item.weapon_damage(), MUTED, item.weapon_reach()])
+	if item.ethereal:
+		out.append("[font_size=13][color=#c1d8e4]ETHEREAL · %s[/color][/font_size]" % ("BROKEN" if item.is_broken() else "%d/%d durability" % [item.durability, item.max_durability]))
+		out.append(_label("Cannot be repaired · " + ("Display only" if item.is_broken() else "Enhanced power")))
 	var stats: Dictionary = item.all_stats()
 	if not stats.is_empty():
 		var ids: Array = stats.keys()

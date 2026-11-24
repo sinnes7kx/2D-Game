@@ -237,7 +237,7 @@ func _process(delta: float) -> void:
             last_wand_frame = -1
         wand_visual.region_enabled = true
         wand_visual.show()
-        wand_visual.modulate = Color(1.0, 1.0, 1.0, 0.98)
+        wand_visual.modulate = Color(1.0, 1.0, 1.0, 0.98 * wand_item.weapon_opacity())
         wand_visual.position = Vector2.ZERO
         wand_visual.rotation = 0.0
         wand_visual.scale = Vector2.ONE

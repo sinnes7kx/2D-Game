@@ -796,7 +796,7 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 	bolt.direction = (intended - bolt.global_position).normalized() if intended.distance_squared_to(bolt.global_position) > 25.0 else aim
 	bolt.owner_rid = player.get_rid()
 	bolt.caster = player
-	bolt.damage = (35.0 if charged else 14.0) * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0)
+	bolt.damage = (35.0 if charged else 14.0) * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power()
 	if charged:
 		bolt.damage *= 1.0 + inventory.get_stat_total("charged_spell_pct") / 100.0
 	bolt.charged = charged
@@ -827,6 +827,8 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		release_fx.global_position = bolt.global_position
 		release_fx.call("configure", wand_gradient[0], wand_gradient[1], wand_gradient[2], wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
 
+	_wear_cast_wand(wand)
+
 func cast_moonfall(target_position: Vector2) -> void:
 	var wand: GhostItemInstance = inventory.get_equipped("wand")
 	if wand == null or not inventory.has_collected("v125_moonfall_unlocked"):
@@ -845,7 +847,7 @@ func cast_moonfall(target_position: Vector2) -> void:
 		point = obstruction.get("position", point)
 	var storm: Node2D = MOONFALL_SCENE.instantiate() as Node2D
 	storm.set("appearance_seed", wand.visual_seed())
-	storm.set("damage_per_pulse", 7.8 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0))
+	storm.set("damage_per_pulse", 7.8 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
 	storm.set("style_index", GhostWeaponFXLibrary.moonfall_style(wand.visual_seed(), wand.quality))
 	var signature: Dictionary = wand.effect_rolls()
 	storm.set("main_color", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("b9dfff"), 0.58))
@@ -853,6 +855,8 @@ func cast_moonfall(target_position: Vector2) -> void:
 	add_child(storm)
 	removed_room_items.append(storm)
 	storm.global_position = point
+
+	_wear_cast_wand(wand)
 
 func _v127_aimed_area_point(target_position: Vector2) -> Vector2:
 	# The target cannot be summoned through masonry or movable cover.
@@ -877,12 +881,14 @@ func _v127_spawn_area(scene: PackedScene, target_position: Vector2, is_astral: b
 	effect.set("primary", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("d6b9ed"), 0.48))
 	effect.set("secondary", GhostWeaponFXLibrary.color(int(signature["accent"])).lerp(Color("efd1eb"), 0.38))
 	if is_astral:
-		effect.set("pulse_damage", 10.5 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0))
+		effect.set("pulse_damage", 10.5 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
 	else:
-		effect.set("one_hit_damage", 14.0 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0))
+		effect.set("one_hit_damage", 14.0 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
 	add_child(effect)
 	removed_room_items.append(effect)
 	effect.global_position = _v127_aimed_area_point(target_position)
+
+	_wear_cast_wand(wand)
 
 func cast_astral_rain(target_position: Vector2) -> void:
 	if inventory.has_collected("v127_astral_rain_unlocked"):
@@ -938,7 +944,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F6:
 			_enter_room("hollow_veil_moor")
 		elif event.physical_keycode == KEY_F7:
-			_give_weapon_test_samples()
+			if OS.is_debug_build() and event.shift_pressed:
+				_give_ethereal_trial()
+			else:
+				_give_weapon_test_samples()
 		elif event.physical_keycode == KEY_F9:
 			_enter_room("blackbrick_court")
 		elif event.physical_keycode == KEY_F10:
@@ -1137,3 +1146,30 @@ func _restore_world_progress() -> void:
 	var coords: Variant = saved.get("last_shrine_point", [])
 	if coords is Array and coords.size() >= 2:
 		last_shrine_point = Vector2(float(coords[0]), float(coords[1]))
+
+func _ethereal_wand_power() -> float:
+	var wand: GhostItemInstance = inventory.get_equipped("wand")
+	return 1.25 if wand != null and wand.ethereal else 1.0
+
+func _wear_cast_wand(wand: GhostItemInstance) -> void:
+	if wand == null or not wand.ethereal:
+		return
+	# One cost per successful spell creation, never per pulse or target.
+	if inventory.wear_ethereal(wand):
+		ui.show_pickup("ETHEREAL WAND BROKEN · " + wand.definition.display_name, Color("d9b6cf"))
+	elif wand.durability == 10:
+		ui.show_pickup("ETHEREAL WAND · 10 CASTS REMAIN", Color("d9b6cf"))
+
+# Explicit debug trial, never mutates an existing collectible.
+func _give_ethereal_trial() -> void:
+	if not OS.is_debug_build():
+		return
+	var template: GhostItemData = load("res://items/rosemirror_twinblade_v170.tres") as GhostItemData
+	var sample: GhostItemInstance = GhostItemGenerator.create(template, 184001, "rare")
+	sample.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
+	sample.make_ethereal()
+	sample.durability = 3
+	if inventory.add_existing_item(sample) != null:
+		ui.show_pickup("ETHEREAL TEST TWINBLADE · 3 USES · OPEN I", Color("c1d8e4"))
+	else:
+		ui.show_pickup("BACKPACK FULL")

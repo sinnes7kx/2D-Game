@@ -112,6 +112,8 @@ func refresh() -> void:
 		if favorites.button_pressed and not item.collector_favorite:
 			continue
 		var label_text: String = "%s%s%s  ·  %s%s" % ["★ " if item.collector_favorite else "", "[Protected] " if item.collector_locked else "", item.display_name(), item.collector_material_label(), " · Display %d" % (item.exhibition_slot + 1) if item.exhibition_slot >= 0 else ""]
+		if item.ethereal:
+			label_text += " · Broken" if item.is_broken() else " · %d/%d durability" % [item.durability, item.max_durability]
 		if not item.regional_imprint_label().is_empty():
 			label_text += " · " + item.regional_imprint_label()
 		if not query.is_empty() and not (label_text + " " + item.origin_label()).to_lower().contains(query):

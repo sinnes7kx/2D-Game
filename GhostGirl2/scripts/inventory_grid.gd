@@ -108,7 +108,7 @@ func _draw() -> void:
 			var available: Vector2 = bounds.size - Vector2(12, 22)
 			var factor: float = minf(available.x / maxf(1.0, source_size.x), available.y / maxf(1.0, source_size.y))
 			var image_size: Vector2 = source_size * factor
-			draw_texture_rect(shown_icon, Rect2(bounds.position + (bounds.size - image_size) * 0.5 - Vector2(0, 5), image_size), false)
+			draw_texture_rect(shown_icon, Rect2(bounds.position + (bounds.size - image_size) * 0.5 - Vector2(0, 5), image_size), false, Color(1, 1, 1, item.weapon_opacity()))
 		if held:
 			draw_string(get_theme_default_font(), bounds.position + Vector2(5, bounds.size.y * 0.5), "HELD", HORIZONTAL_ALIGNMENT_CENTER, bounds.size.x - 8, 12, Color(0.96, 0.82, 0.66))
 		else:

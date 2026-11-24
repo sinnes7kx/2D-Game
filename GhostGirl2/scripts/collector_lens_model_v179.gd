@@ -12,6 +12,7 @@ var segments: Array[PackedVector2Array] = []
 
 func set_item(value: GhostItemInstance) -> void:
 	item = value
+	self_modulate.a = item.weapon_opacity() if item != null else 1.0
 	look = item.collector_appearance() if item != null else {}
 	profiles.clear()
 	for hand in range(2):
