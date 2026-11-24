@@ -64,6 +64,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append("[font_size=14][color=%s]+%.1f%% %s[/color][/font_size]" % [GOLD if unique_socketable else BLUE, item.definition.socket_bonus_value, escape(GhostPaletteLibrary.stat_label(item.definition.socket_bonus_id))])
 	if slot != "none":
 		out.append(_cosmetic_dots(item))
+	if slot in ["sword", "wand"] and not item.regional_imprint_label().is_empty():
+		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, escape(item.regional_imprint_label())])
 	if not advanced:
 		if slot in ["sword", "wand"]:
 			out.append("[font_size=11][color=%s]P  ·  Inspect weapon[/color][/font_size]" % MUTED)
@@ -79,6 +81,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, "Moonfall Halo" if item.visual_signature() == 5 else "Mythic Radiance"])
 		out.append(_label("Luminous dress aura" if slot == "dress" else "Spectral accessory glimmer"))
 	if slot in ["sword", "wand"]:
+		if not item.origin_label().is_empty():
+			out.append(_label("Found in " + item.origin_label()))
 		var fx: Dictionary = item.effect_rolls()
 		# ALT reveals what the item *does visually*, not its internal RNG identifiers.
 		if item.visual_signature() > 0:
