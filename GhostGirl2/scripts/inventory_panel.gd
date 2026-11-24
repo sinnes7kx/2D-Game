@@ -2,6 +2,7 @@ extends PanelContainer
 signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal cursor_pick_requested(index: int)
+signal inspect_requested(item: GhostItemInstance)
 signal cursor_place_requested(page: int, col: int, row: int)
 signal cursor_cancel_requested
 signal cursor_drop_requested(index: int)
@@ -15,6 +16,7 @@ var pending_gear_index: int = -1
 var active_page: int = 0
 var pending_delete_item: Variant = null
 var test_looks: OptionButton
+@onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
 @onready var description: RichTextLabel = $Layout/DetailsWell/DetailsVBox/ItemDescription
 @onready var seed_row: HBoxContainer = $Layout/DetailsWell/DetailsVBox/SeedRow
@@ -39,6 +41,7 @@ func _ready() -> void:
 	$Layout/Header/NextPage.pressed.connect(_change_page.bind(1))
 	$Layout/Header/SortBackpack.pressed.connect(_sort_backpack)
 	equip_button.pressed.connect(_equip)
+	inspect_button.pressed.connect(_inspect_selected)
 	socket_button.pressed.connect(_select_socket)
 	destroy_button.pressed.connect(_request_delete)
 	$Layout/DetailsWell/DetailsVBox/SeedRow/RerollSeed.pressed.connect(_reroll_selected_seed)
@@ -193,6 +196,7 @@ func _show_details(index: int) -> void:
 	var worn: Variant = inventory.get_equipped(item.get_slot()) if item.get_slot() != "none" else null
 	if worn != null and worn != item:
 		description.text += "\n[font_size=12][color=#c8a98a]HOLD CTRL WHILE HOVERING TO COMPARE[/color][/font_size]"
+	inspect_button.visible = item.get_slot() in ["sword", "wand"]
 	equip_button.visible = item.get_slot() != "none"
 	if equip_button.visible:
 		var equipped: bool = inventory.equipped_index(item.get_slot()) == index
@@ -422,6 +426,8 @@ func _clear() -> void:
 		test_looks.hide()
 	if is_instance_valid(description):
 		description.text = "[font_size=15][color=#a99fae]HOVER for details  ·  ALT advanced  ·  CTRL compare  ·  CLICK to hold[/color][/font_size]"
+	if is_instance_valid(inspect_button):
+		inspect_button.hide()
 	if is_instance_valid(equip_button):
 		equip_button.visible = false
 	if is_instance_valid(socket_button):
@@ -480,3 +486,12 @@ func _preview_look(index: int) -> void:
 	inventory.contents_changed.emit()
 	inventory.equipment_changed.emit()
 	notice.text = "TEST ONLY · %s · COLOR %d/7 · GLOW %d/8" % [item.collector_material_label(), int(item.collector_appearance().get("color_mode", 0)) + 1, int(item.collector_appearance().get("glow_motif", 0)) + 1]
+
+func selected_weapon_for_inspection() -> GhostItemInstance:
+	var item: GhostItemInstance = _selected_cosmetic_item()
+	return item if item != null and item.get_slot() in ["sword", "wand"] else null
+
+func _inspect_selected() -> void:
+	var item: GhostItemInstance = selected_weapon_for_inspection()
+	if item != null:
+		inspect_requested.emit(item)
