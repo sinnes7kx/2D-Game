@@ -140,5 +140,8 @@ jobs:
       - name: Verify legacy inventory dropdown compatibility
         run: godot --headless --path GhostGirl2 --script res://tests/v1921_dropdown_compat_smoke.gd
 
+      - name: Verify collection recovery and legacy migration
+        run: godot --headless --path GhostGirl2 --script res://tests/v1922_collection_recovery_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
