@@ -3,6 +3,9 @@ extends Node2D
 ## Weapon artwork is integrated in the approved directional body animations.
 ## v1.60 also enables a dedicated wand-hand overlay to replace the placeholder look.
 var inventory
+const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
+var wand_surface_key: String = ""
+var wand_surface: ShaderMaterial
 @onready var player_art: AnimatedSprite2D = get_parent().get_node("Ghost") as AnimatedSprite2D
 @onready var wings: Sprite2D = $Wings
 @onready var pendant: Sprite2D = $Trinket
@@ -237,6 +240,14 @@ func _process(delta: float) -> void:
             wand_visual.texture = WAND_POSE_ATLASES[visual_index]
             last_wand_animation = ""
             last_wand_frame = -1
+        var surface_key: String = WEAPON_SURFACE.key(wand_item)
+        if wand_surface == null or surface_key != wand_surface_key:
+            wand_surface_key = surface_key
+            if wand_surface == null:
+                wand_surface = ShaderMaterial.new()
+            WEAPON_SURFACE.configure(wand_surface, wand_item.collector_appearance(), WAND_FRAME_SIZE, false)
+            wand_visual.material = wand_surface
+        wand_visual.region_filter_clip_enabled = true
         wand_visual.region_enabled = true
         wand_visual.show()
         wand_visual.modulate = Color(1.0, 1.0, 1.0, 0.98 * wand_item.weapon_opacity())
