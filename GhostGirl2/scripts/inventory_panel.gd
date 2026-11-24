@@ -3,6 +3,7 @@ signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal cursor_pick_requested(index: int)
 signal inspect_requested(item: GhostItemInstance)
+signal vault_requested(item: GhostItemInstance)
 signal cursor_place_requested(page: int, col: int, row: int)
 signal cursor_cancel_requested
 signal cursor_drop_requested(index: int)
@@ -42,6 +43,7 @@ func _ready() -> void:
 	$Layout/Header/SortBackpack.pressed.connect(_sort_backpack)
 	equip_button.pressed.connect(_equip)
 	inspect_button.pressed.connect(_inspect_selected)
+	$Layout/Header/VaultButton.pressed.connect(func() -> void: vault_requested.emit(selected_weapon_for_inspection()))
 	socket_button.pressed.connect(_select_socket)
 	destroy_button.pressed.connect(_request_delete)
 	$Layout/DetailsWell/DetailsVBox/SeedRow/RerollSeed.pressed.connect(_reroll_selected_seed)
@@ -207,8 +209,9 @@ func _show_details(index: int) -> void:
 		socket_button.text = "SELECT GEM OR RUNE" if pending_gear_index < 0 else "CHOOSE A GEM / RUNE"
 	destroy_button.visible = true
 	$Layout/Actions/DropSelected.visible = true
+	$Layout/Actions/DropSelected.disabled = not inventory.can_drop(index)
 	destroy_button.disabled = not inventory.can_destroy(index)
-	destroy_button.tooltip_text = "Unequip first; quest items cannot be destroyed" if destroy_button.disabled else "Permanently destroy selected item"
+	destroy_button.tooltip_text = "Protected item" if item.collector_locked else ("Unequip first; quest items cannot be destroyed" if destroy_button.disabled else "Permanently destroy selected item")
 
 func _appearance_colors(item: GhostItemInstance, look: Dictionary) -> Array[Color]:
 	# Saved full-spectrum colors are derived from THAT look's UID, not the
