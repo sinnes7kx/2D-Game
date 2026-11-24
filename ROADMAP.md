@@ -130,7 +130,7 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - User screenshots show cyan/purple hair and inconsistent dress dye, missing held-weapon preview effects (especially bows), and a front-facing screen-right dagger grip offset. The body shader used whole-texture UVs and violet-pixel weapon classification; both are unsafe for mixed body atlases. Disable both color passes pending authored per-frame fabric masks; dress palette data and accessory/halo effects remain. This intentionally suspends dress fabric dye rather than risking recoloring hair/skin.
 - Shared blade-local signature geometry, restrained motif accents, actual bow-mask signature uniforms and mirrored guide offsets; single detailed pass per twinblade end. Correct the neutral front screen-right hand anchor against the existing body art. No changes to combat or saved item data.
 - New `tests/v1923_equipped_fx_smoke.gd` exercises real dropdown, equipped/inspection look parity, bow shader parameters, neutral body shader controls and preserved item data. Registered in CI; interactive four-direction and weapon alignment checks remain release blockers.
-- PR #28 (v1.92.2 collection recovery) remains open with failed CI; this independent visual fix is based directly on main, not the failing recovery branch. M0 is not complete.
+- PR #28 (v1.92.2 collection recovery) is now merged, but its recorded CI run 45445026003 failed. The current main workflow does not register the collection recovery smoke; restore and verify that regression before treating recovery as validated. M0 is not complete.
 ### Current evidence and blockers (v1.92.2)
 
 - v1.92.1 PR #27 merged; GitHub Actions run [45381388211](https://github.com/sinnes7kx/2D-Game/actions/runs/45381388211) succeeded, including the current/legacy/missing TestMythic control smoke. The local F5 confirmation and release-export UI check remain outstanding.
@@ -144,7 +144,7 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - Character screen replaces the static Doll texture at runtime with an isolated SubViewport using the actual player scene, equipped-item layers, and current idle animation. Four directional views, read-only shared equipment references, no gameplay input/collision or player-group registration; processing and viewport rendering disabled when hidden. Original portrait scene remains a fallback resource.
 - In-game session-only 0–200% held weapon FX intensity slider and 100% reset affect equipped prestige overlay, shared edge/signature passes, painted weapon material overlays and inspection. Base weapon art and Ethereal condition opacity are not changed. Dress/accessory aura and combat projectile/impact effects are outside this slider's scope.
 - Debug effect menu keeps existing IDs, explains family/pose/rarity dependencies, marks unequipped items as inspect/equip-first, distinguishes visual Ethereal from durability, and disables unsupported surface/guard/grip choices. Effects and intensity do not become saved item data.
-- New `tests/v1924_live_preview_smoke.gd` tests isolated actual rig, direction, slider, selected preview, bow compatibility, no item mutation, and hidden-preview processing. CI registered, result pending at commit time. Layout and visual tuning need actual Godot F5 testing on target hardware. Prior v1.92.3 PR #29 CI succeeded and was merged; unsafe dress recoloring remains disabled.
+- New `tests/v1924_live_preview_smoke.gd` tests isolated actual rig, direction, slider, selected preview, bow compatibility, no item mutation, and hidden-preview processing. CI run [45458675481](https://github.com/sinnes7kx/2D-Game/actions/runs/45458675481) succeeded and PR #30 merged. User subsequently confirmed the preview works in their local game; full directional/visual/performance checks remain outstanding. Prior v1.92.3 PR #29 CI succeeded and was merged; unsafe dress recoloring remains disabled.
 
 ### Done means
 
@@ -190,6 +190,9 @@ Fresh source imports, headless tests pass, **real F5 playtesting** confirms core
 
 - [ ] Expand original authored weapon families (swords, daggers, spears, scythes, halberds, bows, wands, dual weapons), keeping authentic shapes and combat timing.
 - [ ] Compose layers for blade/body, guard, grip, accents, trinkets, ribbons, wing accessories, glow, particles, and material patterns so independent seed channels can vary.
+- [ ] M1 head-slot collector expansion: add Glowing Eyes as the first small authored accessory family, followed by optional crescent halos, floral crowns, veils and delicate spectral ornaments. The current headpiece slot uses the legacy `wings` equipment key; reuse that key for mutually exclusive head accessories rather than silently migrating existing equipment.
+- [ ] Eye effects must use separate frame-specific, direction-aware eye anchors/masks (including concealed eyes and back-facing poses). Preserve Ghost Girl's approved facial features and original body pixels; no hue-based body recoloring. Roll independent continuous palettes, glow intensity, asymmetry, pulse speed and restrained motifs using versioned appearance channels. Natural rarity and stats remain independent; no new odds until audited. Use the dagger FX readability as the art reference, and the live equipment preview and adjustable FX control as the testing interface.
+- [ ] Verify eye/head accessories in idle, walk, attack, dodge, jump and all four preview directions; verify item identity, lock/favorite, equip/unequip, vault and save/reload. Prototype after the M0 collection-safety gates and item identity baseline, not instead of them.
 - [ ] Keep a seed-stable map from stored appearance data to *all* idle, walk, attack, dodge, jump, and inspect poses, including left/right orientation.
 - [ ] Use tapered blade-following sword glows and softer visual effects rather than square beam artifacts.
 - [ ] Cap layered effect counts for readability and older PCs; use LOD/quality controls without changing the underlying collector identity.
@@ -550,6 +553,7 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 - [ ] Check current branch and reproduce/close the inventory Button → OptionButton issue with Godot.
 - [ ] Run `v1921_dropdown_compat_smoke.gd`; inspect and clean the duplicate conflict-marked inventory script.
 - [ ] Run existing smoke tests, then F5 test the full item lifecycle, vault, exhibitions, and an older save.
+- [ ] Restore the v1.92.2 collection recovery regression to the active workflow and resolve its failure; verify transfer safety and old saves before expanding loot families.
 - [ ] Document any remaining blockers and only declare completion with evidence.
 
 **Sprint B: the collector's identity**
@@ -558,7 +562,7 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 - [ ] Build a small **item identity regression suite** for unchanged stats, look, seed, protection, and display through save/reload.
 - [ ] Improve the prized-item Inspect presentation, with numeric seed in Advanced only and uncluttered default tooltips.
 - [ ] Confirm favorite/look save and reroll behavior; do not write a parallel implementation when an existing path works.
-- [ ] Prototype at least one genuinely rare, understated, memorable visual combination using deterministic seeded art and tested rarity boundaries.
+- [ ] Prototype at least one genuinely rare, understated, memorable visual combination using deterministic seeded art and tested rarity boundaries; Glowing Eyes is the requested first head-slot candidate after the M0 and identity gates.
 
 **Sprint C: the collection showcase loop**
 
