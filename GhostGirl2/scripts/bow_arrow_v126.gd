@@ -235,9 +235,9 @@ func _draw() -> void:
 	var glow_ink: Color = GhostWeaponFXLibrary.color(bow_glow_index)
 	if not full_palette.is_empty():
 		glow_ink = GhostCosmeticRNGV152.sample_palette(full_palette, time_pulse * 0.13, true)
-	if not procedural_look.is_empty():
+	elif not procedural_look.is_empty():
 		glow_ink = RelicPaletteV139.color_at(procedural_look, time_pulse, 0.33)
-	var mixed: Color = element_ink.lerp(glow_ink, 0.23 + 0.17 * sin(time_pulse))
+	var mixed: Color = glow_ink.lerp(element_ink, 0.15 + 0.08 * sin(time_pulse))
 	_draw_arrow_shaft(Vector2.ZERO, Color("e4dce5").lerp(element_ink, 0.43), 1.0, 1.0)
 	var pulse: float = 0.5 + 0.5 * sin(time_pulse * 3.2)
 	draw_circle(direction * 18.0, 4.5 + pulse * 2.0, Color(mixed.r, mixed.g, mixed.b, 0.22 + 0.14 * pulse))
