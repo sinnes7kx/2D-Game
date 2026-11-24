@@ -16,7 +16,6 @@ var rare_visual_mod: int = -1
 # In-memory debug inspection only. Intentionally omitted from save dictionaries,
 # cosmetic snapshots and normal RNG; never changes genuine rare rolls.
 var debug_visual_override: int = -1
-<<<<<<< Updated upstream
 var debug_mythic_variant: int = -1
 var collector_favorite: bool = false
 var collector_locked: bool = false
@@ -34,11 +33,6 @@ var debug_glow_motif: int = -1
 var debug_surface_mode: int = -1
 var debug_forge_guard: int = -1
 var debug_forge_grip: int = -1
-=======
-var debug_collector_tier: int = -1
-var debug_color_mode: int = -1
-var debug_glow_motif: int = -1
->>>>>>> Stashed changes
 # Favorite presets store exact appearance fields, including existing altar rolls.
 var saved_cosmetic_looks: Array[Dictionary] = []
 var palette_index: int = 0
@@ -414,11 +408,7 @@ func effect_description() -> String:
 func collector_appearance() -> Dictionary:
 	if get_slot() not in ["sword", "wand"]:
 		return {}
-<<<<<<< Updated upstream
 	var look: Dictionary = REGIONAL.apply(COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed()), origin_room, regional_rank)
-=======
-	var look: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
->>>>>>> Stashed changes
 	if OS.is_debug_build():
 		if debug_collector_tier >= 0:
 			look["material"] = debug_collector_tier
@@ -427,7 +417,6 @@ func collector_appearance() -> Dictionary:
 			look["color_mode"] = debug_color_mode
 		if debug_glow_motif >= 0:
 			look["glow_motif"] = debug_glow_motif
-<<<<<<< Updated upstream
 		if debug_surface_mode >= 0:
 			look["surface_mode"] = clampi(debug_surface_mode, 0, 6)
 		if debug_forge_guard >= 0:
@@ -435,8 +424,6 @@ func collector_appearance() -> Dictionary:
 		if debug_forge_grip >= 0:
 			look["forge_grip"] = clampi(debug_forge_grip, 0, 5)
 	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
-=======
->>>>>>> Stashed changes
 	return look
 
 func collector_material_label() -> String:

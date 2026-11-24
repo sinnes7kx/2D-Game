@@ -27,6 +27,7 @@ func configure_v118(kind: String, tint: Color, variant: int, tier: int, heading:
 	life = lifetime
 
 func _ready() -> void:
+	self_modulate.a = 0.62 # Does not fade the child counter/riposte caption.
 	z_index = 44
 	if effect_kind in ["riposte", "ready"]:
 		caption = Label.new()

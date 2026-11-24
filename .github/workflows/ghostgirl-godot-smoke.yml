@@ -131,5 +131,8 @@ jobs:
       - name: Verify enchanted arsenal weapon material integration
         run: godot --headless --path GhostGirl2 --script res://tests/v190_arsenal_smoke.gd
 
+      - name: Verify gentle weapon idle motion and opacity
+        run: godot --headless --path GhostGirl2 --script res://tests/v191_gentle_motion_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

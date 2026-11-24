@@ -30,6 +30,9 @@ const IMPACT_SCRIPT: Script = preload("res://scripts/weapon_spectacle.gd")
 const IMPACT_PRESTIGE: Script = preload("res://scripts/impact_prestige_v116.gd")
 var impact_style: int = 0
 
+func _ready() -> void:
+	self_modulate.a = 0.68
+
 func _physics_process(delta: float) -> void:
 	if spell_form >= 5:
 		if not beam_resolved:

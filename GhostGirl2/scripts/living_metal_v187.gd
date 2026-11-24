@@ -63,7 +63,7 @@ static func draw_surface(canvas: Node2D, left: PackedVector2Array, right: Packed
 			var v1: float = v0 + 0.21
 			var ink: Color = surface_color(profile, (a+b)*0.5, (v0+v1)*0.5, phase)
 			# A subtle translucent pigment over the underlying opaque steel.
-			ink.a = 0.88
+			ink.a = 0.64
 			canvas.draw_colored_polygon(PackedVector2Array([la.lerp(ra,v0),lb.lerp(rb,v0),lb.lerp(rb,v1),la.lerp(ra,v1)]), ink)
 	# Small rune strokes or distant stars inside the actual steel, never
 	# outside the outline. No glow sprite or additional hit.
@@ -76,7 +76,7 @@ static func draw_surface(canvas: Node2D, left: PackedVector2Array, right: Packed
 		var r: Vector2 = at_edge(right,u)
 		var p: Vector2 = l.lerp(r,0.31 if i%2==0 else 0.66)
 		var tint: Color = profile["edge"]
-		tint.a = 0.30 + 0.30 * (0.5 + 0.5*sin(phase*1.8+float(i)))
+		tint.a = 0.20 + 0.20 * (0.5 + 0.5*sin(phase*1.8+float(i)))
 		if mode == 3:
 			canvas.draw_line(l.lerp(r,0.28),l.lerp(r,0.72),tint,0.65,true)
 		else:

@@ -3,6 +3,7 @@ extends Node2D
 ## Uses unmodified approved Ghost Girl body frames; two sword layers are
 ## rendered separately and are never part of physics collision/damage logic.
 const ITEM_ID: String = "gloamrose_dual_swords_v174"
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const SWORD_SCRIPT: Script = preload("res://scripts/v174_dual_sword_blade.gd")
 var body: AnimatedSprite2D = null
 var player: Node2D = null
@@ -101,7 +102,11 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 		action = "riposte"
 	elif animation_name.begins_with("dual_sword_walk_"):
 		action = "walk"
-	return authored_blade_spans(face, action, frame_index)
+	var spans: Array = authored_blade_spans(face, action, 0 if action == "idle" else frame_index)
+	if action == "idle":
+		for hand in range(spans.size()):
+			spans[hand] = GENTLE.smooth(body, animation_name, spans[hand], hand)
+	return spans
 
 static func authored_blade_spans(face: String, action: String, frame_index: int) -> Array:
 	# Pure per-frame geometry, also exercised in CI without granting inventory

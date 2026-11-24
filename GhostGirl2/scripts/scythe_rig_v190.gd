@@ -1,4 +1,5 @@
 extends Node2D
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 const SURFACE = preload("res://scripts/weapon_surface_v190.gd")
@@ -43,6 +44,9 @@ func _draw() -> void:
 	if not visible or body == null or profile.is_empty():
 		return
 	var name_now: String = str(body.animation)
-	var points: PackedVector2Array = SCYTHE.span(name_now, body.frame, guides)
+	var idle: bool = GENTLE.modular_idle(name_now)
+	var points: PackedVector2Array = SCYTHE.span(name_now, 0 if idle else body.frame, guides)
+	if idle:
+		points = GENTLE.smooth(body, name_now, points)
 	if points.size() == 2:
 		SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, -1.0 if name_now.ends_with("_left") else 1.0, true)

@@ -6,6 +6,7 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const SCYTHE_V190 = preload("res://scripts/scythe_art_v190.gd")
 const SCYTHE_RIG_V190 = preload("res://scripts/scythe_rig_v190.gd")
 const FRAME_GUARD_V186 = preload("res://scripts/frame_guard_v186.gd")
@@ -155,6 +156,7 @@ func _ready() -> void:
 	DAGGER_THRUST_V186.install(body_art)
 	FRAME_GUARD_V186.install(body_art)
 	SCYTHE_V190.install(body_art)
+	GENTLE.install(body_art)
 	var scythe_rig: Node2D = SCYTHE_RIG_V190.new()
 	scythe_rig.name = "ScytheRigV190"
 	body_art.add_child(scythe_rig)
@@ -474,6 +476,8 @@ func _physics_process(delta: float) -> void:
 		else:
 			var rest_prefix: String = _weapon_motion_prefix(false)
 			_play_if_changed(rest_prefix + facing_name)
+			if rest_prefix != "idle_" and not GENTLE.modular_idle(str(body_art.animation)):
+				body_art.speed_scale = 0.48
 	move_and_slide()
 
 func _process(delta: float) -> void:

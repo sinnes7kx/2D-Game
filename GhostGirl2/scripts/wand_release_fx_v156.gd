@@ -21,6 +21,9 @@ func configure(a: Color, b: Color, c: Color, seed: int, heavy: bool, sig: int, l
 	z_index = 28
 	queue_redraw()
 
+func _ready() -> void:
+	self_modulate.a = 0.62
+
 func _process(delta: float) -> void:
 	age += delta
 	if age >= LIFE:

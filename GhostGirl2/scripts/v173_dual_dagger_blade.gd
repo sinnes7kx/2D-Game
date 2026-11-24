@@ -1,4 +1,5 @@
 extends Node2D
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.73 per-hand drawing over Ghost Girl's approved unchanged 2D body.
 ## This is art-only: never creates a collider, damage trigger or projectile.
@@ -20,7 +21,7 @@ func _process(_delta: float) -> void:
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_name: String = str(body.animation)
 	var active: bool = bool(rig.call("is_active", animation_name))
-	if active and MODULAR.surface_is_animated(self, body, blade_index):
+	if active and (GENTLE.modular_idle(animation_name) or MODULAR.surface_is_animated(self, body, blade_index)):
 		queue_redraw()
 	if animation_name != last_animation or body.frame != last_frame or active != last_active:
 		last_animation = animation_name

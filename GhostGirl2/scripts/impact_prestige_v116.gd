@@ -22,6 +22,9 @@ func configure(effect_kind: String, ink: Color, accent: Color, variant: int, rar
     lifetime = 0.96 if (style >= 3 and tier >= 2) else 0.68
     z_index = 48
 
+func _ready() -> void:
+    self_modulate.a = 0.65
+
 func _process(delta: float) -> void:
     age += delta
     if age >= lifetime:

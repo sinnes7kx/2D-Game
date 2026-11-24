@@ -57,7 +57,7 @@ func _verify() -> void:
 			for frame in range(8):
 				var source_frame: int = frame
 				if idle:
-					source_frame = IDLE_SEQUENCE[frame]
+					source_frame = 0 if preload("res://scripts/gentle_weapon_motion_v191.gd").modular_idle(target) else IDLE_SEQUENCE[frame]
 				elif walk:
 					source_frame = WALK_SEQUENCE[frame]
 				var image: Texture2D = frames.get_frame_texture(target, frame)

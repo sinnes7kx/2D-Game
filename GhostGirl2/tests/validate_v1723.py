@@ -24,13 +24,14 @@ assert "Color" in fx
 
 # Twinblade is handled *before* the legacy shaft-wide generic bloom, and
 # before any old ring/ambient signature that used to illuminate its grip.
-start = fx.index('if style == "twinblade":\n\t\t_draw_v1723_twinblade_edges(')
+start = fx.index('# The physical twinblade layer already draws its two cutting edges.')
 end = fx.index('return', start)
 twinblade_early_branch = fx[start:end]
 assert "_draw_signature" not in twinblade_early_branch
 assert "_draw_ambient_fireflies" not in twinblade_early_branch
 assert "_draw_v1723_mythic_sheen" in twinblade_early_branch
-assert fx.index('if style == "twinblade":\n\t\t_draw_v1723_twinblade_edges(') < fx.index('for i in range(15):')
+assert "_is_equipped" in twinblade_early_branch and "_draw_v1723_twinblade_edges" in twinblade_early_branch
+assert fx.index('# The physical twinblade layer already draws its two cutting edges.') < fx.index('for i in range(15):')
 
 # Two cutting regions; no central-handle glow.
 segment_body = fx.split('func _v1723_blade_segments(', 1)[1].split('func _draw_v1723_twinblade_edges(', 1)[0]

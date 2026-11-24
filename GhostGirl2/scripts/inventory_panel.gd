@@ -3,10 +3,7 @@ signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal cursor_pick_requested(index: int)
 signal inspect_requested(item: GhostItemInstance)
-<<<<<<< Updated upstream
 signal vault_requested(item: GhostItemInstance)
-=======
->>>>>>> Stashed changes
 signal cursor_place_requested(page: int, col: int, row: int)
 signal cursor_cancel_requested
 signal cursor_drop_requested(index: int)
@@ -46,10 +43,7 @@ func _ready() -> void:
 	$Layout/Header/SortBackpack.pressed.connect(_sort_backpack)
 	equip_button.pressed.connect(_equip)
 	inspect_button.pressed.connect(_inspect_selected)
-<<<<<<< Updated upstream
 	$Layout/Header/VaultButton.pressed.connect(func() -> void: vault_requested.emit(selected_weapon_for_inspection()))
-=======
->>>>>>> Stashed changes
 	socket_button.pressed.connect(_select_socket)
 	destroy_button.pressed.connect(_request_delete)
 	$Layout/DetailsWell/DetailsVBox/SeedRow/RerollSeed.pressed.connect(_reroll_selected_seed)
@@ -58,20 +52,9 @@ func _ready() -> void:
 	# Never surface the tester in release exports.
 	test_mythic.hide()
 	if OS.is_debug_build():
-<<<<<<< Updated upstream
 		test_looks = test_mythic
 		_setup_effect_menu()
 		test_looks.item_selected.connect(_preview_look)
-=======
-		test_mythic.pressed.connect(_toggle_mythic_preview)
-		test_looks = OptionButton.new()
-		test_looks.add_theme_font_size_override("font_size", 12)
-		$Layout/DetailsHeader.add_child(test_looks)
-		for label in ["TEST LOOKS", "Clear previews", "Anomaly", "Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Next color mode", "Next glow motif"]:
-			test_looks.add_item(label)
-		test_looks.item_selected.connect(_preview_look)
-		test_looks.hide()
->>>>>>> Stashed changes
 	$Layout/Actions/DropSelected.pressed.connect(_drop_selected)
 	description.bbcode_enabled = true
 	confirmation.confirmed.connect(_confirm_delete)
@@ -200,13 +183,7 @@ func _show_details(index: int) -> void:
 	description.text = "[font_size=19][color=%s]%s[/color][/font_size]\n" % [title_ink, ITEM_MARKUP.escape(item.display_name())] + ITEM_MARKUP.item_info(item, selected_alt_down)
 	description.scroll_to_line(0)
 	_refresh_seed_controls(item)
-<<<<<<< Updated upstream
 	test_mythic.visible = OS.is_debug_build()
-=======
-	test_mythic.visible = OS.is_debug_build() and item.get_slot() != "none"
-	if is_instance_valid(test_looks):
-		test_looks.visible = item.get_slot() in ["sword", "wand"]
->>>>>>> Stashed changes
 	if test_mythic.visible:
 		test_mythic.select(0)
 	# Details remain compact; the side-by-side floating compare popup owns long
@@ -214,11 +191,7 @@ func _show_details(index: int) -> void:
 	var worn: Variant = inventory.get_equipped(item.get_slot()) if item.get_slot() != "none" else null
 	if worn != null and worn != item:
 		description.text += "\n[font_size=12][color=#c8a98a]HOLD CTRL WHILE HOVERING TO COMPARE[/color][/font_size]"
-<<<<<<< Updated upstream
 	inspect_button.visible = true
-=======
-	inspect_button.visible = item.get_slot() in ["sword", "wand"]
->>>>>>> Stashed changes
 	equip_button.visible = item.get_slot() != "none"
 	if equip_button.visible:
 		var equipped: bool = inventory.equipped_index(item.get_slot()) == index
@@ -484,7 +457,6 @@ func _local_stat_label(stat_id: String) -> String:
 		"find_bonus_pct": return "item discovery"
 		_: return stat_id.replace("_", " ")
 
-<<<<<<< Updated upstream
 func _setup_effect_menu() -> void:
 	test_looks.clear()
 	test_looks.add_item("TEST EFFECTS", 0)
@@ -565,45 +537,12 @@ func selected_item_for_inspection() -> GhostItemInstance:
 	if inventory == null or selected_index < 0:
 		return null
 	return inventory.get_item(selected_index)
-=======
-func _preview_look(index: int) -> void:
-	if not OS.is_debug_build():
-		return
-	var item: GhostItemInstance = _selected_cosmetic_item()
-	if item == null or item.get_slot() not in ["sword", "wand"]:
-		return
-	match index:
-		1:
-			item.debug_collector_tier = -1
-			item.debug_color_mode = -1
-			item.debug_glow_motif = -1
-			item.debug_visual_override = -1
-		2:
-			item.debug_collector_tier = 6
-			item.debug_color_mode = 6
-		3, 4, 5, 6, 7, 8:
-			item.debug_collector_tier = index - 3
-		9:
-			item.debug_color_mode = (int(item.collector_appearance().get("color_mode", 0)) + 1) % 7
-		10:
-			item.debug_glow_motif = (int(item.collector_appearance().get("glow_motif", 0)) + 1) % 8
-		_:
-			return
-	test_looks.select(0)
-	inventory.contents_changed.emit()
-	inventory.equipment_changed.emit()
-	notice.text = "TEST ONLY · %s · COLOR %d/7 · GLOW %d/8" % [item.collector_material_label(), int(item.collector_appearance().get("color_mode", 0)) + 1, int(item.collector_appearance().get("glow_motif", 0)) + 1]
->>>>>>> Stashed changes
 
 func selected_weapon_for_inspection() -> GhostItemInstance:
 	var item: GhostItemInstance = _selected_cosmetic_item()
 	return item if item != null and item.get_slot() in ["sword", "wand"] else null
 
 func _inspect_selected() -> void:
-<<<<<<< Updated upstream
 	var item: GhostItemInstance = selected_item_for_inspection()
-=======
-	var item: GhostItemInstance = selected_weapon_for_inspection()
->>>>>>> Stashed changes
 	if item != null:
 		inspect_requested.emit(item)
