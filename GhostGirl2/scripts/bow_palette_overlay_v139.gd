@@ -141,13 +141,7 @@ func refresh() -> void:
 	var look: Dictionary = item.collector_appearance()
 	# The real bow limb palette is independent from the string. Blend its
 	# full ramp with the separately rolled living surface pigment.
-	var limbs: Array[Color] = item.bow_limb_gradient_colors()
-	var pigments: Array = look.get("surface_colors", [])
-	var blended: Array[Color] = []
-	for i in range(limbs.size()):
-		var u: float = float(i) / float(limbs.size() - 1)
-		blended.append(limbs[i].lerp(GhostCosmeticRNGV152.sample_palette(pigments, u), 0.42))
-	WEAPON_SURFACE.configure(mat, look, Vector2(256, 220), true, blended)
+	WEAPON_SURFACE.configure(mat, look, Vector2(256, 220), true, WEAPON_SURFACE.bow_pigment(item, look))
 
 func _process(_delta: float) -> void:
 	if body == null or inventory == null:
