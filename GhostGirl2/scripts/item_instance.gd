@@ -30,6 +30,7 @@ var exhibition_slot: int = -1 # Only assigned while in collection vault.
 var debug_collector_tier: int = -1
 var debug_color_mode: int = -1
 var debug_glow_motif: int = -1
+var debug_surface_mode: int = -1
 # Favorite presets store exact appearance fields, including existing altar rolls.
 var saved_cosmetic_looks: Array[Dictionary] = []
 var palette_index: int = 0
@@ -414,6 +415,8 @@ func collector_appearance() -> Dictionary:
 			look["color_mode"] = debug_color_mode
 		if debug_glow_motif >= 0:
 			look["glow_motif"] = debug_glow_motif
+		if debug_surface_mode >= 0:
+			look["surface_mode"] = clampi(debug_surface_mode, 0, 6)
 	return look
 
 func collector_material_label() -> String:
