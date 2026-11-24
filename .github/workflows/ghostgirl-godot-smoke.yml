@@ -152,6 +152,8 @@ jobs:
       - name: Verify Lanternhaven town and stash access
         run: godot --headless --path GhostGirl2 --script res://tests/v193_town_smoke.gd
 
+      - name: Verify quality-coded pinned item tooltips
+        run: godot --headless --path GhostGirl2 --script res://tests/v193_quality_tooltip_smoke.gd
       - name: Verify Collector Roll Code and item identity
         run: godot --headless --path GhostGirl2 --script res://tests/v1931_roll_code_smoke.gd
 

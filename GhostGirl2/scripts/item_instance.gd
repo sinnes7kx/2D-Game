@@ -431,6 +431,14 @@ func collector_appearance() -> Dictionary:
 	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
 	return look
 
+# Only independently rolled collector-level cosmetics earn the tooltip star.
+# Ignore debug overrides, item quality, and ordinary stat/affix rarity.
+func has_rare_seeded_appearance() -> bool:
+	if get_slot() not in ["sword", "wand"]:
+		return false
+	var natural: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+	return maxi(int(natural.get("material", 0)), int(natural.get("particle_tier", 0))) >= 4 or genuine_visual_signature() >= 4
+
 func collector_material_label() -> String:
 	var look: Dictionary = collector_appearance()
 	return COLLECTOR_LOOK.rarity_label(look) if not look.is_empty() else ""

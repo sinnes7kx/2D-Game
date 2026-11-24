@@ -27,6 +27,7 @@ var hovered_item: Variant = null
 var hovered_equipped: Variant = null
 var hover_ctrl_down: bool = false
 var hover_alt_down: bool = false
+var tooltip_pinned: bool = false
 var inventory_data: Node
 var cursor_item_index: int = -1
 var drop_click_guard: int = 0
@@ -126,15 +127,20 @@ func show_pickup(label_text: String, tint: Color = Color("d9cbd0")) -> void:
 	pickup_time = 2.6
 
 func _process(delta: float) -> void:
-	# Keep CTRL comparisons live even if the mouse stays on the same grid cell.
-	if hovered_item != null and item_compare_popup != null and item_compare_popup.visible:
-		var ctrl_now: bool = Input.is_key_pressed(KEY_CTRL)
+	# ALT locks the tooltip at its last position so its star and color
+	# details can be inspected without the panel chasing the pointer.
+	if item_compare_popup != null and item_compare_popup.visible:
 		var alt_now: bool = Input.is_key_pressed(KEY_ALT)
-		if ctrl_now != hover_ctrl_down or alt_now != hover_alt_down:
+		var ctrl_now: bool = Input.is_key_pressed(KEY_CTRL)
+		if alt_now != tooltip_pinned:
+			tooltip_pinned = alt_now
+			item_compare_popup.call("set_pinned", tooltip_pinned)
+			if not tooltip_pinned and hovered_item == null:
+				item_compare_popup.hide()
+		if hovered_item != null and (ctrl_now != hover_ctrl_down or alt_now != hover_alt_down):
 			hover_ctrl_down = ctrl_now
 			hover_alt_down = alt_now
-			var compare_item: Variant = hovered_equipped if ctrl_now else null
-			item_compare_popup.call("display_item", hovered_item, compare_item, alt_now)
+			item_compare_popup.call("display_item", hovered_item, hovered_equipped if ctrl_now else null, alt_now)
 	if drop_click_guard > 0:
 		drop_click_guard -= 1
 	if cursor_item_index >= 0 and inventory_data != null:
@@ -283,18 +289,26 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func _show_item_hover(item: Variant, equipped: Variant) -> void:
+	# Do not swap items while inspecting a pinned tooltip with the mouse.
+	if tooltip_pinned and item_compare_popup != null and item_compare_popup.visible:
+		return
 	hovered_item = item
-	# Equipment already filters by matching slot; keep this guard in the HUD.
 	hovered_equipped = equipped if item != null and equipped != null and equipped != item and item.get_slot() == equipped.get_slot() else null
 	hover_ctrl_down = Input.is_key_pressed(KEY_CTRL)
 	hover_alt_down = Input.is_key_pressed(KEY_ALT)
 	if is_menu_open() and cursor_item_index < 0:
+		tooltip_pinned = hover_alt_down
+		item_compare_popup.call("set_pinned", tooltip_pinned)
 		item_compare_popup.call("display_item", item, hovered_equipped if hover_ctrl_down else null, hover_alt_down)
 
 func _hide_item_hover() -> void:
 	hovered_item = null
 	hovered_equipped = null
 	if is_instance_valid(item_compare_popup):
+		if tooltip_pinned and Input.is_key_pressed(KEY_ALT):
+			return
+		tooltip_pinned = false
+		item_compare_popup.call("set_pinned", false)
 		item_compare_popup.hide()
 
 func set_location(label_text: String) -> void:
