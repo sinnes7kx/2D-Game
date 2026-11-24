@@ -104,7 +104,7 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		if item.visual_signature() > 0:
 			var signature_level: int = item.visual_signature()
 			var signature_title: String = "Mythic Radiance" if signature_level == 4 else ("Moonfall Halo" if signature_level == 5 else GhostCosmeticRNGV152.signature_name(signature_level))
-			out.append("[font_size=13][color=%s]✦ EXTREMELY RARE · %s[/color][/font_size]" % [GOLD, escape(signature_title)])
+			out.append("[font_size=13][color=%s]✦ %s · %s[/color][/font_size]" % [GOLD, "TEST EFFECT" if ROLL_CODE.debug_active(item) else "EXTREMELY RARE", escape(signature_title)])
 			if signature_level == 4:
 				var layers: Array[String] = ["Lightning arcs", "Cinder motes", "Astral pulses", "Spectral petals"]
 				out.append(_label("Mythic animation · " + layers[item.mythic_layer_variant()]))
