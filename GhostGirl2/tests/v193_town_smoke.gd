@@ -51,6 +51,12 @@ func _verify() -> void:
 	if modal.get("deposit").disabled:
 		_fail("Town deposit disabled")
 		return
+	# Simulate a blocked write; rollback must retain the very same instance.
+	inv.save_block_reason = "synthetic failed write"
+	if inv.vault_store(0) or inv.contents.size() != 1 or inv.contents[0] != item or not inv.vault.is_empty():
+		_fail("Failed deposit did not roll back")
+		return
+	inv.save_block_reason = ""
 	# Test backend without writing user saves; UI uses exactly these functions.
 	if not inv.vault_store(0,false) or inv.vault[0]!=item or not inv.set_exhibition(item,0,false):
 		_fail("Town store or exhibition reference failed")
@@ -64,6 +70,11 @@ func _verify() -> void:
 	if inv.vault.size()!=1 or not inv.contents.is_empty():
 		_fail("Remote withdrawal mutated collection")
 		return
+	inv.save_block_reason = "synthetic failed write"
+	if inv.vault_withdraw(0) or inv.vault.size() != 1 or inv.vault[0] != item or item.exhibition_slot != 0:
+		_fail("Failed withdrawal did not restore display assignment")
+		return
+	inv.save_block_reason = ""
 	if not inv.vault_withdraw(0,false) or inv.contents[0]!=item or item.cosmetic_snapshot()!=identity or item.all_stats()!=stats or not item.collector_locked or item.exhibition_slot!=-1:
 		_fail("Transfer changed identity, protection or display")
 		return
