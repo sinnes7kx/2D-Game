@@ -479,6 +479,12 @@ func _setup_effect_menu() -> void:
 	test_looks.add_separator("Blade surface")
 	for i in range(7):
 		test_looks.add_item(preload("res://scripts/living_metal_v187.gd").LABELS[i], 60 + i)
+	test_looks.add_separator("Forged guards")
+	for i in range(8):
+		test_looks.add_item(["Straight", "Swept back", "Swept forward", "Winged", "Scroll", "Diamond", "Thorn", "Beaded"][i], 70 + i)
+	test_looks.add_separator("Forged grips")
+	for i in range(6):
+		test_looks.add_item(["Leather wrap", "Metal collars", "Silk lacing", "Inlaid", "Riveted", "Carved"][i], 80 + i)
 	test_looks.select(0)
 
 func _preview_look(index: int) -> void:
@@ -495,6 +501,8 @@ func _preview_look(index: int) -> void:
 		item.debug_color_mode = -1
 		item.debug_glow_motif = -1
 		item.debug_surface_mode = -1
+		item.debug_forge_guard = -1
+		item.debug_forge_grip = -1
 	elif id >= 10 and id <= 15:
 		item.debug_visual_override = id - 10
 		item.debug_mythic_variant = -1
@@ -513,6 +521,10 @@ func _preview_look(index: int) -> void:
 			test_looks.select(0)
 			return
 		item.debug_surface_mode = id - 60
+	elif id >= 70 and id <= 77:
+		item.debug_forge_guard = id - 70
+	elif id >= 80 and id <= 85:
+		item.debug_forge_grip = id - 80
 	else:
 		return
 	var chosen: String = test_looks.get_item_text(index)

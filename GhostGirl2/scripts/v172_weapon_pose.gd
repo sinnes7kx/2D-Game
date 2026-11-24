@@ -328,7 +328,7 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 		var inventory: Node = world.get("inventory") as Node if world != null else null
 		var equipped: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
 		if equipped != null:
-			var key: String = "%s:%s:%s:%s:%s" % [equipped.get_instance_id(), equipped.cosmetic_uid, equipped.visual_seed(), equipped.debug_collector_tier, equipped.debug_color_mode * 10 + equipped.debug_glow_motif]
+			var key: String = "%s:%s:%s:%s:%s:%s:%s" % [equipped.get_instance_id(), equipped.cosmetic_uid, equipped.visual_seed(), equipped.debug_collector_tier, equipped.debug_color_mode * 10 + equipped.debug_glow_motif, equipped.visual_signature(), equipped.mythic_layer_variant()]
 			if str(get_meta("v180_fx_key", "")) != key:
 				set_meta("v180_fx_key", key)
 				set_meta("v180_fx_look", equipped.collector_appearance())
@@ -338,7 +338,6 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 			for side in [-1.0, 1.0]:
 				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 1.4)
 				ANOMALOUS.draw_edge(self, MODULAR.edge_points(rear_root, rear, width, look, side), colors, fx_look, v180_elapsed, 1.4)
-		draw_circle(grip, 3.7, Color("d8c7d6"))
 		return
 	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
 	draw_line(rear_root, front_root, Color("78596d"), 3.0, true)
