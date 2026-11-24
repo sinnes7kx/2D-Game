@@ -190,6 +190,9 @@ func _bind_room() -> void:
 				shrine.call("restore_from_inventory", inventory)
 	if room_view.has_node("Gameplay/MoonfallReliquary"):
 		room_view.get_node("Gameplay/MoonfallReliquary").call("restore_from_inventory", inventory)
+	if room_view.has_node("Gameplay/CollectionExhibition"):
+		for display in room_view.get_node("Gameplay/CollectionExhibition").get_children():
+			display.call("bind_inventory", inventory)
 	if room_view.has_node("Gameplay/WeaponShowcases"):
 		# v1.72.2: nested floor-armory pickups must be restored too.
 		for rack in room_view.get_node("Gameplay/WeaponShowcases").find_children("*", "Node2D", true, false):
@@ -456,6 +459,8 @@ func _process(_delta: float) -> void:
 			ui.set_prompt("E  USE KEY" if inventory.has_item("moon_rose_key") else "")
 		else:
 			ui.set_prompt("E  ENTER" if bool(current_target.get("opened")) else "")
+	elif current_target.is_in_group("v182_exhibition"):
+		ui.set_prompt("E  INSPECT DISPLAY")
 	elif current_target.is_in_group("interactable"):
 		ui.set_prompt("E  INTERACT")
 	else:
@@ -515,6 +520,10 @@ func _choose_target():
 func interact() -> void:
 	var target = _choose_target()
 	if target == null:
+		return
+	if target.is_in_group("v182_exhibition"):
+		var displayed: GhostItemInstance = target.call("get_displayed_item") as GhostItemInstance
+		ui.call("open_exhibition", int(target.get("slot")), displayed)
 		return
 	if target.is_in_group("moor_vigil_memory"):
 		if target.call("awaken", inventory):
