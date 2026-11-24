@@ -486,6 +486,13 @@ Choose incremental wrappers around working code before introducing sweeping repl
 - [ ] Place technical seeds and detailed metadata behind Advanced rather than on every tooltip.
 - [ ] Avoid monetized pressure, forced daily routines, or UI that demands constant ranked participation.
 
+### v1.95: stable weapon idle presentation (source implementation, playtest pending)
+
+- [ ] Verify 8-step, 3.45-second idle transitions for normal swords, Moonwarden spear, Briarwake trident, Thornrose bow and Moonveil bow, all four facing directions. The new frames are **subtle in-betweens derived from existing approved artwork**, not eight newly hand-painted independent poses.
+- [ ] Verify the bow palette mask, mirrored left-hand bow layer, and bow/spear glow axes remain stable while idle. Attack, walking, dodge and cast sprite frames must remain unchanged.
+- [ ] On a lower-end GPU, check first-load frame generation time and memory. Adjust transition strength if the weapon looks ghosted rather than still.
+- [ ] Longer-term animation-art pass: commission/author eight genuinely distinct approved body-breathing frames while keeping the weapon grip and silhouette fixed; replace interpolated idle only after visual review.
+
 ### Art and audio principles
 
 - [ ] Preserve the approved Ghost Girl silhouette, facial appearance, and dark painterly 2D aesthetic.
