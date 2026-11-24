@@ -1,6 +1,9 @@
 extends Node2D
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 ## A display-only weapon model; shares the equipped modular art routines.
+const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
+const PAINTED_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
+var painted_preview: Sprite2D
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 var item: GhostItemInstance
 var look: Dictionary = {}
@@ -32,6 +35,7 @@ func set_item(value: GhostItemInstance) -> void:
 	gradients.clear()
 	if item != null:
 		gradients = item.glow_gradient_colors()
+	_update_painted_preview()
 	elapsed = 0.0
 	queue_redraw()
 
@@ -51,14 +55,14 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger", "scythe"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
 	if item == null or item.definition == null:
 		return
 	if not is_modular() or profiles.is_empty() or profiles[0].is_empty():
-		if item.definition.icon != null:
+		if item.definition.icon != null and not has_painted_surface():
 			var size: Vector2 = Vector2(item.definition.icon.get_size())
 			var fit: Vector2 = size * (90.0 / maxf(1.0, maxf(size.x, size.y)))
 			draw_texture_rect(item.definition.icon, Rect2(-fit * 0.5, fit), false)
@@ -67,6 +71,11 @@ func _draw() -> void:
 		return
 	var style: String = item.weapon_style()
 	match style:
+		"scythe":
+			var p: Dictionary = profiles[0].duplicate()
+			p["scythe_span"] = float(look.get("scythe_span", 1.0))
+			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
+			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled)
 		"twinblade":
 			var width: float = ART.twinblade_width(str(item.definition.item_id) == "rosemirror_twinblade_v170")
 			var spans: Array[PackedVector2Array] = ART.twinblade_spans(Vector2.ZERO, Vector2(0, -68))
@@ -162,3 +171,26 @@ func _draw_signature(center: Vector2, radius: float) -> void:
 			1: draw_circle(p, 1.8, ink)
 			2: draw_arc(p, 3.4, 0, TAU, 16, ink, 1.0, true)
 			3: draw_colored_polygon(PackedVector2Array([p,p + Vector2(2,-4),p + Vector2(4,0)]), ink)
+
+func has_painted_surface() -> bool:
+	return item != null and item.definition != null and item.definition.icon != null and (item.get_slot() == "wand" or item.weapon_style() == "bow")
+
+func _update_painted_preview() -> void:
+	if not has_painted_surface():
+		if is_instance_valid(painted_preview):
+			painted_preview.hide()
+		return
+	if not is_instance_valid(painted_preview):
+		painted_preview = Sprite2D.new()
+		painted_preview.name = "PaintedMaterialPreviewV190"
+		painted_preview.show_behind_parent = true
+		add_child(painted_preview)
+	painted_preview.texture = item.definition.icon
+	var size: Vector2 = Vector2(painted_preview.texture.get_size())
+	painted_preview.scale = Vector2.ONE * (90.0 / maxf(1.0, maxf(size.x, size.y)))
+	var mat: ShaderMaterial = ShaderMaterial.new()
+	var colors: Array = PAINTED_SURFACE.bow_pigment(item, look) if item.weapon_style() == "bow" else look.get("surface_colors", [])
+	PAINTED_SURFACE.configure(mat, look, size, false, colors)
+	painted_preview.material = mat
+	painted_preview.self_modulate.a = item.weapon_opacity()
+	painted_preview.show()
