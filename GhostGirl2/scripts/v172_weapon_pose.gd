@@ -342,7 +342,7 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 			var fx_look: Dictionary = get_meta("v180_fx_look")
 			var colors: Array[Color] = get_meta("v180_fx_colors")
 			for side in [-1.0, 1.0]:
-				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 0.78)
+				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 0.78, side > 0.0)
 				ANOMALOUS.draw_edge(self, MODULAR.edge_points(rear_root, rear, width, look, side), colors, fx_look, v180_elapsed, 0.78)
 		return
 	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
