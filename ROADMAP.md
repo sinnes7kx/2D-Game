@@ -510,6 +510,15 @@ Choose incremental wrappers around working code before introducing sweeping repl
 - [ ] Back up existing saves before upgrading. Downgrading and saving through an older build that doesn't recognize `gradient_version` may reset V2 looks to V1; do not overwrite a cherished V2 look via downgrade.
 - [ ] In future authored-art work, prefer dedicated body-breathing frames over crossfading painted pixels when a weapon needs more visible motion.
 
+### v1.98: weapon proportion, carried bows and meaningful missed attacks (source implemented; Godot visual review pending)
+
+- [ ] Verify Reaper scythe's roughly 13% longer **art-only** span, Briarwake Trident's longer back-shaft, and the slightly extended single/stiletto/dual dagger blades in all four directions. A weapon's displayed length must **not** change the reach/hitbox, loot rolls, rarity or existing saved cosmetics.
+- [ ] Bow reference pose: while idle, Thornrose and Moonveil are carried roughly cross-body/horizontal like the uploaded reference. Swap baked bow idle bodies for the original clean approved Ghost Girl body; rotate and align the same extracted physical bow and pigment mask around the actual hand for front/back/left/right. The back-facing hand is partly occluded and uses an approximated anchor; require a real F5 screenshot check before final approval. Shooting/walking/attack frames stay unaltered.
+- [ ] Review new original **airy sword whooshes** instead of an impact-like swing beep. Heavy, fully charged bow releases, heavy wand casts and aerial strikes play their own longer sweeps and a restrained visual air wake even on a complete miss; impact sounds/riposte hitstop remain reserved for confirmed contact.
+- [ ] Check keyboard/gamepad combat animations, charged bow release and jump landing independently. No fake hit markers, no extra damage/projectiles; camera-only movement on misses must be gentle, and the existing F8 shake and F9 new-impact-sound levels must work.
+- [ ] Godot headless CI: run v1.94/v1.95/v1.96/v1.97 and the new v1.98 weapon/sound/hand-alignment smoke suite, plus clean resource import. The new bow pose needs a **manual F5 front/back/left/right preview**, particularly wrist alignment and the bow appearing once.
+- [ ] Tune procedural sound loudness and art proportion with actual gameplay; leave PR unmerged if the bow is misaligned or heavy/charged/airborne cues feel too strong.
+
 ### Art and audio principles
 
 - [ ] Preserve the approved Ghost Girl silhouette, facial appearance, and dark painterly 2D aesthetic.
