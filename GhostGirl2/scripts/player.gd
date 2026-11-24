@@ -503,7 +503,7 @@ func _process(delta: float) -> void:
 	camera_push = camera_push.move_toward(Vector2.ZERO, delta * 85.0)
 	if is_instance_valid(get_node_or_null("Camera2D")):
 		var cam: Camera2D = $Camera2D
-		cam.offset = Vector2(sin(visual_time * 74.0), cos(visual_time * 59.0)) * camera_kick * 0.72 + camera_push
+		cam.offset = (Vector2(sin(visual_time * 74.0), cos(visual_time * 59.0)) * camera_kick * 0.72 + camera_push) * COMBAT_JUICE.shake_level
 	queue_redraw()
 	if not is_instance_valid(body_art):
 		return
@@ -1446,9 +1446,9 @@ func on_world_impact(point: Vector2, strength: float) -> void:
 	if distance > 750.0:
 		return
 	var falloff: float = pow(1.0 - distance / 750.0, 1.5)
-	camera_kick = maxf(camera_kick, minf(12.0, strength * falloff) * COMBAT_JUICE.shake_level)
+	camera_kick = maxf(camera_kick, minf(12.0, strength * falloff))
 	var away: Vector2 = (global_position - point).normalized() if distance > 0.01 else -facing
-	camera_push = away * minf(7.5, strength * falloff * 0.64) * COMBAT_JUICE.shake_level
+	camera_push = away * minf(7.5, strength * falloff * 0.64)
 
 func _spawn_blade_blood(where: Vector2, tint: Color, accent: Color, impact_style: int, tier: int, seed_value: int) -> void:
 	var root: Node = get_tree().current_scene
