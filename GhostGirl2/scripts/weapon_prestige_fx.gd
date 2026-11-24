@@ -210,6 +210,12 @@ func _axial_span() -> PackedVector2Array:
 				if first.size() == 2:
 					return first
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 35.0)])
+	if style == "twinblade":
+		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
+		if physical != null:
+			var span: Variant = physical.call("get_weapon_span", animation, body.frame)
+			if span is PackedVector2Array and span.size() == 2:
+				return span
 	if style in ["maul", "twinblade"]:
 		# The four physical weapon variants have their own frame-authored
 		# guides. No arbitrary white glowing rectangles or detached rings.
@@ -681,9 +687,9 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 	var result: Array = []
 	if style == "twinblade":
-		var back_tip: Vector2 = grip - (tip - grip) * 0.68
-		result.append([grip.lerp(tip, 0.58), tip])
-		result.append([grip.lerp(back_tip, 0.56), back_tip])
+		var back_tip: Vector2 = grip - (tip - grip) * 0.90
+		result.append([grip.lerp(tip, 0.20), tip])
+		result.append([grip.lerp(back_tip, 0.22), back_tip])
 	elif style == "maul":
 		result.append([grip.lerp(tip, 0.79), tip])
 	elif style == "spear" or style == "halberd":
@@ -697,28 +703,23 @@ func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 	return result
 
 
-func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, normal: Vector2, intensity: float) -> void:
-	# Silver-edged redglass cutting profiles over the two *actual* blade ends.
-	# The long, wrapped central grip is untouched (including by ambient FX).
-	var redsteel: Color = Color("ad4961") if item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170" else Color("814e73")
-	var edge: Color = _gradient_at(fposmod(elapsed * 0.032 + 0.70, 1.0)).lerp(Color.WHITE, 0.22)
+func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, intensity: float) -> void:
+	# Narrow bevel highlights, not broad luminous heads. Keep metal visible.
+	var width: float = 3.8 if item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170" else 3.2
 	for segment in _v1723_blade_segments(grip, tip, "twinblade"):
 		var a: Vector2 = segment[0]
 		var b: Vector2 = segment[1]
 		var direction: Vector2 = (b - a).normalized()
-		var shoulder: Vector2 = a + direction * 3.5
-		var fine_tip: Vector2 = b + direction * 2.4
-		draw_colored_polygon(PackedVector2Array([
-			shoulder - normal * 2.7,
-			a.lerp(b, 0.42) - normal * 3.5,
-			fine_tip,
-			a.lerp(b, 0.35) + normal * 2.1,
-			shoulder + normal * 1.1
-		]), Color(redsteel.r, redsteel.g, redsteel.b, 0.12 * intensity))
-		draw_line(a.lerp(b, 0.22) - normal * 1.2, fine_tip, Color(edge.r, edge.g, edge.b, 0.42 * intensity), 1.12, true)
-		draw_line(a.lerp(b, 0.40) + normal * 1.5, fine_tip, Color(1.0, 0.89, 0.94, 0.18 * intensity), 0.75, true)
-		_v175_visible_edge(a.lerp(b, 0.08), fine_tip, intensity, 0.41 if (b - a).x < 0.0 else 0.06)
-
+		var normal: Vector2 = Vector2(-direction.y, direction.x)
+		var taper: Vector2 = a.lerp(b, 0.76)
+		var edge: Color = _gradient_at(fposmod(elapsed * 0.052 + (0.41 if direction.x < 0.0 else 0.06), 1.0)).lerp(Color.WHITE, 0.18)
+		for side in [-1.0, 1.0]:
+			var root_edge: Vector2 = a + normal * width * side
+			var mid_edge: Vector2 = taper + normal * width * 0.72 * side
+			draw_line(root_edge, mid_edge, Color(edge.r, edge.g, edge.b, 0.17 * minf(intensity, 2.0)), 2.5, true)
+			draw_line(mid_edge, b, Color(edge.r, edge.g, edge.b, 0.17 * minf(intensity, 2.0)), 2.0, true)
+			draw_line(root_edge, mid_edge, Color(edge.r, edge.g, edge.b, 0.58 * minf(intensity, 1.5)), 0.85, true)
+			draw_line(mid_edge, b, Color(edge.r, edge.g, edge.b, 0.58 * minf(intensity, 1.5)), 0.85, true)
 
 # Additional persistent, colorful MYTHIC-only halo. The loop is reproducible
 # from cosmetic UID's existing visual_seed(); it never draws or modifies damage.

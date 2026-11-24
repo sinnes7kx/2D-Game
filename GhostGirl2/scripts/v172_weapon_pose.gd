@@ -9,6 +9,8 @@ var body: AnimatedSprite2D = null
 var player: Node2D = null
 var last_animation: String = ""
 var last_frame: int = -1
+var twin_axes: Dictionary = {}
+const TWIN_AXES_PATH: String = "res://resources/new_weapon_axes_v170.json"
 
 static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 	if sprite == null or sprite.sprite_frames == null:
@@ -30,7 +32,75 @@ static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 				for i in range(frames.get_frame_count(base_name)):
 					frames.add_frame(target, frames.get_frame_texture(base_name, i))
 
+	# v1.76: dedicated eight-frame thrust clips for both polearms.
+	# Source textures are the approved clean body, never the rose-hook art.
+	for weapon_art in ["spear", "briarwake_spear"]:
+		for action in ["pierce", "heavy_pierce"]:
+			for face in ["front", "back", "left", "right"]:
+				var source: String = "attack_unarmed_light_" + face
+				var target: String = "attack_" + weapon_art + "_" + action + "_" + face
+				if not frames.has_animation(source) or frames.get_frame_count(source) < 8:
+					continue
+				if frames.has_animation(target):
+					frames.remove_animation(target)
+				frames.add_animation(target)
+				frames.set_animation_speed(target, 12.0)
+				frames.set_animation_loop(target, false)
+				var sequence: Array[int] = [0, 1, 2, 4, 4, 5, 2, 0]
+				for index in sequence:
+					frames.add_frame(target, frames.get_frame_texture(source, index))
+
+	# Replace baked twinblades with the approved body and a separate physical
+	# blade drawing. All old atlas files remain available, unchanged.
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(TWIN_AXES_PATH))
+	if raw is Dictionary:
+		for anim in frames.get_animation_names():
+			var name: String = str(anim)
+			if not name.contains("twinblade") or not raw.has(name):
+				continue
+			var face: String = name.get_slice("_", name.get_slice_count("_") - 1)
+			var source: String = "attack_unarmed_light_" + face
+			if not frames.has_animation(source) or frames.get_frame_count(source) < 8:
+				continue
+			var sequence: Array[int] = [0, 1, 2, 3, 4, 5, 6, 7]
+			if name.contains("_idle_"):
+				sequence = [0, 0, 1, 0, 0, 1, 0, 0]
+			elif name.contains("_walk_"):
+				sequence = [0, 1, 2, 1, 0, 1, 2, 1]
+			var speed: float = frames.get_animation_speed(name)
+			var looping: bool = frames.get_animation_loop(name)
+			frames.remove_animation(name)
+			frames.add_animation(name)
+			frames.set_animation_speed(name, speed)
+			frames.set_animation_loop(name, looping)
+			for index in sequence:
+				frames.add_frame(name, frames.get_frame_texture(source, index))
+
+# The shaft translates along the facing vector, rather than swinging.
+# Frame 3 contains the existing 43%-elapsed damage event.
+static func pierce_span(face: String, frame_index: int, heavy: bool) -> PackedVector2Array:
+	var heading: Vector2 = Vector2.DOWN
+	var anchor: Vector2 = Vector2(22, 24)
+	match face:
+		"back":
+			heading = Vector2.UP
+			anchor = Vector2(22, 16)
+		"left":
+			heading = Vector2.LEFT
+			anchor = Vector2(-23, 24)
+		"right":
+			heading = Vector2.RIGHT
+			anchor = Vector2(23, 24)
+	var travel: Array[float] = [-8.0, -19.0, -12.0, 21.0, 20.0, 9.0, -3.0, -8.0]
+	var n: int = clampi(frame_index, 0, 7)
+	var grip: Vector2 = anchor + heading * travel[n] * (1.18 if heavy else 1.0)
+	var tip: Vector2 = grip + heading * 74.0
+	return PackedVector2Array([grip, tip])
+
 func _ready() -> void:
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(TWIN_AXES_PATH))
+	if raw is Dictionary:
+		twin_axes = raw
 	body = get_parent() as AnimatedSprite2D
 	player = body.get_parent() as Node2D if body != null else null
 	z_as_relative = true
@@ -62,12 +132,20 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
-	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_"))
+	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade") and twin_axes.has(animation_name):
+		return true
+	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	var empty: PackedVector2Array = PackedVector2Array()
 	if not _is_equipped(animation_name):
 		return empty
+	if animation_name.contains("twinblade") and twin_axes.has(animation_name):
+		var guides: Array = twin_axes[animation_name]
+		var guide: Array = guides[clampi(frame_index, 0, guides.size() - 1)]
+		var grip: Vector2 = Vector2(float(guide[0]), float(guide[1]))
+		var tip: Vector2 = Vector2(float(guide[2]), float(guide[3]))
+		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 60.0])
 	var spear: bool = animation_name.begins_with("attack_briarwake_spear_")
 	var heavy: bool = animation_name.contains("_heavy_")
 	var face: String = "front"
@@ -75,6 +153,8 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 		if animation_name.ends_with(direction):
 			face = direction
 			break
+	if animation_name.contains("_pierce_"):
+		return pierce_span(face, frame_index, heavy)
 	var n: int = clampi(frame_index, 0, 7)
 	var anchor: Vector2 = Vector2(29, 24)
 	match face:
@@ -122,8 +202,12 @@ func _draw() -> void:
 		return
 	var tangent: Vector2 = axis.normalized()
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
-	if animation_name.begins_with("attack_nocturne_dagger_"):
+	if animation_name.contains("twinblade"):
+		_draw_v176_twinblade(grip, tip, animation_name.contains("rosemirror"))
+	elif animation_name.begins_with("attack_nocturne_dagger_"):
 		_draw_nightglass_stiletto(grip, tip, tangent, normal)
+	elif animation_name.begins_with("attack_spear_"):
+		_draw_moonwarden_spear(grip, tip, tangent, normal)
 	else:
 		_draw_briarwake_trident(grip, tip, tangent, normal)
 
@@ -166,3 +250,53 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 	# Two-hand bracing at the proper shaft distance from the forward hand.
 	draw_circle(grip - tangent * 9.0, 4.8, Color("d8c7d6"))
 	draw_circle(grip + tangent * 12.0, 4.5, Color("cab9cf"))
+
+func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2) -> void:
+	var root: Vector2 = tip - tangent * 24.0
+	var butt: Vector2 = grip - tangent * 22.0
+	draw_line(butt, root, Color("322638"), 6.5, true)
+	draw_line(butt, root, Color("876f84"), 3.2, true)
+	draw_line(butt + normal, root + normal, Color("b8a7c1"), 1.0, true)
+	draw_colored_polygon(PackedVector2Array([root - normal * 5.0, tip, root + normal * 5.0, root - tangent * 3.0]), Color("b9b5d5"))
+	draw_colored_polygon(PackedVector2Array([root, tip, root + normal * 5.0]), Color("625f8f"))
+	draw_line(root - normal * 5.0, tip, Color("e6dcf4"), 1.1, true)
+	draw_circle(grip - tangent * 7.0, 4.1, Color("d8c7d6"))
+	draw_circle(grip + tangent * 10.0, 4.0, Color("cab9cf"))
+
+# Opaque metal, not additive glow. The rear blade has its own cutting
+# direction; the wrapped central grip remains visibly separate.
+func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
+	var rear: Vector2 = grip - (tip - grip) * 0.90
+	var front_root: Vector2 = grip.lerp(tip, 0.20)
+	var rear_root: Vector2 = grip.lerp(rear, 0.22)
+	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
+	draw_line(rear_root, front_root, Color("78596d"), 3.0, true)
+	var axis: Vector2 = (tip - grip).normalized()
+	var normal: Vector2 = Vector2(-axis.y, axis.x)
+	for i in range(7):
+		var p: Vector2 = rear_root.lerp(front_root, float(i + 1) / 8.0)
+		draw_line(p - normal * 2.0, p + normal * 2.0, Color("b595a6"), 1.0, true)
+	_draw_v176_razor(front_root, tip, rose)
+	_draw_v176_razor(rear_root, rear, rose)
+	draw_circle(grip, 3.7, Color("d8c7d6"))
+
+func _draw_v176_razor(root: Vector2, tip: Vector2, rose: bool) -> void:
+	var axis: Vector2 = (tip - root).normalized()
+	var normal: Vector2 = Vector2(-axis.y, axis.x)
+	var steel: Color = Color("c57a93") if rose else Color("a6b2dc")
+	var shadow: Color = Color("67364e") if rose else Color("505775")
+	var edge: Color = Color("ffe1e9") if rose else Color("edf3ff")
+	# Straight sword cutting edges, long central bevel, acute point.
+	# No swollen shoulder, club head or crescent bulb.
+	var shoulder: Vector2 = root.lerp(tip, 0.08)
+	var taper: Vector2 = root.lerp(tip, 0.76)
+	var width: float = 3.8 if rose else 3.2
+	draw_colored_polygon(PackedVector2Array([root - normal * width, shoulder - normal * width, taper - normal * width * 0.72, tip, taper + normal * width * 0.72, shoulder + normal * width, root + normal * width]), steel)
+	draw_colored_polygon(PackedVector2Array([root, tip, taper + normal * width * 0.72, root + normal * width]), shadow)
+	draw_line(root - normal * width, taper - normal * width * 0.72, edge, 0.85, true)
+	draw_line(taper - normal * width * 0.72, tip, edge, 0.85, true)
+	draw_line(root + normal * width, taper + normal * width * 0.72, Color("bfb0d5"), 0.65, true)
+	draw_line(taper + normal * width * 0.72, tip, Color("bfb0d5"), 0.65, true)
+	draw_line(root, tip, Color("e2d4ef"), 0.65, true)
+	# Small crossguard separates the sword from the short leather grip.
+	draw_line(root - normal * 6.0, root + normal * 6.0, Color("a993b5"), 1.7, true)

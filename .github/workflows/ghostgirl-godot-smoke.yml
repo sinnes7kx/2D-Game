@@ -77,5 +77,11 @@ jobs:
       - name: Verify hook-free weapon frames and left bow mirror in Godot
         run: godot --headless --path GhostGirl2 --script res://tests/v175_hookfree_mirror_smoke.gd
 
+      - name: Compile revised physical weapon pose renderer
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v172_weapon_pose.gd
+
+      - name: Verify v1.76 polearm thrust and Sanctum armory
+        run: godot --headless --path GhostGirl2 --script res://tests/v176_polearm_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
