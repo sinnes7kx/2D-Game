@@ -18,13 +18,13 @@ static func _label(text_value: String) -> String:
 	return "[font_size=12][color=%s]%s[/color][/font_size]" % [MUTED, escape(text_value)]
 
 static func _cosmetic_dots(item: Variant) -> String:
-	var colors: Array[Color] = [item.palette_color()]
+	var colors: Array[Color] = item.glow_gradient_colors()
 	if item.get_slot() in ["sword", "wand"]:
 		colors = item.bow_limb_gradient_colors() if item.weapon_style() == "bow" else item.glow_gradient_colors()
 	var pieces: Array[String] = []
 	for ink in colors:
 		pieces.append("[font_size=16][color=%s]●[/color][/font_size]" % color_to_tag(ink))
-	return "  ".join(pieces)
+	return " ".join(pieces)
 
 static func _swatch_colors(colors: Array[Color]) -> String:
 	var pieces: Array[String] = []
