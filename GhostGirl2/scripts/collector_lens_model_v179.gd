@@ -24,6 +24,8 @@ func set_item(value: GhostItemInstance) -> void:
 				look["color_mode"] = item.debug_color_mode
 			if item.debug_glow_motif >= 0:
 				look["glow_motif"] = item.debug_glow_motif
+	if item != null:
+		look.merge(item.effect_palette_motion(), true)
 	profiles.clear()
 	for hand in range(2):
 		profiles.append(ART.weapon_profile(look, str(item.definition.item_id), hand) if item != null and item.definition != null else {})
