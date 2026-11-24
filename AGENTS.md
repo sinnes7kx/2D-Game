@@ -69,6 +69,13 @@ Helpful existing resources:
 - Compatibility regression: `GhostGirl2/tests/v1921_dropdown_compat_smoke.gd`
 - CI: `.github/workflows/ghostgirl-godot-smoke.yml`
 
+### Mainline integration gate (mandatory)
+
+- **Use `main` as the normal pull-request base.** If a change explicitly depends on an unmerged feature PR, mark it **stacked**, document the dependency and planned merge order, and create a separate, verified integration PR targeting `main` before calling it delivered.
+- A GitHub PR with `merged=true` is **not proof that its contents reached `main`**. Read the PR's actual base branch; check the changed file or commit from `main`, and require mainline CI after the integration merge.
+- Never report a feature as released/available from `main` solely because its nested PR was merged or its feature-branch CI passed. Distinguish **branch implemented**, **headless tested**, **merged into main**, and **F5 playtested**.
+- Before starting a next feature on a stacked series, check whether the whole stack is on `main`. Consolidate first if not. Do not silently implement against an older mainline or regress newer feature changes.
+
 ## 7. What not to claim
 
 Never claim live trading, account ownership, globally verified scarcity, online showrooms, public verified leaderboards, or completed real-world Godot playtests without actual corresponding code and evidence. Distinguish **idea**, **source implementation**, **headless validation**, **interactive engine testing**, and **released feature**.
