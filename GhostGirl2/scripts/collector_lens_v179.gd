@@ -2,6 +2,7 @@ extends Control
 ## Collector's Lens: modal, read-only inspection. Never equips, rerolls,
 ## changes a save or creates a gameplay attack.
 const MODEL = preload("res://scripts/collector_lens_model_v179.gd")
+const ROLL_CODE = preload("res://scripts/collector_roll_code_v1931.gd")
 const MARKUP = preload("res://scripts/item_rich_text.gd")
 var model: Node2D
 var stage: Control
@@ -93,6 +94,10 @@ func _ready() -> void:
 	copy.text = "Copy look code"
 	controls.add_child(copy)
 	copy.pressed.connect(_copy_code)
+	var copy_roll: Button = Button.new()
+	copy_roll.text = "Copy roll"
+	controls.add_child(copy_roll)
+	copy_roll.pressed.connect(_copy_roll)
 	var close: Button = Button.new()
 	close.text = "Close  ·  Esc"
 	controls.add_child(close)
@@ -174,3 +179,13 @@ func _copy_code() -> void:
 	var identity: String = inspected.cosmetic_uid if not inspected.cosmetic_uid.is_empty() else "legacy-%d" % inspected.visual_seed()
 	DisplayServer.clipboard_set("GG1:%s:%s" % [inspected.definition.item_id, identity])
 	status.text = "Appearance code copied  ·  no combat stats included"
+
+func _copy_roll() -> void:
+	if inspected == null:
+		return
+	var code: String = ROLL_CODE.share(inspected)
+	if code.is_empty():
+		status.text = "Roll Code unavailable for this item family"
+		return
+	DisplayServer.clipboard_set(code)
+	status.text = "Genuine V1 roll copied · not verified ownership"
