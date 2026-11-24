@@ -120,6 +120,9 @@ position = Vector2(1172, 1358)
 [node name="From_lily_pond" type="Marker2D" parent="SpawnPoints" unique_id=287997023]
 position = Vector2(1864, 1079)
 
+[node name="From_lanternhaven" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1175, 1358)
+
 [node name="Gameplay" type="Node2D" parent="." unique_id=598952081]
 
 [node name="Portals" type="Node2D" parent="Gameplay" unique_id=102441236]
@@ -130,6 +133,13 @@ scale = Vector2(4.9542227, 2.8996165)
 script = ExtResource("act_portal")
 interaction_name = "Return to cloister"
 destination = "cloister"
+
+[node name="lanternhaven" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1020, 1358)
+script = ExtResource("act_portal")
+destination = "lanternhaven"
+interaction_name = "Return to town"
+opened = true
 
 [node name="lily_pond" type="Node2D" parent="Gameplay/Portals" unique_id=1364687015]
 position = Vector2(2168, 736.00006)
