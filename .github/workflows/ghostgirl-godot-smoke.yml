@@ -128,5 +128,8 @@ jobs:
       - name: Verify independent forged weapon identities
         run: godot --headless --path GhostGirl2 --script res://tests/v189_forging_smoke.gd
 
+      - name: Verify enchanted arsenal weapon material integration
+        run: godot --headless --path GhostGirl2 --script res://tests/v190_arsenal_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
