@@ -1,6 +1,7 @@
 extends RefCounted
 ## Seeded surface pigment. Pure functions permit exact preview and testing.
 ## Surface pigment is not light, damage, a particle emitter or a new item roll.
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const LABELS: Array[String] = ["Brushed Steel", "Damascus", "Opal Veins", "Flowing Runes", "Spectral Glass", "Starfield", "Prismatic Fracture"]
 
 static func surface_for_ticket(ticket: int, tier: int) -> int:
@@ -44,7 +45,7 @@ static func surface_color(profile: Dictionary, u: float, v: float, phase: float)
 		var shift: float = u + (phase * float(profile.get("surface_speed",0.5)) * 0.12 if animated(mode) else 0.0)
 		accent = GhostCosmeticRNGV152.sample_palette(colors, shift, animated(mode))
 
-	return metal.lerp(accent, weight * (0.18 if mode < 2 else 0.48))
+	return metal.lerp(accent, minf(0.85, weight * (0.18 if mode < 2 else 0.48) * FX_LEVEL.intensity))
 
 static func draw_surface(canvas: Node2D, left: PackedVector2Array, right: PackedVector2Array, profile: Dictionary, phase: float) -> void:
 	# Split each cross section at the bevel; leave the true cutting edge
@@ -63,7 +64,7 @@ static func draw_surface(canvas: Node2D, left: PackedVector2Array, right: Packed
 			var v1: float = v0 + 0.21
 			var ink: Color = surface_color(profile, (a+b)*0.5, (v0+v1)*0.5, phase)
 			# A subtle translucent pigment over the underlying opaque steel.
-			ink.a = 0.64
+			ink.a = FX_LEVEL.alpha(0.64)
 			canvas.draw_colored_polygon(PackedVector2Array([la.lerp(ra,v0),lb.lerp(rb,v0),lb.lerp(rb,v1),la.lerp(ra,v1)]), ink)
 	# Small rune strokes or distant stars inside the actual steel, never
 	# outside the outline. No glow sprite or additional hit.
@@ -76,7 +77,7 @@ static func draw_surface(canvas: Node2D, left: PackedVector2Array, right: Packed
 		var r: Vector2 = at_edge(right,u)
 		var p: Vector2 = l.lerp(r,0.31 if i%2==0 else 0.66)
 		var tint: Color = profile["edge"]
-		tint.a = 0.20 + 0.20 * (0.5 + 0.5*sin(phase*1.8+float(i)))
+		tint.a = FX_LEVEL.alpha(0.20 + 0.20 * (0.5 + 0.5*sin(phase*1.8+float(i))))
 		if mode == 3:
 			canvas.draw_line(l.lerp(r,0.28),l.lerp(r,0.72),tint,0.65,true)
 		else:
