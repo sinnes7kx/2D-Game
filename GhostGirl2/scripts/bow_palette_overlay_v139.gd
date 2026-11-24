@@ -139,7 +139,18 @@ func refresh() -> void:
 	last_bow_cosmetic_key = item.cosmetic_uid + ":" + str(item.visual_seed()) + ":" + str(item.visual_signature())
 	var mat: ShaderMaterial = material as ShaderMaterial
 	mat.set_shader_parameter("primary_color", limb_gradient[0])
-	mat.set_shader_parameter("secondary_color", limb_gradient[2])
+	mat.set_shader_parameter("secondary_color", limb_gradient[-1])
+	var ramp: Gradient = Gradient.new()
+	var offsets: PackedFloat32Array = PackedFloat32Array()
+	for i in range(limb_gradient.size()):
+		offsets.append(float(i) / float(limb_gradient.size() - 1))
+	ramp.offsets = offsets
+	ramp.colors = PackedColorArray(limb_gradient)
+	var palette_texture: GradientTexture1D = GradientTexture1D.new()
+	palette_texture.gradient = ramp
+	palette_texture.width = 256
+	mat.set_shader_parameter("palette_ramp", palette_texture)
+	mat.set_shader_parameter("use_palette_ramp", true)
 	mat.set_shader_parameter("gradient_angle", float(paint["gradient_angle"]))
 	mat.set_shader_parameter("gradient_speed", float(paint["gradient_speed"]))
 	mat.set_shader_parameter("pulse_speed", float(paint["pulse_speed"]))
