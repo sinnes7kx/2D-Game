@@ -1,0 +1,102 @@
+extends RefCounted
+## Shared geometry for the Lunar Vigil Halberd and both warmauls.
+## The shaft stays anchored to the existing weapon-free body pose.
+const ART = preload("res://scripts/modular_weapon_art_v178.gd")
+const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
+const SURFACE = preload("res://scripts/living_metal_v187.gd")
+const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
+const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+
+static func matches(name: String) -> bool:
+	return name.begins_with("halberd_") or name.begins_with("attack_halberd_") or name.begins_with("maul_") or name.begins_with("attack_maul_") or name.begins_with("ashglass_maul_") or name.begins_with("attack_ashglass_maul_")
+
+static func source_frame(name: String, frame: int) -> int:
+	return 0 if name.contains("_idle_") else SCYTHE.source_frame(name, frame)
+
+static func install(sprite: AnimatedSprite2D) -> void:
+	var frames: SpriteFrames = sprite.sprite_frames
+	if frames == null:
+		return
+	for value in frames.get_animation_names():
+		var name: String = str(value)
+		if not matches(name):
+			continue
+		var face: String = name.get_slice("_", name.get_slice_count("_") - 1)
+		var source: String = "attack_unarmed_light_" + face
+		if not frames.has_animation(source) or frames.get_frame_count(source) < 8:
+			continue
+		for i in range(frames.get_frame_count(name)):
+			frames.set_frame(name, i, frames.get_frame_texture(source, source_frame(name,i)), frames.get_frame_duration(name,i))
+
+static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2Array:
+	if not matches(name):
+		return PackedVector2Array()
+	var face: String = name.get_slice("_",name.get_slice_count("_")-1)
+	var anchor: Vector2 = HAND.hand_anchor(face,source_frame(name,frame),0 if face == "left" else 1)
+	if anchor == Vector2.INF:
+		if face != "back":
+			return PackedVector2Array()
+		anchor = Vector2(34,27)
+	var direction: Vector2 = Vector2(-0.62 if face == "left" else 0.62,-0.78)
+	var rows: Array = guides.get(name,[])
+	if not rows.is_empty():
+		var line: Array = rows[clampi(frame,0,rows.size()-1)]
+		if line.size() == 4:
+			var heading: Vector2 = Vector2(float(line[2])-float(line[0]),float(line[3])-float(line[1]))
+			if heading.length_squared() > 16.0:
+				direction = heading.normalized()
+	return PackedVector2Array([anchor, anchor + direction.normalized() * (82.0 if name.contains("halberd") else 54.0)])
+
+static func halberd_outline(head: Vector2, axis: Vector2, p: Dictionary, side: float = 1.0) -> PackedVector2Array:
+	var n: Vector2 = Vector2(-axis.y,axis.x)*side
+	var width: float = 21.0 * float(p.get("heavy_head_span",1.0))
+	var flare: float = float(p.get("heavy_head_flare",1.0))
+	return PackedVector2Array([head-axis*13.0,head-axis*19.0+n*width*0.90,head-axis*6.0+n*width*flare,head+axis*8.0+n*width,head+axis*13.0+n*width*0.45,head+axis*7.0])
+
+static func maul_outline(head: Vector2, axis: Vector2, p: Dictionary, ashglass: bool) -> PackedVector2Array:
+	var n: Vector2 = Vector2(-axis.y,axis.x)
+	var half_width: float = (14.0 if ashglass else 12.0)*float(p.get("heavy_head_span",1.0))
+	var depth: float = (10.0 if ashglass else 12.0)*float(p.get("heavy_head_flare",1.0))
+	var bevel: float = 3.5 if ashglass else 2.2
+	return PackedVector2Array([head-axis*depth-n*(half_width-bevel),head-axis*(depth-bevel)-n*half_width,head+axis*(depth-bevel)-n*half_width,head+axis*depth-n*(half_width-bevel),head+axis*depth+n*(half_width-bevel),head+axis*(depth-bevel)+n*half_width,head-axis*(depth-bevel)+n*half_width,head-axis*depth+n*(half_width-bevel)])
+
+static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictionary, look: Dictionary, colors: Array[Color], phase: float, style: String, ashglass: bool, side: float, glow: bool) -> void:
+	if p.is_empty() or grip.distance_squared_to(head)<16.0:
+		return
+	var axis: Vector2 = (head-grip).normalized()
+	var n: Vector2 = Vector2(-axis.y,axis.x)
+	var foot: Vector2 = grip-axis*(29.0 if style=="halberd" else 20.0)
+	var trim: Color = p["ornament_ink"]
+	canvas.draw_line(foot,head,Color("211b29"),5.6,true)
+	canvas.draw_line(foot,head,p["grip"],3.8,true)
+	ART.draw_grip(canvas,grip-axis*9.0,grip+axis*9.0,4.3,p)
+	canvas.draw_line(foot-n*3.0,foot+n*3.0,trim,1.7,true)
+	if style=="halberd":
+		var outline: PackedVector2Array = halberd_outline(head,axis,p,side)
+		var center: Vector2 = head-axis*3.0+n*side*6.0
+		for i in range(outline.size()):
+			var ink: Color = SURFACE.surface_color(p,float(i)/float(outline.size()),0.25 if i%2==0 else 0.75,phase)
+			canvas.draw_colored_polygon(PackedVector2Array([center,outline[i],outline[(i+1)%outline.size()]]),ink)
+		var edge: PackedVector2Array = PackedVector2Array([outline[1],outline[2],outline[3],outline[4]])
+		canvas.draw_polyline(edge,p["edge"],0.85,true)
+		ART.draw_blade(canvas,head-axis*3.0,head+axis*22.0,3.7,p,phase)
+		var hook: PackedVector2Array = PackedVector2Array([head-axis*9.0,head-axis*12.0-n*side*12.0,head+axis*5.0-n*side*5.0])
+		canvas.draw_colored_polygon(hook,p["shade"])
+		canvas.draw_polyline(hook,p["edge"],0.7,true)
+		if glow:
+			FX.draw_edge(canvas,edge,colors,look,phase,0.66)
+	else:
+		var outline: PackedVector2Array = maul_outline(head,axis,p,ashglass)
+		for i in range(outline.size()):
+			var ink: Color = SURFACE.surface_color(p,float(i)/float(outline.size()),0.25 if i%2==0 else 0.75,phase)
+			canvas.draw_colored_polygon(PackedVector2Array([head,outline[i],outline[(i+1)%outline.size()]]),ink)
+		var closed: PackedVector2Array = outline.duplicate()
+		closed.append(outline[0])
+		canvas.draw_polyline(closed,p["edge"],0.9,true)
+		var core: Color = trim.darkened(0.25)
+		canvas.draw_colored_polygon(PackedVector2Array([head-axis*4.0,head+n*5.0,head+axis*4.0,head-n*5.0]),core)
+		canvas.draw_line(head-n*3.0,head+n*3.0,trim,0.75,true)
+		if glow:
+			var rim: PackedVector2Array = PackedVector2Array([outline[0],outline[1],outline[2],outline[3]])
+			FX.draw_edge(canvas,rim,colors,look,phase,0.60)
