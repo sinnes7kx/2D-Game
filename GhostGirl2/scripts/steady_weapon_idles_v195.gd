@@ -1,7 +1,7 @@
 extends RefCounted
 ## v1.95 — steady eight-step idle presentation for baked sword, polearm and bows.
-## Existing artwork is the source: the approved neutral weapon pose always
-## dominates, while restrained in-between frames soften abrupt two-pose jumps.
+## Existing artwork is the source: the approved neutral silhouette is locked,
+## while restrained interior-paint in-betweens soften abrupt two-pose jumps.
 ## No animation manifest, source PNG, hitbox, equipment or save data is changed.
 const CYCLE_SECONDS: float = 3.45
 const STEPS: int = 8
@@ -88,16 +88,13 @@ static func _mix_rgba(base: PackedByteArray, other: PackedByteArray, mix: float)
     var out: PackedByteArray = base.duplicate()
     var weight: float = clampf(mix, 0.0, 0.2)
     for p in range(0, base.size(), 4):
-        if base[p] == other[p] and base[p + 1] == other[p + 1] and base[p + 2] == other[p + 2] and base[p + 3] == other[p + 3]:
+        # Lock approved blade/bow/trident contours and all transparency:
+        # never crossfade a silhouette or draw a faint second weapon edge.
+        if base[p + 3] < 232 or other[p + 3] < 232:
             continue
-        var original_alpha: float = float(base[p + 3]) / 255.0
-        var next_alpha: float = float(other[p + 3]) / 255.0
-        var a: float = lerpf(original_alpha, next_alpha, weight)
-        out[p + 3] = clampi(roundi(a * 255.0), 0, 255)
-        if a <= 0.00001:
-            continue
-        # Premultiplied interpolation avoids dark fringes against alpha.
+        # Only softly interpolate opaque interior paint/breathing details.
+        # The original alpha, outline and weapon alignment are pixel-stable.
         for channel in range(3):
-            var premul: float = float(base[p + channel]) * original_alpha * (1.0 - weight) + float(other[p + channel]) * next_alpha * weight
-            out[p + channel] = clampi(roundi(premul / a), 0, 255)
+            if base[p + channel] != other[p + channel]:
+                out[p + channel] = clampi(roundi(lerpf(float(base[p + channel]), float(other[p + channel]), weight)), 0, 255)
     return out
