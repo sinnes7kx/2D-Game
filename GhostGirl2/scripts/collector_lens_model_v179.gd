@@ -1,6 +1,7 @@
 extends Node2D
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 ## A display-only weapon model; shares the equipped modular art routines.
+const HEAVY = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
 const PAINTED_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 var painted_preview: Sprite2D
@@ -55,7 +56,7 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger", "scythe"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
@@ -71,6 +72,11 @@ func _draw() -> void:
 		return
 	var style: String = item.weapon_style()
 	match style:
+		"halberd", "maul":
+			var p: Dictionary = profiles[0].duplicate()
+			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
+			p["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
+			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled)
 		"scythe":
 			var p: Dictionary = profiles[0].duplicate()
 			p["scythe_span"] = float(look.get("scythe_span", 1.0))

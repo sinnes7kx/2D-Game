@@ -134,5 +134,8 @@ jobs:
       - name: Verify gentle weapon idle motion and opacity
         run: godot --headless --path GhostGirl2 --script res://tests/v191_gentle_motion_smoke.gd
 
+      - name: Verify modular halberds and warmauls
+        run: godot --headless --path GhostGirl2 --script res://tests/v192_heavy_weapons_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
