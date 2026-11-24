@@ -13,6 +13,9 @@ var inspect: Button
 var favorite: Button
 var lock: Button
 var shown: Array[GhostItemInstance] = []
+var display_slot: OptionButton
+var display_button: Button
+var clear_display: Button
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -66,6 +69,12 @@ func _ready() -> void:
 	details = Label.new()
 	details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	layout.add_child(details)
+	var exhibition: HBoxContainer = HBoxContainer.new()
+	layout.add_child(exhibition)
+	display_slot = OptionButton.new()
+	exhibition.add_child(display_slot)
+	display_button = _button(exhibition, "Display in Sanctum", _assign_display)
+	clear_display = _button(exhibition, "Remove from display", _remove_display)
 	var actions: HBoxContainer = HBoxContainer.new()
 	layout.add_child(actions)
 	deposit = _button(actions, "Store selected", _store)
@@ -83,13 +92,15 @@ func _button(parent: HBoxContainer, label_text: String, callback: Callable) -> B
 	b.pressed.connect(callback)
 	return b
 
-func open_vault(value: Node, candidate: GhostItemInstance) -> void:
+func open_vault(value: Node, candidate: GhostItemInstance, preferred_slot: int = -1) -> void:
 	inventory = value
 	selected_item = candidate
 	search.clear()
 	favorites.set_pressed_no_signal(false)
 	show()
 	refresh()
+	if preferred_slot >= 0 and preferred_slot < display_slot.item_count:
+		display_slot.select(preferred_slot)
 
 func refresh() -> void:
 	if inventory == null:
@@ -100,7 +111,7 @@ func refresh() -> void:
 	for item in inventory.vault:
 		if favorites.button_pressed and not item.collector_favorite:
 			continue
-		var label_text: String = "%s%s%s  ·  %s" % ["★ " if item.collector_favorite else "", "[Protected] " if item.collector_locked else "", item.display_name(), item.collector_material_label()]
+		var label_text: String = "%s%s%s  ·  %s%s" % ["★ " if item.collector_favorite else "", "[Protected] " if item.collector_locked else "", item.display_name(), item.collector_material_label(), " · Display %d" % (item.exhibition_slot + 1) if item.exhibition_slot >= 0 else ""]
 		if not query.is_empty() and not label_text.to_lower().contains(query):
 			continue
 		shown.append(item)
@@ -109,6 +120,7 @@ func refresh() -> void:
 	count_label.text = "%d / %d weapons and wands stored" % [inventory.vault.size() + inventory.unresolved_vault.size(), inventory.VAULT_CAPACITY]
 	if shown.has(selected_item):
 		list.select(shown.find(selected_item))
+	_refresh_displays()
 	_update_buttons()
 
 func _select(index: int) -> void:
@@ -120,6 +132,8 @@ func _update_buttons() -> void:
 	var stored: bool = selected_item != null and inventory.vault.has(selected_item)
 	var carried: bool = selected_item != null and inventory.contents.has(selected_item)
 	deposit.disabled = not carried or selected_item.get_slot() not in ["sword", "wand"] if carried else true
+	display_button.disabled = not stored
+	clear_display.disabled = not stored or selected_item.exhibition_slot < 0 if stored else true
 	withdraw.disabled = not stored
 	inspect.disabled = not (stored or carried)
 	favorite.disabled = not (stored or carried)
@@ -128,6 +142,9 @@ func _update_buttons() -> void:
 		details.text = "%s  ·  %s  ·  %s" % [selected_item.display_name(), selected_item.collector_material_label(), "Stored safely" if stored else "In backpack — unequip to store"]
 		favorite.text = "Unfavorite" if selected_item.collector_favorite else "Favorite"
 		lock.text = "Unlock" if selected_item.collector_locked else "Protect"
+		if stored and selected_item.exhibition_slot >= 0:
+			details.text += " · Sanctum display %d" % (selected_item.exhibition_slot + 1)
+			display_slot.select(selected_item.exhibition_slot)
 	else:
 		details.text = "Select a weapon to inspect or retrieve. Select one in your backpack before opening to store it."
 		favorite.text = "Favorite"
@@ -159,4 +176,24 @@ func _favorite() -> void:
 
 func _lock() -> void:
 	if selected_item != null and inventory.set_collector_flag(selected_item, "collector_locked", not selected_item.collector_locked):
+		refresh()
+
+func _refresh_displays() -> void:
+	var prior: int = maxi(0, display_slot.selected)
+	display_slot.clear()
+	for slot in range(inventory.EXHIBITION_CAPACITY):
+		var occupant: GhostItemInstance = inventory.exhibition_item(slot)
+		var label_text: String = "Display %d — %s" % [slot + 1, occupant.display_name() if occupant != null else ("Unavailable item" if inventory.exhibition_reserved(slot) else "Empty")]
+		display_slot.add_item(label_text, slot)
+		display_slot.set_item_disabled(slot, inventory.exhibition_reserved(slot))
+	display_slot.select(clampi(prior, 0, display_slot.item_count - 1))
+
+func _assign_display() -> void:
+	if selected_item != null and inventory.set_exhibition(selected_item, display_slot.selected):
+		refresh()
+	else:
+		details.text = "Could not assign display. The collection remains unchanged."
+
+func _remove_display() -> void:
+	if selected_item != null and inventory.set_exhibition(selected_item, -1):
 		refresh()
