@@ -13,6 +13,8 @@ This ordering is not optional:
 4. Keep routine loot hunting enjoyable and accessible.
 5. Develop optional advanced combat and verified rankings.
 6. Expand worlds and content in ways that strengthen those loops.
+7. A huge part of the game is the dopamine from finding really cool / rare seeded items.
+8. Some rare seeded items can improve combat slightly, this needs to be balanced. For example some bow seeds can shoot 3 arrows but each arrow deals 50% less damage.
 
 A task's explicit user request controls scope, but never silently undo these product goals. Flag any apparent contradiction.
 
@@ -29,7 +31,6 @@ A task's explicit user request controls scope, but never silently undo these pro
 
 - Preserve item seeds, cosmetic UID, intrinsic rare traits, stats, affixes, sockets, item quality, favorites/locks, saved looks, vault, and exhibition placement unless the explicit feature legitimately transforms them.
 - `item_seed` (stats/loot), `cosmetic_seed` and `cosmetic_uid` (appearance), and a **future authoritative owned-instance ID** are separate concepts. A reproducible seed is **not** globally verified uniqueness.
-- Cosmetic rerolls must not alter combat RNG outcomes or genuine discovery provenance. Keep appearance previews, gallery renders, and multi-projectile FX from modifying damage or the item.
 - Debug forced rarity/appearance is for local testing only. It must never become an authentic minted drop, tradeable rarity, or verified leaderboard result.
 - Do not call offline items globally unique or verified. A future shared trading economy needs server-issued ownership, auditability, atomic transactions, replay/dupe protections, and explicit rules for local legacy saves.
 - Keep tradeable collector items accessible through ordinary play; keep skill-ranking rewards mostly cosmetic, account-bound, or presentational unless the user approves another balance policy.
