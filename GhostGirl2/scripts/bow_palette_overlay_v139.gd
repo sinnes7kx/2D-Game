@@ -176,7 +176,20 @@ func _process(_delta: float) -> void:
 		var bow_motion: String = "walk" if source_animation.contains("_walk_") else "idle"
 		var mirrored_bow: String = _bow_style_name(item) + "_" + bow_motion + "_right"
 		if bow_carry_visual.sprite_frames.has_animation(mirrored_bow):
-			visible = false
+			# The right-facing color-mask silhouette matches the extracted
+			# bow-only right art (same 256x220 coordinates). Mirror BOTH so
+			# saved gradients survive when Ghost Girl faces left.
+			if sprite_frames != null and sprite_frames.has_animation(mirrored_bow):
+				visible = true
+				flip_h = true
+				show_behind_parent = false
+				z_index = 4
+				position = Vector2(-3.0, -1.0)
+				if str(self.animation) != mirrored_bow:
+					self.animation = StringName(mirrored_bow)
+				set_frame_and_progress(clampi(body.frame, 0, sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
+			else:
+				visible = false
 			bow_carry_visual.visible = true
 			bow_carry_visual.flip_h = true
 			bow_carry_visual.show_behind_parent = false
