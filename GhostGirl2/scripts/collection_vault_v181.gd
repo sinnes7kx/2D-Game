@@ -51,7 +51,7 @@ func _ready() -> void:
 	var filters: HBoxContainer = HBoxContainer.new()
 	layout.add_child(filters)
 	search = LineEdit.new()
-	search.placeholder_text = "Search name or material rarity"
+	search.placeholder_text = "Search weapon, rarity or region"
 	search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	filters.add_child(search)
 	search.text_changed.connect(func(_value: String) -> void: refresh())
@@ -112,7 +112,9 @@ func refresh() -> void:
 		if favorites.button_pressed and not item.collector_favorite:
 			continue
 		var label_text: String = "%s%s%s  ·  %s%s" % ["★ " if item.collector_favorite else "", "[Protected] " if item.collector_locked else "", item.display_name(), item.collector_material_label(), " · Display %d" % (item.exhibition_slot + 1) if item.exhibition_slot >= 0 else ""]
-		if not query.is_empty() and not label_text.to_lower().contains(query):
+		if not item.regional_imprint_label().is_empty():
+			label_text += " · " + item.regional_imprint_label()
+		if not query.is_empty() and not (label_text + " " + item.origin_label()).to_lower().contains(query):
 			continue
 		shown.append(item)
 		var index: int = list.add_item(label_text, item.definition.icon)
