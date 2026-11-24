@@ -2,6 +2,7 @@ extends Resource
 class_name GhostItemInstance
 const RelicPaletteV139 = preload("res://scripts/procedural_relic_palette_v139.gd")
 const COSMETIC_RNG = preload("res://scripts/cosmetic_rng_v152.gd")
+const COLLECTOR_LOOK = preload("res://scripts/collector_appearance_v177.gd")
 ## Each dropped instance stores its own deterministic rolls, independent of template.
 var definition: GhostItemData
 var item_seed: int = 0
@@ -379,6 +380,16 @@ func effect_description() -> String:
 		return "%s · %s / %s · %s · %s · %s" % [name, ink, accent, style, GhostWeaponFXLibrary.spell_form_name(int(v["form"])), hit_style]
 	return "%s · %s / %s · %s · %s" % [name, ink, accent, style, hit_style]
 
+# Collection identity is derived from existing saved looks, not persisted twice.
+func collector_appearance() -> Dictionary:
+	if get_slot() not in ["sword", "wand"]:
+		return {}
+	return COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
+
+func collector_material_label() -> String:
+	var look: Dictionary = collector_appearance()
+	return COLLECTOR_LOOK.rarity_label(look) if not look.is_empty() else ""
+
 func palette_color() -> Color:
 	return weapon_base_color() if get_slot() == "sword" else GhostPaletteLibrary.color_for_slot(get_slot(), palette_index)
 
@@ -422,6 +433,8 @@ func details(advanced: bool = false) -> String:
 		lines.append("Sockets %d/%d" % [socketed.size(), sockets])
 	if advanced:
 		lines.append(definition.description)
+		if get_slot() in ["sword", "wand"]:
+			lines.append("Material rarity: " + collector_material_label())
 		if get_slot() == "sword":
 			lines.append("Light attack %.2fs · %.1f stamina" % [light_swing_duration(), light_stamina_cost()])
 		if get_slot() in ["sword", "wand"]:
