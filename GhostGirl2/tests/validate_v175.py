@@ -36,7 +36,8 @@ assert 'func _v175_visible_edge(' in fx
 assert 'func _v175_mythic_signature(' in fx
 assert '_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)' in fx
 assert '_v175_visible_edge(a, tip, intensity, float(hand_index) * 0.31)' in fx
-assert '_v175_visible_edge(a.lerp(b, 0.08), fine_tip, intensity,' in fx
+assert 'draw_line(root_edge, mid_edge, Color(edge.r, edge.g, edge.b, 0.58' in fx
+assert 'draw_line(mid_edge, b, Color(edge.r, edge.g, edge.b, 0.58' in fx
 assert 'if item.get_slot() != "wand":' in fx
 assert '_v175_mythic_signature(blade_a, blade_b, style, segment_i, attacking)' in fx
 for group in ["twinblade", "dual_dagger", "dual_sword", "bow"]:
