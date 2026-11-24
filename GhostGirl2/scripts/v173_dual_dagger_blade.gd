@@ -1,4 +1,5 @@
 extends Node2D
+const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.73 per-hand drawing over Ghost Girl's approved unchanged 2D body.
 ## This is art-only: never creates a collider, damage trigger or projectile.
 @export_range(0, 1, 1) var blade_index: int = 0
@@ -47,6 +48,11 @@ func _draw() -> void:
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
 	var guard: Vector2 = grip + tangent * 9.0
 	var steel: Vector2 = grip + tangent * 12.0
+	var look: Dictionary = MODULAR.equipped_profile(self, body, blade_index)
+	if not look.is_empty():
+		MODULAR.draw_grip(self, grip - tangent * 8.0, steel, 3.5, look)
+		MODULAR.draw_blade(self, steel, point, 3.1, look)
+		return
 	var steel_tone: Color = Color("3c384d") if blade_index == 0 else Color("403047")
 	var edge: Color = Color("c7c3de") if blade_index == 0 else Color("e5aec5")
 	var glass: Color = Color("8c6fba") if blade_index == 0 else Color("b17895")
