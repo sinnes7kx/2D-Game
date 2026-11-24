@@ -43,9 +43,11 @@ func _verify() -> void:
     if single.size() != 2 or paired.size() != 2 or single[0].distance_to(single[1]) < 31.0 or paired[0].distance_to(paired[1]) < 27.0:
         _fail("Dagger or stiletto blade did not lengthen")
         return
-    if not (AIR_WAKE.new() is Node2D):
+    var wake: Node2D = AIR_WAKE.new() as Node2D
+    if wake == null or wake is CollisionObject2D:
         _fail("Air wake must stay a visual-only node")
         return
+    wake.free()
 
     var player: Node = (load("res://scenes/player.tscn") as PackedScene).instantiate()
     root.add_child(player)
@@ -84,6 +86,10 @@ func _verify() -> void:
                 return
             if carry.flip_h != (face == "left") or palette.flip_h != carry.flip_h:
                 _fail("Incorrect handedness in bow idle: " + anim)
+                return
+            var expected_source: String = art_name + "_idle_" + ("right" if face == "left" else face)
+            if str(carry.animation) != expected_source or str(palette.animation) != expected_source:
+                _fail("Incorrect directional bow-only art source: " + anim)
                 return
     # A miss remains presentation-only; no collision shapes or attack logic.
     var code: String = FileAccess.get_file_as_string("res://scripts/player.gd")
