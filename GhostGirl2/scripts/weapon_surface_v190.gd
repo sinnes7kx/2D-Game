@@ -22,7 +22,7 @@ static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, over
 	mat.set_shader_parameter("surface_speed", float(look.get("surface_speed", 0.5)))
 	mat.set_shader_parameter("cell_size", cell)
 	mat.set_shader_parameter("overlay_only", overlay)
-	mat.set_shader_parameter("strength", 0.40 if overlay else 0.58)
+	mat.set_shader_parameter("strength", 0.27 if overlay else 0.40)
 
 static func key(item: GhostItemInstance) -> String:
 	return "%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank]
