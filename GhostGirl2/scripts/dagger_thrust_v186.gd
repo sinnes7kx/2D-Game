@@ -45,7 +45,7 @@ static func span(face: String, frame: int, hand: int, heavy: bool, paired: bool)
 	var aim: Vector2 = (forward + lateral * angles[n] * (-1.0 if hand == 0 else 1.0)).normalized()
 	if not lead and n in [2, 3, 4]:
 		aim = (forward * 0.5 - lateral * 0.85).normalized()
-	var length: float = 34.0 if not paired else 30.0
+	var length: float = 39.0 if not paired else 35.0
 	if face in ["front", "back"]:
 		length *= 0.82
 	return PackedVector2Array([anchor, anchor + aim * length])
