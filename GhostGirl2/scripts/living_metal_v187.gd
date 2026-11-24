@@ -43,7 +43,9 @@ static func surface_color(profile: Dictionary, u: float, v: float, phase: float)
 	if colors.size() == 3:
 		var shift: float = fposmod(u + (phase * 0.035 if animated(mode) else 0.0), 1.0)
 		var i: int = 0 if shift < 0.5 else 1
-		accent = (colors[i] as Color).lerp(colors[i+1], shift * 2.0 - float(i))
+		var first: Color = colors[i]
+		var second: Color = colors[i+1]
+		accent = first.lerp(second, shift * 2.0 - float(i))
 	if mode == 6:
 		accent = Color.from_hsv(fposmod(accent.h + phase * 0.04 + u * 0.25, 1.0), accent.s, accent.v)
 	return metal.lerp(accent, weight * (0.18 if mode < 2 else 0.48))
