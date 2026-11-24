@@ -31,12 +31,12 @@ static func current(item: Variant) -> String:
 	return str(TIER_DIGITS[material]) + signature + str(TIER_DIGITS[particles]) + surface + regional + "-----"
 
 static func valid_code(value: String) -> bool:
-	if value.length() != 10:
+	if value.length() != 10 or not value.ends_with("-----"):
 		return false
 	for i in range(value.length()):
 		if "0123456789-".find(value.substr(i,1)) < 0:
 			return false
-	return true
+	return "9753210".contains(value.substr(0,1)) and "953210-".contains(value.substr(1,1)) and "9753210".contains(value.substr(2,1)) and "975320-".contains(value.substr(3,1)) and "9730-".contains(value.substr(4,1))
 
 static func debug_active(item: Variant) -> bool:
 	return OS.is_debug_build() and (item.debug_visual_override >= 0 or item.debug_mythic_variant >= 0 or item.debug_collector_tier >= 0 or item.debug_color_mode >= 0 or item.debug_glow_motif >= 0 or item.debug_surface_mode >= 0 or item.debug_forge_guard >= 0 or item.debug_forge_grip >= 0)
