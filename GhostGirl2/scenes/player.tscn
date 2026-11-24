@@ -43,6 +43,10 @@ animation = &"idle_front"
 autoplay = "idle_front"
 frame_progress = 0.48644552
 
+[node name="BowCarryV166" type="AnimatedSprite2D" parent="Ghost"]
+visible = false
+z_index = 3
+
 [node name="BowPaletteV139" type="AnimatedSprite2D" parent="Ghost" unique_id=800683166]
 visible = false
 script = ExtResource("v139_bow_palette")

@@ -31,9 +31,9 @@ func _resolved_animation_name(item: GhostItemInstance, animation_name: String) -
 		return style + "_" + motion + "_" + face
 	return animation_name
 
-func _should_flip_for_animation(_animation_name: String) -> bool:
-	# The left-facing bow already has authored/retargeted left-facing art.
-	return false
+func _should_flip_for_animation(animation_name: String) -> bool:
+	# Mirror the BOW-ONLY right-side graphic, never Ghost Girl herself.
+	return animation_name.ends_with("_left")
 
 func _carry_transform_for_animation(source_animation: String, frame_index: int) -> Dictionary:
 	if source_animation.begins_with("attack_"):
@@ -169,6 +169,38 @@ func _process(_delta: float) -> void:
 			bow_carry_visual.visible = false
 		return
 	var animation: String = _resolved_animation_name(item, source_animation)
+	# v1.75: the left-facing painted bow was not actually reversed. The BODY
+	# is now the untouched left-facing unarmed Ghost Girl pose, so draw a
+	# mirrored RIGHT-facing bow-only sprite at the left hand.
+	if _should_flip_for_animation(source_animation) and bow_carry_visual != null and bow_carry_visual.sprite_frames != null:
+		var bow_motion: String = "walk" if source_animation.contains("_walk_") else "idle"
+		var mirrored_bow: String = _bow_style_name(item) + "_" + bow_motion + "_right"
+		if bow_carry_visual.sprite_frames.has_animation(mirrored_bow):
+			# The right-facing color-mask silhouette matches the extracted
+			# bow-only right art (same 256x220 coordinates). Mirror BOTH so
+			# saved gradients survive when Ghost Girl faces left.
+			if sprite_frames != null and sprite_frames.has_animation(mirrored_bow):
+				visible = true
+				flip_h = true
+				show_behind_parent = false
+				z_index = 4
+				position = Vector2(-3.0, -1.0)
+				if str(self.animation) != mirrored_bow:
+					self.animation = StringName(mirrored_bow)
+				set_frame_and_progress(clampi(body.frame, 0, sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
+			else:
+				visible = false
+			bow_carry_visual.visible = true
+			bow_carry_visual.flip_h = true
+			bow_carry_visual.show_behind_parent = false
+			bow_carry_visual.z_index = 3
+			bow_carry_visual.position = Vector2(-3.0, -1.0)
+			bow_carry_visual.rotation_degrees = 0.0
+			bow_carry_visual.scale = Vector2.ONE
+			if str(bow_carry_visual.animation) != mirrored_bow:
+				bow_carry_visual.animation = StringName(mirrored_bow)
+			bow_carry_visual.set_frame_and_progress(clampi(body.frame, 0, bow_carry_visual.sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
+			return
 	# The ordinary idle/walk art has a baked rose hook. Dedicated bow artwork
 	# contains the correct clean character and physical bow; the extracted
 	# detached BowCarryV166 must never overlay that artwork.

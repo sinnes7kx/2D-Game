@@ -468,6 +468,88 @@ func _draw() -> void:
 # axis. Never brighten a twinblade's central wrapped handle.
 
 
+# v1.75: a clearly legible NORMAL-quality metal edge (not gated on
+# a Mythic signature). Only called on metal segments, never the handle.
+func _v175_visible_edge(a: Vector2, b: Vector2, power: float, phase: float) -> void:
+	var vec: Vector2 = b - a
+	if vec.length_squared() < 24.0:
+		return
+	var direction: Vector2 = vec.normalized()
+	var normal: Vector2 = Vector2(-direction.y, direction.x)
+	var pulse: float = 0.86 + 0.14 * sin(elapsed * 1.7 + phase * TAU)
+	var strong: float = clampf(power * pulse, 0.7, 3.2)
+	for i in range(11):
+		var u: float = float(i) / 10.0
+		var p: Vector2 = a.lerp(b, u)
+		var taper: float = maxf(0.12, sin((u * 0.80 + 0.16) * PI))
+		var tint: Color = _gradient_at(fposmod(u * 0.45 + elapsed * 0.052 + phase, 1.0)).lerp(Color.WHITE, 0.19)
+		draw_circle(p, 5.4 * taper, Color(tint.r, tint.g, tint.b, 0.085 * strong * taper))
+		draw_circle(p, 2.8 * taper, Color(tint.r, tint.g, tint.b, 0.18 * strong * taper))
+		draw_circle(p, 1.2 * taper, Color(1.0, 0.98, 1.0, 0.27 * strong * taper))
+	var edge: Color = _gradient_at(fposmod(0.60 + phase + elapsed * 0.06, 1.0)).lerp(Color.WHITE, 0.33)
+	draw_line(a.lerp(b, 0.06) - normal * 0.55, b, Color(edge.r, edge.g, edge.b, 0.52 * strong), 2.15, true)
+	draw_line(a.lerp(b, 0.18) + normal * 0.42, b, Color(1.0, 0.99, 1.0, 0.26 * strong), 0.88, true)
+
+
+# Additional Mythic families unlike the wand's projectile effects:
+# twinblade: razor shards; paired daggers: spectral split strikes;
+# paired swords: eclipse threads; bows: moon moths; polearms: falling petals.
+# Cosmetic UID seed alone controls variant and phase; no damage/save RNG.
+func _v175_mythic_signature(a: Vector2, b: Vector2, style: String, index: int, attacking: bool) -> void:
+	if item == null or visual_signature_level not in [4, 5]:
+		return
+	var delta: Vector2 = b - a
+	if delta.length_squared() < 24.0:
+		return
+	var tangent: Vector2 = delta.normalized()
+	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
+	var seed: float = float(posmod(item.visual_seed(), 1543)) / 1543.0
+	var variant: int = item.mythic_layer_variant()
+	var phase: float = elapsed * (1.3 + 0.15 * float(variant)) + seed * TAU + float(index) * 1.53
+	var pulse: float = 0.77 + 0.23 * sin(phase * 1.9)
+	var power: float = clampf(visible_glow_strength * effect_intensity * pulse * (1.18 if attacking else 0.88), 0.7, 3.0)
+	var bright: Color = _gradient_at(fposmod(elapsed * 0.10 + seed + float(index) * 0.25, 1.0)).lerp(Color.WHITE, 0.20)
+	if style == "twinblade":
+		# Razor shards extend beyond each sharpened tip, not along the grip.
+		for i in range(3):
+			var travel: float = fposmod(0.2 * float(i) + elapsed * 0.14 + seed, 0.96)
+			var p: Vector2 = a.lerp(b, travel)
+			var shard: Vector2 = p + normal * (3.3 + float(i) * 1.6) * (1.0 if index == 0 else -1.0)
+			draw_colored_polygon(PackedVector2Array([p, shard + tangent * 3.5, shard - tangent * 2.0]), Color(bright.r, bright.g, bright.b, 0.29 * power))
+		_soft_orb(b + tangent * 4.0, 4.3, bright, power * 0.96)
+	elif style == "dual_dagger":
+		# Two narrow staggered shadows follow the cutting edge.
+		for side in [-1.0, 1.0]:
+			var drift: Vector2 = normal * side * (2.6 + 1.8 * sin(phase))
+			draw_line(a.lerp(b, 0.35) + drift, b + drift * 0.42, Color(bright.r, bright.g, bright.b, 0.27 * power), 0.95, true)
+		_soft_orb(b, 3.5, bright, power * 0.90)
+	elif style == "dual_sword" or style == "blade":
+		# The blade crosses an ethereal eclipse filament (no wand beams).
+		var crescent_center: Vector2 = b - tangent * 5.0
+		draw_arc(crescent_center, 7.5, phase * 0.30, phase * 0.30 + PI * 0.86, 24, Color(bright.r, bright.g, bright.b, 0.29 * power), 1.2, true)
+		draw_line(a.lerp(b, 0.53) + normal * 2.0, b + normal * 1.0, Color(bright.r, bright.g, bright.b, 0.21 * power), 1.0, true)
+	elif style == "bow":
+		# Three tiny moon-moths flutter around the bow, never the string grip.
+		for i in range(3):
+			var u: float = 0.22 + float(i) * 0.27
+			var p: Vector2 = a.lerp(b, u) + normal * sin(phase + float(i) * 2.1) * 5.5
+			draw_line(p, p + Vector2(-3.0, -2.0), Color(bright.r, bright.g, bright.b, 0.32 * power), 1.0, true)
+			draw_line(p, p + Vector2(3.0, -2.0), Color(1.0, 0.95, 1.0, 0.33 * power), 1.0, true)
+	else:
+		# Spear/halberd/scythe/maul: short rising thorns and falling petals.
+		for i in range(4):
+			var u: float = fposmod(0.17 + float(i) * 0.19 + elapsed * 0.045 + seed, 0.94)
+			var p: Vector2 = a.lerp(b, u)
+			var offset: Vector2 = normal * sin(phase + float(i) * 1.6) * 5.0
+			draw_colored_polygon(PackedVector2Array([p, p + offset + tangent * 2.0, p + offset - tangent * 1.9]), Color(bright.r, bright.g, bright.b, 0.24 * power))
+	# A seeded point-star occasionally flares, distinct from old tiny motes.
+	var sparkle_time: float = maxf(0.0, sin(phase * 2.1 + float(variant)))
+	if sparkle_time > 0.32:
+		var star: Vector2 = a.lerp(b, fposmod(elapsed * 0.17 + seed + float(index) * 0.33, 0.97))
+		var extent: float = 2.2 + sparkle_time * 3.0
+		draw_line(star - normal * extent, star + normal * extent, Color(1.0, 0.99, 1.0, 0.42 * power * sparkle_time), 1.1, true)
+		draw_line(star - tangent * extent * 0.70, star + tangent * extent * 0.70, Color(bright.r, bright.g, bright.b, 0.34 * power * sparkle_time), 1.05, true)
+
 func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) -> void:
 	# Two independent moving metal edge masks, each tied to its own authored
 	# grip-to-point span. The original handle/guard is never treated as emissive.
@@ -505,8 +587,10 @@ func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) 
 		var shine: Color = _gradient_at(fposmod(0.67 + seed_phase + elapsed * 0.11 + hand_phase, 1.0))
 		var edge_offset: float = -1.3 if hand_index == 0 else 1.3
 		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.16) * power * pulse), 1.45, true)
+		_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)
 		if not mythic:
 			continue
+		_v175_mythic_signature(blade_root, tip, "dual_sword", hand_index, attacking)
 		# Seven four-point glitters per blade; always reproducible from cosmetic
 		# seed and time, with no non-cosmetic RandomNumberGenerator calls.
 		for glitter_i in range(7):
@@ -566,8 +650,10 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 			draw_circle(at, 1.6 * taper, Color(color.r, color.g, color.b, alpha * 2.2))
 		var shine: Color = _gradient_at(fposmod(0.73 + seed_phase + elapsed * 0.09 + hand_phase, 1.0))
 		draw_line(a - blade_normal * 1.1, tip, Color(shine.r, shine.g, shine.b, (0.45 if mythic else 0.14) * power * pulse), 1.35, true)
+		_v175_visible_edge(a, tip, intensity, float(hand_index) * 0.31)
 		if not mythic:
 			continue
+		_v175_mythic_signature(a, tip, "dual_dagger", hand_index, attacking)
 		for glitter_i in range(5):
 			var n: float = float(glitter_i)
 			var u: float = fposmod(0.13 + n * 0.17 + seed_phase * 0.13 + elapsed * 0.07 + hand_phase, 0.94)
@@ -631,6 +717,7 @@ func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, normal: Vector2, i
 		]), Color(redsteel.r, redsteel.g, redsteel.b, 0.12 * intensity))
 		draw_line(a.lerp(b, 0.22) - normal * 1.2, fine_tip, Color(edge.r, edge.g, edge.b, 0.42 * intensity), 1.12, true)
 		draw_line(a.lerp(b, 0.40) + normal * 1.5, fine_tip, Color(1.0, 0.89, 0.94, 0.18 * intensity), 0.75, true)
+		_v175_visible_edge(a.lerp(b, 0.08), fine_tip, intensity, 0.41 if (b - a).x < 0.0 else 0.06)
 
 
 # Additional persistent, colorful MYTHIC-only halo. The loop is reproducible
@@ -655,6 +742,8 @@ func _draw_v1723_mythic_sheen(grip: Vector2, tip: Vector2, tangent: Vector2, nor
 	for segment_i in range(segments.size()):
 		var blade_a: Vector2 = segments[segment_i][0]
 		var blade_b: Vector2 = segments[segment_i][1]
+		if item.get_slot() != "wand":
+			_v175_mythic_signature(blade_a, blade_b, style, segment_i, attacking)
 		var blade_dir: Vector2 = (blade_b - blade_a).normalized()
 		var blade_normal: Vector2 = Vector2(-blade_dir.y, blade_dir.x)
 		# Always-visible, breathing color sweep on the sharp portion only.

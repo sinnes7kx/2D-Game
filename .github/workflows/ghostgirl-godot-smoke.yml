@@ -44,6 +44,9 @@ jobs:
       - name: Validate v1.74 dual-sword equipment and animation references
         run: python3 GhostGirl2/tests/validate_v174.py
 
+      - name: Validate v1.75 hook-free body, bow mirror and Mythic glows
+        run: python3 GhostGirl2/tests/validate_v175.py
+
       - name: Import project resources
         run: godot --headless --editor --path GhostGirl2 --import
 
@@ -64,6 +67,15 @@ jobs:
 
       - name: Verify dual-sword animations on a real Godot player scene
         run: godot --headless --path GhostGirl2 --script res://tests/v174_animation_smoke.gd
+
+      - name: Compile hook-free weapon animation installer
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v175_hookfree_weapon_body.gd
+
+      - name: Compile bow palette overlay with left mirror
+        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/bow_palette_overlay_v139.gd
+
+      - name: Verify hook-free weapon frames and left bow mirror in Godot
+        run: godot --headless --path GhostGirl2 --script res://tests/v175_hookfree_mirror_smoke.gd
 
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
