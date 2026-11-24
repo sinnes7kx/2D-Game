@@ -366,6 +366,7 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"bow_detail_index": item.bow_detail_index,
 		"cosmetic_seed": item.cosmetic_seed,
 		"cosmetic_uid": item.cosmetic_uid,
+		"gradient_version": item.gradient_version,
 		"birth_roll_code_v1": item.birth_roll_code_v1,
 		"birth_roll_uid_v1": item.birth_roll_uid_v1,
 		"rare_visual_mod": item.rare_visual_mod,
@@ -532,6 +533,7 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	item.cosmetic_seed = int(saved.get("cosmetic_seed", -1))
 	# Old saves without an ID retain their original seed-derived visual look.
 	item.cosmetic_uid = str(saved.get("cosmetic_uid", ""))
+	item.gradient_version = clampi(int(saved.get("gradient_version", 1)), 1, 2)
 	item.rare_visual_mod = int(saved.get("rare_visual_mod", -1))
 	var birth_code: String = str(saved.get("birth_roll_code_v1", ""))
 	var birth_uid: String = str(saved.get("birth_roll_uid_v1", ""))
@@ -701,6 +703,8 @@ func generate_find(template: GhostItemData, seed_value: int, forced_quality: Str
 	# Do not change the item_seed that determines damage, affixes and sockets.
 	if template.equip_slot != "none" and template.item_class == "equipment":
 		item.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
+		if GhostCosmeticRNGV152.is_valid_uid(item.cosmetic_uid):
+			item.gradient_version = 2
 	item.stamp_origin(origin)
 	if not origin.is_empty():
 		item.roll_ethereal()
