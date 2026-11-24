@@ -3,6 +3,7 @@ extends AnimatedSprite2D
 ## The baked bow underneath remains visible if this node cannot load.
 const SHADE: Shader = preload("res://assets/equipment/weapon_surface_v190.gdshader")
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
+const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 var inventory: Node = null
 var body: AnimatedSprite2D = null
 var last_bow_cosmetic_key: String = ""
@@ -151,6 +152,9 @@ func _process(_delta: float) -> void:
 		return
 	var item: GhostItemInstance = inventory.get_equipped("sword")
 	var source_animation: String = str(body.animation)
+	# The new idle body is mostly the authored neutral pose; lock masks and
+	# the left-facing detached bow to that same pose to prevent color jitter.
+	var overlay_frame: int = 0 if STEADY_IDLE.is_bow_idle(source_animation) else body.frame
 	if item != null and item.weapon_style() == "bow":
 		var key: String = WEAPON_SURFACE.key(item)
 		if key != last_bow_cosmetic_key:
@@ -179,7 +183,7 @@ func _process(_delta: float) -> void:
 				position = Vector2(-3.0, -1.0)
 				if str(self.animation) != mirrored_bow:
 					self.animation = StringName(mirrored_bow)
-				set_frame_and_progress(clampi(body.frame, 0, sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
+				set_frame_and_progress(clampi(overlay_frame, 0, sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
 			else:
 				visible = false
 			bow_carry_visual.visible = true
@@ -191,7 +195,7 @@ func _process(_delta: float) -> void:
 			bow_carry_visual.scale = Vector2.ONE
 			if str(bow_carry_visual.animation) != mirrored_bow:
 				bow_carry_visual.animation = StringName(mirrored_bow)
-			bow_carry_visual.set_frame_and_progress(clampi(body.frame, 0, bow_carry_visual.sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
+			bow_carry_visual.set_frame_and_progress(clampi(overlay_frame, 0, bow_carry_visual.sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
 			return
 	# The ordinary idle/walk art has a baked rose hook. Dedicated bow artwork
 	# contains the correct clean character and physical bow; the extracted
@@ -213,7 +217,7 @@ func _process(_delta: float) -> void:
 		bow_carry_visual.scale = carry.get("scale", Vector2.ONE)
 		if str(bow_carry_visual.animation) != animation:
 			bow_carry_visual.animation = StringName(animation)
-		bow_carry_visual.set_frame_and_progress(clampi(body.frame, 0, bow_carry_visual.sprite_frames.get_frame_count(animation) - 1), body.frame_progress)
+		bow_carry_visual.set_frame_and_progress(clampi(overlay_frame, 0, bow_carry_visual.sprite_frames.get_frame_count(animation) - 1), body.frame_progress)
 		return
 	if bow_carry_visual != null:
 		bow_carry_visual.visible = false
@@ -229,5 +233,5 @@ func _process(_delta: float) -> void:
 	position = Vector2.ZERO
 	if str(self.animation) != animation:
 		self.animation = StringName(animation)
-	set_frame_and_progress(clampi(body.frame, 0, sprite_frames.get_frame_count(animation) - 1), body.frame_progress)
+	set_frame_and_progress(clampi(overlay_frame, 0, sprite_frames.get_frame_count(animation) - 1), body.frame_progress)
 	visible = true
