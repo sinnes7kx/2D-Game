@@ -372,6 +372,9 @@ func _gradient_at(t: float) -> Color:
 func _draw() -> void:
 	if item == null or body == null:
 		return
+	# The new scythe rig owns the curved cutting-edge light, not the old baked shaft.
+	if item.weapon_style() == "scythe" and player != null and player.has_node("Ghost/ScytheRigV190") and preload("res://scripts/scythe_art_v190.gd").matches(str(body.animation)):
+		return
 	var points: PackedVector2Array = _axial_span()
 	if points.size() != 2:
 		return
