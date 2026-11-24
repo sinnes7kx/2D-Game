@@ -1215,6 +1215,8 @@ func _begin_attack(heavy: bool) -> void:
 				attack_animation = "attack_dual_dagger_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
 			elif active_attack_style == "dual_sword" and not heavy:
 				attack_animation = "attack_dual_sword_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
+			elif active_attack_style == "spear" and (heavy or combo_step == 2):
+				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
 			else:
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_" if heavy else "_light_") + facing_name
 		else:
