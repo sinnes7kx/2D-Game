@@ -57,7 +57,7 @@ static func equipped_profile(owner: Node, body: AnimatedSprite2D, hand: int = 0)
 	var item: GhostItemInstance = inventory.get_equipped("sword")
 	if item == null:
 		return {}
-	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand, item.debug_collector_tier, item.debug_surface_mode, item.origin_room, item.regional_rank]
+	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), hand, item.debug_collector_tier, item.debug_surface_mode, item.origin_room, item.regional_rank, item.debug_forge_guard, item.debug_forge_grip]
 	if str(owner.get_meta("v178_profile_key", "")) != key:
 		owner.set_meta("v178_profile_key", key)
 		owner.set_meta("v178_profile", weapon_profile(item.collector_appearance(), str(item.definition.item_id), hand))
