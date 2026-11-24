@@ -51,10 +51,11 @@ func _draw() -> void:
 	var style: String = item.weapon_style()
 	match style:
 		"twinblade":
-			var width: float = 3.8 if str(item.definition.item_id) == "rosemirror_twinblade_v170" else 3.2
-			_grip(Vector2(0, 11.88), Vector2(0, -12), 3.0, 0)
-			_blade(Vector2(0, -12), Vector2(0, -60), width, 0)
-			_blade(Vector2(0, 11.88), Vector2(0, 54), width, 0)
+			var width: float = ART.twinblade_width(str(item.definition.item_id) == "rosemirror_twinblade_v170")
+			var spans: Array[PackedVector2Array] = ART.twinblade_spans(Vector2.ZERO, Vector2(0, -68))
+			_grip(spans[1][0], spans[0][0], 3.0, 0)
+			for span in spans:
+				_blade(span[0], span[1], width, 0)
 		"dual_sword", "dual_dagger":
 			var dagger: bool = style == "dual_dagger"
 			for hand in range(2):
