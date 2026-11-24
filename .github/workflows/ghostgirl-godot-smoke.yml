@@ -113,5 +113,8 @@ jobs:
       - name: Verify Ethereal weapon durability and preservation
         run: godot --headless --path GhostGirl2 --script res://tests/v184_ethereal_smoke.gd
 
+      - name: Verify universal inspection and effect menu
+        run: godot --headless --path GhostGirl2 --script res://tests/v185_inspection_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

@@ -49,6 +49,7 @@ func _ready() -> void:
 	var glow_material: CanvasItemMaterial = CanvasItemMaterial.new()
 	glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	material = glow_material
+	self_modulate.a = 0.88 # Effects only; never fade the actual character or metal.
 	show()
 	set_process(true)
 	if FileAccess.file_exists(MANIFEST_PATH):

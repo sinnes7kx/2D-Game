@@ -37,8 +37,8 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 			var a: Vector2 = path[i].lerp(path[i + 1], float(j) / 5.0)
 			var b: Vector2 = path[i].lerp(path[i + 1], float(j + 1) / 5.0)
 			var ink: Color = color_at(colors, look, u, time)
-			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, 0.20 * power), 3.6, true)
-			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, minf(0.95, 0.78 * power)), 1.3, true)
+			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, 0.18 * power), 3.6, true)
+			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, minf(0.86, 0.70 * power)), 1.3, true)
 	var root: Vector2 = path[0]
 	var tip: Vector2 = path[path.size() - 1]
 	var axis: Vector2 = (tip - root).normalized()
@@ -47,7 +47,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 		var u: float = fposmod(float(j) * 0.23 + time * (0.13 + float(motif) * 0.018), 1.0)
 		var p: Vector2 = root.lerp(tip, u)
 		var ink: Color = color_at(colors, look, u, time)
-		ink.a = sin(u * PI) * 0.88
+		ink.a = sin(u * PI) * 0.79
 		var wiggle: Vector2 = normal * sin(u * TAU * 2.0 + time * 3.0) * 3.0
 		match motif:
 			0: canvas.draw_circle(p, 1.3, ink)
@@ -70,7 +70,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 		for i in range(region_rank + 1):
 			var u: float = fposmod(time * 0.16 + float(i) / float(region_rank + 1), 1.0)
 			var p: Vector2 = root.lerp(tip, u)
-			local.a = sin(u * PI) * 0.68
+			local.a = sin(u * PI) * 0.61
 			match region:
 				"moonwake_crypt":
 					canvas.draw_arc(p + normal * 2.0, 3.0, time, time + PI, 10, local, 1.1, true)

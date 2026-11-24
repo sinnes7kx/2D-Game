@@ -588,7 +588,7 @@ func interact() -> void:
 			var saved_drop_id: String = str(target.get("persistent_drop_id"))
 			if not saved_drop_id.is_empty():
 				_forget_ground_record(saved_drop_id)
-			ui.show_pickup("%s · %s" % [found.quality.to_upper(), found.display_name()], found.quality_color())
+			_announce_discovery(found, "%s · %s" % [found.quality.to_upper(), found.display_name()], saved_drop_id.is_empty())
 			target.remove_from_group("interactable")
 			target.queue_free()
 		else:
@@ -606,7 +606,7 @@ func interact() -> void:
 		inventory.collected_pickups[id] = true
 		inventory.save_game()
 		target.call("restore_from_inventory", inventory)
-		ui.show_pickup(("ARMORY FIND · " if bool(target.get("ground_display")) else "RELIC SHOWCASE · ") + acquired.display_name(), acquired.quality_color())
+		_announce_discovery(acquired, ("ARMORY FIND · " if bool(target.get("ground_display")) else "RELIC SHOWCASE · ") + acquired.display_name())
 		return
 	if target.is_in_group("treasure_chest"):
 		var chest_id: String = str(target.get("chest_id"))
@@ -619,7 +619,7 @@ func interact() -> void:
 				inventory.save_game()
 				target.set("opened", true)
 				target.remove_from_group("interactable")
-				ui.show_pickup("%s  ·  %s" % [rolled.quality.to_upper(), rolled.display_name()], rolled.quality_color())
+				_announce_discovery(rolled, "%s  ·  %s" % [rolled.quality.to_upper(), rolled.display_name()])
 			else:
 				ui.show_pickup("BACKPACK FULL")
 		return
@@ -904,7 +904,7 @@ func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: Stri
 	var quality: String = "" if quality_choice == "random" else quality_choice
 	var reward: GhostItemInstance = inventory.add_loot(_roll_sword_drop(data, seed_value), seed_value, quality, room)
 	if reward != null:
-		ui.show_pickup("%s  ·  %s" % [reward.quality.to_upper(), reward.display_name()], reward.quality_color())
+		_announce_discovery(reward, "%s  ·  %s" % [reward.quality.to_upper(), reward.display_name()])
 	else:
 		ui.show_pickup("BACKPACK FULL")
 
@@ -966,7 +966,11 @@ func spawn_world_loot(data: GhostItemData, seed_value: int, quality: String, poi
 	if data == null:
 		return
 	var drop: Node2D = WORLD_DROP_SCENE.instantiate() as Node2D
-	drop.set("item_data", _roll_sword_drop(data, seed_value))
+	var template: GhostItemData = _roll_sword_drop(data, seed_value)
+	drop.set("item_data", template)
+	# Natural non-unique weapons are rolled once, before any floor heraldry.
+	if template != null and not template.unique and template.equip_slot in ["sword", "wand"]:
+		drop.set("dropped_instance", inventory.generate_find(template, seed_value, "" if quality == "random" else quality, room))
 	drop.set("loot_seed", seed_value)
 	drop.set("guaranteed_quality", quality)
 	drop.global_position = point
@@ -1173,3 +1177,17 @@ func _give_ethereal_trial() -> void:
 		ui.show_pickup("ETHEREAL TEST TWINBLADE · 3 USES · OPEN I", Color("c1d8e4"))
 	else:
 		ui.show_pickup("BACKPACK FULL")
+
+func _announce_discovery(item: GhostItemInstance, ordinary: String, natural: bool = true) -> void:
+	var label_text: String = item.discovery_label() if natural else ""
+	if label_text.is_empty():
+		ui.show_pickup(ordinary, item.quality_color())
+		return
+	ui.show_pickup(label_text + " · " + item.display_name(), Color("d5c0eb"))
+	var chime: AudioStreamPlayer = AudioStreamPlayer.new()
+	chime.stream = preload("res://assets/audio/hook_chime.wav")
+	chime.volume_db = -16.0
+	chime.pitch_scale = 0.84
+	add_child(chime)
+	chime.finished.connect(chime.queue_free)
+	chime.play()

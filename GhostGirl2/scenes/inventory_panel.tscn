@@ -111,12 +111,12 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.67, 0.60, 0.72, 1)
 text = "HOVER TO COMPARE"
 
-[node name="TestMythic" type="Button" parent="Layout/DetailsHeader"]
+[node name="TestMythic" type="OptionButton" parent="Layout/DetailsHeader"]
 visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-text = "PLAYTEST  ·  MYTHIC"
-tooltip_text = "Debug build only: preview Mythic visuals. Does not change item stats, real cosmetic rarity or saves."
+
+tooltip_text = "Debug build only: select visual signatures, rarity, color behavior and glow motifs. Nothing is saved."
 
 [node name="DetailsWell" type="PanelContainer" parent="Layout"]
 custom_minimum_size = Vector2(0, 142)
