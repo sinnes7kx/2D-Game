@@ -58,8 +58,11 @@ static func _cosmetic_dots(item: Variant) -> String:
 	elif item.get_slot() in ["sword", "wand"]:
 		rows.append(_visual_row(item, "surface", "SURFACE TINT"))
 	rows.append(_visual_row(item, "glow", "FX LIGHT"))
-	rows = rows.filter(func(line: String) -> bool: return not line.is_empty())
-	return "\n".join(rows)
+	var present: Array[String] = []
+	for line in rows:
+		if not line.is_empty():
+			present.append(line)
+	return "\n".join(present)
 
 # One swatch's visible meaning is explained here, when hovered. Kept out
 # of the ordinary item body: Alt only pins the panel for interactive reading.
