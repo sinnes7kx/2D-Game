@@ -30,6 +30,45 @@ static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 				for i in range(frames.get_frame_count(base_name)):
 					frames.add_frame(target, frames.get_frame_texture(base_name, i))
 
+	# v1.76: dedicated eight-frame thrust clips for both polearms.
+	# Source textures are the approved clean body, never the rose-hook art.
+	for weapon_art in ["spear", "briarwake_spear"]:
+		for action in ["pierce", "heavy_pierce"]:
+			for face in ["front", "back", "left", "right"]:
+				var source: String = "attack_unarmed_light_" + face
+				var target: String = "attack_" + weapon_art + "_" + action + "_" + face
+				if not frames.has_animation(source) or frames.get_frame_count(source) < 8:
+					continue
+				if frames.has_animation(target):
+					frames.remove_animation(target)
+				frames.add_animation(target)
+				frames.set_animation_speed(target, 12.0)
+				frames.set_animation_loop(target, false)
+				var sequence: Array[int] = [0, 1, 2, 4, 4, 5, 2, 0]
+				for index in sequence:
+					frames.add_frame(target, frames.get_frame_texture(source, index))
+
+# The shaft translates along the facing vector, rather than swinging.
+# Frame 3 contains the existing 43%-elapsed damage event.
+static func pierce_span(face: String, frame_index: int, heavy: bool) -> PackedVector2Array:
+	var heading: Vector2 = Vector2.DOWN
+	var anchor: Vector2 = Vector2(22, 24)
+	match face:
+		"back":
+			heading = Vector2.UP
+			anchor = Vector2(22, 16)
+		"left":
+			heading = Vector2.LEFT
+			anchor = Vector2(-23, 24)
+		"right":
+			heading = Vector2.RIGHT
+			anchor = Vector2(23, 24)
+	var travel: Array[float] = [-8.0, -19.0, -12.0, 21.0, 20.0, 9.0, -3.0, -8.0]
+	var n: int = clampi(frame_index, 0, 7)
+	var grip: Vector2 = anchor + heading * travel[n] * (1.18 if heavy else 1.0)
+	var tip: Vector2 = grip + heading * 74.0
+	return PackedVector2Array([grip, tip])
+
 func _ready() -> void:
 	body = get_parent() as AnimatedSprite2D
 	player = body.get_parent() as Node2D if body != null else null
@@ -62,7 +101,7 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
-	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_"))
+	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	var empty: PackedVector2Array = PackedVector2Array()
@@ -75,6 +114,8 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 		if animation_name.ends_with(direction):
 			face = direction
 			break
+	if animation_name.contains("_pierce_"):
+		return pierce_span(face, frame_index, heavy)
 	var n: int = clampi(frame_index, 0, 7)
 	var anchor: Vector2 = Vector2(29, 24)
 	match face:
@@ -124,6 +165,8 @@ func _draw() -> void:
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
 	if animation_name.begins_with("attack_nocturne_dagger_"):
 		_draw_nightglass_stiletto(grip, tip, tangent, normal)
+	elif animation_name.begins_with("attack_spear_"):
+		_draw_moonwarden_spear(grip, tip, tangent, normal)
 	else:
 		_draw_briarwake_trident(grip, tip, tangent, normal)
 
@@ -166,3 +209,15 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 	# Two-hand bracing at the proper shaft distance from the forward hand.
 	draw_circle(grip - tangent * 9.0, 4.8, Color("d8c7d6"))
 	draw_circle(grip + tangent * 12.0, 4.5, Color("cab9cf"))
+
+func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2) -> void:
+	var root: Vector2 = tip - tangent * 24.0
+	var butt: Vector2 = grip - tangent * 22.0
+	draw_line(butt, root, Color("322638"), 6.5, true)
+	draw_line(butt, root, Color("876f84"), 3.2, true)
+	draw_line(butt + normal, root + normal, Color("b8a7c1"), 1.0, true)
+	draw_colored_polygon(PackedVector2Array([root - normal * 5.0, tip, root + normal * 5.0, root - tangent * 3.0]), Color("b9b5d5"))
+	draw_colored_polygon(PackedVector2Array([root, tip, root + normal * 5.0]), Color("625f8f"))
+	draw_line(root - normal * 5.0, tip, Color("e6dcf4"), 1.1, true)
+	draw_circle(grip - tangent * 7.0, 4.1, Color("d8c7d6"))
+	draw_circle(grip + tangent * 10.0, 4.0, Color("cab9cf"))
