@@ -1,4 +1,6 @@
 extends SceneTree
+const IDLE_SEQUENCE: Array[int] = [0, 0, 1, 0, 0, 1, 0, 0]
+const WALK_SEQUENCE: Array[int] = [0, 1, 2, 1, 0, 1, 2, 1]
 ## v1.75: compare runtime frame TEXTURES to approved clean original sprites,
 ## not just the animation names. Check left-bow mirror structure exists.
 func _initialize() -> void:
@@ -55,9 +57,9 @@ func _verify() -> void:
 			for frame in range(8):
 				var source_frame: int = frame
 				if idle:
-					source_frame = [0, 0, 1, 0, 0, 1, 0, 0][frame]
+					source_frame = IDLE_SEQUENCE[frame]
 				elif walk:
-					source_frame = [0, 1, 2, 1, 0, 1, 2, 1][frame]
+					source_frame = WALK_SEQUENCE[frame]
 				var image: Texture2D = frames.get_frame_texture(target, frame)
 				var approved: Texture2D = frames.get_frame_texture(clean, source_frame)
 				if image != approved:
