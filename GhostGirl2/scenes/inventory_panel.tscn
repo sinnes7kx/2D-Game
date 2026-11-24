@@ -67,6 +67,11 @@ text = "1 / 8"
 layout_mode = 2
 text = "›"
 
+[node name="VaultButton" type="Button" parent="Layout/Header"]
+layout_mode = 2
+text = "VAULT"
+tooltip_text = "Store, inspect, favorite and protect collectible weapons"
+
 [node name="SortBackpack" type="Button" parent="Layout/Header"]
 layout_mode = 2
 text = "SORT"
