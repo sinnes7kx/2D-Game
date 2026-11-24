@@ -210,6 +210,12 @@ func _axial_span() -> PackedVector2Array:
 				if first.size() == 2:
 					return first
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 35.0)])
+	if style == "twinblade":
+		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
+		if physical != null:
+			var span: Variant = physical.call("get_weapon_span", animation, body.frame)
+			if span is PackedVector2Array and span.size() == 2:
+				return span
 	if style in ["maul", "twinblade"]:
 		# The four physical weapon variants have their own frame-authored
 		# guides. No arbitrary white glowing rectangles or detached rings.
