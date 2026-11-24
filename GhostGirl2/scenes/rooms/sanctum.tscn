@@ -6,6 +6,18 @@
 [ext_resource type="Script" uid="uid://cghiperffjqvo" path="res://scripts/memory_point.gd" id="act_memory"]
 [ext_resource type="Script" uid="uid://ce3362xitjjtv" path="res://scripts/portal.gd" id="act_portal"]
 
+[ext_resource type="Script" path="res://scripts/weapon_showcase.gd" id="v176_rack"]
+[ext_resource type="Resource" path="res://items/eclipse_twinblade_v170.tres" id="v176_item_0"]
+[ext_resource type="Resource" path="res://items/rosemirror_twinblade_v170.tres" id="v176_item_1"]
+[ext_resource type="Resource" path="res://items/moonwarden_spear_v169.tres" id="v176_item_2"]
+[ext_resource type="Resource" path="res://items/briarwake_trident_v171.tres" id="v176_item_3"]
+[ext_resource type="Resource" path="res://items/roseglass_dagger_v169.tres" id="v176_item_4"]
+[ext_resource type="Resource" path="res://items/nocturne_stiletto_v171.tres" id="v176_item_5"]
+[ext_resource type="Resource" path="res://items/gravebell_maul_v170.tres" id="v176_item_6"]
+[ext_resource type="Resource" path="res://items/ashglass_warmaul_v170.tres" id="v176_item_7"]
+[ext_resource type="Resource" path="res://items/moonlace_dual_daggers_v173.tres" id="v176_item_8"]
+[ext_resource type="Resource" path="res://items/gloamrose_dual_swords_v174.tres" id="v176_item_9"]
+
 [sub_resource type="RectangleShape2D" id="shape_0"]
 size = Vector2(2389, 248)
 
@@ -149,3 +161,95 @@ scale = Vector2(1.65, 1.65)
 script = ExtResource("act_atmosphere")
 
 [node name="HookAnchors" type="Node2D" parent="Gameplay" unique_id=1002779568]
+
+[node name="WeaponShowcases" type="Node2D" parent="Gameplay"]
+
+[node name="V176_eclipse_twinblade_v170" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(850, 1050)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_0")
+pickup_id = "v176_sanctum_eclipse_twinblade_v170"
+item_seed = 176101
+guaranteed_quality = "unique"
+ground_display = true
+
+[node name="V176_rosemirror_twinblade_v170" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1015, 1050)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_1")
+pickup_id = "v176_sanctum_rosemirror_twinblade_v170"
+item_seed = 176102
+guaranteed_quality = "unique"
+ground_display = true
+
+[node name="V176_moonwarden_spear_v169" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1180, 1050)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_2")
+pickup_id = "v176_sanctum_moonwarden_spear_v169"
+item_seed = 176103
+guaranteed_quality = "unique"
+ground_display = true
+
+[node name="V176_briarwake_trident_v171" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1345, 1050)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_3")
+pickup_id = "v176_sanctum_briarwake_trident_v171"
+item_seed = 176104
+guaranteed_quality = "unique"
+ground_display = true
+
+[node name="V176_roseglass_dagger_v169" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1510, 1050)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_4")
+pickup_id = "v176_sanctum_roseglass_dagger_v169"
+item_seed = 176105
+guaranteed_quality = "rare"
+ground_display = true
+
+[node name="V176_nocturne_stiletto_v171" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(850, 1210)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_5")
+pickup_id = "v176_sanctum_nocturne_stiletto_v171"
+item_seed = 176106
+guaranteed_quality = "rare"
+ground_display = true
+
+[node name="V176_gravebell_maul_v170" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1015, 1210)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_6")
+pickup_id = "v176_sanctum_gravebell_maul_v170"
+item_seed = 176107
+guaranteed_quality = "rare"
+ground_display = true
+
+[node name="V176_ashglass_warmaul_v170" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1180, 1210)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_7")
+pickup_id = "v176_sanctum_ashglass_warmaul_v170"
+item_seed = 176108
+guaranteed_quality = "rare"
+ground_display = true
+
+[node name="V176_moonlace_dual_daggers_v173" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1345, 1210)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_8")
+pickup_id = "v176_sanctum_moonlace_dual_daggers_v173"
+item_seed = 176109
+guaranteed_quality = "rare"
+ground_display = true
+
+[node name="V176_gloamrose_dual_swords_v174" type="Node2D" parent="Gameplay/WeaponShowcases"]
+position = Vector2(1510, 1210)
+script = ExtResource("v176_rack")
+item_data = ExtResource("v176_item_9")
+pickup_id = "v176_sanctum_gloamrose_dual_swords_v174"
+item_seed = 176110
+guaranteed_quality = "rare"
+ground_display = true
