@@ -114,6 +114,7 @@ func _process(_delta: float) -> void:
 	v180_elapsed += _delta
 	if body == null:
 		return
+	MODULAR.apply_equipped_opacity(self, body)
 	var animation_now: String = str(body.animation)
 	if animation_now.contains("twinblade"):
 		queue_redraw()
