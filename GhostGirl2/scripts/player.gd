@@ -6,6 +6,7 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
+const FRAME_GUARD_V186 = preload("res://scripts/frame_guard_v186.gd")
 const DAGGER_THRUST_V186 = preload("res://scripts/dagger_thrust_v186.gd")
 const V172_POSE_SCRIPT = preload("res://scripts/v172_weapon_pose.gd")
 const V173_DUAL_DAGGER_SCRIPT = preload("res://scripts/v173_dual_daggers.gd")
@@ -150,6 +151,7 @@ func _ready() -> void:
 	V174_DUAL_SWORD_SCRIPT.install_animations(body_art)
 	V175_CLEAN_WEAPON_BODY.install(body_art)
 	DAGGER_THRUST_V186.install(body_art)
+	FRAME_GUARD_V186.install(body_art)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
