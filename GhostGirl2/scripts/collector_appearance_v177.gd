@@ -32,6 +32,8 @@ static func roll(uid: String, legacy_seed: int) -> Dictionary:
 		"shift_rate": 0.055 + float(ticket(uid, legacy_seed, "v180-shift-rate")) / 9999.0 * 0.24,
 		"finish": ticket(uid, legacy_seed, "surface-finish") % 7,
 		"pattern": ticket(uid, legacy_seed, "blade-pattern") % 11,
+		"scythe_span": 0.82 + float(ticket(uid, legacy_seed, "v190-scythe-span")) / 9999.0 * 0.36,
+		"scythe_curve": 0.45 + float(ticket(uid, legacy_seed, "v190-scythe-curve")) / 9999.0 * 0.45,
 		"forge_width": 0.64 + float(ticket(uid, legacy_seed, "v189-width")) / 9999.0 * 0.59,
 		"forge_shoulder": 0.82 + float(ticket(uid, legacy_seed, "v189-shoulder")) / 9999.0 * 0.18,
 		"forge_taper": 0.55 + float(ticket(uid, legacy_seed, "v189-taper")) / 9999.0 * 0.45,

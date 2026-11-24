@@ -114,7 +114,7 @@ func open_item(value: GhostItemInstance) -> void:
 	info.text = ""
 	if not look.is_empty():
 		info.text = "[color=#dfc38e]MATERIAL  ·  %s[/color]\n[color=#c8b6db]PARTICLES  ·  %s[/color]\n\n" % [value.collector_material_label().to_upper(), ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"][clampi(int(look.get("particle_tier", 0)), 0, 6)]]
-	if bool(model.call("is_modular")) and not look.is_empty():
+	if (bool(model.call("is_modular")) or bool(model.call("has_painted_surface"))) and not look.is_empty():
 		info.text += "[color=#bfc9dd]SURFACE  ·  %s[/color]\n\n" % preload("res://scripts/living_metal_v187.gd").LABELS[clampi(int(look.get("surface_mode", 0)), 0, 6)]
 	info.text += MARKUP.item_info(value, true)
 	info.scroll_to_line(0)

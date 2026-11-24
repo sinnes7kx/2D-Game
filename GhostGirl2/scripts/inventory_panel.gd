@@ -516,8 +516,8 @@ func _preview_look(index: int) -> void:
 	elif id >= 50 and id <= 57:
 		item.debug_glow_motif = id - 50
 	elif id >= 60 and id <= 66:
-		if item.get_slot() != "sword":
-			notice.text = "Blade surface preview requires a modular sword or dagger"
+		if item.get_slot() not in ["sword", "wand"]:
+			notice.text = "Surface preview requires a supported weapon"
 			test_looks.select(0)
 			return
 		item.debug_surface_mode = id - 60
