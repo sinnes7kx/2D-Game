@@ -1,4 +1,5 @@
 extends Node2D
+const DAGGER_THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 var v180_elapsed: float = 0.0
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
@@ -141,6 +142,8 @@ func _is_equipped(animation_name: String) -> bool:
 	var ident: String = str(equipped.definition.item_id)
 	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade")  :
 		return true
+	if equipped.weapon_style() == "dagger" and animation_name.contains("_pierce_"):
+		return true
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
@@ -169,6 +172,8 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 			face = direction
 			break
 	if animation_name.contains("_pierce_"):
+		if animation_name.begins_with("attack_dagger_") or animation_name.begins_with("attack_nocturne_dagger_"):
+			return DAGGER_THRUST.single_span(face, frame_index, heavy)
 		return pierce_span(face, frame_index, heavy)
 	var n: int = clampi(frame_index, 0, 7)
 	var anchor: Vector2 = Vector2(29, 24)
@@ -219,7 +224,7 @@ func _draw() -> void:
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
 	if animation_name.contains("twinblade"):
 		_draw_v176_twinblade(grip, tip, animation_name.contains("rosemirror"))
-	elif animation_name.begins_with("attack_nocturne_dagger_"):
+	elif animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_"):
 		_draw_nightglass_stiletto(grip, tip, tangent, normal)
 	elif animation_name.begins_with("attack_spear_"):
 		_draw_moonwarden_spear(grip, tip, tangent, normal)

@@ -179,6 +179,9 @@ func _axial_span() -> PackedVector2Array:
 	if body == null or item == null:
 		return empty
 	var animation: String = str(body.animation)
+	if body.sprite_frames != null:
+		var repaired: Dictionary = body.sprite_frames.get_meta("v186_heavy_fallbacks", {})
+		animation = str(repaired.get(animation, animation))
 	var face: String = _facing(animation)
 	var grip: Vector2 = _hand_anchor(face)
 	var end_point: Vector2 = _fallback_tip(grip, face, 46.0)

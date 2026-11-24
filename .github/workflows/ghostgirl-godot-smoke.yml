@@ -116,5 +116,8 @@ jobs:
       - name: Verify universal inspection and effect menu
         run: godot --headless --path GhostGirl2 --script res://tests/v185_inspection_smoke.gd
 
+      - name: Verify dagger thrusts and repaired animation frames
+        run: godot --headless --path GhostGirl2 --script res://tests/v186_animation_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
