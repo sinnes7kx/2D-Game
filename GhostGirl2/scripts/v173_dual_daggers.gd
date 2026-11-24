@@ -178,7 +178,7 @@ func _authored_blade_spans(animation_name: String, frame_index: int) -> Array:
 		var aim: Vector2 = (sweep * lateral + forward * advance).normalized()
 		if aim.is_zero_approx():
 			aim = forward
-		var tip: Vector2 = grip + aim * 30.0
+		var tip: Vector2 = grip + aim * 35.0
 		result.append(PackedVector2Array([grip, tip]))
 	return result
 
