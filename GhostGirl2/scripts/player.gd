@@ -24,6 +24,8 @@ const SPECTACLE: Script = preload("res://scripts/weapon_spectacle.gd")
 const IMPACT_PRESTIGE: Script = preload("res://scripts/impact_prestige_v116.gd")
 const PHYSICAL_FEEL: Script = preload("res://scripts/impact_spawner_v149.gd")
 const COMBAT_JUICE: Script = preload("res://scripts/combat_juice_v194.gd")
+const SWING_WAKE: Script = preload("res://scripts/swing_wake_v198.gd")
+const TIP_EXTENSION_V198: Script = preload("res://scripts/weapon_tip_extension_v198.gd")
 const RIPOSTE_SFX: AudioStream = preload("res://assets/audio/riposte_chime_v113.wav")
 const COMBAT_RESPONSE_V157: Script = preload("res://scripts/combat_response_v157.gd")
 const DODGE_SFX: AudioStream = preload("res://assets/audio/dodge_wisp.wav")
@@ -167,6 +169,9 @@ func _ready() -> void:
 	var scythe_rig: Node2D = SCYTHE_RIG_V190.new()
 	scythe_rig.name = "ScytheRigV190"
 	body_art.add_child(scythe_rig)
+	var blade_tips: Node2D = TIP_EXTENSION_V198.new() as Node2D
+	blade_tips.name = "WeaponTipExtensionV198"
+	body_art.add_child(blade_tips)
 	if equipment_preview_only:
 		collision_layer = 0
 		collision_mask = 0
@@ -753,6 +758,10 @@ func _advance_spell(delta: float) -> void:
 	spell_time_left = maxf(0.0, spell_time_left - delta)
 	if not spell_shot and spell_time_left <= spell_cast_duration - spell_shot_time:
 		spell_shot = true
+		if wand_heavy_attack or spell_is_moonfall or not special_spell_kind.is_empty():
+			_emit_air_wake("charged", spell_direction)
+			COMBAT_JUICE.play(get_tree().current_scene, global_position, "charged_swing", -19.0)
+			camera_kick = maxf(camera_kick, 1.6)
 		if is_instance_valid(lock_target) and lock_target.has_method("spell_aim_point"):
 			spell_aim_point = lock_target.call("spell_aim_point")
 		if spell_is_moonfall:
@@ -903,7 +912,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 		attack_direction = jump_direction
 	set_facing(attack_direction)
 	jump_direction = attack_direction
-	_play_action_sfx(SWING_SFX)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "jump_swing", -14.0)
 	var attack_animation: String = ""
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
 	if holding_sword:
@@ -966,6 +975,11 @@ func _strike_jump_attack() -> void:
 	heavy_attack = true
 	active_attack_style = _weapon_style()
 	attack_direction = jump_direction if jump_direction.length_squared() > 0.0 else facing
+	# Air movement and light camera response happen on commitment, NOT on hit.
+	_emit_air_wake("jump", attack_direction)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "jump_swing", -23.0)
+	camera_kick = maxf(camera_kick, 2.3)
+	camera_push = attack_direction * 1.6
 	_strike_nearby_enemies(JUMP_ATTACK_DAMAGE_BONUS)
 	# Camera and hitstop are deliberately assigned only on a confirmed hit.
 	heavy_attack = previous_heavy
@@ -1032,6 +1046,25 @@ func _spawn_precision_feedback(kind: String, where: Vector2, direction: Vector2)
 	fx.set("tint", Color("f4d6a8") if kind == "riposte" else Color("cfb6ec"))
 	root.add_child(fx)
 	fx.global_position = where
+
+func _emit_air_wake(kind: String, heading: Vector2) -> void:
+	var root: Node = get_tree().current_scene
+	if root == null or get_tree().get_nodes_in_group("v198_air_wake").size() >= 12:
+		return
+	var wake: Node2D = SWING_WAKE.new() as Node2D
+	if wake == null:
+		return
+	wake.set("kind", kind)
+	wake.set("direction", heading)
+	if world != null and world.inventory != null:
+		var weapon: GhostItemInstance = world.inventory.get_equipped("sword")
+		if weapon == null:
+			weapon = world.inventory.get_equipped("wand")
+		if weapon != null:
+			var rolls: Dictionary = weapon.effect_rolls()
+			wake.set("color", GhostWeaponFXLibrary.color(int(rolls.get("color", 0))).lerp(Color("d5cde1"), 0.38))
+	root.add_child(wake)
+	wake.global_position = global_position + Vector2(0.0, -29.0) + heading.normalized() * 16.0
 
 func _begin_weapon_attack(heavy: bool) -> void:
 	if carrying != null:
@@ -1119,6 +1152,11 @@ func _release_bow_charge() -> void:
 	# A rushed release still fires one normal arrow. Environmental targets
 	# requiring a charged shot only accept fully drawn releases.
 	_launch_bow_arrow(bow_firing_direction, fully_drawn)
+	if fully_drawn:
+		_emit_air_wake("charged", bow_firing_direction)
+		COMBAT_JUICE.play(get_tree().current_scene, global_position, "charged_swing", -16.5)
+		camera_kick = maxf(camera_kick, 1.7)
+		camera_push = bow_firing_direction.normalized() * 1.2
 	body_art.set_frame_and_progress(6, 0.0)
 	body_art.play()
 	bow_duration = 0.18
@@ -1234,8 +1272,8 @@ func _begin_attack(heavy: bool) -> void:
 			attack_hit_threshold = 0.58
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
-	_play_action_sfx(SWING_SFX)
-	COMBAT_JUICE.play(get_tree().current_scene, global_position, "swing", -21.0)
+	# Actual moving-air sound, without the old bright WAV transient on swords.
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "heavy_swing" if heavy else "swing", -16.5 if heavy else -18.5)
 	attack_hit_done = false
 	heavy_attack = heavy
 	# The empty-hand branch must always play visible unarmed attack frames.
@@ -1293,6 +1331,11 @@ func _advance_attack(delta: float) -> void:
 	attack_time_left = maxf(0.0, attack_time_left - delta)
 	if not attack_hit_done and attack_time_left <= attack_duration * attack_hit_threshold:
 		attack_hit_done = true
+		if heavy_attack:
+			_emit_air_wake("heavy", attack_direction)
+			COMBAT_JUICE.play(get_tree().current_scene, global_position, "swing", -24.0)
+			camera_kick = maxf(camera_kick, 1.9)
+			camera_push = attack_direction * 1.4
 		_strike_nearby_enemies()
 	if attack_time_left <= 0.0:
 		combo_grace = 0.48 if not heavy_attack else 0.0

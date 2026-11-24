@@ -169,5 +169,8 @@ jobs:
       - name: Verify dagger idle, Reaper glow and versioned dark gradients
         run: godot --headless --path GhostGirl2 --script res://tests/v197_dagger_reaper_dark_gradient_smoke.gd
 
+      - name: Verify sword whoosh, bow idle hand alignment and miss feedback
+        run: godot --headless --path GhostGirl2 --script res://tests/v198_weapon_swing_bow_pose_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

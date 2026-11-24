@@ -3,6 +3,7 @@ extends Node2D
 ## 8 frames x 4 directions for idle, walk, A/B/C light combo and heavy.
 ## Each hand gets an independently authored tip path, driven by frame index.
 const ITEM_ID: String = "moonlace_dual_daggers_v173"
+const BLADE_LENGTH: float = 35.0
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const BLADE_SCRIPT = preload("res://scripts/v173_dual_dagger_blade.gd")
@@ -178,7 +179,7 @@ func _authored_blade_spans(animation_name: String, frame_index: int) -> Array:
 		var aim: Vector2 = (sweep * lateral + forward * advance).normalized()
 		if aim.is_zero_approx():
 			aim = forward
-		var tip: Vector2 = grip + aim * 30.0
+		var tip: Vector2 = grip + aim * BLADE_LENGTH
 		result.append(PackedVector2Array([grip, tip]))
 	return result
 

@@ -11,6 +11,7 @@ const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## Glow reads get_weapon_span(), so light and the painted weapon cannot drift.
 const STILETTO: String = "nocturne_stiletto_v171"
 const TRIDENT: String = "briarwake_trident_v171"
+const TRIDENT_SHAFT_BACK: float = 26.0
 var body: AnimatedSprite2D = null
 var player: Node2D = null
 var last_animation: String = ""
@@ -209,6 +210,10 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 				tips = [Vector2(-33, 44), Vector2(-8, 35), Vector2(-40, 6), Vector2(-67, 13), Vector2(-82, 16), Vector2(-70, 34), Vector2(-48, 39), Vector2(-33, 44)]
 			"right":
 				tips = [Vector2(33, 44), Vector2(8, 35), Vector2(40, 6), Vector2(67, 13), Vector2(82, 16), Vector2(70, 34), Vector2(48, 39), Vector2(33, 44)]
+	# A slender dagger/stiletto gets a slightly longer visible blade. The
+	# weapon remains anchored to the same hand; the attack collider is unchanged.
+	if animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_"):
+		tips[n] = anchor + (tips[n] - anchor) * 1.13
 	# A heavy blow has a longer forearm extension, not a spinning flat weapon.
 	var reach: Vector2 = tips[n] - anchor
 	if heavy and n in [3, 4, 5]:
@@ -259,7 +264,7 @@ func _draw_nightglass_stiletto(grip: Vector2, tip: Vector2, tangent: Vector2, no
 	draw_circle(grip, 3.9, Color("d3c5d5"))
 
 func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2) -> void:
-	var shaft_base: Vector2 = grip - tangent * 18.0
+	var shaft_base: Vector2 = grip - tangent * TRIDENT_SHAFT_BACK
 	var head: Vector2 = tip - tangent * 17.0
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():

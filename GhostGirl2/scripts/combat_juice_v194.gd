@@ -31,7 +31,64 @@ static func play(parent: Node, where: Vector2, kind: String, volume_db: float = 
     voice.finished.connect(voice.queue_free)
     voice.play()
 
+# Sword sounds need the *motion of displaced air*, not a pitched buzz
+# or an impact drum. Band-limited stochastic noise, an accelerating crest
+# and a short descending harmonic form one original, airy sword whoosh.
+static func _render_air_sweep(kind: String) -> AudioStreamWAV:
+    var duration: float = 0.22
+    var pitch_start: float = 260.0
+    var pitch_end: float = 78.0
+    var bass: float = 0.055
+    match kind:
+        "heavy_swing":
+            duration = 0.43
+            pitch_start = 218.0
+            pitch_end = 52.0
+            bass = 0.135
+        "jump_swing":
+            duration = 0.49
+            pitch_start = 285.0
+            pitch_end = 47.0
+            bass = 0.160
+        "charged_swing":
+            duration = 0.39
+            pitch_start = 455.0
+            pitch_end = 68.0
+            bass = 0.105
+    var sample_count: int = roundi(duration * RATE)
+    var pcm: PackedByteArray = PackedByteArray()
+    pcm.resize(sample_count * 2)
+    var noise_state: int = posmod(kind.hash() + 18523, 2147483646) + 1
+    var mid: float = 0.0
+    var low: float = 0.0
+    var phase: float = 0.0
+    for i in range(sample_count):
+        var t: float = float(i) / float(sample_count)
+        noise_state = (noise_state * 16807) % 2147483647
+        var white: float = float(noise_state % 65535) / 32767.5 - 1.0
+        mid = lerpf(mid, white, 0.19)
+        low = lerpf(low, white, 0.019)
+        var air: float = mid - low
+        # Slow gathering air, fast release, then a soft tail on the miss.
+        var crest: float = pow(maxf(0.0, sin(t * PI)), 1.7)
+        var sweep: float = 0.55 + 0.45 * sin((t * 4.8 - 0.7) * PI) * sin(t * PI)
+        var envelope: float = maxf(0.0, crest * sweep)
+        phase += TAU * lerpf(pitch_start, pitch_end, t) / RATE
+        var sound: float = (air * 2.25 + sin(phase) * bass) * envelope
+        var sample: int = clampi(roundi(sound * 21000.0), -32768, 32767)
+        var signed_bits: int = sample & 0xffff
+        pcm[i * 2] = signed_bits & 255
+        pcm[i * 2 + 1] = (signed_bits >> 8) & 255
+    var stream: AudioStreamWAV = AudioStreamWAV.new()
+    stream.format = AudioStreamWAV.FORMAT_16_BITS
+    stream.mix_rate = RATE
+    stream.stereo = false
+    stream.data = pcm
+    return stream
+
 static func _render(kind: String) -> AudioStreamWAV:
+    if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing"]:
+        return _render_air_sweep(kind)
     var duration: float = 0.19
     var start_hz: float = 350.0
     var end_hz: float = 100.0
