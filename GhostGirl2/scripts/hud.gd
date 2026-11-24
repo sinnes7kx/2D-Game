@@ -356,3 +356,11 @@ func _open_collection_vault(item: GhostItemInstance) -> void:
 		_cancel_cursor_item()
 	_hide_item_hover()
 	collection_vault.call("open_vault", inventory_data, item)
+
+func open_exhibition(slot: int, item: GhostItemInstance) -> void:
+	if inventory_data == null:
+		return
+	_hide_item_hover()
+	collection_vault.call("open_vault", inventory_data, item, slot)
+	if item != null:
+		_open_collector_lens(item)

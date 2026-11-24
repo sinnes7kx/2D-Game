@@ -18,6 +18,7 @@ var rare_visual_mod: int = -1
 var debug_visual_override: int = -1
 var collector_favorite: bool = false
 var collector_locked: bool = false
+var exhibition_slot: int = -1 # Only assigned while in collection vault.
 var debug_collector_tier: int = -1
 var debug_color_mode: int = -1
 var debug_glow_motif: int = -1

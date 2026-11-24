@@ -20,6 +20,7 @@ var grid_positions: Array[Vector2i] = []  # y = page * GRID_ROWS + local row
 var equipment: Dictionary = {"dress": -1, "wings": -1, "trinket": -1, "charm": -1, "wand": -1, "sword": -1}
 var collected_pickups: Dictionary = {}
 const VAULT_CAPACITY: int = 240
+const EXHIBITION_CAPACITY: int = 6
 var vault: Array[GhostItemInstance] = []
 var unresolved_vault: Array[Dictionary] = []
 
@@ -357,7 +358,7 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"cosmetic_uid": item.cosmetic_uid,
 		"rare_visual_mod": item.rare_visual_mod,
 		"saved_cosmetic_looks": item.saved_cosmetic_looks.duplicate(true),
-		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked
+		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked, "exhibition_slot": item.exhibition_slot
 	}
 
 func load_game() -> void:
@@ -384,6 +385,7 @@ func load_game() -> void:
 			continue
 		var item: GhostItemInstance = _deserialize_item(saved)
 		if item != null:
+			item.exhibition_slot = -1
 			var wanted: Vector2i = Vector2i(int(saved.get("grid_x", -1)), int(saved.get("grid_y", -1)))
 			if wanted.y >= 0 and saved_grid_rows != GRID_ROWS:
 				var old_page: int = int(floor(float(wanted.y) / float(saved_grid_rows)))
@@ -405,6 +407,7 @@ func load_game() -> void:
 				unresolved_vault.append(saved.duplicate(true))
 			else:
 				vault.append(stored)
+	_normalize_exhibition()
 	collected_pickups.clear()
 	for key in (data.get("collected", {}) as Dictionary).keys():
 		collected_pickups[str(key)] = true
@@ -467,6 +470,7 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 			item.socketed.append(jewel.duplicate(true))
 	item.collector_favorite = bool(saved.get("collector_favorite", false))
 	item.collector_locked = bool(saved.get("collector_locked", false))
+	item.exhibition_slot = clampi(int(saved.get("exhibition_slot", -1)), -1, EXHIBITION_CAPACITY - 1)
 	return item
 
 func vault_store(index: int, persist: bool = true) -> bool:
@@ -499,6 +503,8 @@ func vault_withdraw(index: int, persist: bool = true) -> bool:
 	var pos: Vector2i = _first_open(item)
 	if pos.x < 0:
 		return false
+	var previous_slot: int = item.exhibition_slot
+	item.exhibition_slot = -1
 	vault.remove_at(index)
 	contents.append(item)
 	grid_positions.append(pos)
@@ -506,6 +512,7 @@ func vault_withdraw(index: int, persist: bool = true) -> bool:
 		contents.pop_back()
 		grid_positions.pop_back()
 		vault.insert(index, item)
+		item.exhibition_slot = previous_slot
 		return false
 	contents_changed.emit()
 	equipment_changed.emit()
@@ -518,6 +525,53 @@ func set_collector_flag(item: GhostItemInstance, flag: String, value: bool) -> b
 	item.set(flag, value)
 	if not save_game():
 		item.set(flag, old)
+		return false
+	contents_changed.emit()
+	return true
+
+# Each physical display references a single stored instance. Duplicated
+# cosmetic UIDs are allowed; they never identify ownership or slot assignment.
+func exhibition_item(slot: int) -> GhostItemInstance:
+	if slot < 0 or slot >= EXHIBITION_CAPACITY:
+		return null
+	for item in vault:
+		if item.exhibition_slot == slot:
+			return item
+	return null
+
+func exhibition_reserved(slot: int) -> bool:
+	for record in unresolved_vault:
+		if int(record.get("exhibition_slot", -1)) == slot:
+			return true
+	return false
+
+func _normalize_exhibition() -> void:
+	var occupied: Dictionary = {}
+	for item in vault:
+		var slot: int = item.exhibition_slot
+		if slot < 0:
+			continue
+		if slot >= EXHIBITION_CAPACITY or occupied.has(slot) or exhibition_reserved(slot):
+			item.exhibition_slot = -1
+		else:
+			occupied[slot] = true
+
+func set_exhibition(item: GhostItemInstance, slot: int, persist: bool = true) -> bool:
+	if item == null or not vault.has(item) or slot < -1 or slot >= EXHIBITION_CAPACITY:
+		return false
+	if slot >= 0 and exhibition_reserved(slot):
+		return false
+	var previous: int = item.exhibition_slot
+	var replaced: GhostItemInstance = exhibition_item(slot)
+	if replaced == item:
+		return true
+	if replaced != null:
+		replaced.exhibition_slot = -1
+	item.exhibition_slot = slot
+	if persist and not save_game():
+		item.exhibition_slot = previous
+		if replaced != null:
+			replaced.exhibition_slot = slot
 		return false
 	contents_changed.emit()
 	return true
