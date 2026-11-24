@@ -493,6 +493,14 @@ Choose incremental wrappers around working code before introducing sweeping repl
 - [ ] On a lower-end GPU, check first-load frame generation time and memory. Adjust transition strength if the weapon looks ghosted rather than still.
 - [ ] Longer-term animation-art pass: commission/author eight genuinely distinct approved body-breathing frames while keeping the weapon grip and silhouette fixed; replace interpolated idle only after visual review.
 
+### v1.96: compact visual tooltip and sword-idle readability (source implementation; Godot F5 pending)
+
+- [ ] Test 16 subtle silhouette-locked sword idle frames in all four directions; bow and spear idles retain their eight-step treatment. Confirm that genuine painted weapon contours remain steady and no odd palette ghosting appears when holding a prized item.
+- [ ] Check that the normal item tooltip stays compact even when Alt pins it: stats, sockets, larger labelled dot controls, and separately colored flavour prose. Technical roll code/history and lengthy appearance sections remain in P/Inspect.
+- [ ] Hold Alt, then hover each visual color dot; verify correct panel-level contextual help for surface tint, bowstring light and FX glow on current and compared items. Dots are shader/FX samples, **not an exact prediction of final weapon pixels**.
+- [ ] Cross-check the Moonveil/Thornrose bow limb tint dots against the actual `weapon_surface_v190.gd` shader input after mixing its material ramp, including different effects intensity/debug appearance. Do not imply that the full bow inherits the glow color.
+- [ ] Run v1.95 and v1.96 Godot smoke regressions, open equipped preview, and manually check mouse interaction and resource/memory costs on older hardware. Neither the item RNG/save schema nor combat damage may change.
+
 ### Art and audio principles
 
 - [ ] Preserve the approved Ghost Girl silhouette, facial appearance, and dark painterly 2D aesthetic.
