@@ -130,8 +130,6 @@ static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float
 	canvas.draw_line(root, tip, edge, 0.55, true)
 	var axis: Vector2 = (tip - root).normalized()
 	var normal: Vector2 = Vector2(-axis.y, axis.x)
-	var tier: int = int(p["material"])
-	var finish: int = int(p["finish"])
 	# Every etching is sampled from the real cross section, so narrow blades
 	# cannot have floating markings. Separate from surface and glow rolls.
 	var ink: Color = p.get("ornament_ink", accent)
