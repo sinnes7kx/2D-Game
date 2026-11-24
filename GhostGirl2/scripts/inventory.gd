@@ -466,12 +466,16 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	# Preserve the actual generated rolls: random-quality generation consumes
 	# an extra RNG draw compared with forced-quality reconstruction.
 	if saved.has("rolled_stat"):
-		item.stat_value = float(saved["rolled_stat"])
+		item.stat_value = snappedf(float(saved["rolled_stat"]), 0.1)
 	if saved.get("rolled_affixes") is Array:
 		item.affixes.clear()
 		for affix in saved["rolled_affixes"]:
 			if affix is Dictionary:
-				item.affixes.append(affix.duplicate(true))
+				var restored_affix: Dictionary = affix.duplicate(true)
+				# Generated affixes are quantized to tenths. JSON decimal parsing
+				# can otherwise differ by a floating-point bit from snappedf.
+				restored_affix["value"] = snappedf(float(affix.get("value", 0.0)), 0.1)
+				item.affixes.append(restored_affix)
 	if saved.has("rolled_sockets"):
 		item.sockets = clampi(int(saved["rolled_sockets"]), 0, definition.max_sockets)
 	for jewel in saved.get("socketed", []):
