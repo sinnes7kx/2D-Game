@@ -614,12 +614,14 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 
 ## 15. Next-build task order — actionable sprint
 
+**Integration gate (2026-11-25):** PR #37 reached `main`, while subsequent PRs #38 and #39 were merged into **stacked feature branches**, not `main`. A green nested PR is not a mainline release. PR #40 targets `main` to integrate v1.97–v1.98 together. Its headless CI must pass; after merge, verify the new scripts and tests are visible from `main` and run a mainline smoke workflow. Real F5 bow hand placement in four directions, audio feel, item migrations, vault, inventory, and old saves are still open.
+
 **Sprint A: stability before spectacle**
 
 - [ ] Check current branch and reproduce/close the inventory Button → OptionButton issue with Godot.
 - [ ] Run `v1921_dropdown_compat_smoke.gd`; inspect and clean the duplicate conflict-marked inventory script.
 - [ ] Run existing smoke tests, then F5 test the full item lifecycle, vault, exhibitions, and an older save.
-- [ ] Restore the v1.92.2 collection recovery regression to the active workflow and resolve its failure; verify transfer safety and old saves before expanding loot families.
+- [x] Restore the v1.92.2 collection recovery regression to the active workflow. **Godot headless CI passed** in run 45511859931, including the legacy migration test. Real F5 transfer/save-load checks and private older-save compatibility remain outstanding; do not treat CI as that playtest.
 - [ ] Document any remaining blockers and only declare completion with evidence.
 
 **Sprint B: the collector's identity**
