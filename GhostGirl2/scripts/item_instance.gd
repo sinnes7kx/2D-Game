@@ -11,6 +11,9 @@ var item_seed: int = 0
 var cosmetic_seed: int = -1
 # Opaque 128-bit appearance ID; intentionally never shown in tooltips.
 var cosmetic_uid: String = ""
+# Recorded once for new finds; empty on legacy items with unknown birth appearance.
+var birth_roll_code_v1: String = ""
+var birth_roll_uid_v1: String = ""
 # Independent, extremely rare VISUAL-only signature (0 none, 1..5 effects).
 var rare_visual_mod: int = -1
 # In-memory debug inspection only. Intentionally omitted from save dictionaries,

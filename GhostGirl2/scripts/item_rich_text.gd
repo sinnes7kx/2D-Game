@@ -2,6 +2,8 @@ extends RefCounted
 ## v1.51 — Diablo II-inspired compact information, with ALT for advanced/cosmetics.
 ## Do not print stat/loot/cosmetic seed numbers or cosmetic palette names by default.
 const GOLD = "#e4c88f"
+const ROLL_CODE = preload("res://scripts/collector_roll_code_v1931.gd")
+const GOLD = "#dfc38e"
 const MUTED = "#a19aa4"
 const GREEN = "#9bcfb4"
 const RED = "#e6a2a2"
@@ -69,6 +71,18 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append(_cosmetic_dots(item))
 	if slot in ["sword", "wand"] and not item.regional_imprint_label().is_empty():
 		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, escape(item.regional_imprint_label())])
+	if slot in ["sword", "wand"] and (advanced or OS.is_debug_build()):
+		var code: String = ROLL_CODE.current(item)
+		var birth: String = item.birth_roll_code_v1 if ROLL_CODE.valid_code(item.birth_roll_code_v1) else "unknown (legacy)"
+		out.append("[font_size=14][color=#dfc38e]ROLL · %s[/color][/font_size]" % code)
+		out.append(_label("Original · " + birth))
+		if ROLL_CODE.debug_active(item):
+			out.append(_label("TEST FX active · genuine rolls unchanged"))
+		if advanced:
+			out.append(_label("V1 · - means not ranked / not applicable"))
+			out.append(_label(ROLL_CODE.breakdown(code)))
+			if birth != "unknown (legacy)":
+				out.append(_label("Original look" if item.cosmetic_uid == item.birth_roll_uid_v1 else "Current look differs from original"))
 	if not advanced:
 		if slot in ["sword", "wand"]:
 			out.append("[font_size=11][color=%s]P  ·  Inspect weapon[/color][/font_size]" % MUTED)
@@ -91,7 +105,7 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		if item.visual_signature() > 0:
 			var signature_level: int = item.visual_signature()
 			var signature_title: String = "Mythic Radiance" if signature_level == 4 else ("Moonfall Halo" if signature_level == 5 else GhostCosmeticRNGV152.signature_name(signature_level))
-			out.append("[font_size=13][color=%s]✦ EXTREMELY RARE · %s[/color][/font_size]" % [GOLD, escape(signature_title)])
+			out.append("[font_size=13][color=%s]✦ %s · %s[/color][/font_size]" % [GOLD, "TEST EFFECT" if ROLL_CODE.debug_active(item) else "EXTREMELY RARE", escape(signature_title)])
 			if signature_level == 4:
 				var layers: Array[String] = ["Lightning arcs", "Cinder motes", "Astral pulses", "Spectral petals"]
 				out.append(_label("Mythic animation · " + layers[item.mythic_layer_variant()]))
