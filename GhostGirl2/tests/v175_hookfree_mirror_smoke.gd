@@ -62,7 +62,40 @@ func _verify() -> void:
 					source_frame = WALK_SEQUENCE[frame]
 				var image: Texture2D = frames.get_frame_texture(target, frame)
 				var approved: Texture2D = frames.get_frame_texture(clean, source_frame)
-				if image != approved:
+				if idle and target in ["thornrose_idle_left", "moonveil_idle_left"]:
+					# v1.95 synthesizes the 7 intermediate bow-idle frames from
+					# approved hook-free sources. Test silhouette/alpha fidelity,
+					# not Resource identity (only frame zero is the original ref).
+					var neutral: Texture2D = frames.get_frame_texture(clean, 0)
+					if frame == 0:
+						if image != neutral:
+							push_error("v1.95 left bow neutral source changed: " + target)
+							failures += 1
+					else:
+						var base_img: Image = neutral.get_image()
+						var tween_img: Image = image.get_image()
+						if base_img == null or tween_img == null or base_img.get_size() != tween_img.get_size():
+							push_error("v1.95 left bow idle image invalid: " + target)
+							failures += 1
+						else:
+							if base_img.is_compressed():
+								base_img.decompress()
+							if tween_img.is_compressed():
+								tween_img.decompress()
+							base_img.convert(Image.FORMAT_RGBA8)
+							tween_img.convert(Image.FORMAT_RGBA8)
+							var before: PackedByteArray = base_img.get_data()
+							var after: PackedByteArray = tween_img.get_data()
+							if before.size() != after.size():
+								push_error("v1.95 bow idle alpha size changed: " + target)
+								failures += 1
+							else:
+								for p in range(3, before.size(), 4):
+									if before[p] != after[p]:
+										push_error("v1.95 left bow hook-free contour changed: " + target)
+										failures += 1
+										break
+				elif image != approved:
 					push_error("v1.75 old hook-backed frame detected: " + target + " #" + str(frame))
 					failures += 1
 				examined += 1
