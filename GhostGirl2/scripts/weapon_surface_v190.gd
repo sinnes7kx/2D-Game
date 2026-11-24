@@ -1,4 +1,5 @@
 extends RefCounted
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const SHADER = preload("res://assets/equipment/weapon_surface_v190.gdshader")
 
@@ -27,9 +28,10 @@ static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, over
 	mat.set_shader_parameter("cell_size", cell)
 	mat.set_shader_parameter("overlay_only", overlay)
 	mat.set_shader_parameter("strength", 0.38 if overlay else 0.40)
+	mat.set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
 
 static func key(item: GhostItemInstance) -> String:
-	return "%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank, item.debug_glow_motif, item.debug_color_mode]
+	return "%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank, item.debug_glow_motif, item.debug_color_mode, FX_LEVEL.revision]
 
 static func bow_pigment(item: GhostItemInstance, look: Dictionary) -> Array[Color]:
 	var limbs: Array[Color] = item.bow_limb_gradient_colors()
