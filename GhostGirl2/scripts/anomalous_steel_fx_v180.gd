@@ -1,22 +1,46 @@
 extends RefCounted
 ## Shared animated color and blade-local motif renderer. All effects are cosmetic.
+const PALETTE = preload("res://scripts/cosmetic_rng_v152.gd")
+
 static func color_at(colors: Array[Color], look: Dictionary, t: float, time: float) -> Color:
-	if colors.size() < 3:
+	if colors.is_empty():
 		return Color.WHITE
 	var mode: int = int(look.get("color_mode", 0))
-	var phase: float = time * float(look.get("shift_rate", 0.1))
-	var u: float = clampf(t, 0.0, 1.0)
-	if mode in [2, 3, 5, 6]:
-		u = fposmod(t + phase, 1.0)
-	var ink: Color = colors[0].lerp(colors[1], u * 2.0) if u < 0.5 else colors[1].lerp(colors[2], (u - 0.5) * 2.0)
+	var speed: float = float(look.get("palette_speed", look.get("shift_rate", 0.1)))
+	var direction: float = float(look.get("palette_direction", 1.0))
+	var phase: float = time * speed * direction
+	var spread: float = float(look.get("palette_span", 1.0))
+	var offset: float = float(look.get("palette_offset", 0.0))
+	var pulse: float = float(look.get("palette_pulse", 0.15))
+	var smooth: bool = int(look.get("palette_curve", 0)) != 1
+	var u: float = t * spread + offset
+	var cycle: bool = false
+	var anomaly: bool = int(look.get("material", 0)) == 6 or int(look.get("particle_tier", 0)) == 6
 	match mode:
-		1: ink = ink.lerp(Color.WHITE, 0.18 + 0.17 * sin(phase * TAU))
-		3: ink = Color.from_hsv(fposmod(ink.h + phase * 0.45, 1.0), ink.s, 1.0)
-		4: ink = Color.from_hsv(fposmod(ink.h + phase, 1.0), 0.75, 1.0)
-		5: ink = ink.lerp(Color.WHITE, pow(maxf(0.0, sin((t - phase) * TAU)), 5.0) * 0.7)
-		6: ink = Color.from_hsv(fposmod(ink.h + phase + t * 0.35, 1.0), 0.85, 1.0)
-	if int(look.get("material", 0)) == 6 or int(look.get("particle_tier", 0)) == 6:
-		ink = Color.from_hsv(fposmod(ink.h + phase * 0.65 + t * 0.45, 1.0), 0.78, 1.0)
+		2:
+			u += phase
+			cycle = true
+		3:
+			u += sin(phase * TAU) * 0.33
+			cycle = true
+		4:
+			u += 0.5 + 0.5 * sin(phase * TAU + offset)
+			cycle = true
+		5:
+			u += phase * 0.5
+			cycle = true
+		6:
+			u += phase + sin(t * TAU + phase * TAU) * 0.25
+			cycle = true
+	if anomaly:
+		# Anomaly has a more unusual wave, but NEVER rotates the HSV hue wheel.
+		u += phase * 0.7 + sin(t * TAU * spread + phase * TAU) * 0.18
+		cycle = true
+	var ink: Color = PALETTE.sample_palette(colors, u if cycle else t, cycle, smooth)
+	if mode == 1:
+		ink = ink.lerp(Color.WHITE, (0.5 + 0.5 * sin(phase * TAU)) * pulse)
+	elif mode == 5:
+		ink = ink.lerp(Color.WHITE, pow(maxf(0.0, sin((t - phase) * TAU)), 5.0) * pulse)
 	if int(look.get("region_rank", 0)) > 0:
 		var local: Color = look.get("region_color", Color.WHITE)
 		var dusk: Color = look.get("region_shadow", Color.WHITE)
