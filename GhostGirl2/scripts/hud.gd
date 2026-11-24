@@ -226,8 +226,8 @@ func _input(event: InputEvent) -> void:
 			inspect = event.pressed and not event.echo and event.physical_keycode == KEY_P
 		if inspect:
 			var candidate: GhostItemInstance = hovered_item as GhostItemInstance
-			if candidate == null or candidate.get_slot() not in ["sword", "wand"]:
-				candidate = inventory_panel.call("selected_weapon_for_inspection") as GhostItemInstance
+			if candidate == null or candidate.definition == null:
+				candidate = inventory_panel.call("selected_item_for_inspection") as GhostItemInstance
 			if candidate != null:
 				_open_collector_lens(candidate)
 				get_viewport().set_input_as_handled()
@@ -340,7 +340,7 @@ func set_lock_target(target_name: String) -> void:
 	lock_label.visible = not target_name.is_empty()
 
 func _open_collector_lens(item: GhostItemInstance) -> void:
-	if item == null or item.get_slot() not in ["sword", "wand"] or not is_instance_valid(collector_lens):
+	if item == null or item.definition == null or not is_instance_valid(collector_lens):
 		return
 	# Clicking an inventory item can leave it on the cursor. Cancel the
 	# temporary cursor state, not the actual item, before opening the modal.
