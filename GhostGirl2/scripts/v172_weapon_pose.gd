@@ -2,6 +2,7 @@ extends Node2D
 const DAGGER_THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 var v180_elapsed: float = 0.0
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.2 — authored four-facing weapon strike poses.
 ## Uses the approved unarmed attack BODY frames; renders physical weapon
@@ -147,6 +148,11 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
+	var idle: bool = GENTLE.modular_idle(animation_name)
+	var span: PackedVector2Array = _authored_weapon_span(animation_name, 0 if idle else frame_index)
+	return GENTLE.smooth(body, animation_name, span) if idle else span
+
+func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	var empty: PackedVector2Array = PackedVector2Array()
 	if not _is_equipped(animation_name):
 		return empty
@@ -336,8 +342,8 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 			var fx_look: Dictionary = get_meta("v180_fx_look")
 			var colors: Array[Color] = get_meta("v180_fx_colors")
 			for side in [-1.0, 1.0]:
-				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 1.4)
-				ANOMALOUS.draw_edge(self, MODULAR.edge_points(rear_root, rear, width, look, side), colors, fx_look, v180_elapsed, 1.4)
+				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 0.78)
+				ANOMALOUS.draw_edge(self, MODULAR.edge_points(rear_root, rear, width, look, side), colors, fx_look, v180_elapsed, 0.78)
 		return
 	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
 	draw_line(rear_root, front_root, Color("78596d"), 3.0, true)
