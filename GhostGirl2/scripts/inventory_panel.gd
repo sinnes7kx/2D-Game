@@ -203,7 +203,9 @@ func _show_details(index: int) -> void:
 	if equip_button.visible:
 		var equipped: bool = inventory.equipped_index(item.get_slot()) == index
 		equip_button.text = "EQUIPPED" if equipped else "EQUIP"
-		equip_button.disabled = equipped
+		equip_button.disabled = equipped or item.is_broken()
+		if item.is_broken():
+			equip_button.text = "BROKEN"
 	socket_button.visible = item.get_slot() != "none" and item.sockets > item.socketed.size()
 	if socket_button.visible:
 		socket_button.text = "SELECT GEM OR RUNE" if pending_gear_index < 0 else "CHOOSE A GEM / RUNE"
