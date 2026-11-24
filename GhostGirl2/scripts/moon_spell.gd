@@ -13,6 +13,7 @@ var age: float = 0.0
 var effect_motif: int = 0
 var effect_color: Color = Color("bca9f5")
 var accent_color: Color = Color("efbde0")
+var full_palette: Array[Color] = []
 var gradient_c: Color = Color("f0dce9")
 var rare_signature: int = 0
 var mythic_layer_variant: int = 0  # purely visual, saved-look-derived
@@ -200,7 +201,7 @@ func _draw() -> void:
 	for j in range(trail.size()):
 		var t: float = float(j + 1) / float(trail.size())
 		var trail_point: Vector2 = to_local(trail[j])
-		var trace: Color = effect_color if j % 2 == 0 else accent_color
+		var trace: Color = GhostCosmeticRNGV152.sample_palette(full_palette if not full_palette.is_empty() else [effect_color, accent_color, gradient_c], t)
 		draw_circle(trail_point, (2.0 + t * 3.0) * scale_factor, Color(trace.r, trace.g, trace.b, 0.10 + t * 0.29))
 		if trail_style >= 2:
 			var normal: Vector2 = Vector2(-direction.y, direction.x)
@@ -228,7 +229,7 @@ func _draw() -> void:
 		for i in range(3):
 			var off: float = float(i - 1) * 16.0 + sin(age * 18.0 + float(i)) * 2.0
 			var p: Vector2 = normal * off - direction * 3.0
-			var star_color: Color = effect_color if i % 2 == 0 else accent_color
+			var star_color: Color = GhostCosmeticRNGV152.sample_palette(full_palette if not full_palette.is_empty() else [effect_color, accent_color, gradient_c], fposmod(float(i) * 0.21, 1.0))
 			draw_circle(p, 6.0 * scale_factor, Color(star_color.r, star_color.g, star_color.b, 0.71))
 			draw_line(p + Vector2(-6, 0), p + Vector2(6, 0), light, 1.6, true)
 			draw_line(p + Vector2(0, -6), p + Vector2(0, 6), light, 1.6, true)
@@ -298,7 +299,7 @@ func _draw_luminous_lance() -> void:
 # Everything below is drawing-only; one projectile still performs one hit event.
 func _v156_ink(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
-	return effect_color.lerp(accent_color, u * 2.0) if u <= 0.5 else accent_color.lerp(gradient_c, (u - 0.5) * 2.0)
+	return GhostCosmeticRNGV152.sample_palette(full_palette if not full_palette.is_empty() else [effect_color, accent_color, gradient_c], u)
 
 func _v156_soft_point(at: Vector2, color: Color, size: float, opacity: float) -> void:
 	draw_circle(at, size * 1.8, Color(color.r, color.g, color.b, 0.016 * opacity))
@@ -359,7 +360,7 @@ func _draw_lance_cosmetics() -> void:
 # wand's cosmetic UID. The gameplay bolt/beam is still ONE damage query.
 func _mythic_spell_ink(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
-	return effect_color.lerp(accent_color, u * 2.0) if u <= 0.5 else accent_color.lerp(gradient_c, (u - 0.5) * 2.0)
+	return GhostCosmeticRNGV152.sample_palette(full_palette if not full_palette.is_empty() else [effect_color, accent_color, gradient_c], u)
 
 func _draw_mythic_spell_bolt(scale_factor: float) -> void:
 	var heading: Vector2 = direction.normalized() if direction.length_squared() > 0.01 else Vector2.RIGHT
