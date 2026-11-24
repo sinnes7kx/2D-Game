@@ -14,6 +14,16 @@ func set_item(value: GhostItemInstance) -> void:
 	item = value
 	self_modulate.a = item.weapon_opacity() if item != null else 1.0
 	look = item.collector_appearance() if item != null else {}
+	if item != null and look.is_empty():
+		look = preload("res://scripts/collector_appearance_v177.gd").roll(item.cosmetic_uid, item.visual_seed())
+		if OS.is_debug_build():
+			if item.debug_collector_tier >= 0:
+				look["material"] = item.debug_collector_tier
+				look["particle_tier"] = item.debug_collector_tier
+			if item.debug_color_mode >= 0:
+				look["color_mode"] = item.debug_color_mode
+			if item.debug_glow_motif >= 0:
+				look["glow_motif"] = item.debug_glow_motif
 	profiles.clear()
 	for hand in range(2):
 		profiles.append(ART.weapon_profile(look, str(item.definition.item_id), hand) if item != null and item.definition != null else {})
@@ -47,7 +57,11 @@ func _draw() -> void:
 		return
 	if not is_modular() or profiles.is_empty() or profiles[0].is_empty():
 		if item.definition.icon != null:
-			draw_texture_rect(item.definition.icon, Rect2(-45, -45, 90, 90), false)
+			var size: Vector2 = Vector2(item.definition.icon.get_size())
+			var fit: Vector2 = size * (90.0 / maxf(1.0, maxf(size.x, size.y)))
+			draw_texture_rect(item.definition.icon, Rect2(-fit * 0.5, fit), false)
+		if glow_enabled:
+			_draw_artwork_effects()
 		return
 	var style: String = item.weapon_style()
 	match style:
@@ -81,6 +95,7 @@ func _draw() -> void:
 				_blade(Vector2(0, 5), Vector2(0, -35), 3.2, 0)
 	if glow_enabled:
 		_draw_light()
+		_draw_signature(Vector2.ZERO, 60.0)
 
 func _draw_trident() -> void:
 	_grip(Vector2(0, 55), Vector2(0, -36), 4.5, 0)
@@ -93,3 +108,55 @@ func _draw_trident() -> void:
 func _draw_light() -> void:
 	for path in segments:
 		ANOMALOUS.draw_edge(self, path, gradients, look, elapsed, float(look.get("glow_strength", 1.0)))
+
+# Existing icon artwork remains intact. These display-only effects use its
+# saved colors and signatures; they do not pretend to be an equipped rig.
+func _draw_artwork_effects() -> void:
+	if gradients.size() < 3:
+		return
+	var tier: int = int(look.get("particle_tier", 0))
+	var motif: int = int(look.get("glow_motif", 0))
+	var radius: float = 39.0
+	if item.get_slot() == "wand":
+		radius = 32.0
+	var count: int = 4 + mini(tier, 5)
+	for i in range(count):
+		var u: float = float(i) / float(count)
+		var phase: float = elapsed * (0.48 + 0.045 * float(motif)) + u * TAU
+		var p: Vector2 = Vector2.from_angle(phase) * (radius + 5.0 * sin(phase * 2.0))
+		var ink: Color = ANOMALOUS.color_at(gradients, look, u, elapsed)
+		ink.a = 0.62 + 0.12 * sin(phase * 1.4)
+		match motif:
+			0, 7: draw_circle(p, 1.6, ink)
+			1, 6:
+				draw_line(p - Vector2(3,0), p + Vector2(3,0), ink, 0.9, true)
+				draw_line(p - Vector2(0,3), p + Vector2(0,3), ink, 0.9, true)
+			2: draw_colored_polygon(PackedVector2Array([p, p + Vector2(2,-4), p + Vector2(4,1)]), ink)
+			3: draw_polyline(PackedVector2Array([p - Vector2(3,3), p + Vector2(1,-1), p + Vector2(-1,1), p + Vector2(3,3)]), ink, 1.0, true)
+			4: draw_arc(p, 3.0, phase, phase + PI, 12, ink, 1.0, true)
+			5: draw_line(p, p - Vector2.from_angle(phase + PI / 2.0) * 7.0, ink, 1.2, true)
+		ink.a = 0.08
+		draw_circle(p, 5.0, ink)
+	_draw_signature(Vector2.ZERO, radius + 10.0)
+
+func _draw_signature(center: Vector2, radius: float) -> void:
+	var sig: int = item.visual_signature()
+	var tier: int = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0)))
+	if gradients.size() < 3 or (sig <= 0 and tier < 4):
+		return
+	var ink: Color = ANOMALOUS.color_at(gradients, look, 0.4, elapsed)
+	ink.a = 0.52
+	var phase: float = elapsed * 0.65
+	if sig == 2 or sig == 5 or tier >= 5:
+		draw_arc(center, radius, phase, phase + PI * 1.35, 48, ink, 1.1, true)
+	if sig == 5 or tier == 6:
+		draw_arc(center, radius + 5.0, -phase, -phase + PI * 0.9, 36, ink, 0.9, true)
+	var variant: int = item.mythic_layer_variant() if sig == 4 else sig % 4
+	for j in range(5 if sig == 4 else 3):
+		var a: float = phase + float(j) * TAU / 5.0
+		var p: Vector2 = center + Vector2.from_angle(a) * radius
+		match variant:
+			0: draw_polyline(PackedVector2Array([p + Vector2(-3,-5),p,p + Vector2(3,-2),p + Vector2(0,5)]), ink, 1.0, true)
+			1: draw_circle(p, 1.8, ink)
+			2: draw_arc(p, 3.4, 0, TAU, 16, ink, 1.0, true)
+			3: draw_colored_polygon(PackedVector2Array([p,p + Vector2(2,-4),p + Vector2(4,0)]), ink)
