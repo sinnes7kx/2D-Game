@@ -95,5 +95,8 @@ jobs:
       - name: Verify preloaded core animation resource and repeatable installation
         run: godot --headless --path GhostGirl2 --script res://tests/v1791_core_animation_smoke.gd
 
+      - name: Verify anomalous steel color modes and hand anchor regression
+        run: godot --headless --path GhostGirl2 --script res://tests/v180_anomalous_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
