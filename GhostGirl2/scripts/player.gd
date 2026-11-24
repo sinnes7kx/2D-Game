@@ -60,6 +60,8 @@ const STAMINA_RECOVERY_WAIT: float = 0.50
 
 
 var world
+# Isolated character-screen actor, never registered as a gameplay player.
+var equipment_preview_only: bool = false
 var facing: Vector2 = Vector2.DOWN
 var facing_name: String = "front"
 var carrying: RigidBody2D = null
@@ -162,6 +164,17 @@ func _ready() -> void:
 	var scythe_rig: Node2D = SCYTHE_RIG_V190.new()
 	scythe_rig.name = "ScytheRigV190"
 	body_art.add_child(scythe_rig)
+	if equipment_preview_only:
+		collision_layer = 0
+		collision_mask = 0
+		set_physics_process(false)
+		set_process(false)
+		set_process_input(false)
+		set_process_unhandled_input(false)
+		set_process_unhandled_key_input(false)
+		body_art.play("idle_front")
+		_update_hand()
+		return
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
