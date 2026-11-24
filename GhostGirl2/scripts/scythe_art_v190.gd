@@ -95,8 +95,12 @@ static func draw_scythe(canvas: Node2D, grip: Vector2, head: Vector2, p: Diction
 		var m1: Vector2 = outer[i+1].lerp(inner[i+1], 0.45)
 		var a: Color = SURFACE.surface_color(p, u, 0.25, phase)
 		var b: Color = SURFACE.surface_color(p, u, 0.75, phase)
-		canvas.draw_colored_polygon(PackedVector2Array([outer[i],outer[i+1],m1,m0]), a)
-		canvas.draw_colored_polygon(PackedVector2Array([m0,m1,inner[i+1],inner[i]]), b)
+		if i == outer.size() - 2:
+			canvas.draw_colored_polygon(PackedVector2Array([outer[i],outer[i+1],m0]), a)
+			canvas.draw_colored_polygon(PackedVector2Array([m0,m1,inner[i]]), b)
+		else:
+			canvas.draw_colored_polygon(PackedVector2Array([outer[i],outer[i+1],m1,m0]), a)
+			canvas.draw_colored_polygon(PackedVector2Array([m0,m1,inner[i+1],inner[i]]), b)
 	canvas.draw_polyline(outer, p["edge"], 0.85, true)
 	canvas.draw_polyline(inner, p["edge"], 1.0, true)
 	canvas.draw_line(head - axis * 3.5, head + axis * 3.5, trim, 2.2, true)
