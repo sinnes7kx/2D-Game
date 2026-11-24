@@ -270,15 +270,25 @@ func _axial_span() -> PackedVector2Array:
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 68.0)])
 	if style == "bow":
 		var bow_animation: String = _resolved_bow_animation_name(animation)
+		var frame_index: int = body.frame
+		var mirrored: bool = false
+		var offset: Vector2 = Vector2.ZERO
+		var mask: AnimatedSprite2D = body.get_node_or_null("BowPaletteV139") as AnimatedSprite2D
+		if mask != null and mask.visible and bow_axes_by_animation.has(str(mask.animation)):
+			bow_animation = str(mask.animation)
+			frame_index = mask.frame
+			mirrored = mask.flip_h
+			offset = mask.position
 		var axes: Array = bow_axes_by_animation.get(bow_animation, [])
 		if not axes.is_empty():
-			var guide: Variant = axes[clampi(body.frame, 0, axes.size() - 1)]
+			var guide: Variant = axes[clampi(frame_index, 0, axes.size() - 1)]
 			if guide is Array and guide.size() == 4:
 				var start_pos: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 				var end_pos: Vector2 = Vector2(float(guide[2]), float(guide[3]))
-				# The dedicated bow body frames are already correctly
-				# oriented, unlike the previous hook-body+carry-overlay path.
-				return PackedVector2Array([start_pos, end_pos])
+				if mirrored:
+					start_pos.x *= -1.0
+					end_pos.x *= -1.0
+				return PackedVector2Array([start_pos + offset, end_pos + offset])
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 46.0)])
 	# Every equipment category that actually occupies the weapon slot
 	# receives a visible fallback aura, not an empty array.
@@ -439,7 +449,7 @@ func _draw() -> void:
 		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
 		if physical == null or not bool(physical.call("_is_equipped", animation)):
 			_draw_v1723_twinblade_edges(grip, tip, normal, intensity)
-		_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
+			_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
 		return
 	ANOMALOUS.draw_edge(self, PackedVector2Array([grip.lerp(tip, 0.25), tip]), effect_palette, collector_look, elapsed, 1.0)
 	# Bow string and body remain recognizable; its glow must not become a solid bar.
