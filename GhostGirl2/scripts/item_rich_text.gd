@@ -65,6 +65,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	if slot != "none":
 		out.append(_cosmetic_dots(item))
 	if not advanced:
+		if slot in ["sword", "wand"]:
+			out.append("[font_size=11][color=%s]P  ·  Inspect weapon[/color][/font_size]" % MUTED)
 		out.append("[font_size=11][color=%s]ALT  ·  Advanced & appearance[/color][/font_size]" % MUTED)
 		return "\n".join(out)
 	out.append("[font_size=12][color=%s]—  ADVANCED  —[/color][/font_size]" % GOLD)

@@ -1,4 +1,6 @@
 extends CanvasLayer
+const COLLECTOR_LENS = preload("res://scripts/collector_lens_v179.gd")
+var collector_lens: Control
 ## Minimal node-authored HUD. No dialogue, no lore overlays, no objectives.
 ## Every onscreen element can be selected, moved or styled in hud.tscn.
 
@@ -58,6 +60,10 @@ func _ready() -> void:
 	health_meter.visible = false
 	stamina_meter.visible = false
 	portrait.texture = EMOTIONS["neutral"]
+	collector_lens = COLLECTOR_LENS.new()
+	collector_lens.name = "CollectorLensV179"
+	$Overlay.add_child(collector_lens)
+	collector_lens.z_index = 100
 
 func bind_inventory(value: Node) -> void:
 	inventory_data = value
@@ -192,6 +198,22 @@ func _drop_selected_item(index: int) -> void:
 		inventory_panel.call("clear_selection")
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(collector_lens) and collector_lens.visible:
+		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+			collector_lens.call("close_lens")
+			get_viewport().set_input_as_handled()
+		return
+	if is_menu_open() and cursor_item_index < 0 and hovered_item != null:
+		var inspect: bool = false
+		if event is InputEventMouseButton:
+			inspect = event.pressed and event.shift_pressed and event.button_index == MOUSE_BUTTON_RIGHT
+		elif event is InputEventKey:
+			inspect = event.pressed and not event.echo and event.physical_keycode == KEY_P
+		if inspect and hovered_item.get_slot() in ["sword", "wand"]:
+			collector_lens.call("open_item", hovered_item)
+			_hide_item_hover()
+			get_viewport().set_input_as_handled()
+			return
 	if cursor_item_index < 0 or not (event is InputEventMouseButton):
 		return
 	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
@@ -213,6 +235,9 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if is_instance_valid(collector_lens) and collector_lens.visible:
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_TAB or event.physical_keycode == KEY_I:
 			# A single Diablo-like view contains equipment and backpack together.
@@ -279,7 +304,7 @@ func set_health(current: float, maximum: float) -> void:
 	health_meter.visible = current < maximum
 
 func is_menu_open() -> bool:
-	return inventory_panel.visible or equipment_panel.visible
+	return inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible)
 
 func set_stamina(current: float, maximum: float) -> void:
 	stamina_meter.max_value = maximum

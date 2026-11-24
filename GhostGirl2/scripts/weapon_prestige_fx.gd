@@ -1,4 +1,5 @@
 extends Node2D
+const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.3 — blade-only twinblade enchantments and high-visibility seeded Mythic shimmer.
 ## Axial glows track the weapon shaft/blade instead of orbiting a floating tip.
 ## Seeded colors and time-based shimmer are visual-only; no new damage paths.
@@ -720,6 +721,14 @@ func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, 
 		var b: Vector2 = segment[1]
 		var direction: Vector2 = (b - a).normalized()
 		var normal: Vector2 = Vector2(-direction.y, direction.x)
+		var physical_profile: Dictionary = MODULAR.equipped_profile(self, body)
+		if not physical_profile.is_empty():
+			var chroma: Color = _gradient_at(fposmod(elapsed * 0.052 + (0.41 if direction.x < 0.0 else 0.06), 1.0))
+			for side in [-1.0, 1.0]:
+				var edge_path: PackedVector2Array = MODULAR.edge_points(a, b, width, physical_profile, side)
+				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.16 * minf(intensity, 2.0)), 2.2, true)
+				draw_polyline(edge_path, Color(chroma.r, chroma.g, chroma.b, 0.55 * minf(intensity, 1.5)), 0.85, true)
+			continue
 		var taper: Vector2 = a.lerp(b, 0.76)
 		var edge: Color = _gradient_at(fposmod(elapsed * 0.052 + (0.41 if direction.x < 0.0 else 0.06), 1.0)).lerp(Color.WHITE, 0.18)
 		for side in [-1.0, 1.0]:

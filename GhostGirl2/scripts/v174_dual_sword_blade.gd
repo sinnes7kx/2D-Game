@@ -1,4 +1,5 @@
 extends Node2D
+const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.74: two long, sharp Gothic weapons, one in each hand.
 ## All drawn geometry follows v174_dual_swords.gd per-frame blade positions.
 ## No hitbox, collider, gameplay roll or save mutations occur in this layer.
@@ -50,6 +51,11 @@ func _draw() -> void:
 	var guard: Vector2 = grip + tangent * 10.0
 	var blade_root: Vector2 = guard + tangent * 5.0
 	var blade_tip: Vector2 = point + tangent * 2.0
+	var look: Dictionary = MODULAR.equipped_profile(self, body, blade_index)
+	if not look.is_empty():
+		MODULAR.draw_grip(self, grip - tangent * 9.0, blade_root, 5.1, look)
+		MODULAR.draw_blade(self, blade_root, blade_tip, 5.2 if blade_index == 0 else 4.8, look)
+		return
 	var wrap: Color = Color("655266") if blade_index == 0 else Color("754c5e")
 	var metal: Color = Color("74738c") if blade_index == 0 else Color("682e49")
 	var second_metal: Color = Color("ddd5e4") if blade_index == 0 else Color("be6384")

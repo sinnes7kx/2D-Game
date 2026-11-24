@@ -86,5 +86,11 @@ jobs:
       - name: Validate independent collector appearance rolls
         run: godot --headless --path GhostGirl2 --script res://tests/v177_collector_smoke.gd
 
+      - name: Validate modular physical weapon profiles
+        run: godot --headless --path GhostGirl2 --script res://tests/v178_modular_smoke.gd
+
+      - name: Verify collector inspection modal and item preservation
+        run: godot --headless --path GhostGirl2 --script res://tests/v179_lens_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
