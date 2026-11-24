@@ -1,7 +1,6 @@
 extends RefCounted
 ## v1.51 — Diablo II-inspired compact information, with ALT for advanced/cosmetics.
 ## Do not print stat/loot/cosmetic seed numbers or cosmetic palette names by default.
-const GOLD = "#e4c88f"
 const ROLL_CODE = preload("res://scripts/collector_roll_code_v1931.gd")
 const GOLD = "#dfc38e"
 const MUTED = "#a19aa4"
@@ -9,6 +8,8 @@ const GREEN = "#9bcfb4"
 const RED = "#e6a2a2"
 const BLUE = "#a8bcff"
 const PALE = "#d9ccd7"
+const FLAVOUR = "#c99fd4"
+const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 
 static func escape(raw: String) -> String:
 	return raw.replace("[", "[lb]")
@@ -19,14 +20,87 @@ static func color_to_tag(ink: Color) -> String:
 static func _label(text_value: String) -> String:
 	return "[font_size=12][color=%s]%s[/color][/font_size]" % [MUTED, escape(text_value)]
 
+# These are explicitly named visual channels, NOT a promise that a whole
+# weapon will appear in the swatch color. Painted art and layered shaders mix.
+static func visual_colors(item: Variant, channel: String) -> Array[Color]:
+	var result: Array[Color] = []
+	if item == null:
+		return result
+	match channel:
+		"glow":
+			return item.glow_gradient_colors()
+		"string":
+			return item.bow_string_gradient_colors() if item.weapon_style() == "bow" else result
+		"surface":
+			if item.get_slot() not in ["sword", "wand"]:
+				return result
+			var look: Dictionary = item.collector_appearance()
+			var raw: Array = WEAPON_SURFACE.bow_pigment(item, look) if item.weapon_style() == "bow" else look.get("surface_colors", [])
+			for entry in raw:
+				if entry is Color:
+					result.append(entry)
+	return result
+
+static func _visual_row(item: Variant, channel: String, caption: String) -> String:
+	var tones: Array[Color] = visual_colors(item, channel)
+	if tones.is_empty():
+		return ""
+	var dots: Array[String] = []
+	for i in range(tones.size()):
+		dots.append("[url=visual:%s:%d][font_size=22][color=%s]●[/color][/font_size][/url]" % [channel, i, color_to_tag(tones[i])])
+	return "[font_size=11][color=%s]%s[/color][/font_size]  %s" % [MUTED, caption, "  ".join(dots)]
+
 static func _cosmetic_dots(item: Variant) -> String:
-	var colors: Array[Color] = item.glow_gradient_colors()
-	if item.get_slot() in ["sword", "wand"]:
-		colors = item.bow_limb_gradient_colors() if item.weapon_style() == "bow" else item.glow_gradient_colors()
-	var pieces: Array[String] = []
-	for ink in colors:
-		pieces.append("[font_size=16][color=%s]●[/color][/font_size]" % color_to_tag(ink))
-	return " ".join(pieces)
+	var rows: Array[String] = []
+	if item.weapon_style() == "bow":
+		rows.append(_visual_row(item, "surface", "BOW TINT"))
+		rows.append(_visual_row(item, "string", "STRING LIGHT"))
+	elif item.get_slot() in ["sword", "wand"]:
+		rows.append(_visual_row(item, "surface", "SURFACE TINT"))
+	rows.append(_visual_row(item, "glow", "FX LIGHT"))
+	var present: Array[String] = []
+	for line in rows:
+		if not line.is_empty():
+			present.append(line)
+	return "\n".join(present)
+
+# One swatch's visible meaning is explained here, when hovered. Kept out
+# of the ordinary item body: Alt only pins the panel for interactive reading.
+static func visual_dot_details(item: Variant, meta: String) -> String:
+	var tokens: PackedStringArray = meta.split(":")
+	if tokens.size() != 3 or tokens[0] != "visual":
+		return ""
+	var channel: String = tokens[1]
+	var index: int = int(tokens[2])
+	var tones: Array[Color] = visual_colors(item, channel)
+	if index < 0 or index >= tones.size():
+		return ""
+	var label: String = "FX LIGHT"
+	var explanation: String = "This is an effect-light gradient, not a full-weapon recolor. The original painted metal remains visible."
+	match channel:
+		"surface":
+			label = "BOW LIMB TINT" if item.weapon_style() == "bow" else "SURFACE TINT"
+			explanation = "These are tint-ramp stops. The shader blends them with the painted weapon and surface effects, so the finished material will look different."
+		"string":
+			label = "BOWSTRING LIGHT"
+			explanation = "Separate cosmetic gradient for the bowstring highlight. It does not set the bow limbs or arrow color."
+	var details: Array[String] = ["%s  ·  %d/%d  ·  #%s" % [label, index + 1, tones.size(), tones[index].to_html(false).to_upper()], explanation]
+	if channel == "glow" and item.get_slot() in ["sword", "wand"]:
+		var fx: Dictionary = item.effect_rolls()
+		details.append("Aura: " + GhostWeaponFXLibrary.motif_name(int(fx.get("motif", 0))))
+		details.append("Trail: " + GhostWeaponFXLibrary.trail_name(int(fx.get("trail", 0))))
+		details.append("On hit: " + GhostWeaponFXLibrary.impact_name(item.get_slot(), int(fx.get("impact", 0))))
+		if item.get_slot() == "wand":
+			details.append("Spell: " + GhostWeaponFXLibrary.spell_form_name(int(fx.get("form", 0))))
+		if item.weapon_style() == "bow":
+			var bow: Dictionary = item.bow_rolls()
+			details.append("Arrow: " + GhostBowImprintsV138.name_for_element(int(bow.get("element", 0))))
+		var code: String = ROLL_CODE.current(item)
+		if not code.is_empty():
+			details.append("Appearance roll: " + code + "  (see P to inspect)")
+		if ROLL_CODE.debug_active(item):
+			details.append("TEST LOOK ACTIVE — genuine rarity is unchanged")
+	return "\n".join(details)
 
 static func _swatch_colors(colors: Array[Color]) -> String:
 	var pieces: Array[String] = []
@@ -71,7 +145,7 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append(_cosmetic_dots(item))
 	if slot in ["sword", "wand"] and not item.regional_imprint_label().is_empty():
 		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, escape(item.regional_imprint_label())])
-	if slot in ["sword", "wand"] and (advanced or OS.is_debug_build()):
+	if slot in ["sword", "wand"] and advanced:
 		var code: String = ROLL_CODE.current(item)
 		var birth: String = item.birth_roll_code_v1 if ROLL_CODE.valid_code(item.birth_roll_code_v1) else "unknown (legacy)"
 		out.append("[font_size=14][color=#dfc38e]ROLL · %s[/color][/font_size]" % code)
@@ -83,15 +157,15 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			out.append(_label(ROLL_CODE.breakdown(code)))
 			if birth != "unknown (legacy)":
 				out.append(_label("Original look" if item.cosmetic_uid == item.birth_roll_uid_v1 else "Current look differs from original"))
+	var flavor: String = str(item.definition.description).strip_edges()
+	if not flavor.is_empty():
+		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])
 	if not advanced:
 		if slot in ["sword", "wand"]:
 			out.append("[font_size=11][color=%s]P  ·  Inspect weapon[/color][/font_size]" % MUTED)
-		out.append("[font_size=11][color=%s]HOLD ALT  ·  Pin & inspect appearance[/color][/font_size]" % MUTED)
+		out.append("[font_size=11][color=%s]HOLD ALT  ·  Pin for color details[/color][/font_size]" % MUTED)
 		return "\n".join(out)
 	
-	var flavor: String = str(item.definition.description).strip_edges()
-	if not flavor.is_empty():
-		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [PALE, escape(flavor)])
 	if slot == "sword":
 		out.append(_label("Light strike %.2fs  ·  %.1f stamina" % [item.light_swing_duration(), item.light_stamina_cost()]))
 	if slot in ["dress", "wings", "trinket", "charm"] and item.visual_signature() in [4, 5]:

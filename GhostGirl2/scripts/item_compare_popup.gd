@@ -4,25 +4,37 @@ const ITEM_MARKUP = preload("res://scripts/item_rich_text.gd")
 const SINGLE_WIDTH: float = 328.0
 const DOUBLE_WIDTH: float = 664.0
 var pinned: bool = false
+var _current_item: Variant = null
+var _equipped_item: Variant = null
 
 @onready var current_panel: PanelContainer = $Columns/Current
 @onready var equipped_panel: PanelContainer = $Columns/Equipped
 @onready var current_title: Label = $Columns/Current/Layout/TitleRow/Name
 @onready var rare_star: Button = $Columns/Current/Layout/TitleRow/RareStar
 @onready var current_body: RichTextLabel = $Columns/Current/Layout/Body
+@onready var current_hint: Label = $Columns/Current/Layout/VisualHint
 @onready var equipped_title: Label = $Columns/Equipped/Layout/Name
 @onready var equipped_body: RichTextLabel = $Columns/Equipped/Layout/Body
+@onready var equipped_hint: Label = $Columns/Equipped/Layout/VisualHint
 
 func _ready() -> void:
     current_body.bbcode_enabled = true
     equipped_body.bbcode_enabled = true
     mouse_filter = Control.MOUSE_FILTER_IGNORE
     rare_star.mouse_filter = Control.MOUSE_FILTER_STOP
+    current_body.meta_hover_started.connect(_on_current_dot_hover)
+    current_body.meta_hover_ended.connect(_on_current_dot_exit)
+    equipped_body.meta_hover_started.connect(_on_equipped_dot_hover)
+    equipped_body.meta_hover_ended.connect(_on_equipped_dot_exit)
 
-func display_item(item: Variant, equipped: Variant = null, advanced: bool = false) -> void:
+func display_item(item: Variant, equipped: Variant = null, _advanced: bool = false) -> void:
     if item == null:
         hide()
         return
+    _current_item = item
+    _equipped_item = equipped
+    current_hint.hide()
+    equipped_hint.hide()
     var comparing: bool = equipped != null and equipped != item
     equipped_panel.visible = comparing
     current_title.text = item.display_name()
@@ -30,14 +42,15 @@ func display_item(item: Variant, equipped: Variant = null, advanced: bool = fals
     rare_star.visible = item.has_method("has_rare_seeded_appearance") and bool(item.call("has_rare_seeded_appearance"))
     rare_star.tooltip_text = _rare_details(item) if rare_star.visible else ""
     current_title.add_theme_color_override("font_color", item.quality_color())
-    current_body.text = ITEM_MARKUP.item_info(item, advanced)
+    # ALT pins the compact tooltip; detailed roll history lives in P/Inspect.
+    current_body.text = ITEM_MARKUP.item_info(item, false)
     current_body.scroll_to_line(0)
     var lines: int = current_body.text.count("\n") + 2
     if comparing:
         equipped_title.text = "EQUIPPED · " + equipped.display_name()
         _quality_border(equipped_panel, equipped)
         equipped_title.add_theme_color_override("font_color", equipped.quality_color())
-        equipped_body.text = ITEM_MARKUP.changes(item, equipped) + "\n\n" + ITEM_MARKUP.item_info(equipped, advanced)
+        equipped_body.text = ITEM_MARKUP.changes(item, equipped) + "\n\n" + ITEM_MARKUP.item_info(equipped, false)
         equipped_body.scroll_to_line(0)
         lines = maxi(lines, equipped_body.text.count("\n") + 2)
     var screen: Vector2 = get_viewport_rect().size
@@ -57,6 +70,31 @@ func set_pinned(active: bool) -> void:
     mouse_filter = Control.MOUSE_FILTER_STOP if pinned else Control.MOUSE_FILTER_IGNORE
     current_body.mouse_filter = Control.MOUSE_FILTER_STOP if pinned else Control.MOUSE_FILTER_IGNORE
     equipped_body.mouse_filter = Control.MOUSE_FILTER_STOP if pinned else Control.MOUSE_FILTER_IGNORE
+    if not pinned:
+        current_hint.hide()
+        equipped_hint.hide()
+
+func _display_dot_hint(meta: Variant, item: Variant, target: Label) -> void:
+    if not pinned or item == null or target == null:
+        return
+    var message: String = ITEM_MARKUP.visual_dot_details(item, str(meta))
+    if message.is_empty():
+        target.hide()
+        return
+    target.text = message
+    target.show()
+
+func _on_current_dot_hover(meta: Variant) -> void:
+    _display_dot_hint(meta, _current_item, current_hint)
+
+func _on_equipped_dot_hover(meta: Variant) -> void:
+    _display_dot_hint(meta, _equipped_item, equipped_hint)
+
+func _on_current_dot_exit(_meta: Variant) -> void:
+    current_hint.hide()
+
+func _on_equipped_dot_exit(_meta: Variant) -> void:
+    equipped_hint.hide()
 
 func _quality_border(panel: PanelContainer, item: Variant) -> void:
     var source: StyleBox = panel.get_theme_stylebox("panel")
