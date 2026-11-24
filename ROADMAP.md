@@ -139,6 +139,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - Keep the ignored `scripts - Copy/` backup unchanged until its conflict-marked contents receive explicit cleanup review; it already has `.gdignore`. Do not replace live scripts with this directory.
 - Remaining P0 gates: interactive F5, real older-save corpus, full disk-write failure handling for ordinary pickups/destruction/equipment, broader malformed nested-record validation, appearance versioning, and a full tracked resource/node-path audit. Do not mark M0 complete yet.
 
+### Live equipment preview and FX testing (v1.92.4, source implementation)
+
+- Character screen replaces the static Doll texture at runtime with an isolated SubViewport using the actual player scene, equipped-item layers, and current idle animation. Four directional views, read-only shared equipment references, no gameplay input/collision or player-group registration; processing and viewport rendering disabled when hidden. Original portrait scene remains a fallback resource.
+- In-game session-only 0–200% held weapon FX intensity slider and 100% reset affect equipped prestige overlay, shared edge/signature passes, painted weapon material overlays and inspection. Base weapon art and Ethereal condition opacity are not changed. Dress/accessory aura and combat projectile/impact effects are outside this slider's scope.
+- Debug effect menu keeps existing IDs, explains family/pose/rarity dependencies, marks unequipped items as inspect/equip-first, distinguishes visual Ethereal from durability, and disables unsupported surface/guard/grip choices. Effects and intensity do not become saved item data.
+- New `tests/v1924_live_preview_smoke.gd` tests isolated actual rig, direction, slider, selected preview, bow compatibility, no item mutation, and hidden-preview processing. CI registered, result pending at commit time. Layout and visual tuning need actual Godot F5 testing on target hardware. Prior v1.92.3 PR #29 CI succeeded and was merged; unsafe dress recoloring remains disabled.
+
 ### Done means
 
 Fresh source imports, headless tests pass, **real F5 playtesting** confirms core item flow, all existing saves in the test corpus still load, and no item changes unexpectedly. Do not mark done on static checks alone.
