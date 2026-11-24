@@ -22,6 +22,13 @@ static func install(sprite: AnimatedSprite2D) -> void:
 		var animation_name: String = str(entry.get("name", ""))
 		if animation_name.is_empty():
 			continue
+		# Core combat clips are now authored in the base SpriteFrames resource.
+		# Never remove/re-add an existing complete core clip while a player
+		# or editor animation preview may reference it.
+		if frames.has_animation(animation_name) and frames.get_frame_count(animation_name) > 0:
+			var expected: int = int(entry.get("frame_count", 8)) if entry.has("atlas") else entry.get("textures", []).size()
+			if expected > 0 and frames.get_frame_count(animation_name) == expected:
+				continue
 		var loaded: Array[Texture2D] = []
 		if entry.has("atlas"):
 			var atlas_path: String = "res://" + str(entry.get("atlas", ""))
