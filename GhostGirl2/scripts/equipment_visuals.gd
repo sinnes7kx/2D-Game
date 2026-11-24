@@ -178,12 +178,12 @@ func refresh() -> void:
         mythic_dress_halo.visible = dress_signature == 4
         if dress_signature == 4:
             var halo_tint: Color = dress_glow_color.lerp(dress_glow_color_b, 0.52).lightened(0.31)
-            mythic_dress_halo.modulate = Color(halo_tint.r, halo_tint.g, halo_tint.b, 0.94)
+            mythic_dress_halo.modulate = Color(halo_tint.r, halo_tint.g, halo_tint.b, 0.42)
     var cloth_shader: ShaderMaterial = player_art.material as ShaderMaterial
     if cloth_shader != null:
-        cloth_shader.set_shader_parameter("tint_strength", 1.0 if fabric != null else 0.0)
+        cloth_shader.set_shader_parameter("tint_strength", 0.0)
         cloth_shader.set_shader_parameter("dress_tint", fabric.palette_color() if fabric != null else Color.WHITE)
-        cloth_shader.set_shader_parameter("cloth_filagree_strength", 0.34 if fabric != null else 0.0)
+        cloth_shader.set_shader_parameter("cloth_filagree_strength", 0.0)
         cloth_shader.set_shader_parameter("cloth_filagree_phase", float(posmod(fabric.visual_seed(), 997)) * TAU / 997.0 if fabric != null else 0.0)
     var feather: GhostItemInstance = inventory.get_equipped("wings")
     wings.visible = feather != null
@@ -206,7 +206,7 @@ func refresh() -> void:
         weapon = inventory.get_equipped("wand")
     if cloth_shader != null:
         cloth_shader.set_shader_parameter("weapon_accent", weapon.weapon_base_color() if weapon != null and weapon.get_slot() == "sword" else (weapon.palette_color() if weapon != null else Color.WHITE))
-        cloth_shader.set_shader_parameter("weapon_strength", 0.95 if weapon != null else 0.0)
+        cloth_shader.set_shader_parameter("weapon_strength", 0.0)
     sword_visual.hide()
     wand_visual.hide()
     _rebuild_ambient_sources(feather, amulet, inventory.get_equipped("wand"))
