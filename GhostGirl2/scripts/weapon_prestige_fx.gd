@@ -706,9 +706,9 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 	var result: Array = []
 	if style == "twinblade":
-		var back_tip: Vector2 = grip - (tip - grip) * 0.90
-		result.append([grip.lerp(tip, 0.20), tip])
-		result.append([grip.lerp(back_tip, 0.22), back_tip])
+		var spans: Array[PackedVector2Array] = MODULAR.twinblade_spans(grip, tip)
+		for span in spans:
+			result.append([span[0], span[1]])
 	elif style == "maul":
 		result.append([grip.lerp(tip, 0.79), tip])
 	elif style == "spear" or style == "halberd":
@@ -724,7 +724,7 @@ func _v1723_blade_segments(grip: Vector2, tip: Vector2, style: String) -> Array:
 
 func _draw_v1723_twinblade_edges(grip: Vector2, tip: Vector2, _normal: Vector2, intensity: float) -> void:
 	# Narrow bevel highlights, not broad luminous heads. Keep metal visible.
-	var width: float = 3.8 if item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170" else 3.2
+	var width: float = MODULAR.twinblade_width(item != null and item.definition != null and str(item.definition.item_id) == "rosemirror_twinblade_v170")
 	for segment in _v1723_blade_segments(grip, tip, "twinblade"):
 		var a: Vector2 = segment[0]
 		var b: Vector2 = segment[1]
