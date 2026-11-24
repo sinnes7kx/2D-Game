@@ -62,6 +62,8 @@ static func _source_image(texture: Texture2D) -> Image:
         var whole: Image = _atlas_images[key] as Image
         if whole == null or whole.is_empty():
             return null
+        if whole.is_compressed():
+            whole.decompress()
         var region: Rect2i = Rect2i(Vector2i(tile.region.position), Vector2i(tile.region.size))
         if region.position.x < 0 or region.position.y < 0 or region.end.x > whole.get_width() or region.end.y > whole.get_height():
             return null
@@ -74,6 +76,10 @@ static func _create_steps(neutral: Texture2D, alternate: Texture2D) -> Array[Tex
     var results: Array[Texture2D] = []
     if base == null or breath == null or base.is_empty() or breath.is_empty() or base.get_size() != breath.get_size():
         return results
+    if base.is_compressed():
+        base.decompress()
+    if breath.is_compressed():
+        breath.decompress()
     base.convert(Image.FORMAT_RGBA8)
     breath.convert(Image.FORMAT_RGBA8)
     var original: PackedByteArray = base.get_data()
