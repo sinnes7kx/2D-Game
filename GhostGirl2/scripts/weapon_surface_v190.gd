@@ -26,3 +26,12 @@ static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, over
 
 static func key(item: GhostItemInstance) -> String:
 	return "%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank]
+
+static func bow_pigment(item: GhostItemInstance, look: Dictionary) -> Array[Color]:
+	var limbs: Array[Color] = item.bow_limb_gradient_colors()
+	var pigment: Array = look.get("surface_colors", [])
+	var blended: Array[Color] = []
+	for i in range(limbs.size()):
+		var u: float = float(i) / float(limbs.size() - 1)
+		blended.append(limbs[i].lerp(GhostCosmeticRNGV152.sample_palette(pigment, u), 0.42))
+	return blended
