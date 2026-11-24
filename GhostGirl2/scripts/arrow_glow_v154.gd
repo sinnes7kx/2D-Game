@@ -6,8 +6,9 @@ var elapsed: float = 0.0
 func _ready() -> void:
     arrow = get_parent() as Node2D
     var mat: CanvasItemMaterial = CanvasItemMaterial.new()
-    mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+    mat.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX
     material = mat
+    self_modulate.a = 0.55
     z_index = -1
 
 func _process(delta: float) -> void:
