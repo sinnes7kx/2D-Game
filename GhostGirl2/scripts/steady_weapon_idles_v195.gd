@@ -5,15 +5,18 @@ extends RefCounted
 ## No animation manifest, source PNG, hitbox, equipment or save data is changed.
 const CYCLE_SECONDS: float = 3.45
 const STEPS: int = 8
-const SWORD_STEPS: int = 16 # Twice the idle samples for a smoother, weapon-still sword pose.
+const SWORD_STEPS: int = 16 # Short blades and swords both use 16 soft, steady visual steps.
 const BLEND_STEPS: Array = [0.0, 0.024, 0.055, 0.095, 0.145, 0.112, 0.069, 0.027]
 static var _textures_by_key: Dictionary = {}
 static var _atlas_images: Dictionary = {}
 
 static func matches(name: String) -> bool:
-    return name.begins_with("sword_idle_") or name.begins_with("spear_idle_") \
+    return name.begins_with("sword_idle_") or name.begins_with("dagger_idle_") or name.begins_with("nocturne_dagger_idle_") or name.begins_with("spear_idle_") \
         or name.begins_with("briarwake_spear_idle_") \
         or name.begins_with("thornrose_idle_") or name.begins_with("moonveil_idle_")
+
+static func is_smooth_blade_idle(name: String) -> bool:
+    return name.begins_with("sword_idle_") or name.begins_with("dagger_idle_") or name.begins_with("nocturne_dagger_idle_")
 
 static func is_bow_idle(name: String) -> bool:
     return name.begins_with("thornrose_idle_") or name.begins_with("moonveil_idle_")
@@ -36,7 +39,7 @@ static func install(sprite: AnimatedSprite2D) -> void:
         if neutral == null or alternate == null:
             continue
         var key: String = "%s:%d:%d" % [name, neutral.get_rid().get_id(), alternate.get_rid().get_id()]
-        var requested_steps: int = SWORD_STEPS if name.begins_with("sword_idle_") else STEPS
+        var requested_steps: int = SWORD_STEPS if is_smooth_blade_idle(name) else STEPS
         key += ":%d" % requested_steps
         var generated: Array = _textures_by_key.get(key, [])
         if generated.is_empty():
@@ -46,7 +49,7 @@ static func install(sprite: AnimatedSprite2D) -> void:
                 continue
             _textures_by_key[key] = generated
         if requested_steps == SWORD_STEPS:
-            # Rebuild only the sword idle timeline; all attacks/walks and
+            # Rebuild only blade idles; attacks, walks and
             # every original source frame remain untouched in project files.
             for i in range(STEPS):
                 frames.set_frame(name, i, generated[i] as Texture2D, 1.0)
