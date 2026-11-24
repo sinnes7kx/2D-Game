@@ -47,8 +47,9 @@ func display_item(item: Variant, equipped: Variant = null, advanced: bool = fals
     desired_width = minf(desired_width, maxf(260.0, screen.x - 20.0))
     custom_minimum_size = Vector2.ZERO
     size = Vector2(desired_width, desired_height)
+    var first_show: bool = not visible
     show()
-    if not pinned:
+    if first_show or not pinned:
         _place_popup()
 
 func set_pinned(active: bool) -> void:
@@ -58,9 +59,10 @@ func set_pinned(active: bool) -> void:
     equipped_body.mouse_filter = Control.MOUSE_FILTER_STOP if pinned else Control.MOUSE_FILTER_IGNORE
 
 func _quality_border(panel: PanelContainer, item: Variant) -> void:
-    var frame: StyleBoxFlat = panel.get_theme_stylebox("panel").duplicate(true) as StyleBoxFlat
-    if frame == null:
+    var source: StyleBox = panel.get_theme_stylebox("panel")
+    if not (source is StyleBoxFlat):
         return
+    var frame: StyleBoxFlat = source.duplicate(true) as StyleBoxFlat
     frame.border_color = item.quality_color()
     panel.add_theme_stylebox_override("panel", frame)
 
