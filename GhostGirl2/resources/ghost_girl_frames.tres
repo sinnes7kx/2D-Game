@@ -66,6 +66,455 @@
 [ext_resource type="Texture2D" uid="uid://dbkm05h5n4vc6" path="res://assets/ghost/right_06.png" id="w_right_6"]
 [ext_resource type="Texture2D" uid="uid://c0n3cc86nfaxo" path="res://assets/ghost/right_07.png" id="w_right_7"]
 
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_00.png" id="core1791_0_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_01.png" id="core1791_0_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_02.png" id="core1791_0_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_03.png" id="core1791_0_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_04.png" id="core1791_0_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_05.png" id="core1791_0_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_06.png" id="core1791_0_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_back_07.png" id="core1791_0_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_00.png" id="core1791_1_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_01.png" id="core1791_1_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_02.png" id="core1791_1_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_03.png" id="core1791_1_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_04.png" id="core1791_1_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_05.png" id="core1791_1_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_06.png" id="core1791_1_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_front_07.png" id="core1791_1_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_00.png" id="core1791_2_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_01.png" id="core1791_2_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_02.png" id="core1791_2_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_03.png" id="core1791_2_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_04.png" id="core1791_2_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_05.png" id="core1791_2_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_06.png" id="core1791_2_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_left_07.png" id="core1791_2_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_00.png" id="core1791_3_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_01.png" id="core1791_3_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_02.png" id="core1791_3_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_03.png" id="core1791_3_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_04.png" id="core1791_3_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_05.png" id="core1791_3_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_06.png" id="core1791_3_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_light_right_07.png" id="core1791_3_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_00.png" id="core1791_4_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_01.png" id="core1791_4_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_02.png" id="core1791_4_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_03.png" id="core1791_4_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_04.png" id="core1791_4_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_05.png" id="core1791_4_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_06.png" id="core1791_4_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_back_07.png" id="core1791_4_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_00.png" id="core1791_5_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_01.png" id="core1791_5_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_02.png" id="core1791_5_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_03.png" id="core1791_5_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_04.png" id="core1791_5_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_05.png" id="core1791_5_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_06.png" id="core1791_5_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_front_07.png" id="core1791_5_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_00.png" id="core1791_6_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_01.png" id="core1791_6_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_02.png" id="core1791_6_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_03.png" id="core1791_6_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_04.png" id="core1791_6_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_05.png" id="core1791_6_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_06.png" id="core1791_6_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_left_07.png" id="core1791_6_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_00.png" id="core1791_7_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_01.png" id="core1791_7_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_02.png" id="core1791_7_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_03.png" id="core1791_7_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_04.png" id="core1791_7_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_05.png" id="core1791_7_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_06.png" id="core1791_7_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v12/attack_heavy_right_07.png" id="core1791_7_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_00.png" id="core1791_8_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_01.png" id="core1791_8_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_02.png" id="core1791_8_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_03.png" id="core1791_8_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_04.png" id="core1791_8_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_05.png" id="core1791_8_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_06.png" id="core1791_8_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_07.png" id="core1791_8_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_08.png" id="core1791_8_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_09.png" id="core1791_8_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_10.png" id="core1791_8_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_11.png" id="core1791_8_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_12.png" id="core1791_8_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_13.png" id="core1791_8_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_14.png" id="core1791_8_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_back_15.png" id="core1791_8_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_00.png" id="core1791_9_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_01.png" id="core1791_9_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_02.png" id="core1791_9_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_03.png" id="core1791_9_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_04.png" id="core1791_9_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_05.png" id="core1791_9_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_06.png" id="core1791_9_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_07.png" id="core1791_9_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_08.png" id="core1791_9_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_09.png" id="core1791_9_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_10.png" id="core1791_9_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_11.png" id="core1791_9_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_12.png" id="core1791_9_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_13.png" id="core1791_9_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_14.png" id="core1791_9_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_front_15.png" id="core1791_9_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_00.png" id="core1791_10_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_01.png" id="core1791_10_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_02.png" id="core1791_10_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_03.png" id="core1791_10_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_04.png" id="core1791_10_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_05.png" id="core1791_10_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_06.png" id="core1791_10_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_07.png" id="core1791_10_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_08.png" id="core1791_10_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_09.png" id="core1791_10_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_10.png" id="core1791_10_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_11.png" id="core1791_10_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_12.png" id="core1791_10_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_13.png" id="core1791_10_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_14.png" id="core1791_10_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_left_15.png" id="core1791_10_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_00.png" id="core1791_11_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_01.png" id="core1791_11_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_02.png" id="core1791_11_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_03.png" id="core1791_11_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_04.png" id="core1791_11_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_05.png" id="core1791_11_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_06.png" id="core1791_11_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_07.png" id="core1791_11_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_08.png" id="core1791_11_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_09.png" id="core1791_11_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_10.png" id="core1791_11_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_11.png" id="core1791_11_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_12.png" id="core1791_11_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_13.png" id="core1791_11_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_14.png" id="core1791_11_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/dodge_right_15.png" id="core1791_11_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_00.png" id="core1791_12_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_01.png" id="core1791_12_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_02.png" id="core1791_12_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_03.png" id="core1791_12_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_04.png" id="core1791_12_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_05.png" id="core1791_12_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_06.png" id="core1791_12_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_back_07.png" id="core1791_12_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_00.png" id="core1791_13_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_01.png" id="core1791_13_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_02.png" id="core1791_13_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_03.png" id="core1791_13_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_04.png" id="core1791_13_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_05.png" id="core1791_13_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_06.png" id="core1791_13_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_front_07.png" id="core1791_13_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_00.png" id="core1791_14_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_01.png" id="core1791_14_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_02.png" id="core1791_14_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_03.png" id="core1791_14_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_04.png" id="core1791_14_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_05.png" id="core1791_14_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_06.png" id="core1791_14_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_left_07.png" id="core1791_14_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_00.png" id="core1791_15_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_01.png" id="core1791_15_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_02.png" id="core1791_15_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_03.png" id="core1791_15_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_04.png" id="core1791_15_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_05.png" id="core1791_15_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_06.png" id="core1791_15_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hurt_right_07.png" id="core1791_15_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_00.png" id="core1791_16_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_01.png" id="core1791_16_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_02.png" id="core1791_16_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_03.png" id="core1791_16_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_04.png" id="core1791_16_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_05.png" id="core1791_16_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_06.png" id="core1791_16_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_07.png" id="core1791_16_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_08.png" id="core1791_16_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_09.png" id="core1791_16_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_10.png" id="core1791_16_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_11.png" id="core1791_16_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_12.png" id="core1791_16_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_13.png" id="core1791_16_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_14.png" id="core1791_16_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_front_15.png" id="core1791_16_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_00.png" id="core1791_17_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_01.png" id="core1791_17_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_02.png" id="core1791_17_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_03.png" id="core1791_17_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_04.png" id="core1791_17_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_05.png" id="core1791_17_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_06.png" id="core1791_17_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_07.png" id="core1791_17_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_08.png" id="core1791_17_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_09.png" id="core1791_17_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_10.png" id="core1791_17_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_11.png" id="core1791_17_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_12.png" id="core1791_17_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_13.png" id="core1791_17_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_14.png" id="core1791_17_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_back_15.png" id="core1791_17_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_00.png" id="core1791_18_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_01.png" id="core1791_18_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_02.png" id="core1791_18_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_03.png" id="core1791_18_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_04.png" id="core1791_18_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_05.png" id="core1791_18_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_06.png" id="core1791_18_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_07.png" id="core1791_18_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_08.png" id="core1791_18_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_09.png" id="core1791_18_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_10.png" id="core1791_18_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_11.png" id="core1791_18_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_12.png" id="core1791_18_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_13.png" id="core1791_18_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_14.png" id="core1791_18_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_left_15.png" id="core1791_18_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_00.png" id="core1791_19_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_01.png" id="core1791_19_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_02.png" id="core1791_19_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_03.png" id="core1791_19_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_04.png" id="core1791_19_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_05.png" id="core1791_19_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_06.png" id="core1791_19_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_07.png" id="core1791_19_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_08.png" id="core1791_19_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_09.png" id="core1791_19_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_10.png" id="core1791_19_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_11.png" id="core1791_19_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_12.png" id="core1791_19_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_13.png" id="core1791_19_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_14.png" id="core1791_19_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_sword_right_15.png" id="core1791_19_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_00.png" id="core1791_20_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_01.png" id="core1791_20_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_02.png" id="core1791_20_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_03.png" id="core1791_20_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_04.png" id="core1791_20_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_05.png" id="core1791_20_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_06.png" id="core1791_20_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_07.png" id="core1791_20_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_08.png" id="core1791_20_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_09.png" id="core1791_20_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_10.png" id="core1791_20_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_11.png" id="core1791_20_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_12.png" id="core1791_20_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_13.png" id="core1791_20_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_14.png" id="core1791_20_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_front_15.png" id="core1791_20_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_00.png" id="core1791_21_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_01.png" id="core1791_21_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_02.png" id="core1791_21_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_03.png" id="core1791_21_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_04.png" id="core1791_21_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_05.png" id="core1791_21_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_06.png" id="core1791_21_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_07.png" id="core1791_21_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_08.png" id="core1791_21_8"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_09.png" id="core1791_21_9"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_10.png" id="core1791_21_10"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_11.png" id="core1791_21_11"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_12.png" id="core1791_21_12"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_13.png" id="core1791_21_13"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_14.png" id="core1791_21_14"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/hook_launch_back_15.png" id="core1791_21_15"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_00.png" id="core1791_22_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_01.png" id="core1791_22_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_02.png" id="core1791_22_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_03.png" id="core1791_22_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_04.png" id="core1791_22_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_05.png" id="core1791_22_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_06.png" id="core1791_22_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_front_07.png" id="core1791_22_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_00.png" id="core1791_23_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_01.png" id="core1791_23_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_02.png" id="core1791_23_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_03.png" id="core1791_23_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_04.png" id="core1791_23_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_05.png" id="core1791_23_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_06.png" id="core1791_23_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_back_07.png" id="core1791_23_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_00.png" id="core1791_24_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_01.png" id="core1791_24_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_02.png" id="core1791_24_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_03.png" id="core1791_24_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_04.png" id="core1791_24_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_05.png" id="core1791_24_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_06.png" id="core1791_24_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_left_07.png" id="core1791_24_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_00.png" id="core1791_25_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_01.png" id="core1791_25_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_02.png" id="core1791_25_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_03.png" id="core1791_25_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_04.png" id="core1791_25_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_05.png" id="core1791_25_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_06.png" id="core1791_25_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_light_alt_right_07.png" id="core1791_25_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_00.png" id="core1791_26_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_01.png" id="core1791_26_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_02.png" id="core1791_26_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_03.png" id="core1791_26_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_04.png" id="core1791_26_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_05.png" id="core1791_26_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_06.png" id="core1791_26_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_front_07.png" id="core1791_26_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_00.png" id="core1791_27_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_01.png" id="core1791_27_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_02.png" id="core1791_27_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_03.png" id="core1791_27_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_04.png" id="core1791_27_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_05.png" id="core1791_27_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_06.png" id="core1791_27_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_back_07.png" id="core1791_27_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_00.png" id="core1791_28_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_01.png" id="core1791_28_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_02.png" id="core1791_28_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_03.png" id="core1791_28_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_04.png" id="core1791_28_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_05.png" id="core1791_28_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_06.png" id="core1791_28_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_left_07.png" id="core1791_28_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_00.png" id="core1791_29_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_01.png" id="core1791_29_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_02.png" id="core1791_29_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_03.png" id="core1791_29_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_04.png" id="core1791_29_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_05.png" id="core1791_29_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_06.png" id="core1791_29_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v13/attack_counter_right_07.png" id="core1791_29_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_00.png" id="core1791_30_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_01.png" id="core1791_30_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_02.png" id="core1791_30_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_03.png" id="core1791_30_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_04.png" id="core1791_30_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_05.png" id="core1791_30_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_06.png" id="core1791_30_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_front_07.png" id="core1791_30_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_00.png" id="core1791_31_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_01.png" id="core1791_31_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_02.png" id="core1791_31_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_03.png" id="core1791_31_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_04.png" id="core1791_31_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_05.png" id="core1791_31_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_06.png" id="core1791_31_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_back_07.png" id="core1791_31_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_00.png" id="core1791_32_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_01.png" id="core1791_32_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_02.png" id="core1791_32_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_03.png" id="core1791_32_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_04.png" id="core1791_32_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_05.png" id="core1791_32_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_06.png" id="core1791_32_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_left_07.png" id="core1791_32_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_00.png" id="core1791_33_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_01.png" id="core1791_33_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_02.png" id="core1791_33_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_03.png" id="core1791_33_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_04.png" id="core1791_33_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_05.png" id="core1791_33_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_06.png" id="core1791_33_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_light_right_07.png" id="core1791_33_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_00.png" id="core1791_34_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_01.png" id="core1791_34_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_02.png" id="core1791_34_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_03.png" id="core1791_34_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_04.png" id="core1791_34_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_05.png" id="core1791_34_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_06.png" id="core1791_34_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_front_07.png" id="core1791_34_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_00.png" id="core1791_35_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_01.png" id="core1791_35_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_02.png" id="core1791_35_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_03.png" id="core1791_35_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_04.png" id="core1791_35_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_05.png" id="core1791_35_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_06.png" id="core1791_35_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_back_07.png" id="core1791_35_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_00.png" id="core1791_36_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_01.png" id="core1791_36_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_02.png" id="core1791_36_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_03.png" id="core1791_36_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_04.png" id="core1791_36_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_05.png" id="core1791_36_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_06.png" id="core1791_36_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_left_07.png" id="core1791_36_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_00.png" id="core1791_37_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_01.png" id="core1791_37_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_02.png" id="core1791_37_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_03.png" id="core1791_37_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_04.png" id="core1791_37_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_05.png" id="core1791_37_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_06.png" id="core1791_37_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_unarmed_heavy_right_07.png" id="core1791_37_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_00.png" id="core1791_38_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_01.png" id="core1791_38_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_02.png" id="core1791_38_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_03.png" id="core1791_38_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_04.png" id="core1791_38_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_05.png" id="core1791_38_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_06.png" id="core1791_38_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_front_07.png" id="core1791_38_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_00.png" id="core1791_39_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_01.png" id="core1791_39_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_02.png" id="core1791_39_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_03.png" id="core1791_39_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_04.png" id="core1791_39_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_05.png" id="core1791_39_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_06.png" id="core1791_39_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_back_07.png" id="core1791_39_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_00.png" id="core1791_40_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_01.png" id="core1791_40_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_02.png" id="core1791_40_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_03.png" id="core1791_40_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_04.png" id="core1791_40_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_05.png" id="core1791_40_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_06.png" id="core1791_40_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_left_07.png" id="core1791_40_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_00.png" id="core1791_41_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_01.png" id="core1791_41_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_02.png" id="core1791_41_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_03.png" id="core1791_41_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_04.png" id="core1791_41_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_05.png" id="core1791_41_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_06.png" id="core1791_41_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_light_right_07.png" id="core1791_41_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_00.png" id="core1791_42_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_01.png" id="core1791_42_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_02.png" id="core1791_42_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_03.png" id="core1791_42_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_04.png" id="core1791_42_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_05.png" id="core1791_42_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_06.png" id="core1791_42_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_front_07.png" id="core1791_42_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_00.png" id="core1791_43_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_01.png" id="core1791_43_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_02.png" id="core1791_43_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_03.png" id="core1791_43_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_04.png" id="core1791_43_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_05.png" id="core1791_43_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_06.png" id="core1791_43_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_back_07.png" id="core1791_43_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_00.png" id="core1791_44_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_01.png" id="core1791_44_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_02.png" id="core1791_44_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_03.png" id="core1791_44_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_04.png" id="core1791_44_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_05.png" id="core1791_44_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_06.png" id="core1791_44_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_left_07.png" id="core1791_44_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_00.png" id="core1791_45_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_01.png" id="core1791_45_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_02.png" id="core1791_45_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_03.png" id="core1791_45_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_04.png" id="core1791_45_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_05.png" id="core1791_45_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_06.png" id="core1791_45_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_07.png" id="core1791_45_7"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_snfaj"]
 atlas = ExtResource("65_vdeli")
 region = Rect2(0, 1980, 256, 220)
@@ -1139,4 +1588,1578 @@ animations = [{
 "loop": 1,
 "name": &"wand_walk_right",
 "speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_0_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_0_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_0_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_0_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_0_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_0_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_0_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_0_7")
+}],
+"loop": 0,
+"name": &"attack_light_back",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_1_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_1_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_1_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_1_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_1_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_1_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_1_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_1_7")
+}],
+"loop": 0,
+"name": &"attack_light_front",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_2_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_2_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_2_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_2_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_2_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_2_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_2_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_2_7")
+}],
+"loop": 0,
+"name": &"attack_light_left",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_3_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_3_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_3_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_3_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_3_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_3_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_3_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_3_7")
+}],
+"loop": 0,
+"name": &"attack_light_right",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_4_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_4_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_4_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_4_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_4_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_4_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_4_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_4_7")
+}],
+"loop": 0,
+"name": &"attack_heavy_back",
+"speed": 11.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_5_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_5_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_5_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_5_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_5_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_5_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_5_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_5_7")
+}],
+"loop": 0,
+"name": &"attack_heavy_front",
+"speed": 11.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_6_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_6_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_6_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_6_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_6_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_6_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_6_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_6_7")
+}],
+"loop": 0,
+"name": &"attack_heavy_left",
+"speed": 11.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_7_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_7_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_7_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_7_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_7_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_7_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_7_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_7_7")
+}],
+"loop": 0,
+"name": &"attack_heavy_right",
+"speed": 11.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_8_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_8_15")
+}],
+"loop": 0,
+"name": &"dodge_back",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_9_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_9_15")
+}],
+"loop": 0,
+"name": &"dodge_front",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_10_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_10_15")
+}],
+"loop": 0,
+"name": &"dodge_left",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_11_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_11_15")
+}],
+"loop": 0,
+"name": &"dodge_right",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_12_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_12_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_12_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_12_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_12_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_12_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_12_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_12_7")
+}],
+"loop": 0,
+"name": &"hurt_back",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_13_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_13_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_13_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_13_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_13_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_13_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_13_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_13_7")
+}],
+"loop": 0,
+"name": &"hurt_front",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_14_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_14_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_14_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_14_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_14_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_14_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_14_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_14_7")
+}],
+"loop": 0,
+"name": &"hurt_left",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_15_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_15_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_15_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_15_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_15_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_15_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_15_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_15_7")
+}],
+"loop": 0,
+"name": &"hurt_right",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_16_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_16_15")
+}],
+"loop": 0,
+"name": &"attack_sword_front",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_17_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_17_15")
+}],
+"loop": 0,
+"name": &"attack_sword_back",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_18_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_18_15")
+}],
+"loop": 0,
+"name": &"attack_sword_left",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_19_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_19_15")
+}],
+"loop": 0,
+"name": &"attack_sword_right",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_20_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_20_15")
+}],
+"loop": 0,
+"name": &"hook_launch_front",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_21_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_21_15")
+}],
+"loop": 0,
+"name": &"hook_launch_back",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_22_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_22_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_22_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_22_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_22_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_22_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_22_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_22_7")
+}],
+"loop": 0,
+"name": &"attack_light_alt_front",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_23_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_23_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_23_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_23_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_23_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_23_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_23_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_23_7")
+}],
+"loop": 0,
+"name": &"attack_light_alt_back",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_24_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_24_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_24_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_24_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_24_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_24_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_24_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_24_7")
+}],
+"loop": 0,
+"name": &"attack_light_alt_left",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_25_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_25_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_25_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_25_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_25_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_25_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_25_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_25_7")
+}],
+"loop": 0,
+"name": &"attack_light_alt_right",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_26_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_26_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_26_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_26_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_26_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_26_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_26_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_26_7")
+}],
+"loop": 0,
+"name": &"attack_counter_front",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_27_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_27_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_27_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_27_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_27_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_27_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_27_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_27_7")
+}],
+"loop": 0,
+"name": &"attack_counter_back",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_28_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_28_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_28_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_28_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_28_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_28_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_28_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_28_7")
+}],
+"loop": 0,
+"name": &"attack_counter_left",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_29_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_29_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_29_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_29_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_29_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_29_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_29_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_29_7")
+}],
+"loop": 0,
+"name": &"attack_counter_right",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_30_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_30_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_30_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_30_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_30_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_30_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_30_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_30_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_light_front",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_31_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_31_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_31_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_31_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_31_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_31_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_31_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_31_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_light_back",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_32_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_32_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_32_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_32_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_32_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_32_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_32_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_32_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_light_left",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_33_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_33_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_33_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_33_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_33_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_33_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_33_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_33_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_light_right",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_34_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_34_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_34_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_34_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_34_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_34_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_34_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_34_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_heavy_front",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_35_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_35_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_35_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_35_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_35_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_35_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_35_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_35_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_heavy_back",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_36_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_36_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_36_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_36_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_36_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_36_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_36_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_36_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_heavy_left",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_37_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_37_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_37_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_37_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_37_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_37_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_37_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_37_7")
+}],
+"loop": 0,
+"name": &"attack_unarmed_heavy_right",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_38_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_38_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_38_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_38_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_38_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_38_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_38_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_38_7")
+}],
+"loop": 0,
+"name": &"attack_sword_light_front",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_39_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_39_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_39_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_39_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_39_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_39_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_39_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_39_7")
+}],
+"loop": 0,
+"name": &"attack_sword_light_back",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_40_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_40_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_40_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_40_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_40_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_40_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_40_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_40_7")
+}],
+"loop": 0,
+"name": &"attack_sword_light_left",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_41_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_41_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_41_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_41_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_41_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_41_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_41_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_41_7")
+}],
+"loop": 0,
+"name": &"attack_sword_light_right",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_42_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_42_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_42_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_42_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_42_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_42_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_42_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_42_7")
+}],
+"loop": 0,
+"name": &"attack_sword_heavy_front",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_43_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_43_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_43_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_43_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_43_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_43_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_43_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_43_7")
+}],
+"loop": 0,
+"name": &"attack_sword_heavy_back",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_44_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_44_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_44_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_44_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_44_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_44_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_44_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_44_7")
+}],
+"loop": 0,
+"name": &"attack_sword_heavy_left",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("core1791_45_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_45_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_45_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_45_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_45_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_45_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_45_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("core1791_45_7")
+}],
+"loop": 0,
+"name": &"attack_sword_heavy_right",
+"speed": 16.0
 }]
