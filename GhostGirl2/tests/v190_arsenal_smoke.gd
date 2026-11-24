@@ -35,7 +35,7 @@ func _verify() -> void:
 				_fail("Old baked scythe remains in body")
 				return
 			var span: PackedVector2Array = SCYTHE.span(str(name), i, guides)
-			if span.size() != 2 or not is_equal_approx(span[0].distance_to(span[1]), 76.0):
+			if span.size() != 2 or not is_equal_approx(span[0].distance_to(span[1]), SCYTHE.REAPER_SPAN):
 				_fail("Invalid scythe pose span")
 				return
 	var item: GhostItemInstance = GhostItemGenerator.create(load("res://items/rose_reaper_scythe.tres") as GhostItemData,190001,"rare")
