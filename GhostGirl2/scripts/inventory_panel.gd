@@ -17,6 +17,7 @@ var pending_gear_index: int = -1
 var active_page: int = 0
 var pending_delete_item: Variant = null
 var test_looks: OptionButton
+var last_recovery_notice: String = ""
 @onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
 @onready var description: RichTextLabel = $Layout/DetailsWell/DetailsVBox/ItemDescription
@@ -169,6 +170,13 @@ func refresh() -> void:
 		_show_details(selected_index)
 	else:
 		_clear()
+	var recovery: String = inventory.recovery_notice()
+	page_number.tooltip_text = recovery
+	if not recovery.is_empty():
+		notice.text = recovery
+	elif not last_recovery_notice.is_empty() and notice.text == last_recovery_notice:
+		notice.text = ""
+	last_recovery_notice = recovery
 
 func _on_slot_pressed(index: int) -> void:
 	var item: Variant = inventory.get_item(index)

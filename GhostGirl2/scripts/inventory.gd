@@ -23,6 +23,10 @@ const VAULT_CAPACITY: int = 240
 const EXHIBITION_CAPACITY: int = 6
 var vault: Array[GhostItemInstance] = []
 var unresolved_vault: Array[Dictionary] = []
+# Unavailable or overflow backpack records remain recoverable, not playable.
+var unresolved_backpack: Array[Dictionary] = []
+var save_block_reason: String = ""
+var migration_backup_source: String = ""
 
 func _ready() -> void:
 	load_game()
@@ -301,7 +305,7 @@ func get_stat_total(stat: String) -> float:
 			total += float(item.all_stats().get(stat, 0.0))
 	return total
 
-func save_game() -> bool:
+func _build_save_data() -> Dictionary:
 	var saved_items: Array[Dictionary] = []
 	for i in range(contents.size()):
 		var item: GhostItemInstance = contents[i]
@@ -312,7 +316,16 @@ func save_game() -> bool:
 	var saved_vault: Array[Dictionary] = unresolved_vault.duplicate(true)
 	for item in vault:
 		saved_vault.append(_serialize_item(item, Vector2i(-1, -1)))
-	var data: Dictionary = {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault}
+	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "unresolved_backpack": unresolved_backpack.duplicate(true)}
+
+func save_game() -> bool:
+	if not save_block_reason.is_empty():
+		return false
+	if not _backup_migration_source():
+		save_block_reason = "Could not back up old inventory; original save preserved."
+		push_warning(save_block_reason)
+		return false
+	var data: Dictionary = _build_save_data()
 	var temporary: String = SAVE_FILE + ".tmp"
 	var file: FileAccess = FileAccess.open(temporary, FileAccess.WRITE)
 	if file == null:
@@ -359,29 +372,71 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"rolled_stat": item.stat_value, "rolled_affixes": item.affixes.duplicate(true), "rolled_sockets": item.sockets
 	}
 
+# Preserve the pre-migration file before writing a changed grid format.
+# Use a new backup name rather than replacing an older recovery copy.
+func _backup_migration_source() -> bool:
+	if migration_backup_source.is_empty():
+		return true
+	var backup: String = migration_backup_source + ".pre-grid6.bak"
+	var suffix: int = 0
+	while FileAccess.file_exists(backup):
+		suffix += 1
+		backup = migration_backup_source + ".pre-grid6.%d.bak" % suffix
+		if suffix >= 1000:
+			return false
+	if DirAccess.copy_absolute(migration_backup_source, backup) != OK:
+		return false
+	migration_backup_source = ""
+	return true
+
 func load_game() -> void:
 	var source: String = SAVE_FILE if FileAccess.file_exists(SAVE_FILE) else LEGACY_SAVE_FILE
 	if not FileAccess.file_exists(source):
 		return
 	var file: FileAccess = FileAccess.open(source, FileAccess.READ)
 	if file == null:
+		save_block_reason = "Inventory save could not be opened; saving disabled."
+		push_warning(save_block_reason)
 		return
 	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if not parsed is Dictionary:
+	file.close()
+	if not parsed is Dictionary or not _restore_save_data(parsed):
+		save_block_reason = "Inventory save is invalid; original file preserved. Saving disabled."
+		push_warning(save_block_reason)
 		return
-	var data: Dictionary = parsed as Dictionary
+	save_block_reason = ""
+	if source == LEGACY_SAVE_FILE or int(parsed.get("grid_rows", 4)) != GRID_ROWS:
+		# Legacy v1 stays intact even after the v2 file is created.
+		if source == SAVE_FILE:
+			migration_backup_source = source
+		save_game()
+
+# Validate before touching live state. Reject malformed containers instead
+# of quietly rewriting a partial collection over the original file.
+func _restore_save_data(data: Dictionary) -> bool:
+	if not data.has("items"):
+		return false
+	for key in ["items", "vault", "unresolved_backpack"]:
+		var records: Variant = data.get(key, [])
+		if not records is Array:
+			return false
+		for record in records:
+			if not record is Dictionary:
+				return false
+	for key in ["equipment", "collected"]:
+		if not data.get(key, {}) is Dictionary:
+			return false
 	contents.clear()
 	grid_positions.clear()
+	unresolved_backpack.clear()
 	var restored_indices: Dictionary = {}
-	var saved_items: Array = data.get("items", []) if data.get("items", []) is Array else []
-	# Pre-v1.68 layouts used 4 rows per page. Preserve the page and local row
-	# when importing their absolute grid_y positions, without moving equipment.
+	var saved_items: Array = data.get("items", [])
 	var saved_grid_rows: int = maxi(1, int(data.get("grid_rows", 4)))
 	for saved_index in range(saved_items.size()):
-		var saved: Variant = saved_items[saved_index]
-		if not saved is Dictionary or contents.size() >= capacity:
-			continue
-		var item: GhostItemInstance = _deserialize_item(saved)
+		var saved: Dictionary = saved_items[saved_index]
+		var item: GhostItemInstance = null
+		if contents.size() < capacity:
+			item = _deserialize_item(saved)
 		if item != null:
 			item.exhibition_slot = -1
 			var wanted: Vector2i = Vector2i(int(saved.get("grid_x", -1)), int(saved.get("grid_y", -1)))
@@ -393,26 +448,38 @@ func load_game() -> void:
 				restored_indices[saved_index] = contents.size()
 				contents.append(item)
 				grid_positions.append(pos)
+				continue
+		# Preserve the exact record, including fields this build cannot read.
+		unresolved_backpack.append(saved.duplicate(true))
+	# Retry records from earlier launches after normal backpack items. Never
+	# evict a live item or auto-equip a previously inaccessible weapon.
+	for saved in data.get("unresolved_backpack", []):
+		var item: GhostItemInstance = null
+		if contents.size() < capacity:
+			item = _deserialize_item(saved)
+		if item != null:
+			var pos: Vector2i = _first_open(item)
+			if pos.x >= 0:
+				item.exhibition_slot = -1
+				contents.append(item)
+				grid_positions.append(pos)
+				continue
+		unresolved_backpack.append(saved.duplicate(true))
 	vault.clear()
 	unresolved_vault.clear()
-	var saved_vault: Variant = data.get("vault", [])
-	if saved_vault is Array:
-		for saved in saved_vault:
-			if not saved is Dictionary:
-				continue
-			var stored: GhostItemInstance = _deserialize_item(saved)
-			if stored == null:
-				unresolved_vault.append(saved.duplicate(true))
-			else:
-				vault.append(stored)
+	for saved in data.get("vault", []):
+		var stored: GhostItemInstance = _deserialize_item(saved)
+		if stored == null:
+			unresolved_vault.append(saved.duplicate(true))
+		else:
+			vault.append(stored)
 	_normalize_exhibition()
 	collected_pickups.clear()
 	for key in (data.get("collected", {}) as Dictionary).keys():
 		collected_pickups[str(key)] = true
+	var equipped_saved: Dictionary = data.get("equipment", {})
 	for slot in equipment.keys():
 		equipment[slot] = -1
-	var equipped_saved: Dictionary = data.get("equipment", {}) as Dictionary
-	for slot in equipment.keys():
 		var saved_idx: int = int(equipped_saved.get(slot, -1))
 		var idx: int = int(restored_indices.get(saved_idx, -1))
 		var chosen: GhostItemInstance = get_item(idx)
@@ -420,8 +487,14 @@ func load_game() -> void:
 			equipment[slot] = idx
 	contents_changed.emit()
 	equipment_changed.emit()
-	if source == LEGACY_SAVE_FILE or saved_grid_rows != GRID_ROWS:
-		save_game()
+	return true
+
+func recovery_notice() -> String:
+	if not save_block_reason.is_empty():
+		return save_block_reason
+	if not unresolved_backpack.is_empty():
+		return "%d item(s) safely held for recovery. Free backpack space, restore missing resources, then reload." % unresolved_backpack.size()
+	return ""
 
 func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	var path: String = str(saved.get("resource", ""))
