@@ -1,6 +1,7 @@
 extends Node2D
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.3 — blade-only twinblade enchantments and high-visibility seeded Mythic shimmer.
@@ -193,6 +194,7 @@ func _axial_span() -> PackedVector2Array:
 	var grip: Vector2 = _hand_anchor(face)
 	var end_point: Vector2 = _fallback_tip(grip, face, 46.0)
 	var style: String = item.weapon_style()
+	var pose_frame: int = 0 if STEADY_IDLE.matches(animation) else body.frame
 	if item.get_slot() == "wand":
 		# v1.63: exact frame-authored wand points. Shared Ghost-local geometry
 		# with the 12-row pose atlases, so bloom follows the ornamented head.
@@ -248,12 +250,12 @@ func _axial_span() -> PackedVector2Array:
 		# v1.72.2: glow follows exactly the weapon geometry being rendered.
 		var pose_node: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
 		if pose_node != null and pose_node.has_method("get_weapon_span"):
-			var authored: Variant = pose_node.call("get_weapon_span", animation, body.frame)
+			var authored: Variant = pose_node.call("get_weapon_span", animation, pose_frame)
 			if authored is PackedVector2Array and authored.size() == 2:
 				return authored
 		var fresh: Array = new_weapon_axes_by_animation.get(animation, [])
 		if not fresh.is_empty():
-			var pair: Variant = fresh[clampi(body.frame, 0, fresh.size() - 1)]
+			var pair: Variant = fresh[clampi(pose_frame, 0, fresh.size() - 1)]
 			if pair is Array and pair.size() == 4:
 				return PackedVector2Array([Vector2(float(pair[0]), float(pair[1])), Vector2(float(pair[2]), float(pair[3]))])
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 43.0 if style == "dagger" else 82.0)])
@@ -272,13 +274,13 @@ func _axial_span() -> PackedVector2Array:
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 68.0)])
 	if style == "bow":
 		var bow_animation: String = _resolved_bow_animation_name(animation)
-		var frame_index: int = body.frame
+		var frame_index: int = pose_frame
 		var mirrored: bool = false
 		var offset: Vector2 = Vector2.ZERO
 		var mask: AnimatedSprite2D = body.get_node_or_null("BowPaletteV139") as AnimatedSprite2D
 		if mask != null and mask.visible and bow_axes_by_animation.has(str(mask.animation)):
 			bow_animation = str(mask.animation)
-			frame_index = mask.frame
+			frame_index = 0 if STEADY_IDLE.matches(animation) else mask.frame
 			mirrored = mask.flip_h
 			offset = mask.position
 		var axes: Array = bow_axes_by_animation.get(bow_animation, [])

@@ -160,5 +160,8 @@ jobs:
       - name: Verify original combat impact audio and controls
         run: godot --headless --path GhostGirl2 --script res://tests/v194_impact_audio_smoke.gd
 
+      - name: Verify smooth eight-frame sword, trident and bow idles
+        run: godot --headless --path GhostGirl2 --script res://tests/v195_steady_weapon_idle_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
