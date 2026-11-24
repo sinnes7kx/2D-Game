@@ -17,6 +17,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if rig == null or body == null:
 		return
+	MODULAR.apply_equipped_opacity(self, body)
 	var animation_name: String = str(body.animation)
 	var active: bool = bool(rig.call("is_active", animation_name))
 	if animation_name != last_animation or body.frame != last_frame or active != last_active:
