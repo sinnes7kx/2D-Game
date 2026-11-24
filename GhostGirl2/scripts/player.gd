@@ -22,6 +22,7 @@ const ROSE_SLASH_FX: SpriteFrames = preload("res://resources/rose_slash_fx.tres"
 const SPECTACLE: Script = preload("res://scripts/weapon_spectacle.gd")
 const IMPACT_PRESTIGE: Script = preload("res://scripts/impact_prestige_v116.gd")
 const PHYSICAL_FEEL: Script = preload("res://scripts/impact_spawner_v149.gd")
+const COMBAT_JUICE: Script = preload("res://scripts/combat_juice_v194.gd")
 const RIPOSTE_SFX: AudioStream = preload("res://assets/audio/riposte_chime_v113.wav")
 const COMBAT_RESPONSE_V157: Script = preload("res://scripts/combat_response_v157.gd")
 const DODGE_SFX: AudioStream = preload("res://assets/audio/dodge_wisp.wav")
@@ -709,6 +710,7 @@ func on_wand_projectile_hit(_charged: bool) -> void:
 	# Confirmed-contact feedback only; a missed spell never kicks the camera.
 	camera_kick = maxf(camera_kick, 2.2)
 	_play_action_sfx(HIT_SFX)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "hit", -17.0)
 
 func _begin_spell_cast(heavy: bool = false, moonfall: bool = false) -> void:
 	_begin_spell_cast_v127(heavy, moonfall, "")
@@ -743,6 +745,7 @@ func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> vo
 	spell_cooldown = spell_cast_duration
 	body_art.speed_scale = 1.0
 	body_art.play("wand_cast_" + facing_name)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "spell", -18.0)
 
 func _advance_spell(delta: float) -> void:
 	spell_time_left = maxf(0.0, spell_time_left - delta)
@@ -986,6 +989,7 @@ func _begin_dodge() -> void:
 	dodge_time_left = DODGE_DURATION
 	body_art.speed_scale = 1.0
 	_play_action_sfx(DODGE_SFX)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "dodge", -19.0)
 	PHYSICAL_FEEL.burst(get_tree().current_scene, global_position + Vector2(0, -6), "landing", 0.48, -dodge_direction, roundi(visual_time * 91.0))
 	counter_window = 0.0
 	backstep_origin = global_position
@@ -1012,6 +1016,7 @@ func register_confirmed_evade(attacker: Node2D, _contact: Vector2) -> bool:
 	precision_evade_registered = true
 	backstep_counter_armed = true
 	_spawn_precision_feedback("evade", global_position + Vector2(0, -31), -dodge_direction)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "evade", -15.0)
 	return true
 
 func _spawn_precision_feedback(kind: String, where: Vector2, direction: Vector2) -> void:
@@ -1228,6 +1233,7 @@ func _begin_attack(heavy: bool) -> void:
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
 	_play_action_sfx(SWING_SFX)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "swing", -21.0)
 	attack_hit_done = false
 	heavy_attack = heavy
 	# The empty-hand branch must always play visible unarmed attack frames.
@@ -1415,6 +1421,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		hitstop_left = (0.105 if counter_hit and struck else (0.089 if jump_attack_active else (0.065 if heavy_attack else 0.040)))
 		body_art.pause()
 		_play_action_sfx(RIPOSTE_SFX if counter_hit and struck else HIT_SFX)
+		COMBAT_JUICE.play(get_tree().current_scene, global_position, "parry" if counter_hit and struck else "hit", -14.0 if counter_hit and struck else -18.0)
 		if struck_world and not struck:
 			camera_kick = maxf(camera_kick, 4.5 if jump_attack_active else 3.0)
 			camera_push = attack_direction * (4.0 if jump_attack_active else 2.5)
@@ -1439,9 +1446,9 @@ func on_world_impact(point: Vector2, strength: float) -> void:
 	if distance > 750.0:
 		return
 	var falloff: float = pow(1.0 - distance / 750.0, 1.5)
-	camera_kick = maxf(camera_kick, minf(9.0, strength * falloff))
+	camera_kick = maxf(camera_kick, minf(12.0, strength * falloff) * COMBAT_JUICE.shake_level)
 	var away: Vector2 = (global_position - point).normalized() if distance > 0.01 else -facing
-	camera_push = away * minf(6.5, strength * falloff * 0.64)
+	camera_push = away * minf(7.5, strength * falloff * 0.64) * COMBAT_JUICE.shake_level
 
 func _spawn_blade_blood(where: Vector2, tint: Color, accent: Color, impact_style: int, tier: int, seed_value: int) -> void:
 	var root: Node = get_tree().current_scene
