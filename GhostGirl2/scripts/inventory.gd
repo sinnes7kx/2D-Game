@@ -112,14 +112,7 @@ func add_loot(template: GhostItemData, seed_value: int, forced_quality: String =
 	template = _resolve_socketable_loot_template(template, seed_value)
 	if template.unique and has_item(template.item_id):
 		return null
-	var item: GhostItemInstance = GhostItemGenerator.create(template, seed_value, forced_quality)
-	# New drops roll an independent, 128-bit cosmetic identity once, on pickup.
-	# Do not change the item_seed that determines damage, affixes and sockets.
-	if template.equip_slot != "none" and template.item_class == "equipment":
-		item.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
-	item.stamp_origin(origin)
-	if not origin.is_empty():
-		item.roll_ethereal()
+	var item: GhostItemInstance = generate_find(template, seed_value, forced_quality, origin)
 	var pos: Vector2i = _first_open(item)
 	if pos.x < 0:
 		return null
@@ -613,3 +606,17 @@ func wear_ethereal(item: GhostItemInstance, persist: bool = true) -> bool:
 	if persist:
 		save_game()
 	return broke
+
+# Roll a natural weapon once, before showing it on the ground. No inventory mutation.
+func generate_find(template: GhostItemData, seed_value: int, forced_quality: String = "", origin: String = "") -> GhostItemInstance:
+	if template == null:
+		return null
+	var item: GhostItemInstance = GhostItemGenerator.create(template, seed_value, forced_quality)
+	# New drops roll an independent, 128-bit cosmetic identity once, before presentation.
+	# Do not change the item_seed that determines damage, affixes and sockets.
+	if template.equip_slot != "none" and template.item_class == "equipment":
+		item.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
+	item.stamp_origin(origin)
+	if not origin.is_empty():
+		item.roll_ethereal()
+	return item
