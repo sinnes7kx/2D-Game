@@ -5,6 +5,7 @@ extends CharacterBody2D
 const HIT_EFFECT_SCRIPT: Script = preload("res://scripts/combat_impact.gd")
 const DEATH_FX: Script = preload("res://scripts/enemy_death_burst_v131.gd")
 const PHYSICAL_FEEL: Script = preload("res://scripts/impact_spawner_v149.gd")
+const COMBAT_JUICE: Script = preload("res://scripts/combat_juice_v194.gd")
 const FIRE_STEERING: Script = preload("res://scripts/environment_navigation_v146.gd")
 const HEX_BOLT_SCENE: PackedScene = preload("res://scenes/enemy_hex_bolt.tscn")
 const COMBAT_RESPONSE_V157: Script = preload("res://scripts/combat_response_v157.gd")
@@ -377,6 +378,9 @@ func hit(amount: float, poise_multiplier: float = 1.0) -> void:
 		poise_damage = 0.0
 		stagger_resistance = 1.3
 		PHYSICAL_FEEL.burst(get_tree().current_scene, global_position + Vector2(0.0, -35.0), "poise", 0.90 if is_elite else 0.73, -last_target, loot_seed + recent_hit)
+		# An audible metal break on warder poise loss, not an invented parry success.
+		if archetype == "warder":
+			COMBAT_JUICE.play(get_tree().current_scene, global_position, "parry", -15.0)
 
 func _process(delta: float) -> void:
 	scene_time += delta

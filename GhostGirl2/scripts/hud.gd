@@ -1,5 +1,6 @@
 extends CanvasLayer
 const COLLECTOR_LENS = preload("res://scripts/collector_lens_v179.gd")
+const COMBAT_JUICE = preload("res://scripts/combat_juice_v194.gd")
 var collector_lens: Control
 const COLLECTION_VAULT = preload("res://scripts/collection_vault_v181.gd")
 var collection_vault: Control
@@ -259,6 +260,20 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	# Session-only accessibility controls; saves and combat are unaffected.
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_F8:
+			var shake_next: float = 0.5 if COMBAT_JUICE.shake_level > 0.75 else (0.0 if COMBAT_JUICE.shake_level > 0.25 else 1.0)
+			COMBAT_JUICE.set_shake_level(shake_next)
+			show_pickup("CAMERA SHAKE  ·  %d%%" % roundi(shake_next * 100.0))
+			get_viewport().set_input_as_handled()
+			return
+		if event.physical_keycode == KEY_F9:
+			var sound_next: float = 0.5 if COMBAT_JUICE.sound_level > 0.75 else (0.0 if COMBAT_JUICE.sound_level > 0.25 else 1.0)
+			COMBAT_JUICE.set_sound_level(sound_next)
+			show_pickup("IMPACT SFX  ·  %d%%" % roundi(sound_next * 100.0))
+			get_viewport().set_input_as_handled()
+			return
 	if is_instance_valid(collection_vault) and collection_vault.visible:
 		get_viewport().set_input_as_handled()
 		return
