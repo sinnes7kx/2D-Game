@@ -28,7 +28,10 @@ static func install(sprite: AnimatedSprite2D) -> void:
         if not matches(name) or not frames.get_animation_loop(name) or frames.get_frame_count(name) < STEPS:
             continue
         var neutral: Texture2D = frames.get_frame_texture(name, 0)
-        var alternate: Texture2D = frames.get_frame_texture(name, 3)
+        # v1.75 left-bow body has source frame 1 at slot 2, while
+        # slot 3 is the neutral pose again. Without this, all blends are static.
+        var alternate_index: int = 2 if is_bow_idle(name) and name.ends_with("_left") else 3
+        var alternate: Texture2D = frames.get_frame_texture(name, alternate_index)
         if neutral == null or alternate == null:
             continue
         var key: String = "%s:%d:%d" % [name, neutral.get_rid().get_id(), alternate.get_rid().get_id()]
