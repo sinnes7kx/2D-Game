@@ -118,7 +118,7 @@ func _draw_trident() -> void:
 
 func _draw_light() -> void:
 	for path in segments:
-		ANOMALOUS.draw_edge(self, path, gradients, look, elapsed, float(look.get("glow_strength", 1.0)))
+		ANOMALOUS.draw_edge(self, path, gradients, look, elapsed, float(look.get("glow_strength", 1.0)) * 0.80)
 
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.
@@ -136,7 +136,7 @@ func _draw_artwork_effects() -> void:
 		var phase: float = elapsed * (0.48 + 0.045 * float(motif)) + u * TAU
 		var p: Vector2 = Vector2.from_angle(phase) * (radius + 5.0 * sin(phase * 2.0))
 		var ink: Color = ANOMALOUS.color_at(gradients, look, u, elapsed)
-		ink.a = 0.62 + 0.12 * sin(phase * 1.4)
+		ink.a = 0.36 + 0.08 * sin(phase * 1.4)
 		match motif:
 			0, 7: draw_circle(p, 1.6, ink)
 			1, 6:
@@ -146,7 +146,7 @@ func _draw_artwork_effects() -> void:
 			3: draw_polyline(PackedVector2Array([p - Vector2(3,3), p + Vector2(1,-1), p + Vector2(-1,1), p + Vector2(3,3)]), ink, 1.0, true)
 			4: draw_arc(p, 3.0, phase, phase + PI, 12, ink, 1.0, true)
 			5: draw_line(p, p - Vector2.from_angle(phase + PI / 2.0) * 7.0, ink, 1.2, true)
-		ink.a = 0.08
+		ink.a = 0.045
 		draw_circle(p, 5.0, ink)
 	_draw_signature(Vector2.ZERO, radius + 10.0)
 
@@ -156,7 +156,7 @@ func _draw_signature(center: Vector2, radius: float) -> void:
 	if gradients.size() < 3 or (sig <= 0 and tier < 4):
 		return
 	var ink: Color = ANOMALOUS.color_at(gradients, look, 0.4, elapsed)
-	ink.a = 0.52
+	ink.a = 0.32
 	var phase: float = elapsed * 0.65
 	if sig == 2 or sig == 5 or tier >= 5:
 		draw_arc(center, radius, phase, phase + PI * 1.35, 48, ink, 1.1, true)
