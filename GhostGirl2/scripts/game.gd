@@ -959,7 +959,7 @@ func spawn_world_loot(data: GhostItemData, seed_value: int, quality: String, poi
 # transferred to the world, never rerolled or discarded on a failed placement.
 func drop_inventory_item(index: int) -> bool:
 	if not inventory.can_drop(index):
-		ui.show_pickup("QUEST TREASURES CANNOT BE DROPPED")
+		ui.show_pickup("PROTECTED OR QUEST TREASURES CANNOT BE DROPPED")
 		return false
 	var item: GhostItemInstance = inventory.get_item(index)
 	if item == null or item.definition == null or item.definition.resource_path.is_empty():
