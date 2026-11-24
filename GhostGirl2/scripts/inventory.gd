@@ -19,6 +19,9 @@ var contents: Array[GhostItemInstance] = []
 var grid_positions: Array[Vector2i] = []  # y = page * GRID_ROWS + local row
 var equipment: Dictionary = {"dress": -1, "wings": -1, "trinket": -1, "charm": -1, "wand": -1, "sword": -1}
 var collected_pickups: Dictionary = {}
+const VAULT_CAPACITY: int = 240
+var vault: Array[GhostItemInstance] = []
+var unresolved_vault: Array[Dictionary] = []
 
 func _ready() -> void:
 	load_game()
@@ -224,7 +227,7 @@ func _sort_position_clear(pos: Vector2i, size: Vector2i, placed: Dictionary) -> 
 # Exact item transfer for click-to-ground. Preserve rolled affixes and sockets.
 func can_drop(index: int) -> bool:
 	var item: GhostItemInstance = get_item(index)
-	return item != null and item.definition != null and item.definition.item_class != "quest"
+	return item != null and item.definition != null and item.definition.item_class != "quest" and not item.collector_locked
 
 func take_item_at(index: int) -> GhostItemInstance:
 	if not can_drop(index):
@@ -251,7 +254,7 @@ func add_existing_item(item: GhostItemInstance) -> GhostItemInstance:
 
 func can_destroy(index: int) -> bool:
 	var item: GhostItemInstance = get_item(index)
-	if item == null or item.definition == null or item.definition.item_class == "quest":
+	if item == null or item.definition == null or item.definition.item_class == "quest" or item.collector_locked:
 		return false
 	for slot in equipment.keys():
 		if equipped_index(str(slot)) == index:
@@ -274,7 +277,7 @@ func socket_at(gear_index: int, component_index: int) -> bool:
 		return false
 	if gear.get_slot() == "none" or gear.sockets <= gear.socketed.size():
 		return false
-	if component.definition == null or component.definition.item_class not in ["gem", "rune"]:
+	if component.definition == null or component.collector_locked or component.definition.item_class not in ["gem", "rune"]:
 		return false
 	gear.socketed.append({
 		"id": component.definition.item_id, "name": component.definition.display_name,
@@ -301,44 +304,61 @@ func get_stat_total(stat: String) -> float:
 			total += float(item.all_stats().get(stat, 0.0))
 	return total
 
-func save_game() -> void:
+func save_game() -> bool:
 	var saved_items: Array[Dictionary] = []
 	for i in range(contents.size()):
 		var item: GhostItemInstance = contents[i]
 		if item.definition == null or item.definition.resource_path.is_empty():
 			continue
 		var pos: Vector2i = get_position(i)
-		saved_items.append({
-			"resource": item.definition.resource_path, "seed": item.item_seed,
-			"quality": item.quality, "socketed": item.socketed.duplicate(true),
-			"grid_x": pos.x, "grid_y": pos.y,
-			"palette_index": item.palette_index,
-			"decoration_index": item.decoration_index,
-			"weapon_base_index": item.weapon_base_index,
-			"weapon_gradient_index": item.weapon_gradient_index,
-			"weapon_detail_a_index": item.weapon_detail_a_index,
-			"weapon_detail_b_index": item.weapon_detail_b_index,
-			"weapon_fx_style_index": item.weapon_fx_style_index,
-			"weapon_fx_color_index": item.weapon_fx_color_index,
-			"weapon_fx_accent_index": item.weapon_fx_accent_index,
-			"weapon_fx_trail_index": item.weapon_fx_trail_index,
-			"wand_cast_style_index": item.wand_cast_style_index,
-			"weapon_impact_style_index": item.weapon_impact_style_index,
-			"wand_lance_index": item.wand_lance_index,
-			"bow_element_index": item.bow_element_index,
-			"bow_formation_index": item.bow_formation_index,
-			"bow_glow_index": item.bow_glow_index,
-			"bow_trail_index": item.bow_trail_index,
-			"bow_detail_index": item.bow_detail_index,
-			"cosmetic_seed": item.cosmetic_seed,
-			"cosmetic_uid": item.cosmetic_uid,
-			"rare_visual_mod": item.rare_visual_mod,
-			"saved_cosmetic_looks": item.saved_cosmetic_looks.duplicate(true)
-		})
-	var data: Dictionary = {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS}
-	var file: FileAccess = FileAccess.open(SAVE_FILE, FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(data))
+		saved_items.append(_serialize_item(item, pos))
+	var saved_vault: Array[Dictionary] = unresolved_vault.duplicate(true)
+	for item in vault:
+		saved_vault.append(_serialize_item(item, Vector2i(-1, -1)))
+	var data: Dictionary = {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault}
+	var temporary: String = SAVE_FILE + ".tmp"
+	var file: FileAccess = FileAccess.open(temporary, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(JSON.stringify(data))
+	file.flush()
+	var write_error: Error = file.get_error()
+	file.close()
+	if write_error != OK:
+		return false
+	# Backpack and vault share one atomic save, so moving an item cannot
+	# save only one side of the transfer.
+	return DirAccess.rename_absolute(temporary, SAVE_FILE) == OK
+
+func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
+	return {
+		"resource": item.definition.resource_path, "seed": item.item_seed,
+		"quality": item.quality, "socketed": item.socketed.duplicate(true),
+		"grid_x": pos.x, "grid_y": pos.y,
+		"palette_index": item.palette_index,
+		"decoration_index": item.decoration_index,
+		"weapon_base_index": item.weapon_base_index,
+		"weapon_gradient_index": item.weapon_gradient_index,
+		"weapon_detail_a_index": item.weapon_detail_a_index,
+		"weapon_detail_b_index": item.weapon_detail_b_index,
+		"weapon_fx_style_index": item.weapon_fx_style_index,
+		"weapon_fx_color_index": item.weapon_fx_color_index,
+		"weapon_fx_accent_index": item.weapon_fx_accent_index,
+		"weapon_fx_trail_index": item.weapon_fx_trail_index,
+		"wand_cast_style_index": item.wand_cast_style_index,
+		"weapon_impact_style_index": item.weapon_impact_style_index,
+		"wand_lance_index": item.wand_lance_index,
+		"bow_element_index": item.bow_element_index,
+		"bow_formation_index": item.bow_formation_index,
+		"bow_glow_index": item.bow_glow_index,
+		"bow_trail_index": item.bow_trail_index,
+		"bow_detail_index": item.bow_detail_index,
+		"cosmetic_seed": item.cosmetic_seed,
+		"cosmetic_uid": item.cosmetic_uid,
+		"rare_visual_mod": item.rare_visual_mod,
+		"saved_cosmetic_looks": item.saved_cosmetic_looks.duplicate(true),
+		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked
+	}
 
 func load_game() -> void:
 	var source: String = SAVE_FILE if FileAccess.file_exists(SAVE_FILE) else LEGACY_SAVE_FILE
@@ -362,47 +382,8 @@ func load_game() -> void:
 		var saved: Variant = saved_items[saved_index]
 		if not saved is Dictionary or contents.size() >= capacity:
 			continue
-		var path: String = str(saved.get("resource", ""))
-		if not path.begins_with("res://") or not ResourceLoader.exists(path):
-			continue
-		var definition: GhostItemData = load(path) as GhostItemData
-		if definition != null:
-			var item: GhostItemInstance = GhostItemGenerator.create(definition, int(saved.get("seed", 0)), str(saved.get("quality", "normal")))
-			# v1/v2 saves lack these keys: retain deterministic roll defaults.
-			item.palette_index = clampi(int(saved.get("palette_index", item.palette_index)), 0, 5)
-			item.decoration_index = clampi(int(saved.get("decoration_index", item.decoration_index)), 0, 3)
-			item.weapon_base_index = clampi(int(saved.get("weapon_base_index", item.weapon_base_index)), 0, 5)
-			item.weapon_gradient_index = clampi(int(saved.get("weapon_gradient_index", item.weapon_gradient_index)), 0, 5)
-			item.weapon_detail_a_index = clampi(int(saved.get("weapon_detail_a_index", item.weapon_detail_a_index)), 0, 3)
-			item.weapon_detail_b_index = clampi(int(saved.get("weapon_detail_b_index", item.weapon_detail_b_index)), 0, 3)
-			# A v1.12 save has no effect keys; seeded fallback remains stable.
-			item.weapon_fx_style_index = clampi(int(saved.get("weapon_fx_style_index", item.weapon_fx_style_index)), 0, GhostWeaponFXLibrary.motif_limit(item.quality) - 1)
-			item.weapon_fx_color_index = clampi(int(saved.get("weapon_fx_color_index", item.weapon_fx_color_index)), 0, GhostWeaponFXLibrary.PAINT.size() - 1)
-			item.weapon_fx_accent_index = clampi(int(saved.get("weapon_fx_accent_index", item.weapon_fx_accent_index)), 0, GhostWeaponFXLibrary.PAINT.size() - 1)
-			item.weapon_fx_trail_index = clampi(int(saved.get("weapon_fx_trail_index", item.weapon_fx_trail_index)), 0, GhostWeaponFXLibrary.trail_limit(item.quality) - 1)
-			item.wand_cast_style_index = clampi(int(saved.get("wand_cast_style_index", item.wand_cast_style_index)), 0, GhostWeaponFXLibrary.form_limit(item.quality) - 1)
-			item.weapon_impact_style_index = clampi(int(saved.get("weapon_impact_style_index", item.weapon_impact_style_index)), 0, GhostWeaponFXLibrary.impact_limit(item.quality) - 1)
-			item.wand_lance_index = clampi(int(saved.get("wand_lance_index", item.wand_lance_index)), 0, 1)
-			# For pre-v1.38 saves, generator rolls the same stable bow imprint.
-			item.bow_element_index = clampi(int(saved.get("bow_element_index", item.bow_element_index)), 0, 3)
-			item.bow_formation_index = clampi(int(saved.get("bow_formation_index", item.bow_formation_index)), 0, 1)
-			item.bow_glow_index = clampi(int(saved.get("bow_glow_index", item.bow_glow_index)), 0, 9)
-			item.bow_trail_index = clampi(int(saved.get("bow_trail_index", item.bow_trail_index)), 0, 5)
-			item.bow_detail_index = clampi(int(saved.get("bow_detail_index", item.bow_detail_index)), 0, 4)
-			# These keys are optional: old saves preserve their exact appearance.
-			item.cosmetic_seed = int(saved.get("cosmetic_seed", -1))
-			# Old saves without an ID retain their original seed-derived visual look.
-			item.cosmetic_uid = str(saved.get("cosmetic_uid", ""))
-			item.rare_visual_mod = int(saved.get("rare_visual_mod", -1))
-			item.saved_cosmetic_looks.clear()
-			var saved_looks: Variant = saved.get("saved_cosmetic_looks", [])
-			if saved_looks is Array:
-				for look in saved_looks:
-					if look is Dictionary and look.has("seed") and item.saved_cosmetic_looks.size() < 16:
-						item.saved_cosmetic_looks.append((look as Dictionary).duplicate(true))
-			for jewel in saved.get("socketed", []):
-				if jewel is Dictionary and item.socketed.size() < item.sockets:
-					item.socketed.append(jewel.duplicate(true))
+		var item: GhostItemInstance = _deserialize_item(saved)
+		if item != null:
 			var wanted: Vector2i = Vector2i(int(saved.get("grid_x", -1)), int(saved.get("grid_y", -1)))
 			if wanted.y >= 0 and saved_grid_rows != GRID_ROWS:
 				var old_page: int = int(floor(float(wanted.y) / float(saved_grid_rows)))
@@ -412,6 +393,18 @@ func load_game() -> void:
 				restored_indices[saved_index] = contents.size()
 				contents.append(item)
 				grid_positions.append(pos)
+	vault.clear()
+	unresolved_vault.clear()
+	var saved_vault: Variant = data.get("vault", [])
+	if saved_vault is Array:
+		for saved in saved_vault:
+			if not saved is Dictionary:
+				continue
+			var stored: GhostItemInstance = _deserialize_item(saved)
+			if stored == null:
+				unresolved_vault.append(saved.duplicate(true))
+			else:
+				vault.append(stored)
 	collected_pickups.clear()
 	for key in (data.get("collected", {}) as Dictionary).keys():
 		collected_pickups[str(key)] = true
@@ -428,3 +421,103 @@ func load_game() -> void:
 	equipment_changed.emit()
 	if source == LEGACY_SAVE_FILE or saved_grid_rows != GRID_ROWS:
 		save_game()
+
+func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
+	var path: String = str(saved.get("resource", ""))
+	if not path.begins_with("res://") or not ResourceLoader.exists(path):
+		return null
+	var definition: GhostItemData = load(path) as GhostItemData
+	if definition == null:
+		return null
+	var item: GhostItemInstance = GhostItemGenerator.create(definition, int(saved.get("seed", 0)), str(saved.get("quality", "normal")))
+	# v1/v2 saves lack these keys: retain deterministic roll defaults.
+	item.palette_index = clampi(int(saved.get("palette_index", item.palette_index)), 0, 5)
+	item.decoration_index = clampi(int(saved.get("decoration_index", item.decoration_index)), 0, 3)
+	item.weapon_base_index = clampi(int(saved.get("weapon_base_index", item.weapon_base_index)), 0, 5)
+	item.weapon_gradient_index = clampi(int(saved.get("weapon_gradient_index", item.weapon_gradient_index)), 0, 5)
+	item.weapon_detail_a_index = clampi(int(saved.get("weapon_detail_a_index", item.weapon_detail_a_index)), 0, 3)
+	item.weapon_detail_b_index = clampi(int(saved.get("weapon_detail_b_index", item.weapon_detail_b_index)), 0, 3)
+	# A v1.12 save has no effect keys; seeded fallback remains stable.
+	item.weapon_fx_style_index = clampi(int(saved.get("weapon_fx_style_index", item.weapon_fx_style_index)), 0, GhostWeaponFXLibrary.motif_limit(item.quality) - 1)
+	item.weapon_fx_color_index = clampi(int(saved.get("weapon_fx_color_index", item.weapon_fx_color_index)), 0, GhostWeaponFXLibrary.PAINT.size() - 1)
+	item.weapon_fx_accent_index = clampi(int(saved.get("weapon_fx_accent_index", item.weapon_fx_accent_index)), 0, GhostWeaponFXLibrary.PAINT.size() - 1)
+	item.weapon_fx_trail_index = clampi(int(saved.get("weapon_fx_trail_index", item.weapon_fx_trail_index)), 0, GhostWeaponFXLibrary.trail_limit(item.quality) - 1)
+	item.wand_cast_style_index = clampi(int(saved.get("wand_cast_style_index", item.wand_cast_style_index)), 0, GhostWeaponFXLibrary.form_limit(item.quality) - 1)
+	item.weapon_impact_style_index = clampi(int(saved.get("weapon_impact_style_index", item.weapon_impact_style_index)), 0, GhostWeaponFXLibrary.impact_limit(item.quality) - 1)
+	item.wand_lance_index = clampi(int(saved.get("wand_lance_index", item.wand_lance_index)), 0, 1)
+	# For pre-v1.38 saves, generator rolls the same stable bow imprint.
+	item.bow_element_index = clampi(int(saved.get("bow_element_index", item.bow_element_index)), 0, 3)
+	item.bow_formation_index = clampi(int(saved.get("bow_formation_index", item.bow_formation_index)), 0, 1)
+	item.bow_glow_index = clampi(int(saved.get("bow_glow_index", item.bow_glow_index)), 0, 9)
+	item.bow_trail_index = clampi(int(saved.get("bow_trail_index", item.bow_trail_index)), 0, 5)
+	item.bow_detail_index = clampi(int(saved.get("bow_detail_index", item.bow_detail_index)), 0, 4)
+	# These keys are optional: old saves preserve their exact appearance.
+	item.cosmetic_seed = int(saved.get("cosmetic_seed", -1))
+	# Old saves without an ID retain their original seed-derived visual look.
+	item.cosmetic_uid = str(saved.get("cosmetic_uid", ""))
+	item.rare_visual_mod = int(saved.get("rare_visual_mod", -1))
+	item.saved_cosmetic_looks.clear()
+	var saved_looks: Variant = saved.get("saved_cosmetic_looks", [])
+	if saved_looks is Array:
+		for look in saved_looks:
+			if look is Dictionary and look.has("seed") and item.saved_cosmetic_looks.size() < 16:
+				item.saved_cosmetic_looks.append((look as Dictionary).duplicate(true))
+	for jewel in saved.get("socketed", []):
+		if jewel is Dictionary and item.socketed.size() < item.sockets:
+			item.socketed.append(jewel.duplicate(true))
+	item.collector_favorite = bool(saved.get("collector_favorite", false))
+	item.collector_locked = bool(saved.get("collector_locked", false))
+	return item
+
+func vault_store(index: int, persist: bool = true) -> bool:
+	var item: GhostItemInstance = get_item(index)
+	if item == null or item.definition == null or item.get_slot() not in ["sword", "wand"]:
+		return false
+	if vault.size() + unresolved_vault.size() >= VAULT_CAPACITY:
+		return false
+	for slot in equipment.keys():
+		if equipped_index(str(slot)) == index:
+			return false
+	var position_before: Vector2i = grid_positions[index]
+	var equipment_before: Dictionary = equipment.duplicate(true)
+	vault.append(item)
+	_remove_item_at(index)
+	if persist and not save_game():
+		vault.pop_back()
+		contents.insert(index, item)
+		grid_positions.insert(index, position_before)
+		equipment = equipment_before
+		return false
+	contents_changed.emit()
+	equipment_changed.emit()
+	return true
+
+func vault_withdraw(index: int, persist: bool = true) -> bool:
+	if index < 0 or index >= vault.size() or contents.size() >= capacity:
+		return false
+	var item: GhostItemInstance = vault[index]
+	var pos: Vector2i = _first_open(item)
+	if pos.x < 0:
+		return false
+	vault.remove_at(index)
+	contents.append(item)
+	grid_positions.append(pos)
+	if persist and not save_game():
+		contents.pop_back()
+		grid_positions.pop_back()
+		vault.insert(index, item)
+		return false
+	contents_changed.emit()
+	equipment_changed.emit()
+	return true
+
+func set_collector_flag(item: GhostItemInstance, flag: String, value: bool) -> bool:
+	if item == null or (not contents.has(item) and not vault.has(item)) or flag not in ["collector_favorite", "collector_locked"]:
+		return false
+	var old: bool = bool(item.get(flag))
+	item.set(flag, value)
+	if not save_game():
+		item.set(flag, old)
+		return false
+	contents_changed.emit()
+	return true
