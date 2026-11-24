@@ -82,10 +82,10 @@ func _first_open(item: GhostItemInstance) -> Vector2i:
 					return pos
 	return Vector2i(-1, -1)
 
-func add_pickup(template: GhostItemData, pickup_id: String, item_seed: int) -> GhostItemInstance:
+func add_pickup(template: GhostItemData, pickup_id: String, item_seed: int, origin: String = "") -> GhostItemInstance:
 	if pickup_id.is_empty() or collected_pickups.has(pickup_id):
 		return null
-	var item: GhostItemInstance = add_loot(template, item_seed)
+	var item: GhostItemInstance = add_loot(template, item_seed, "", origin)
 	if item != null:
 		collected_pickups[pickup_id] = true
 		save_game()
@@ -106,7 +106,7 @@ func _resolve_socketable_loot_template(template: GhostItemData, seed_value: int)
 			return jewel
 	return template
 
-func add_loot(template: GhostItemData, seed_value: int, forced_quality: String = "") -> GhostItemInstance:
+func add_loot(template: GhostItemData, seed_value: int, forced_quality: String = "", origin: String = "") -> GhostItemInstance:
 	if template == null or contents.size() >= capacity:
 		return null
 	template = _resolve_socketable_loot_template(template, seed_value)
@@ -117,6 +117,7 @@ func add_loot(template: GhostItemData, seed_value: int, forced_quality: String =
 	# Do not change the item_seed that determines damage, affixes and sockets.
 	if template.equip_slot != "none" and template.item_class == "equipment":
 		item.apply_cosmetic_uid(GhostCosmeticRNGV152.fresh_uid())
+	item.stamp_origin(origin)
 	var pos: Vector2i = _first_open(item)
 	if pos.x < 0:
 		return null
@@ -358,7 +359,7 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"cosmetic_uid": item.cosmetic_uid,
 		"rare_visual_mod": item.rare_visual_mod,
 		"saved_cosmetic_looks": item.saved_cosmetic_looks.duplicate(true),
-		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked, "exhibition_slot": item.exhibition_slot
+		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked, "exhibition_slot": item.exhibition_slot, "origin_room": item.origin_room, "regional_rank": item.regional_rank
 	}
 
 func load_game() -> void:
@@ -471,6 +472,8 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	item.collector_favorite = bool(saved.get("collector_favorite", false))
 	item.collector_locked = bool(saved.get("collector_locked", false))
 	item.exhibition_slot = clampi(int(saved.get("exhibition_slot", -1)), -1, EXHIBITION_CAPACITY - 1)
+	item.origin_room = str(saved.get("origin_room", ""))
+	item.regional_rank = clampi(int(saved.get("regional_rank", 0)), 0, 3)
 	return item
 
 func vault_store(index: int, persist: bool = true) -> bool:
