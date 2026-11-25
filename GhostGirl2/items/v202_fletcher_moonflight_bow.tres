@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ghost/bows_v126/thornrose_icon.png" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v202_fletcher_moonflight_bow"
+display_name = "Fletcher's Moonflight Bow"
+description = "A rosewood bow earned by landing all three shots of the Lanternhaven fletcher's trial without a miss."
+icon = ExtResource("icon")
+equip_slot = "sword"
+item_class = "equipment"
+weapon_style = "bow"
+stat_id = "attack_speed_pct"
+min_stat = 5.0
+max_stat = 10.0
+max_sockets = 2
+item_level = 16
+min_weapon_damage = 19.0
+max_weapon_damage = 26.0
+inventory_width = 2
+inventory_height = 3

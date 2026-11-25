@@ -114,7 +114,7 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	var out: Array[String] = []
 	var slot: String = str(item.get_slot())
 	var item_class: String = str(item.definition.item_class)
-	var category: String = slot if slot != "none" else item_class
+	var category: String = ("HEAD ACCESSORY" if slot == "wings" else ("TIARA / DIADEM" if slot == "helm" else slot)) if slot != "none" else item_class
 	var unique_socketable: bool = item.definition.unique and item_class in ["gem", "rune"]
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
 	if slot == "sword":
@@ -168,7 +168,7 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	
 	if slot == "sword":
 		out.append(_label("Light strike %.2fs  ·  %.1f stamina" % [item.light_swing_duration(), item.light_stamina_cost()]))
-	if slot in ["dress", "wings", "trinket", "charm"] and item.visual_signature() in [4, 5]:
+	if slot in ["dress", "wings", "helm", "trinket", "charm"] and item.visual_signature() in [4, 5]:
 		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, "Moonfall Halo" if item.visual_signature() == 5 else "Mythic Radiance"])
 		out.append(_label("Luminous dress aura" if slot == "dress" else "Spectral accessory glimmer"))
 	if slot in ["sword", "wand"]:

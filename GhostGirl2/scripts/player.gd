@@ -1218,6 +1218,9 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	release.global_position = global_position + Vector2(0, -39) + heading.normalized() * 26.0
 	root.add_child(arrow)
 	arrow.global_position = global_position + Vector2(0, -39) + heading.normalized() * 31.0
+	# Exactly one authentic released arrow per scored range shot; cosmetic
+	# formation wisps never report extra shots to the optional fletcher trial.
+	get_tree().call_group("v202_archery_range", "on_player_arrow_launched", global_position)
 
 func _begin_attack(heavy: bool) -> void:
 	if carrying != null:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=34 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/world/moonthorn_woods.png" id="background"]
 [ext_resource type="Texture2D" path="res://assets/world/layers/moonthorn_woods_foreground.png" id="foreground"]
@@ -18,6 +18,15 @@
 [ext_resource type="Script" path="res://scripts/moonlit_cave_boulder_v201.gd" id="v201_cave"]
 [ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="v140_chest"]
 [ext_resource type="Resource" path="res://items/moon_gem.tres" id="v140_loot"]
+
+[ext_resource type="Script" path="res://scripts/world_critter_v202.gd" id="v202_critter"]
+[ext_resource type="Script" path="res://scripts/collectible_item.gd" id="v202_pickup"]
+[ext_resource type="Resource" path="res://items/v202_crescent_halo.tres" id="v202_crescent_halo_res"]
+[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_crescent_halo.svg" id="v202_crescent_halo_icon"]
+[ext_resource type="Resource" path="res://items/v202_rose_horns.tres" id="v202_rose_horns_res"]
+[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_rose_horns.svg" id="v202_rose_horns_icon"]
+
+[ext_resource type="Script" path="res://scripts/world_puzzle_v202.gd" id="v202_puzzle"]
 
 [sub_resource type="RectangleShape2D" id="col0"]
 size = Vector2(3072, 155)
@@ -341,3 +350,71 @@ chest_id = "v201_moonthorn_cave_cache"
 loot_data = ExtResource("v140_loot")
 loot_seed = 201025
 guaranteed_quality = "magic"
+
+[node name="V202Wildlife" type="Node2D" parent="Gameplay"]
+
+[node name="HareUnderOak" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(990, 960)
+script = ExtResource("v202_critter")
+species = "hare"
+wander_radius = 42.0
+
+[node name="MothByRoots" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(2130, 1170)
+script = ExtResource("v202_critter")
+species = "moth"
+wander_radius = 42.0
+
+[node name="DuskFox" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(2660, 1060)
+script = ExtResource("v202_critter")
+species = "fox"
+wander_radius = 42.0
+
+[node name="CrowMoonlitCave" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(680, 1190)
+script = ExtResource("v202_critter")
+species = "crow"
+wander_radius = 42.0
+
+[node name="CrescentHaloFind" type="Node2D" parent="Gameplay/Collectibles"]
+position = Vector2(740, 1280)
+script = ExtResource("v202_pickup")
+item_data = ExtResource("v202_crescent_halo_res")
+interaction_name = "Discover crescent halo"
+pickup_id = "v202_crescent_halo_find"
+item_seed = 202103
+
+[node name="Icon" type="Sprite2D" parent="Gameplay/Collectibles/CrescentHaloFind"]
+texture = ExtResource("v202_crescent_halo_icon")
+scale = Vector2(0.53, 0.53)
+
+[node name="RoseHornsFind" type="Node2D" parent="Gameplay/Collectibles"]
+position = Vector2(2320, 1210)
+script = ExtResource("v202_pickup")
+item_data = ExtResource("v202_rose_horns_res")
+interaction_name = "Discover rose horns"
+pickup_id = "v202_rose_horns_find"
+item_seed = 202104
+
+[node name="Icon" type="Sprite2D" parent="Gameplay/Collectibles/RoseHornsFind"]
+texture = ExtResource("v202_rose_horns_icon")
+scale = Vector2(0.53, 0.53)
+
+; v2.02 collectible discovery with multiple existing spell/tool solutions.
+[node name="V202WorldPuzzles" type="Node2D" parent="Gameplay"]
+
+[node name="MoonrootKnot" type="Node2D" parent="Gameplay/V202WorldPuzzles"]
+position = Vector2(2500, 1040)
+script = ExtResource("v202_puzzle")
+puzzle_kind = "root_knot"
+discovery_id = "v202_moonthorn_root_knot"
+reward_chest_path = NodePath("../../TreasureChests/MoonrootKnotReward")
+
+[node name="MoonrootKnotReward" parent="Gameplay/TreasureChests" instance=ExtResource("v140_chest")]
+position = Vector2(2640, 1170)
+visible = false
+chest_id = "v202_moonthorn_root_knot_reward_claimed"
+loot_data = ExtResource("v140_loot")
+loot_seed = 202140
+guaranteed_quality = "normal"

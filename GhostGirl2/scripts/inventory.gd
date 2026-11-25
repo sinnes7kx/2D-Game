@@ -18,7 +18,7 @@ const SPECIAL_JEWEL_EXILE: GhostItemData = preload("res://items/exile_jewel.tres
 const SPECIAL_JEWELS: Array[GhostItemData] = [SPECIAL_JEWEL_MALADY, SPECIAL_JEWEL_DELIRIUM, SPECIAL_JEWEL_EXILE]
 var contents: Array[GhostItemInstance] = []
 var grid_positions: Array[Vector2i] = []  # y = page * GRID_ROWS + local row
-var equipment: Dictionary = {"dress": -1, "wings": -1, "trinket": -1, "charm": -1, "wand": -1, "sword": -1}
+var equipment: Dictionary = {"dress": -1, "wings": -1, "helm": -1, "trinket": -1, "charm": -1, "wand": -1, "sword": -1}
 var collected_pickups: Dictionary = {}
 const VAULT_CAPACITY: int = 240
 const EXHIBITION_CAPACITY: int = 6
@@ -42,7 +42,7 @@ func get_item_size(item: GhostItemInstance) -> Vector2i:
 		return Vector2i.ONE
 	match definition.equip_slot:
 		"dress": return Vector2i(2, 3)
-		"wings": return Vector2i(2, 2)
+		"wings", "helm": return Vector2i(2, 2)
 		"wand": return Vector2i(1, 3)
 		"sword": return Vector2i(2, 3)
 		"trinket", "charm": return Vector2i.ONE

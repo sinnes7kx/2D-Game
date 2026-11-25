@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_crescent_halo.svg" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v202_crescent_halo"
+display_name = "Lunar Crescent Halo"
+description = "A delicate orbit of quiet silver light above the hair."
+icon = ExtResource("icon")
+equip_slot = "wings"
+item_class = "equipment"
+stat_id = "spell_power_pct"
+min_stat = 1.5
+max_stat = 3.5
+item_level = 8
+inventory_width = 1
+inventory_height = 1

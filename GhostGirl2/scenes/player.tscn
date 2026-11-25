@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://scripts/v172_weapon_pose.gd" id="v172_pose"]
 [ext_resource type="Script" path="res://scripts/v173_dual_daggers.gd" id="v173_dual"]
 [ext_resource type="Script" path="res://scripts/v174_dual_swords.gd" id="v174_swords"]
+[ext_resource type="Script" path="res://scripts/moonmoth_companion_v202.gd" id="v202_moonmoth"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_feet"]
 radius = 15.0
@@ -121,3 +122,7 @@ texture = ExtResource("9_trinket")
 [node name="ActionSFX" type="AudioStreamPlayer2D" parent="." unique_id=1157320349]
 volume_db = -10.0
 max_distance = 900.0
+
+[node name="MoonmothGuideV202" type="Node2D" parent="."]
+script = ExtResource("v202_moonmoth")
+z_index = 25
