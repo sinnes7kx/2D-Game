@@ -47,6 +47,9 @@ jobs:
       - name: Validate v1.75 hook-free body, bow mirror and Mythic glows
         run: python3 GhostGirl2/tests/validate_v175.py
 
+      - name: Reject unresolved merge markers and unsafe duplicate scripts
+        run: python3 GhostGirl2/tests/validate_active_source_hygiene.py --self-test
+
       - name: Import project resources
         run: godot --headless --editor --path GhostGirl2 --import
 

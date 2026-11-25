@@ -73,7 +73,7 @@ The active Godot project is **`GhostGirl2/`**, not the repository root. File nam
 - **Online player accounts, genuine player-to-player trading, publicly accessible showrooms, and verified leaderboards are roadmap goals, not assumed existing systems.**
 - A local save can be edited; **local-only item fields do not prove unique ownership or authentic rarity** in a future shared economy.
 - Cosmetic favorites / seed rerolls already have partial or substantial source support. Assess the *actual UX and preservation behavior* before rebuilding them.
-- The duplicate `GhostGirl2/scripts - Copy/inventory_panel.gd` currently contains unresolved merge-conflict markers; do not copy it over the active script.
+- The historical duplicate `GhostGirl2/scripts - Copy/inventory_panel.gd` is **not tracked on `main` as inspected 2026-11-25**. Keep the active `scripts/inventory_panel.gd` authoritative; an M0 source-hygiene guard is proposed to prevent duplicate scripts or unresolved merge markers returning.
 - The project name/version in `project.godot` and the historical `GhostGirl2/README.md` may lag behind newly added code. Keep actual release state separate from marketing labels.
 
 ### Status vocabulary
@@ -114,7 +114,8 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 
 - [ ] Reproduce and verify the `TestMythic` crash case: an older `Button` was assigned to an `OptionButton`. Confirm the active `_ensure_effect_dropdown()` implementation fixes it in engine.
 - [ ] Run `tests/v1921_dropdown_compat_smoke.gd` against current, legacy-Button, and missing dropdown scenes. Confirm debug effects and reset signals; ensure tester is hidden in exported releases.
-- [ ] Remove or clean unresolved Git merge markers in the duplicate `scripts - Copy/inventory_panel.gd`; do not substitute this duplicate for the live `scripts/inventory_panel.gd`.
+- [x] Confirm the conflict-marked duplicate `scripts - Copy/inventory_panel.gd` is absent from the tracked `main` tree (2026-11-25 inspection); do not substitute historical copies for the live `scripts/inventory_panel.gd`.
+- [ ] Enforce the proposed active source-hygiene CI guard against unresolved merge markers and reintroduced `scripts - Copy/`; verify CI on the integration PR.
 - [ ] Scan tracked GDScript and scenes for unresolved merge markers, missing resources, bad node paths, stale `@onready` assignments, and startup failures.
 - [ ] Validate fresh-checkout Godot import, script parsing, scene loading, and the CI smoke workflow.
 - [ ] Manually F5-test: new game, old save, inventory, inspect, tooltip, sort, drag-and-drop, socket, equip/unequip, destroy confirmation, vault store/withdraw, favorite/protect, exhibition, save/reload, and exit.
@@ -667,7 +668,7 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 **Sprint A: stability before spectacle**
 
 - [ ] Check current branch and reproduce/close the inventory Button → OptionButton issue with Godot.
-- [ ] Run `v1921_dropdown_compat_smoke.gd`; inspect and clean the duplicate conflict-marked inventory script.
+- [ ] Re-run `v1921_dropdown_compat_smoke.gd` in current CI; the old duplicate inventory script is no longer tracked on `main`. Preserve active compatibility behavior.
 - [ ] Run existing smoke tests, then F5 test the full item lifecycle, vault, exhibitions, and an older save.
 - [x] Restore the v1.92.2 collection recovery regression to the active workflow. **Godot headless CI passed** in run 45511859931, including the legacy migration test. Real F5 transfer/save-load checks and private older-save compatibility remain outstanding; do not treat CI as that playtest.
 - [ ] Document any remaining blockers and only declare completion with evidence.
