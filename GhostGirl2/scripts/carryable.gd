@@ -9,6 +9,8 @@ const PHYSICAL_FEEL: Script = preload("res://scripts/impact_spawner_v149.gd")
 var impact_cooldown: float = 0.0
 var thrown_timer: float = 0.0
 var held: bool = false
+# One genuine stone impact per throw; cosmetic rebounds cannot farm puzzle hits.
+var v201_cave_impact_delivered: bool = false
 var z_height: float = 0.0
 var z_velocity: float = 0.0
 var original_collision_layer: int = 4
@@ -50,6 +52,7 @@ func pick_up(attachment: Marker2D) -> void:
 	if held:
 		return
 	held = true
+	v201_cave_impact_delivered = false
 	thrown_timer = 0.0
 	freeze = true
 	linear_velocity = Vector2.ZERO
@@ -71,6 +74,7 @@ func release_to(parent_node: Node2D, world_position: Vector2, direction: Vector2
 	global_position = world_position
 	rotation = 0.0
 	held = false
+	v201_cave_impact_delivered = false
 	thrown_timer = 2.7 if should_throw else 0.0
 	shadow.visible = true
 	collision_layer = original_collision_layer
@@ -90,8 +94,13 @@ func release_to(parent_node: Node2D, world_position: Vector2, direction: Vector2
 			remove_collision_exception_with(character)
 	)
 
-func _on_body_impact(_other: Node) -> void:
+func _on_body_impact(other: Node) -> void:
 	if not held and thrown_timer > 0.0 and linear_velocity.length() > 135.0:
+		# The player can improvise with a real carried stone. Only a genuine
+		# high-speed collision with the cave obstruction counts, once per throw.
+		if not v201_cave_impact_delivered and other != null and other.is_in_group("v201_cave_blocker") and other.has_method("receive_thrown_impact"):
+			v201_cave_impact_delivered = true
+			other.call("receive_thrown_impact", linear_velocity.length(), global_position)
 		_spawn_impact()
 
 func _spawn_impact() -> void:
