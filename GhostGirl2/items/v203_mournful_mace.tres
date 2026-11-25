@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="data"]
+[ext_resource type="Texture2D" path="res://assets/ui/blunt_v203/v203_mournful_mace.svg" id="icon"]
+
+[resource]
+script = ExtResource("data")
+item_id = "v203_mournful_mace"
+display_name = "Mournful Mace"
+description = "An iron flanged mace. A measured, crushing blow, not a cutting edge."
+icon = ExtResource("icon")
+equip_slot = "sword"
+item_class = "equipment"
+weapon_style = "maul"
+stat_id = "poise_power_pct"
+min_stat = 3.0
+max_stat = 7.0
+max_sockets = 2
+item_level = 10
+min_weapon_damage = 14.0
+max_weapon_damage = 20.0
+inventory_width = 2
+inventory_height = 3
