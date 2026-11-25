@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/world/briar_hollow.png" id="background"]
 [ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
