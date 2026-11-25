@@ -14,6 +14,11 @@ class FakeInventory extends Node:
     var item: GhostItemInstance = null
     func get_equipped(slot: String) -> GhostItemInstance:
         return item if slot == "sword" else null
+    func get_stat_total(_id: String) -> float:
+        return 0.0
+
+class FakeWorld extends Node:
+    var inventory: Node = null
 
 func _initialize() -> void:
     call_deferred("_verify")
@@ -128,6 +133,26 @@ func _verify() -> void:
     if old_maul.physical_damage_kind() != "blunt" or not BLUNT.kind_from_id(old_maul.definition.item_id).is_empty():
         _fail("Original maul damage kind or silhouette changed")
         return
+    # A bow aerial action cannot accidentally invoke a second, invisible
+    # jump-melee strike while the genuine arrow is being drawn/released.
+    var fake_world: FakeWorld = FakeWorld.new()
+    fake_world.inventory = fake
+    root.add_child(fake_world)
+    actor.set("world", fake_world)
+    actor.call("_begin_jump")
+    if float(actor.get("jump_duration")) < 0.60:
+        _fail("Jump duration was not raised")
+        return
+    actor.set("jump_time_left", 0.29)
+    actor.set("jump_duration", 0.62)
+    actor.set("jump_attack_active", true)
+    actor.set("jump_attack_triggered", false)
+    actor.call("_advance_jump", 0.04)
+    if not bool(actor.get("jump_attack_triggered")) or bool(actor.get("attack_hit_done")):
+        _fail("Aerial bow skipped its trigger policy or registered an invisible melee hit")
+        return
+    actor.set("world", null)
+    fake_world.free()
     var game: Node2D = GAME.new() as Node2D
     var dropped: GhostItemData = game.call("_roll_sword_drop", load("res://items/dusk_needle.tres"), 41)
     if dropped == null or BLUNT.kind_from_id(dropped.item_id).is_empty():
