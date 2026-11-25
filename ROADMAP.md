@@ -126,6 +126,11 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
 
+### v2.05 — multi-slot collector identity regression (PR source; CI/F5 pending)
+
+- [ ] New `tests/v205_multislot_collector_identity_smoke.gd` checks four real item definitions (dual swords, bow, glowing eyes and tiara) with synthetic collectible seeds. It tests saved-look restoration, appearance-only UID changes, birth/current roll-code separation, equipped-slot mapping, collected flags and whole-inventory JSON encode/decode without accessing `user://`.
+- [ ] Check GitHub Actions headless result before calling the suite validated. This test supplements v1.93.1 and v2.00; it does **not** replace private legacy-save F5 tests, vault failure recovery, inventory interactions or visual alignment verification.
+- [ ] No save schema, balancing, drop chances or equipment behavior changes. Existing collector IDs, stats and palettes remain untouched.
 ### v2.04 — seeded eye silhouettes and eye coverage (feature branch; Godot CI / F5 pending)
 
 - [ ] The existing `v202_luminous_eyes` accessory now draws opaque eye-shaped backing across the original black pupils, with four eye variants (Moonveil, Cathedral slit, Starborn, Hollow ring) selected deterministically from the saved cosmetic seed. A separate versioned continuous color gradient follows the cosmetic UID; cosmetic rerolls can yield new variants and shades without touching stats, item identity or the saved `wings` slot.
