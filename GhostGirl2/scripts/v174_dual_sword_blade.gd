@@ -1,6 +1,7 @@
 extends Node2D
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 ## v1.74: two long, sharp Gothic weapons, one in each hand.
 ## All drawn geometry follows v174_dual_swords.gd per-frame blade positions.
 ## No hitbox, collider, gameplay roll or save mutations occur in this layer.
@@ -58,7 +59,22 @@ func _draw() -> void:
 	var look: Dictionary = MODULAR.equipped_profile(self, body, blade_index)
 	if not look.is_empty():
 		MODULAR.draw_grip(self, grip - tangent * 9.0, blade_root, 5.1, look)
-		MODULAR.draw_blade(self, blade_root, blade_tip, 5.2 if blade_index == 0 else 4.8, look)
+		var steel_width: float = 6.6 if blade_index == 0 else 6.1
+		MODULAR.draw_blade(self, blade_root, blade_tip, steel_width, look)
+		# World-size visibility: thin, seeded metal edges + restrained halo.
+		# Draw on the actual blade silhouette so the longer sword never has a
+		# floating glow or a duplicate solid weapon image.
+		var near_edge: PackedVector2Array = MODULAR.edge_points(blade_root, blade_tip, steel_width, look, -1.0)
+		var far_edge: PackedVector2Array = MODULAR.edge_points(blade_root, blade_tip, steel_width, look, 1.0)
+		var trim: Color = look["accent"]
+		var aura: float = FX_LEVEL.alpha(0.12 if int(look.get("material", 0)) >= 3 else 0.045)
+		if aura > 0.0:
+			var halo: Color = Color(trim.r, trim.g, trim.b, aura)
+			draw_polyline(near_edge, halo, 3.4, true)
+			draw_polyline(far_edge, halo, 2.9, true)
+		var glint: Color = look["edge"]
+		glint.a = 0.68
+		draw_polyline(near_edge, glint, 1.30, true)
 		return
 	var wrap: Color = Color("655266") if blade_index == 0 else Color("754c5e")
 	var metal: Color = Color("74738c") if blade_index == 0 else Color("682e49")
