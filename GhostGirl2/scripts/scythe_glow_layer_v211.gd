@@ -32,7 +32,9 @@ static func opacity(level_index: int) -> float:
 func set_pose(item: GhostItemInstance, at_grip: Vector2, at_head: Vector2, shape: Dictionary, direction: float, override_level: int = -1) -> void:
 	var next_level: int = clampi(override_level, 0, 5) if override_level >= 0 else rolled_level(item)
 	var enabled: bool = item != null and item.weapon_style() == "scythe" and at_grip.distance_squared_to(at_head) > 16.0 and not shape.is_empty()
-	var new_palette: Array[Color] = item.glow_gradient_colors() if enabled else []
+	var new_palette: Array[Color] = []
+	if enabled:
+		new_palette = item.glow_gradient_colors()
 	if grip == at_grip and head == at_head and side == direction and level == next_level and active == enabled and profile == shape and palette == new_palette:
 		return
 	grip = at_grip
