@@ -152,6 +152,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])
 	# Keep special seeded visuals visible in the ordinary hover tooltip,
 	# even when ALT is not held. Detailed roll codes stay in Inspect.
+	if item.has_rare_seeded_appearance():
+		out.append("[font_size=13][color=%s]✦ Rare appearance: %s[/color][/font_size]" % [GOLD, escape(item.collector_material_label())])
 	if item.visual_signature() > 0:
 		var level: int = item.visual_signature()
 		var signature_label: String = "Mythic Radiance" if level == 4 else ("Moonfall Halo" if level == 5 else GhostCosmeticRNGV152.signature_name(level))
