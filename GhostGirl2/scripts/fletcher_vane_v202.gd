@@ -3,7 +3,7 @@ extends Node2D
 ## A stage marker for the v2.02 fletcher trial.
 ## The physical arrow still owns the one and only hit/collision sweep.
 @export_range(0, 2, 1) var stage_index: int = 0
-@export var trigger_radius: float = 33.0
+@export var trigger_radius: float = 48.0 # Includes the painted bullseye 35px above the node origin.
 var glow: float = 0.0
 
 func _ready() -> void:
