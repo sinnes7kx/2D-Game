@@ -17,6 +17,8 @@ var pending_gear_index: int = -1
 var active_page: int = 0
 var pending_delete_item: Variant = null
 var test_looks: OptionButton
+var cosmetic_radio_panel: ScrollContainer
+var cosmetic_radio_options: Array[Dictionary] = []
 var last_recovery_notice: String = ""
 @onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
@@ -60,6 +62,12 @@ func _ready() -> void:
 		test_looks.item_selected.connect(_preview_look)
 	$Layout/Actions/DropSelected.pressed.connect(_drop_selected)
 	description.bbcode_enabled = true
+	# The item information belongs in the hover popup / Collector's Lens.
+	# Keep legacy scene nodes for old save/test compatibility, but show a
+	# categorized preview lab in the freed panel instead of duplicate stats.
+	$Layout/DetailsHeader.hide()
+	description.hide()
+	_create_cosmetic_radio_panel()
 	confirmation.confirmed.connect(_confirm_delete)
 	confirmation.canceled.connect(_cancel_delete)
 	_clear()
@@ -223,6 +231,7 @@ func _show_details(index: int) -> void:
 	description.text = "[font_size=19][color=%s]%s[/color][/font_size]\n" % [title_ink, ITEM_MARKUP.escape(item.display_name())] + ITEM_MARKUP.item_info(item, selected_alt_down)
 	description.scroll_to_line(0)
 	_refresh_seed_controls(item)
+	_refresh_cosmetic_radio_panel(item)
 	test_mythic.visible = OS.is_debug_build()
 	if test_mythic.visible:
 		_update_effect_compatibility(item)
@@ -459,6 +468,8 @@ func _clear() -> void:
 		slots.call("set_selected", -1)
 	if is_instance_valid(seed_row):
 		seed_row.visible = false
+	if is_instance_valid(cosmetic_radio_panel):
+		cosmetic_radio_panel.visible = OS.is_debug_build()
 	if is_instance_valid(test_mythic):
 		test_mythic.visible = false
 	if is_instance_valid(test_looks):
@@ -497,6 +508,110 @@ func _local_stat_label(stat_id: String) -> String:
 		"stamina_recovery_pct": return "stamina regeneration"
 		"find_bonus_pct": return "item discovery"
 		_: return stat_id.replace("_", " ")
+
+
+# Preview categories use the existing TEST ONLY IDs and debug overrides.
+# Nothing in these radio controls writes a cosmetic UID or stat roll.
+func _create_cosmetic_radio_panel() -> void:
+	var host: VBoxContainer = $Layout/DetailsWell/DetailsVBox
+	cosmetic_radio_panel = ScrollContainer.new()
+	cosmetic_radio_panel.name = "CosmeticLayersV210"
+	cosmetic_radio_panel.custom_minimum_size = Vector2(0, 168)
+	cosmetic_radio_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	cosmetic_radio_panel.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	host.add_child(cosmetic_radio_panel)
+	host.move_child(cosmetic_radio_panel, 0)
+	var categories: VBoxContainer = VBoxContainer.new()
+	categories.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cosmetic_radio_panel.add_child(categories)
+	var label: Label = Label.new()
+	label.text = "COSMETIC LAYERS · PREVIEW ONLY, NOT SAVED"
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_color", Color("d8bcdb"))
+	categories.add_child(label)
+	var sections: Array[Dictionary] = [
+		{"name": "Signature", "ids": [10, 11, 12, 13, 14, 15], "labels": ["None", "Thorns", "Eclipse", "Seraph", "Mythic", "Moonfall"]},
+		{"name": "Mythic detail", "ids": [20, 21, 22, 23], "labels": ["Lightning", "Cinders", "Astral", "Petals"]},
+		{"name": "Material rarity", "ids": [30, 31, 32, 33, 34, 35, 36], "labels": ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"]},
+		{"name": "Color motion", "ids": [40, 41, 42, 43, 44, 45, 46], "labels": ["Still", "Pulse", "Drift", "Iridescent", "Phase", "Moonwash", "Prism"]},
+		{"name": "Glow shape", "ids": [50, 51, 52, 53, 54, 55, 56, 57], "labels": ["Motes", "Bars", "Petals", "Zigzag", "Arcs", "Comets", "Stars", "Wisps"]},
+		{"name": "Surface", "ids": [60, 61, 62, 63, 64, 65, 66], "labels": ["Plain", "Ripple", "Living", "Flare", "Flow", "Spark", "Anomaly"]},
+		{"name": "Guard shape", "ids": [70, 71, 72, 73, 74, 75, 76, 77], "labels": ["Straight", "Back", "Forward", "Winged", "Scroll", "Diamond", "Thorn", "Beaded"]},
+		{"name": "Grip style", "ids": [80, 81, 82, 83, 84, 85], "labels": ["Leather", "Metal", "Silk", "Inlaid", "Riveted", "Carved"]}
+	]
+	for section in sections:
+		var heading: Label = Label.new()
+		heading.text = str(section["name"])
+		heading.add_theme_font_size_override("font_size", 12)
+		heading.add_theme_color_override("font_color", Color("d9b899"))
+		categories.add_child(heading)
+		var group: ButtonGroup = ButtonGroup.new()
+		var grid: GridContainer = GridContainer.new()
+		grid.columns = 3
+		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		categories.add_child(grid)
+		var natural: RadioButton = RadioButton.new()
+		natural.text = "Natural"
+		natural.button_group = group
+		natural.add_theme_font_size_override("font_size", 11)
+		grid.add_child(natural)
+		natural.set_pressed_no_signal(true)
+		natural.toggled.connect(_radio_natural.bind(str(section["name"])))
+		cosmetic_radio_options.append({"button": natural, "id": -1, "category": str(section["name"])})
+		var ids: Array = section["ids"]
+		var labels: Array = section["labels"]
+		for i in range(ids.size()):
+			var radio: RadioButton = RadioButton.new()
+			radio.text = str(labels[i])
+			radio.button_group = group
+			radio.add_theme_font_size_override("font_size", 11)
+			grid.add_child(radio)
+			var id: int = int(ids[i])
+			radio.toggled.connect(_radio_preview.bind(id))
+			cosmetic_radio_options.append({"button": radio, "id": id, "category": str(section["name"])})
+	cosmetic_radio_panel.visible = OS.is_debug_build()
+
+func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
+	if not is_instance_valid(cosmetic_radio_panel):
+		return
+	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null
+	if not cosmetic_radio_panel.visible:
+		return
+	for choice in cosmetic_radio_options:
+		var button: RadioButton = choice["button"]
+		var id: int = int(choice["id"])
+		if id == -1:
+			button.disabled = false
+			continue
+		var support: Dictionary = _effect_support(item, id)
+		button.disabled = not bool(support["enabled"])
+		button.tooltip_text = "Test effect only · not saved" if not button.disabled else "Not supported on this item"
+
+func _radio_preview(pressed: bool, id: int) -> void:
+	if not pressed or not OS.is_debug_build() or not is_instance_valid(test_looks):
+		return
+	var index: int = test_looks.get_item_index(id)
+	if index >= 0:
+		_preview_look(index)
+
+func _radio_natural(pressed: bool, category: String) -> void:
+	if not pressed or not OS.is_debug_build():
+		return
+	var item: GhostItemInstance = _selected_cosmetic_item()
+	if item == null:
+		return
+	match category:
+		"Signature": item.debug_visual_override = -1
+		"Mythic detail": item.debug_mythic_variant = -1
+		"Material rarity": item.debug_collector_tier = -1
+		"Color motion": item.debug_color_mode = -1
+		"Glow shape": item.debug_glow_motif = -1
+		"Surface": item.debug_surface_mode = -1
+		"Guard shape": item.debug_forge_guard = -1
+		"Grip style": item.debug_forge_grip = -1
+	inventory.contents_changed.emit()
+	inventory.equipment_changed.emit()
+	notice.text = "Natural " + category.to_lower() + " · preview only"
 
 func _setup_effect_menu() -> void:
 	test_looks.clear()
