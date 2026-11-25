@@ -476,7 +476,7 @@ func _clear() -> void:
 	if is_instance_valid(seed_row):
 		seed_row.visible = false
 	if is_instance_valid(cosmetic_radio_panel):
-		cosmetic_radio_panel.visible = OS.is_debug_build()
+		cosmetic_radio_panel.hide()
 	if is_instance_valid(test_mythic):
 		test_mythic.visible = false
 	if is_instance_valid(test_looks):
@@ -584,15 +584,27 @@ func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
 	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null
 	if not cosmetic_radio_panel.visible:
 		return
+	var active: Dictionary = {
+		"Signature": 10 + item.debug_visual_override if item.debug_visual_override >= 0 else -1,
+		"Mythic detail": 20 + item.debug_mythic_variant if item.debug_mythic_variant >= 0 else -1,
+		"Material rarity": 30 + item.debug_collector_tier if item.debug_collector_tier >= 0 else -1,
+		"Color motion": 40 + item.debug_color_mode if item.debug_color_mode >= 0 else -1,
+		"Glow shape": 50 + item.debug_glow_motif if item.debug_glow_motif >= 0 else -1,
+		"Surface": 60 + item.debug_surface_mode if item.debug_surface_mode >= 0 else -1,
+		"Guard shape": 70 + item.debug_forge_guard if item.debug_forge_guard >= 0 else -1,
+		"Grip style": 80 + item.debug_forge_grip if item.debug_forge_grip >= 0 else -1
+	}
 	for choice in cosmetic_radio_options:
 		var button: RadioButton = choice["button"]
 		var id: int = int(choice["id"])
-		if id == -1:
+		var category: String = str(choice["category"])
+		if id >= 0:
+			var support: Dictionary = _effect_support(item, id)
+			button.disabled = not bool(support["enabled"])
+			button.tooltip_text = "Test effect only · not saved" if not button.disabled else "Not supported on this item"
+		else:
 			button.disabled = false
-			continue
-		var support: Dictionary = _effect_support(item, id)
-		button.disabled = not bool(support["enabled"])
-		button.tooltip_text = "Test effect only · not saved" if not button.disabled else "Not supported on this item"
+		button.set_pressed_no_signal(id == int(active.get(category, -1)))
 
 func _radio_preview(pressed: bool, id: int) -> void:
 	if not pressed or not OS.is_debug_build() or not is_instance_valid(test_looks):
