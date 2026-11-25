@@ -3,6 +3,7 @@ extends Control
 ## changes a save or creates a gameplay attack.
 const MODEL = preload("res://scripts/collector_lens_model_v179.gd")
 const ROLL_CODE = preload("res://scripts/collector_roll_code_v1931.gd")
+const SCYTHE_GLOW = preload("res://scripts/scythe_glow_layer_v211.gd")
 const MARKUP = preload("res://scripts/item_rich_text.gd")
 var model: Node2D
 var stage: Control
@@ -11,6 +12,7 @@ var info: RichTextLabel
 var status: Label
 var glow_button: CheckButton
 var motion_button: CheckButton
+var scythe_glow_choices: OptionButton
 var inspected: GhostItemInstance
 var angle: float = -0.35
 var zoom: float = 1.0
@@ -86,6 +88,14 @@ func _ready() -> void:
 	motion_button = CheckButton.new()
 	motion_button.text = "Motion preview"
 	controls.add_child(motion_button)
+	scythe_glow_choices = OptionButton.new()
+	scythe_glow_choices.name = "ScytheGlowPreviewV211"
+	scythe_glow_choices.tooltip_text = "Preview only · changes no item rolls or saved appearance"
+	scythe_glow_choices.add_item("Rolled glow", -1)
+	for step in range(6):
+		scythe_glow_choices.add_item("%d%% glow" % (step * 10), step)
+	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
+	controls.add_child(scythe_glow_choices)
 	var reset: Button = Button.new()
 	reset.text = "Reset view"
 	controls.add_child(reset)
@@ -125,6 +135,8 @@ func open_item(value: GhostItemInstance) -> void:
 	info.scroll_to_line(0)
 	glow_button.disabled = false
 	motion_button.disabled = false
+	scythe_glow_choices.visible = value.weapon_style() == "scythe"
+	scythe_glow_choices.select(0)
 	glow_button.set_pressed_no_signal(true)
 	motion_button.set_pressed_no_signal(false)
 	model.set("glow_enabled", true)
@@ -132,11 +144,21 @@ func open_item(value: GhostItemInstance) -> void:
 	show()
 	_position_model()
 	status.text = "Drag to rotate  ·  Wheel to zoom  ·  Display-only motion" if bool(model.call("is_modular")) else "Original artwork + animated effects  ·  Drag to rotate  ·  Wheel to zoom"
+	if value.weapon_style() == "scythe":
+		status.text = "Rolled silhouette glow: %d%% · use selector to preview 0–50%% (unsaved)" % (SCYTHE_GLOW.rolled_level(value) * 10)
 
 func close_lens() -> void:
 	hide()
 	inspected = null
 	model.call("set_item", null)
+
+func _select_scythe_glow(index: int) -> void:
+	if inspected == null or inspected.weapon_style() != "scythe":
+		return
+	var value: int = scythe_glow_choices.get_item_id(index)
+	model.call("set_glow_preview_override", value)
+	var actual: int = SCYTHE_GLOW.rolled_level(inspected)
+	status.text = ("Rolled glow · %d%%" % (actual * 10)) if value < 0 else ("Preview glow · %d%% · not saved" % (value * 10))
 
 func _toggle_glow(active: bool) -> void:
 	model.set("glow_enabled", active)
