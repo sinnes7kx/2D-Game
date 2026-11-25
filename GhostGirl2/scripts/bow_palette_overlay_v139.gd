@@ -20,6 +20,10 @@ func _bow_style_name(item: GhostItemInstance) -> String:
 	return "thornrose"
 
 func _resolved_animation_name(item: GhostItemInstance, animation_name: String) -> String:
+	# Aerial strike clips preserve the exact same painted bow and recolor mask.
+	# Normalize only lookup names, never the physical bow or child FX pivot.
+	if animation_name.contains("_air_"):
+		animation_name = animation_name.replace("_air_", "_")
 	if sprite_frames != null and sprite_frames.has_animation(animation_name):
 		return animation_name
 	var style: String = _bow_style_name(item)
