@@ -99,9 +99,12 @@ func _ready() -> void:
 	copy_roll.text = "Copy roll"
 	controls.add_child(copy_roll)
 	copy_roll.pressed.connect(_copy_roll)
+	# Keep the existing compact toolbar from overflowing at smaller widths.
+	var card_row: HBoxContainer = HBoxContainer.new()
+	layout.add_child(card_row)
 	var card_button: Button = Button.new()
-	card_button.text = "Copy collector card"
-	controls.add_child(card_button)
+	card_button.text = "Copy collector card (offline)"
+	card_row.add_child(card_button)
 	card_button.pressed.connect(_copy_card)
 	var close: Button = Button.new()
 	close.text = "Close  ·  Esc"
