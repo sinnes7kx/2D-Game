@@ -5,8 +5,11 @@ const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 ## A display-only weapon model; shares the equipped modular art routines.
 const HEAVY = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
+const SCYTHE_GLOW = preload("res://scripts/scythe_glow_layer_v211.gd")
 const PAINTED_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 var painted_preview: Sprite2D
+var scythe_glow: Node2D
+var glow_preview_override: int = -1
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 var item: GhostItemInstance
 var look: Dictionary = {}
@@ -16,7 +19,18 @@ var glow_enabled: bool = true
 var elapsed: float = 0.0
 var segments: Array[PackedVector2Array] = []
 
+func _ready() -> void:
+	scythe_glow = SCYTHE_GLOW.new() as Node2D
+	scythe_glow.name = "ScytheGlowLayerV211"
+	scythe_glow.z_index = 2
+	add_child(scythe_glow)
+
+func set_glow_preview_override(level_index: int) -> void:
+	glow_preview_override = level_index
+	queue_redraw()
+
 func set_item(value: GhostItemInstance) -> void:
+	glow_preview_override = -1
 	item = value
 	self_modulate.a = item.weapon_opacity() if item != null else 1.0
 	look = item.collector_appearance() if item != null else {}
@@ -68,7 +82,11 @@ func is_modular() -> bool:
 func _draw() -> void:
 	segments.clear()
 	if item == null or item.definition == null:
+		if is_instance_valid(scythe_glow):
+			scythe_glow.call("clear_pose")
 		return
+	if item.weapon_style() != "scythe" and is_instance_valid(scythe_glow):
+		scythe_glow.call("clear_pose")
 	if not is_modular() or profiles.is_empty() or profiles[0].is_empty():
 		if item.definition.icon != null and not has_painted_surface():
 			var size: Vector2 = Vector2(item.definition.icon.get_size())
@@ -83,12 +101,17 @@ func _draw() -> void:
 			var p: Dictionary = profiles[0].duplicate()
 			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
 			p["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
-			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled)
+			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled, str(item.definition.item_id))
 		"scythe":
 			var p: Dictionary = profiles[0].duplicate()
 			p["scythe_span"] = float(look.get("scythe_span", 1.0))
 			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
-			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled)
+			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, false)
+			if is_instance_valid(scythe_glow):
+				if glow_enabled:
+					scythe_glow.call("set_pose", item, Vector2(-12, 20), Vector2(-12, -56), p, 1.0, glow_preview_override)
+				else:
+					scythe_glow.call("clear_pose")
 		"twinblade":
 			var width: float = ART.twinblade_width(str(item.definition.item_id) == "rosemirror_twinblade_v170")
 			var spans: Array[PackedVector2Array] = ART.twinblade_spans(Vector2.ZERO, Vector2(0, -68))
