@@ -1,5 +1,5 @@
 extends Node2D
-## v2.02 original frame-compatible head ornament strokes.
+## v2.04 eye silhouettes and seeded palettes; original body atlases stay untouched.
 ## "wings" remains the SAVED legacy head-accessory key. "helm" is independent.
 ## No new item metadata or underlying Ghost Girl atlas edits.
 var phase: float = 0.0
@@ -35,7 +35,7 @@ func _draw() -> void:
         var accent: Color = accessory.palette_color().lerp(Color("e1d2ef"), 0.35)
         match id:
             "v202_luminous_eyes":
-                _draw_eyes(accent, face)
+                _draw_eyes(accessory, face)
             "v202_bandit_mask":
                 _draw_mask(accent, face)
             "v202_crescent_halo":
@@ -43,17 +43,73 @@ func _draw() -> void:
             "v202_rose_horns":
                 _draw_horns(accent, face)
 
-func _draw_eyes(color: Color, face: String) -> void:
-    if face == "back":
+# This channel is independent from loot/stat rolls and persists through the
+# existing cosmetic UID / seed snapshots, favorites and vault serialization.
+const EYE_RNG = preload("res://scripts/cosmetic_rng_v152.gd")
+const EYE_VARIANTS: Array[String] = ["moonveil", "cathedral", "starborn", "hollow"]
+
+static func eye_variant_index(seed: int) -> int:
+    return posmod(seed, EYE_VARIANTS.size())
+
+static func eye_centers(face: String) -> Array[Vector2]:
+    # Original v2.02 spread (+/-9) fell BETWEEN the black pupils.
+    # These are Ghost-local anchors; EquipmentVisuals copies Ghost's transform.
+    match face:
+        "front":
+            return [Vector2(-19.0, -72.0), Vector2(19.0, -72.0)]
+        "left":
+            return [Vector2(-15.0, -72.0)]
+        "right":
+            return [Vector2(15.0, -72.0)]
+    return []
+
+func _eye_ellipse(center: Vector2, radius: Vector2, tint: Color) -> void:
+    var points: PackedVector2Array = PackedVector2Array()
+    for i in range(25):
+        var angle: float = TAU * float(i) / 24.0
+        points.append(center + Vector2(cos(angle) * radius.x, sin(angle) * radius.y))
+    draw_colored_polygon(points, tint)
+
+func _draw_eyes(item: GhostItemInstance, face: String) -> void:
+    var centers: Array[Vector2] = eye_centers(face)
+    if centers.is_empty():
         return
-    var flicker: float = 0.84 + 0.16 * sin(phase * 3.2)
-    var spread: float = 9.0 if face == "front" else 5.0
-    var offset: float = 0.0 if face == "front" else (4.0 if face == "right" else -4.0)
-    for side in [-1.0, 1.0]:
-        var p: Vector2 = Vector2(offset + side * spread, -72.0)
-        draw_circle(p, 5.2, Color(color.r, color.g, color.b, 0.08 * flicker))
-        draw_line(p + Vector2(-3.0, 0), p + Vector2(3.0, -0.5), Color(color.r, color.g, color.b, 0.66 * flicker), 1.8, true)
-        draw_circle(p, 1.6, Color(0.98, 0.96, 1.0, 0.88 * flicker))
+    var variant: int = eye_variant_index(item.visual_seed())
+    var colors: Array[Color] = EYE_RNG.gradient_for_channel(
+        item.cosmetic_uid, item.visual_seed(), "head-eyes-v204", item.gradient_version)
+    var primary: Color = EYE_RNG.sample_palette(colors, 0.23)
+    var secondary: Color = EYE_RNG.sample_palette(colors, 0.78)
+    # A readable pale contour even when the seeded palette rolls very dark.
+    var rim: Color = primary.lerp(Color("eaf2ff"), 0.58)
+    var pupil: Color = secondary.lerp(Color.WHITE, 0.38)
+    var pulse: float = 0.94 + 0.06 * sin(phase * (1.3 + float(variant) * 0.23))
+    for center in centers:
+        # Solid opaque backing hides the original black eyes in the *same*
+        # coordinate space; glow is applied only to the outlines, not the mask.
+        _eye_ellipse(center, Vector2(11.7, 8.7), Color("15101e"))
+        _eye_ellipse(center, Vector2(10.7, 7.6), rim.darkened(0.64))
+        _eye_ellipse(center, Vector2(9.8, 6.5), Color("21192b"))
+        match variant:
+            0: # Moonveil: wide, watchful irises
+                _eye_ellipse(center, Vector2(6.0, 5.5), primary * Color(1, 1, 1, pulse))
+                _eye_ellipse(center, Vector2(3.3, 4.1), pupil)
+                draw_circle(center + Vector2(-1.0, -1.3), 1.5, Color.WHITE)
+            1: # Cathedral: vertical luminous slits
+                _eye_ellipse(center, Vector2(6.3, 5.6), primary.darkened(0.25))
+                _eye_ellipse(center, Vector2(2.1, 5.5), pupil)
+                draw_line(center + Vector2(0, -5), center + Vector2(0, 5), rim, 1.4, true)
+            2: # Starborn: tiny four-point stellar gaze
+                _eye_ellipse(center, Vector2(5.6, 4.6), primary.darkened(0.35))
+                draw_line(center + Vector2(-5.0, 0), center + Vector2(5.0, 0), pupil, 2.0, true)
+                draw_line(center + Vector2(0, -5.8), center + Vector2(0, 5.8), pupil, 2.0, true)
+                draw_circle(center, 2.1, Color.WHITE)
+            3: # Hollow: bright ring around a dark, open center
+                draw_arc(center, 5.1, 0.0, TAU, 28, pupil, 2.8, true)
+                draw_circle(center, 2.3, Color("100d17"))
+                draw_circle(center + Vector2(-2.7, -2.3), 1.1, rim)
+        # Delicate readable contour, not a full-screen bloom.
+        draw_arc(center, 10.2, 0.05, PI - 0.05, 22, rim, 1.6, true)
+        draw_arc(center, 10.2, PI + 0.05, TAU - 0.05, 22, rim, 1.2, true)
 
 func _draw_mask(color: Color, face: String) -> void:
     if face == "back":
