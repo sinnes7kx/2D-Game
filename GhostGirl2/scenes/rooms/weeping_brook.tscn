@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/world/weeping_brook.png" id="background"]
 [ext_resource type="Texture2D" path="res://assets/world/layers/weeping_brook_foreground.png" id="foreground"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ambience/water_ambience.tscn" id="water"]
 [ext_resource type="PackedScene" path="res://scenes/ambience/petal_ambience.tscn" id="petal"]
 [ext_resource type="PackedScene" path="res://scenes/ambience/firefly_ambience.tscn" id="firefly"]
+
+[ext_resource type="Script" path="res://scripts/world_critter_v202.gd" id="v202_critter"]
 
 [sub_resource type="RectangleShape2D" id="col0"]
 size = Vector2(3072, 158)
@@ -268,3 +270,29 @@ script = ExtResource("portal")
 interaction_name = "Explore Reliquary Path"
 destination = "reliquary_path"
 opened = true
+
+[node name="V202Wildlife" type="Node2D" parent="Gameplay"]
+
+[node name="RiverMoth01" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(1270, 790)
+script = ExtResource("v202_critter")
+species = "moth"
+wander_radius = 42.0
+
+[node name="RiverMoth02" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(2100, 1150)
+script = ExtResource("v202_critter")
+species = "moth"
+wander_radius = 42.0
+
+[node name="RiverHare" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(870, 1210)
+script = ExtResource("v202_critter")
+species = "hare"
+wander_radius = 42.0
+
+[node name="RiverCrow" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(2440, 900)
+script = ExtResource("v202_critter")
+species = "crow"
+wander_radius = 42.0
