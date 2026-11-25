@@ -112,6 +112,9 @@ jobs:
       - name: Verify head accessories and tiaras survive safe vault transfers
         run: godot --headless --path GhostGirl2 --script res://tests/v206_equipment_vault_smoke.gd
 
+      - name: Verify stable vault family and quality filtering and sorting
+        run: godot --headless --path GhostGirl2 --script res://tests/v208_vault_filters_smoke.gd
+
       - name: Verify Sanctum collection exhibition and persistent assignments
         run: godot --headless --path GhostGirl2 --script res://tests/v182_exhibition_smoke.gd
 

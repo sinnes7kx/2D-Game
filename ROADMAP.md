@@ -143,6 +143,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.08 — collection vault organization (stacked source; CI/F5 pending)
+
+- [ ] Add family and quality filters plus stable original-order, quality, name and equipment-family sorting to the existing stash panel. Existing text search and favorites filter still work in combination; sorting never changes `inventory.contents` or `inventory.vault`.
+- [ ] Prevent actions against an item hidden by a filter by clearing invisible selection. On reopening, reset list controls to an understandable default. All operations continue to use exact item references and established save protections.
+- [ ] Add `tests/v208_vault_filters_smoke.gd` covering real head/weapon item fixtures, stable ordering, filtered selection safety, immutable save snapshots and the actual UI controls. No new item fields, source timestamps, unsupported acquisition ordering, or invented rarity scores.
+- [ ] This is a **stacked PR dependent on the broader equipment vault PR #49**. Merge #49 into `main` before integrating this slice into `main`. Headless CI and live F5 (narrow layouts, large collections, older GPU) remain acceptance gates.
+
 ### v2.03 — physical bow grips, more airborne motion and blunt weapon variety (source implementation; F5 approval pending)
 
 **User-provided visual defect (2026-11-25):** The front and left idle bows were floating away from the correct wrist in the inventory preview and in the world. The physical full-color bow and independent palette layer had a shared pivot, but its **grip target** was under-calibrated in those authored facings. Color reroll is shader-only; it must never cause the weapon to move.
