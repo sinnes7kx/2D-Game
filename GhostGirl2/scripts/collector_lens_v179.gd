@@ -117,6 +117,7 @@ func _ready() -> void:
 	copy_roll.text = "Copy roll"
 	controls.add_child(copy_roll)
 	copy_roll.pressed.connect(_copy_roll)
+	# Standalone action row keeps the existing toolbar uncluttered.
 	# Keep the existing compact toolbar from overflowing at smaller widths.
 	var card_row: HBoxContainer = HBoxContainer.new()
 	layout.add_child(card_row)
