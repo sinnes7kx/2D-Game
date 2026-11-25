@@ -159,7 +159,8 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 	if not _is_equipped(animation_name):
 		return empty
 	if animation_name.contains("twinblade"):
-		var guides: Array = twin_axes.get(animation_name, [])
+		var guide_key: String = animation_name.replace("_air_", "_") if animation_name.contains("_air_") else animation_name
+		var guides: Array = twin_axes.get(guide_key, [])
 		if guides.is_empty():
 			var facing: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
 			var anchor: Vector2 = Vector2(35, 25)
