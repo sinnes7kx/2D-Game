@@ -88,6 +88,13 @@ func _ready() -> void:
 	motion_button = CheckButton.new()
 	motion_button.text = "Motion preview"
 	controls.add_child(motion_button)
+	var glow_row: HBoxContainer = HBoxContainer.new()
+	glow_row.name = "ScytheGlowRowV211"
+	layout.add_child(glow_row)
+	var glow_caption: Label = Label.new()
+	glow_caption.text = "SCYTHE AURA · VISUAL ONLY"
+	glow_caption.add_theme_font_size_override("font_size", 12)
+	glow_row.add_child(glow_caption)
 	scythe_glow_choices = OptionButton.new()
 	scythe_glow_choices.name = "ScytheGlowPreviewV211"
 	scythe_glow_choices.tooltip_text = "Preview only · changes no item rolls or saved appearance"
@@ -95,7 +102,7 @@ func _ready() -> void:
 	for step in range(6):
 		scythe_glow_choices.add_item("%d%% glow" % (step * 10))
 	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
-	controls.add_child(scythe_glow_choices)
+	glow_row.add_child(scythe_glow_choices)	glow_row.hide()
 	var reset: Button = Button.new()
 	reset.text = "Reset view"
 	controls.add_child(reset)
@@ -135,7 +142,7 @@ func open_item(value: GhostItemInstance) -> void:
 	info.scroll_to_line(0)
 	glow_button.disabled = false
 	motion_button.disabled = false
-	scythe_glow_choices.visible = value.weapon_style() == "scythe"
+	scythe_glow_choices.get_parent().visible = value.weapon_style() == "scythe"
 	scythe_glow_choices.select(0)
 	glow_button.set_pressed_no_signal(true)
 	motion_button.set_pressed_no_signal(false)
