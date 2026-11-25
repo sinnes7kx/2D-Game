@@ -55,7 +55,9 @@ static func gradient_colors(uid: String, legacy_seed: int) -> Array[Color]:
 # Each channel derives a variable number of stops from the complete UID.
 # No named color sets or forced rainbow. A continuous hue span can be almost
 # monochrome, complementary, muted, jewel-bright, pastel, dark or broad.
-static func gradient_for_channel(uid: String, legacy_seed: int, channel: String) -> Array[Color]:
+static func gradient_for_channel(uid: String, legacy_seed: int, channel: String, version: int = 1) -> Array[Color]:
+    if version >= 2:
+        return _gradient_for_channel_v2(uid, legacy_seed, channel)
     var identity: String = uid.to_lower() if is_valid_uid(uid) else "legacy-%d" % legacy_seed
     var domain: String = "ghost-girl-v188:" + channel + ":" + identity
     var header: PackedByteArray = domain.sha256_buffer()
@@ -74,6 +76,41 @@ static func gradient_for_channel(uid: String, legacy_seed: int, channel: String)
         var brightness: float = clampf(value + (_unit16(bytes, 4) - 0.5) * 0.48, 0.16, 1.0)
         colors.append(Color.from_hsv(hue, saturation, brightness))
     return colors
+
+# A new, explicitly versioned palette family for NEW finds and intentional
+# cosmetic rerolls only. Existing saved item palettes remain v1 bit-for-bit.
+# Eight continuous tonal families include real black / charcoal / ink hues.
+# Rarity, material tier, signature, stats and loot RNG are not touched.
+static func _gradient_for_channel_v2(uid: String, legacy_seed: int, channel: String) -> Array[Color]:
+    var base: Array[Color] = gradient_for_channel(uid, legacy_seed, channel, 1)
+    var identity: String = uid.to_lower() if is_valid_uid(uid) else "legacy-%d" % legacy_seed
+    var header: PackedByteArray = ("ghost-girl-v196-dark-palette:" + channel + ":" + identity).sha256_buffer()
+    var family: int = int(header[0]) % 8
+    var ink_shadow: Color = Color.from_hsv(_unit16(header, 2), 0.12 + _unit16(header, 4) * 0.30, 0.035 + _unit16(header, 6) * 0.10)
+    var out: Array[Color] = []
+    for i in range(base.size()):
+        var u: float = float(i) / float(maxi(1, base.size() - 1))
+        var source: Color = base[i]
+        var tone: Color = source
+        match family:
+            0: # true onyx to ink (first swatch can be pure black)
+                tone = Color.BLACK if i == 0 else source.lerp(ink_shadow, 0.80 - u * 0.18).darkened(0.30)
+            1: # black-to-jewel metal
+                tone = Color(0.008, 0.007, 0.011) if i == 0 else source.darkened(0.73 * (1.0 - u) + 0.15)
+            2: # cold charcoal / silver-grey
+                tone = source.lerp(Color(0.055, 0.067, 0.082), 0.76 - 0.30 * u)
+            3: # soft smoke and slate
+                tone = source.lerp(ink_shadow, 0.73 - 0.28 * u).darkened(0.14)
+            4: # midnight jewel
+                tone = source.darkened(0.62 - 0.28 * u)
+            5: # high contrast shadow-to-saturated light
+                tone = source.darkened(0.83 if i == 0 else (0.07 + 0.30 * (1.0 - u)))
+            6: # desaturated moonsteel with dark tips
+                tone = source.lerp(Color(0.16, 0.16, 0.20), 0.58 if i == 0 else 0.28)
+            _: # retain bright spectral breadth as part of the widened range
+                tone = source.lerp(Color(0.10, 0.09, 0.17), 0.32 * (1.0 - u))
+        out.append(Color(clampf(tone.r, 0.0, 1.0), clampf(tone.g, 0.0, 1.0), clampf(tone.b, 0.0, 1.0), 1.0))
+    return out
 
 static func _unit16(bytes: PackedByteArray, offset: int) -> float:
     return float(int(bytes[offset]) * 256 + int(bytes[offset + 1])) / 65535.0

@@ -501,6 +501,24 @@ Choose incremental wrappers around working code before introducing sweeping repl
 - [ ] Cross-check the Moonveil/Thornrose bow limb tint dots against the actual `weapon_surface_v190.gd` shader input after mixing its material ramp, including different effects intensity/debug appearance. Do not imply that the full bow inherits the glow color.
 - [ ] Run v1.95 and v1.96 Godot smoke regressions, open equipped preview, and manually check mouse interaction and resource/memory costs on older hardware. Neither the item RNG/save schema nor combat damage may change.
 
+### v1.97: steady daggers, readable Reaper light, dark-gradient generation (source implemented; playtest pending)
+
+- [ ] Verify Roseglass Dagger and Nocturne Stiletto idle presentation across all four directions: 16 gentle interpolated frames over a 3.45-second cycle, fixed approved weapon silhouette and hand anchor, while walking/attacking/dodging remain unchanged. Review startup-time texture cost and visible appearance in equipment preview.
+- [ ] Verify Rose Reaper and Veilkeeper's Reaper scythe blade-edge illumination in dark rooms and with black/charcoal appearance rolls. Keep the narrow crescent rim visible without washing out the original metal/shaft. Session FX intensity (including 0%) must still apply. Confirm no combat or item rarity changes.
+- [ ] The new **opt-in gradient version 2** adds seeded onyx, true black, charcoal, shadow-to-jewel and slate ramps; legacy items, prior favorite appearances, and missing-version old saves continue using unchanged version 1 colors. Only new drops and deliberate cosmetic rerolls move to V2. Current-look version is serialized and captured in favorite snapshots. Collector material/signature rarity odds and ten-digit Roll Codes are unchanged.
+- [ ] Run v1.95/v1.96/v1.97 regressions, reload older saves and saved favorite looks, test surface/FX color swatches, inventory → vault → exhibition continuity, four-facing weapon FX, and performance on older hardware.
+- [ ] Back up existing saves before upgrading. Downgrading and saving through an older build that doesn't recognize `gradient_version` may reset V2 looks to V1; do not overwrite a cherished V2 look via downgrade.
+- [ ] In future authored-art work, prefer dedicated body-breathing frames over crossfading painted pixels when a weapon needs more visible motion.
+
+### v1.98: weapon proportion, carried bows and meaningful missed attacks (source implemented; Godot visual review pending)
+
+- [ ] Verify Reaper scythe's roughly 13% longer **art-only** span, Briarwake Trident's longer back-shaft, and the slightly extended single/stiletto/dual dagger blades in all four directions, with short guide-anchored overlay tips for dagger/stiletto idle and walking instead of stretching the source atlas. A weapon's displayed length must **not** change the reach/hitbox, loot rolls, rarity or existing saved cosmetics.
+- [ ] Bow reference pose: while idle, Thornrose and Moonveil are carried roughly cross-body/horizontal like the uploaded reference. Swap baked bow idle bodies for the original clean approved Ghost Girl body; rotate and align the same extracted physical bow and pigment mask around the actual hand for front/back/left/right. The back-facing hand is partly occluded and uses an approximated anchor; require a real F5 screenshot check before final approval. Shooting/walking/attack frames stay unaltered.
+- [ ] Review new original **airy sword whooshes** instead of an impact-like swing beep. Heavy, fully charged bow releases, heavy wand casts and aerial strikes play their own longer sweeps and a restrained visual air wake even on a complete miss; impact sounds/riposte hitstop remain reserved for confirmed contact.
+- [ ] Check keyboard/gamepad combat animations, charged bow release and jump landing independently. No fake hit markers, no extra damage/projectiles; camera-only movement on misses must be gentle, and the existing F8 shake and F9 new-impact-sound levels must work.
+- [ ] Godot headless CI: run v1.94/v1.95/v1.96/v1.97 and the new v1.98 weapon/sound/hand-alignment smoke suite, plus clean resource import. The new bow pose needs a **manual F5 front/back/left/right preview**, particularly wrist alignment and the bow appearing once.
+- [ ] Tune procedural sound loudness and art proportion with actual gameplay; leave PR unmerged if the bow is misaligned or heavy/charged/airborne cues feel too strong.
+
 ### Art and audio principles
 
 - [ ] Preserve the approved Ghost Girl silhouette, facial appearance, and dark painterly 2D aesthetic.
@@ -596,12 +614,15 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 
 ## 15. Next-build task order — actionable sprint
 
+**Integration gate (2026-11-25):** PR #37 reached `main`, while subsequent PRs #38 and #39 were merged into **stacked feature branches**, not `main`. A green nested PR is not a mainline release. PR #40 targets `main` to integrate v1.97–v1.98 together. Its headless CI must pass; after merge, verify the new scripts and tests are visible from `main` and run a mainline smoke workflow. Real F5 bow hand placement in four directions, audio feel, item migrations, vault, inventory, and old saves are still open. **Build blocker resolved:** PR #41 restored the missing `GOLD` constant on `main`, and Godot run 45514483189 passed. The earlier PR #40 failed CI against the pre-hotfix mainline due to that missing constant. PR #40 must be rechecked after that fix, not judged against its stale failure.
+
+
 **Sprint A: stability before spectacle**
 
 - [ ] Check current branch and reproduce/close the inventory Button → OptionButton issue with Godot.
 - [ ] Run `v1921_dropdown_compat_smoke.gd`; inspect and clean the duplicate conflict-marked inventory script.
 - [ ] Run existing smoke tests, then F5 test the full item lifecycle, vault, exhibitions, and an older save.
-- [ ] Restore the v1.92.2 collection recovery regression to the active workflow and resolve its failure; verify transfer safety and old saves before expanding loot families.
+- [x] Restore the v1.92.2 collection recovery regression to the active workflow. **Godot headless CI passed** in run 45511859931, including the legacy migration test. Real F5 transfer/save-load checks and private older-save compatibility remain outstanding; do not treat CI as that playtest.
 - [ ] Document any remaining blockers and only declare completion with evidence.
 
 **Sprint B: the collector's identity**

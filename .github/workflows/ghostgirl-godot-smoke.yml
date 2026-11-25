@@ -166,6 +166,12 @@ jobs:
       - name: Verify compact tooltip and interactive visual swatches
         run: godot --headless --path GhostGirl2 --script res://tests/v196_compact_tooltip_smoke.gd
 
+      - name: Verify dagger idle, Reaper glow and versioned dark gradients
+        run: godot --headless --path GhostGirl2 --script res://tests/v197_dagger_reaper_dark_gradient_smoke.gd
+
+      - name: Verify sword whoosh, bow idle hand alignment and miss feedback
+        run: godot --headless --path GhostGirl2 --script res://tests/v198_weapon_swing_bow_pose_smoke.gd
+
       - name: Verify gold tooltip color constant and both info views
         run: godot --headless --path GhostGirl2 --script res://tests/v199_tooltip_gold_constant_smoke.gd
 

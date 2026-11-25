@@ -24,11 +24,11 @@ func _verify() -> void:
     var body: AnimatedSprite2D = actor.get_node("Ghost") as AnimatedSprite2D
     var frames: SpriteFrames = body.sprite_frames
     var checked: int = 0
-    var families: Array[String] = ["sword_idle_", "briarwake_spear_idle_", "spear_idle_", "thornrose_idle_", "moonveil_idle_"]
+    var families: Array[String] = ["sword_idle_", "dagger_idle_", "nocturne_dagger_idle_", "briarwake_spear_idle_", "spear_idle_", "thornrose_idle_", "moonveil_idle_"]
     for prefix in families:
         for face in ["front", "back", "left", "right"]:
             var name: String = prefix + face
-            var expected: int = STEADY.SWORD_STEPS if name.begins_with("sword_idle_") else 8
+            var expected: int = STEADY.SWORD_STEPS if STEADY.is_smooth_blade_idle(name) else 8
             if not frames.has_animation(name) or frames.get_frame_count(name) != expected:
                 _fail("Missing stabilized idle frames: " + name)
                 return
@@ -56,10 +56,10 @@ func _verify() -> void:
                 _fail("Idle patch is not idempotent")
                 return
             checked += 1
-    if checked != 20 or STEADY.matches("attack_briarwake_spear_heavy_front") or STEADY.matches("thornrose_walk_left"):
+    if checked != 28 or STEADY.matches("attack_briarwake_spear_heavy_front") or STEADY.matches("thornrose_walk_left"):
         _fail("Wrong animation coverage")
         return
-    print("v1.96 PASS: 20 four-direction idle loops, 16 sword / 8 other generated frames, steady 3.45s cycle, no attack/walk changes")
+    print("v1.96 PASS: 28 four-direction idle loops, 16 sword-and-dagger / 8 other generated frames, steady 3.45s cycle, no attack/walk changes")
     actor.free()
     quit(0)
 

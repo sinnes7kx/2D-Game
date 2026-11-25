@@ -2,7 +2,9 @@ extends RefCounted
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 const SURFACE = preload("res://scripts/living_metal_v187.gd")
 const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const REAPER_SPAN: float = 86.0
 
 static func matches(name: String) -> bool:
 	return name.begins_with("scythe_") or name.begins_with("attack_scythe_")
@@ -52,7 +54,7 @@ static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2A
 			var authored: Vector2 = Vector2(float(row[2]), float(row[3])) - Vector2(float(row[0]), float(row[1]))
 			if authored.length_squared() > 16.0:
 				direction = authored.normalized()
-	return PackedVector2Array([anchor, anchor + direction.normalized() * 76.0])
+	return PackedVector2Array([anchor, anchor + direction.normalized() * REAPER_SPAN])
 
 # Crescent cutting edge with exact pointed tip, and tapered spine. Independent
 # curvature, blade span and depth retain a recognizable agricultural silhouette.
@@ -76,7 +78,7 @@ static func draw_scythe(canvas: Node2D, grip: Vector2, head: Vector2, p: Diction
 	if p.is_empty() or grip.distance_squared_to(head) < 16.0:
 		return
 	var axis: Vector2 = (head - grip).normalized()
-	var foot: Vector2 = grip - axis * 31.0
+	var foot: Vector2 = grip - axis * 35.0
 	var shaft: Color = p["grip"]
 	var trim: Color = p["ornament_ink"]
 	canvas.draw_line(foot, head, Color("211b29"), 5.0, true)
@@ -104,5 +106,22 @@ static func draw_scythe(canvas: Node2D, grip: Vector2, head: Vector2, p: Diction
 	canvas.draw_polyline(outer, p["edge"], 0.85, true)
 	canvas.draw_polyline(inner, p["edge"], 1.0, true)
 	canvas.draw_line(head - axis * 3.5, head + axis * 3.5, trim, 2.2, true)
-	if glow:
-		FX.draw_edge(canvas, inner, colors, look, phase, 0.85)
+	if glow and FX_LEVEL.intensity > 0.0:
+		# Rose Reaper and Veilkeeper's Reaper: the actual curved cutting edge
+		# remains readable even for seeded black / charcoal gradients.
+		# This is emitted light only; do not recolor the metal or entire shaft.
+		var rim: Color = reaper_edge_tint(colors, look, phase)
+		var power: float = minf(FX_LEVEL.intensity, 2.0) * (0.90 + 0.10 * sin(phase * 1.65))
+		canvas.draw_polyline(inner, Color(rim.r, rim.g, rim.b, 0.13 * power), 5.4, true)
+		canvas.draw_polyline(inner, Color(rim.r, rim.g, rim.b, 0.34 * power), 2.25, true)
+		canvas.draw_polyline(inner, Color(rim.r, rim.g, rim.b, 0.72 * power), 0.95, true)
+		canvas.draw_polyline(outer, Color(rim.r, rim.g, rim.b, 0.22 * power), 1.35, true)
+		canvas.draw_circle(inner[inner.size() - 1], 2.5, Color(rim.r, rim.g, rim.b, 0.25 * power))
+		FX.draw_edge(canvas, inner, colors, look, phase, 1.20)
+
+static func reaper_edge_tint(colors: Array[Color], look: Dictionary, phase: float) -> Color:
+	# At low material brightness, scythe light still reads as silver-rose
+	# emission. The seeded gradient remains the pigment source and is intact.
+	var pigment: Color = FX.color_at(colors, look, 0.68, phase)
+	return pigment.lerp(Color("e5dce8"), 0.50)
+

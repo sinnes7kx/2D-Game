@@ -4,6 +4,7 @@ extends AnimatedSprite2D
 const SHADE: Shader = preload("res://assets/equipment/weapon_surface_v190.gdshader")
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
+const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 var inventory: Node = null
 var body: AnimatedSprite2D = null
 var last_bow_cosmetic_key: String = ""
@@ -53,6 +54,59 @@ func _carry_transform_for_animation(source_animation: String, frame_index: int) 
 	if source_animation.ends_with("_right"):
 		return {"position": Vector2(10.0, -0.5 + bob * 0.55), "rotation_deg": -18.0, "scale": Vector2(0.98, 0.98)}
 	return {"position": Vector2.ZERO, "rotation_deg": 0.0, "scale": Vector2.ONE}
+
+# Idle reference: bow held gently across the torso, not upright alongside it.
+# The image is a full 256x220 bow-only atlas tile; rotate about the *source
+# handle*, then translate that pivot onto Ghost Girl's genuine hand.
+# Front/back share the horizontal side-silhouette; left mirrors right.
+static func idle_hold_pose(face: String) -> Dictionary:
+	var flip: bool = face == "left"
+	# Front/back use the matching authored bow view. Only left uses the
+	# mirrored right-bow source, preserving the approved right/left handedness.
+	var source_face: String = "right" if flip else face
+	var hand: Vector2 = HAND.hand_anchor(face, 0, 0 if flip else 1)
+	if hand == Vector2.INF:
+		# Back hair occludes the original hand at pose zero.
+		hand = Vector2(34.0, 27.0)
+	var source: Vector2 = HAND.hand_anchor(source_face, 0, 1)
+	if source == Vector2.INF:
+		source = Vector2(34.0, 27.0)
+	if flip:
+		source.x = -source.x
+	var angle: float = 80.0 if flip else (-82.0 if face != "back" else -78.0)
+	return {
+		"source_face": source_face,
+		"flip_h": flip,
+		"rotation_deg": angle,
+		"position": hand - source.rotated(deg_to_rad(angle)),
+		"hand": hand,
+		"source_handle": source
+	}
+
+func _show_idle_bow(item: GhostItemInstance, source_animation: String) -> bool:
+	if bow_carry_visual == null or bow_carry_visual.sprite_frames == null or sprite_frames == null:
+		return false
+	var face: String = "front"
+	for suffix in ["front", "back", "left", "right"]:
+		if source_animation.ends_with(suffix):
+			face = suffix
+			break
+	var pose: Dictionary = idle_hold_pose(face)
+	var carry_name: String = _bow_style_name(item) + "_idle_" + str(pose["source_face"])
+	if not bow_carry_visual.sprite_frames.has_animation(carry_name) or not sprite_frames.has_animation(carry_name):
+		return false
+	for layer in [bow_carry_visual, self]:
+		layer.visible = true
+		layer.flip_h = bool(pose["flip_h"])
+		layer.show_behind_parent = false
+		layer.z_index = 3 if layer == bow_carry_visual else 4
+		layer.position = pose["position"]
+		layer.rotation_degrees = float(pose["rotation_deg"])
+		layer.scale = Vector2.ONE
+		if str(layer.animation) != carry_name:
+			layer.animation = StringName(carry_name)
+		layer.set_frame_and_progress(0, 0.0)
+	return true
 
 func _ready() -> void:
 	body = get_parent() as AnimatedSprite2D
@@ -165,6 +219,21 @@ func _process(_delta: float) -> void:
 			bow_carry_visual.visible = false
 		return
 	var animation: String = _resolved_animation_name(item, source_animation)
+	if STEADY_IDLE.is_bow_idle(source_animation):
+		if _show_idle_bow(item, source_animation):
+			return
+		# Missing optional atlas: suppress any stale transformed color mask.
+		if bow_carry_visual != null:
+			bow_carry_visual.visible = false
+		visible = false
+		return
+	# Restore neutral transforms for walking/shooting (the idle pose must
+	# never leak into attack animations).
+	rotation_degrees = 0.0
+	scale = Vector2.ONE
+	if bow_carry_visual != null:
+		bow_carry_visual.rotation_degrees = 0.0
+		bow_carry_visual.scale = Vector2.ONE
 	# v1.75: the left-facing painted bow was not actually reversed. The BODY
 	# is now the untouched left-facing unarmed Ghost Girl pose, so draw a
 	# mirrored RIGHT-facing bow-only sprite at the left hand.
