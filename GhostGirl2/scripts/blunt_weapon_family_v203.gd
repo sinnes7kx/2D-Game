@@ -11,6 +11,18 @@ static func kind_from_id(item_id: String) -> String:
         "v203_nightchain_flail": return "flail"
         _: return ""
 
+# Full-head outline: long-running collector glow must describe the
+# *actual* spiked or flanged shape, never a single line on one side.
+static func _rim(canvas: Node2D, path: PackedVector2Array, gradient: Array[Color], look: Dictionary, time: float, strength: float) -> void:
+	var ink: Color = FX.color_at(gradient, look, 0.56, time)
+	var closed: PackedVector2Array = path.duplicate()
+	if closed.size() < 3:
+		return
+	closed.append(closed[0])
+	canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, 0.09), 8.0, true)
+	canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, 0.19), 3.2, true)
+	FX.draw_edge(canvas, closed, gradient, look, time, strength)
+
 static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Dictionary, look: Dictionary, gradient: Array[Color], time: float, kind: String, glow: bool) -> void:
     if grip.distance_squared_to(head) < 16.0 or profile.is_empty():
         return
@@ -49,7 +61,11 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
             var tip: Vector2 = ball + direction * 18.2
             canvas.draw_colored_polygon(PackedVector2Array([base + direction.orthogonal() * 3.7, tip, base - direction.orthogonal() * 3.7]), metal)
         if glow:
-            FX.draw_edge(canvas, PackedVector2Array([ball - normal * 10, ball + normal * 10]), gradient, look, time, 0.46)
+            var spikes: PackedVector2Array = PackedVector2Array()
+            for i in range(16):
+                var ang: float = TAU * float(i) / 16.0
+                spikes.append(ball + Vector2(cos(ang), sin(ang)) * (18.2 if i % 2 == 0 else 11.2))
+            _rim(canvas, spikes, gradient, look, time, 0.46)
         return
     if kind == "mace":
         # Flanged blunt head, not a cutting edge.
@@ -62,7 +78,8 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
             canvas.draw_circle(spine + along * 10.0, 2.2, accent)
         canvas.draw_line(head - along * 15.0, head + along * 14.0, accent, 1.0, true)
         if glow:
-            FX.draw_edge(canvas, PackedVector2Array([head - along * 13.0 + normal * 9.0, head + along * 11.0 + normal * 9.0]), gradient, look, time, 0.38)
+            var flanges: PackedVector2Array = PackedVector2Array([head - along * 16.0 - normal * 9.0, head + along * 12.0 - normal * 9.0, head + along * 12.0 + normal * 9.0, head - along * 16.0 + normal * 9.0])
+            _rim(canvas, flanges, gradient, look, time, 0.38)
         return
     # Morningstar: heavy round ball plus eight inward-braced spikes.
     canvas.draw_circle(head, 17.0, shade)
@@ -76,4 +93,8 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
         canvas.draw_colored_polygon(PackedVector2Array([origin + axis.orthogonal() * 4.6, spike, origin - axis.orthogonal() * 4.6]), edge)
     canvas.draw_arc(head, 16.0, 0.18, PI * 1.42, 24, accent, 1.45, true)
     if glow:
-        FX.draw_edge(canvas, PackedVector2Array([head - normal * 14.0, head + along * 16.0]), gradient, look, time, 0.45)
+        var star: PackedVector2Array = PackedVector2Array()
+        for j in range(16):
+            var a: float = TAU * float(j) / 16.0
+            star.append(head + Vector2(cos(a), sin(a)) * (26.0 if j % 2 == 0 else 13.8))
+        _rim(canvas, star, gradient, look, time, 0.45)
