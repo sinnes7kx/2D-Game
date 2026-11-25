@@ -34,51 +34,83 @@ static func play(parent: Node, where: Vector2, kind: String, volume_db: float = 
 # Sword sounds need the *motion of displaced air*, not a pitched buzz
 # or an impact drum. Band-limited stochastic noise, an accelerating crest
 # and a short descending harmonic form one original, airy sword whoosh.
+# Original synthetic foley, not a prerecorded sample. A pair of filtered
+# noise bands creates quiet fabric/air motion; the very small low harmonic
+# supplies weight without the old high pitched sci-fi buzz.
 static func _render_air_sweep(kind: String) -> AudioStreamWAV:
-    var duration: float = 0.22
-    var pitch_start: float = 260.0
-    var pitch_end: float = 78.0
-    var bass: float = 0.055
+    var duration: float = 0.20
+    var air_weight: float = 0.80
+    var bass_weight: float = 0.020
     match kind:
         "heavy_swing":
-            duration = 0.43
-            pitch_start = 218.0
-            pitch_end = 52.0
-            bass = 0.135
+            duration = 0.38
+            air_weight = 1.05
+            bass_weight = 0.050
         "jump_swing":
-            duration = 0.49
-            pitch_start = 285.0
-            pitch_end = 47.0
-            bass = 0.160
+            duration = 0.43
+            air_weight = 1.0
+            bass_weight = 0.065
         "charged_swing":
-            duration = 0.39
-            pitch_start = 455.0
-            pitch_end = 68.0
-            bass = 0.105
-    var sample_count: int = roundi(duration * RATE)
+            duration = 0.34
+            air_weight = 0.96
+            bass_weight = 0.042
+    var count: int = roundi(duration * RATE)
     var pcm: PackedByteArray = PackedByteArray()
-    pcm.resize(sample_count * 2)
-    var noise_state: int = posmod(kind.hash() + 18523, 2147483646) + 1
+    pcm.resize(count * 2)
+    var state: int = posmod(kind.hash() + 18523, 2147483646) + 1
     var mid: float = 0.0
     var low: float = 0.0
     var phase: float = 0.0
-    for i in range(sample_count):
-        var t: float = float(i) / float(sample_count)
-        noise_state = (noise_state * 16807) % 2147483647
-        var white: float = float(noise_state % 65535) / 32767.5 - 1.0
-        mid = lerpf(mid, white, 0.19)
-        low = lerpf(low, white, 0.019)
-        var air: float = mid - low
-        # Slow gathering air, fast release, then a soft tail on the miss.
-        var crest: float = pow(maxf(0.0, sin(t * PI)), 1.7)
-        var sweep: float = 0.55 + 0.45 * sin((t * 4.8 - 0.7) * PI) * sin(t * PI)
-        var envelope: float = maxf(0.0, crest * sweep)
-        phase += TAU * lerpf(pitch_start, pitch_end, t) / RATE
-        var sound: float = (air * 2.25 + sin(phase) * bass) * envelope
-        var sample: int = clampi(roundi(sound * 21000.0), -32768, 32767)
-        var signed_bits: int = sample & 0xffff
-        pcm[i * 2] = signed_bits & 255
-        pcm[i * 2 + 1] = (signed_bits >> 8) & 255
+    for i in range(count):
+        var t: float = float(i) / float(count)
+        state = (state * 16807) % 2147483647
+        var white: float = float(state % 65535) / 32767.5 - 1.0
+        mid = lerpf(mid, white, 0.095)
+        low = lerpf(low, white, 0.012)
+        var feather: float = mid - low
+        var pulse: float = pow(maxf(0.0, sin(PI * t)), 1.9)
+        var acceleration: float = 0.64 + 0.36 * sin(PI * clampf(t * 1.13, 0.0, 1.0))
+        phase += TAU * lerpf(110.0, 58.0, t) / RATE
+        var sound: float = (feather * air_weight + sin(phase) * bass_weight) * pulse * acceleration
+        var sample: int = clampi(roundi(sound * 12500.0), -32768, 32767)
+        var packed: int = sample & 0xffff
+        pcm[i * 2] = packed & 255
+        pcm[i * 2 + 1] = (packed >> 8) & 255
+    var stream: AudioStreamWAV = AudioStreamWAV.new()
+    stream.format = AudioStreamWAV.FORMAT_16_BITS
+    stream.mix_rate = RATE
+    stream.stereo = false
+    stream.data = pcm
+    return stream
+
+# Muted metallic/fabric contact: two short noise bands plus a tiny decaying
+# steel resonance. Strong hits have weight, but no sharp synthetic beep.
+static func _render_soft_contact(kind: String) -> AudioStreamWAV:
+    var parry: bool = kind == "parry"
+    var duration: float = 0.23 if parry else 0.16
+    var count: int = roundi(duration * RATE)
+    var pcm: PackedByteArray = PackedByteArray()
+    pcm.resize(count * 2)
+    var state: int = posmod(kind.hash() + 19431, 2147483646) + 1
+    var mid: float = 0.0
+    var low: float = 0.0
+    var phase: float = 0.0
+    for i in range(count):
+        var t: float = float(i) / float(count)
+        state = (state * 16807) % 2147483647
+        var white: float = float(state % 65535) / 32767.5 - 1.0
+        mid = lerpf(mid, white, 0.18)
+        low = lerpf(low, white, 0.025)
+        var body: float = low * exp(-7.0 * t)
+        var scrape: float = (mid - low) * exp(-12.0 * t)
+        phase += TAU * lerpf(830.0, 500.0, t) / RATE
+        var resonance: float = sin(phase) * (0.13 if parry else 0.042) * exp(-13.0 * t)
+        var attack: float = minf(1.0, t / 0.008)
+        var sound: float = (body * 0.95 + scrape * (0.85 if parry else 0.62) + resonance) * attack
+        var sample: int = clampi(roundi(sound * 13000.0), -32768, 32767)
+        var packed: int = sample & 0xffff
+        pcm[i * 2] = packed & 255
+        pcm[i * 2 + 1] = (packed >> 8) & 255
     var stream: AudioStreamWAV = AudioStreamWAV.new()
     stream.format = AudioStreamWAV.FORMAT_16_BITS
     stream.mix_rate = RATE
@@ -89,6 +121,8 @@ static func _render_air_sweep(kind: String) -> AudioStreamWAV:
 static func _render(kind: String) -> AudioStreamWAV:
     if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing"]:
         return _render_air_sweep(kind)
+    if kind in ["hit", "parry"]:
+        return _render_soft_contact(kind)
     var duration: float = 0.19
     var start_hz: float = 350.0
     var end_hz: float = 100.0
