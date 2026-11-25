@@ -104,5 +104,11 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 		canvas.draw_colored_polygon(PackedVector2Array([head-axis*4.0,head+n*5.0,head+axis*4.0,head-n*5.0]),core)
 		canvas.draw_line(head-n*3.0,head+n*3.0,trim,0.75,true)
 		if glow:
-			var rim: PackedVector2Array = PackedVector2Array([outline[0],outline[1],outline[2],outline[3]])
-			FX.draw_edge(canvas,rim,colors,look,phase,0.60)
+			# Illuminate the complete head silhouette, not only one side.
+			# The shaft stays faint so the actual maul shape remains dominant.
+			var halo: Color = FX.color_at(colors, look, 0.65, phase)
+			var outer_halo: Color = Color(halo.r, halo.g, halo.b, 0.10)
+			canvas.draw_polyline(closed, outer_halo, 8.0, true)
+			canvas.draw_polyline(closed, Color(halo.r, halo.g, halo.b, 0.22), 3.5, true)
+			canvas.draw_line(foot, head, Color(halo.r, halo.g, halo.b, 0.085), 7.0, true)
+			FX.draw_edge(canvas, closed, colors, look, phase, 0.60)
