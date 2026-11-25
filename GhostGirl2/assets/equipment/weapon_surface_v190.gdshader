@@ -54,7 +54,9 @@ void fragment() {
     float alpha = art.a * vertex_tint.a;
     if (overlay_only) {
         result = tinted;
-        alpha *= amount * 0.88;
+        // Bow-only mask: paint the whole authored bow silhouette, not a
+        // translucent 20% tint. Underlying body is never recolored.
+        alpha *= clamp(strength, 0.0, 0.98);
     }
     COLOR = vec4(result * vertex_tint.rgb, alpha);
 }
