@@ -36,11 +36,15 @@ func _check() -> void:
 				_fail("Blade tip isn't thrusting along facing: " + name)
 				return
 	var code: String = FileAccess.get_file_as_string("res://scripts/player.gd")
-	if not code.contains('if active_attack_style == "dagger":') or not code.contains('"_pierce_"') or not code.contains('attack_duration = 0.94 if heavy'):
+	if not code.contains('if active_attack_style == "dagger":') or not code.contains('"_pierce_"') or not code.contains('attack_duration = 0.94 if heavy') or not code.contains('dagger_charge_active = heavy and active_attack_style == "dagger"') or not code.contains('DAGGER_CHARGE_MAX'):
 		_fail("Single dagger did not route both attack inputs through separate thrusts")
 		return
 	if not code.contains('if active_attack_style != "dagger":\n\t\t\t\t_spawn_rose_slash'):
 		_fail("Contact still spawns unrelated dagger slash sprite")
+		return
+	var vault_code: String = FileAccess.get_file_as_string("res://scripts/collection_vault_v181.gd")
+	if vault_code.contains("if not query.is_empty()"):
+		_fail("Obsolete vault query parser regression returned")
 		return
 	if inv._serialize_item(dagger, Vector2i.ZERO) != before:
 		_fail("Dagger animation change mutated serialized item")
