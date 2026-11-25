@@ -14,6 +14,12 @@ var palette: Array[Color] = []
 var level: int = 0
 var active: bool = false
 
+func _ready() -> void:
+	# Additive light is isolated from the opaque painted weapon and body.
+	var light_material: CanvasItemMaterial = CanvasItemMaterial.new()
+	light_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = light_material
+
 static func rolled_level(item: GhostItemInstance) -> int:
 	if item == null or item.definition == null or item.weapon_style() != "scythe":
 		return 0
