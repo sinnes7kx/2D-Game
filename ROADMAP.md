@@ -4,7 +4,7 @@
 >
 > **This is the canonical product-priority document for the repository.** See [AGENTS.md](AGENTS.md) for instructions to coding agents.
 
-_Last updated: 2026-11-24 · Godot 4 · living design and delivery plan, not a claim of completion or a release-date promise._
+_Last updated: 2026-11-25 · Godot 4 · living design and delivery plan, not a claim of completion or a release-date promise._
 
 ## Read this first: the game we are building
 
@@ -124,6 +124,18 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Check item invariants on every transfer between backpack, equipment, vault, display, and future trade staging.
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
+
+### v2.02 — lively Lanternhaven, original Moonmoth, fletcher trial and separate headgear (source implementation, F5 pending)
+
+**User request and current gap:** Glowing Eyes were only a planned M1 head-slot experiment; they had **not** been implemented as equippable visual items. The current `wings` equipment save key previously drew one generic headpiece/tiara. This slice turns that legacy slot into **Head Accessory** without renaming its save key and introduces a *separate additive* `helm` key for tiaras and diadems.
+
+- [ ] **Wearable prototype:** four original head-accessory bases (`v202_luminous_eyes`, `v202_bandit_mask`, `v202_crescent_halo`, `v202_rose_horns`) with distinct 96×96 icon assets and four-facing frame-following in-game overlays. Two independent metal helms (`v202_moonlit_tiara`, `v202_starfall_diadem`) can be worn alongside an accessory. All six are discoverable fixed-seed world pickups in Lanternhaven, Moonthorn Woods and Briar Hollow; no special forced high rarity is advertised. The legacy `rosewing_mantle` still uses `wings` and its previous graphic.
+- [ ] Old saves with `wings` only load unchanged; new saves add `helm`: -1. Equipment/UI has an explicit new Helm button, the old button reads HEAD ACCESSORY. Test equip/unequip, old save, full inventory, protection, vault and exhibition fidelity, and all four pose directions. The visuals are an **original procedural preview**, not final authored individual atlases. Do not mark M1 equipment complete before real F5.
+- [ ] **Town and outdoor wildlife:** a bounded handful of tiny editor-placed original moths, crows, hares and foxes wander gently and avoid the player in Lanternhaven, Moonthorn Woods, Briar Hollow and Weeping Brook. No hostile AI, loot, hitboxes or persistence. Profile low-spec Godot performance before increasing counts.
+- [ ] **Original nonverbal Moonmoth companion:** a small winged moonlight familiar follows the player across room changes and brightens around unresolved optional secrets. No Nintendo/Navi art, writing or audio is copied; no extra combat power, path-blocking physics, voice spam or inventory writes. Later design could add optional follow distance, dismiss/hide controls, more expressions and discovery cues without spoiling puzzles.
+- [ ] **Lanternhaven three-stage fletcher range:** real swept-arrow targets require (I) normal contact, (II) fully drawn charged contact, (III) airborne fully drawn contact. Count every actual bow arrow fired while in the lane; the **300/300 perfect** requires exactly three shots and three hits. A perfect score persists a new collected flag, revealing a one-time fixed-seed **rare Fletcher's Moonflight Bow** chest. Missing or firing extra shots scores below perfect; E resets the optional challenge. The bow is a scripted attainable prize, not a naturally rare mint or a population-verified unique item. Do not restrict comparable ordinary collector bows behind competitive precision.
+- [ ] **Creative puzzles across rooms:** new lightweight Moonthorn root knot (fire, frost+hook, roses, patient hook, certain light arrows) and Briar Hollow bellstone (luminous arrow, aerial charged bow, frost+hook, repeated hook) expose separate once-per-save caches. Both reuse the canonical collection flags/chest mechanism and restore after room entry. The original v2.01 cave remains optional. Add more **distinct authored physical/environmental concepts** in subsequent regions (fallen bell towers, river currents, moon mirrors, brittle mineral bridges, lantern chains) rather than cloning identical interactables across every room. Reward a meaningful discovery, never a guessed mandatory one-button solution.
+- [ ] Source tests: `v202_headgear_migration_smoke.gd`, `v202_fletcher_range_smoke.gd`, and `v202_living_world_puzzles_smoke.gd` are registered in CI. They must pass along with prior M0 migration/regression checks; never run a test that writes the player's actual inventory. Real F5 review must check lanes/line-of-sight, wolf/fox/harmless critter look, collision, 100%/200% character preview, save loading and tooltips.
 
 ### v2.01 — exploration landmarks and creative cave solutions (source implementation; engine and visual review pending)
 
