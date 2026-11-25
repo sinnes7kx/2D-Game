@@ -133,8 +133,6 @@ func refresh() -> void:
 			label_text += " · Broken" if item.is_broken() else " · %d/%d durability" % [item.durability, item.max_durability]
 		if not item.regional_imprint_label().is_empty():
 			label_text += " · " + item.regional_imprint_label()
-		if not query.is_empty() and not (label_text + " " + item.origin_label()).to_lower().contains(query):
-			continue
 		shown.append(item)
 		var index: int = list.add_item(label_text, item.definition.icon)
 		list.set_item_custom_fg_color(index, item.quality_color())
