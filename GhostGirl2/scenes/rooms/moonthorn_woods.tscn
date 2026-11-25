@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3]
+[gd_scene load_steps=34 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/world/moonthorn_woods.png" id="background"]
 [ext_resource type="Texture2D" path="res://assets/world/layers/moonthorn_woods_foreground.png" id="foreground"]
