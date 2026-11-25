@@ -12,6 +12,7 @@ var profile: Dictionary = {}
 var colors: Array[Color] = []
 var key: String = ""
 var style: String = ""
+var active_item_id: String = ""
 var ashglass: bool = false
 var phase: float = 0.0
 
@@ -31,6 +32,7 @@ func _process(delta: float) -> void:
 	var inventory: Node = world.get("inventory") as Node if world != null else null
 	var item: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
 	style = item.weapon_style() if item != null else ""
+	active_item_id = str(item.definition.item_id) if item != null and item.definition != null else ""
 	visible = item != null and ((style == "scythe" and SCYTHE.matches(str(body.animation))) or (style in ["halberd", "maul"] and HEAVY.matches(str(body.animation))))
 	if not visible:
 		return
@@ -64,4 +66,4 @@ func _draw() -> void:
 		if style == "scythe":
 			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, true)
 		else:
-			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, true)
+			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, true, active_item_id)
