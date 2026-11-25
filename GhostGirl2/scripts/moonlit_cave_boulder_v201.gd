@@ -14,6 +14,8 @@ const COMPLETED_FLAG: String = "v201_moonlit_cave_open"
 @export var hook_pulls_required: int = 3
 var inventory: Node = null
 var opened: bool = false
+# Existing heavy-melee world-contact code checks this property and group.
+var broken: bool = false
 var ice_left: float = 0.0
 var impact_progress: float = 0.0
 var hook_pulls: int = 0
@@ -31,6 +33,7 @@ func _ready() -> void:
 func restore_from_inventory(saved_inventory: Node) -> void:
     inventory = saved_inventory
     opened = inventory != null and inventory.has_collected(discovery_id)
+    broken = opened
     _refresh_state()
 
 func _refresh_state() -> void:
@@ -45,7 +48,7 @@ func _refresh_state() -> void:
         var blocker: CollisionShape2D = get_node_or_null("CollisionShape2D") as CollisionShape2D
         if blocker != null:
             blocker.set_deferred("disabled", false)
-    for name in ["hook_switch", "v135_frost_targets", "v139_elemental_world", "moon_archery_targets", "rose_bloom_relay"]:
+    for name in ["hook_switch", "v135_frost_targets", "v139_elemental_world", "moon_archery_targets", "rose_bloom_relay", "breakable_cover"]:
         if opened:
             remove_from_group(name)
         else:
@@ -157,6 +160,7 @@ func _complete(method: String) -> bool:
         _hint("THE DISCOVERY COULD NOT BE SAVED · TRY AGAIN", Color("ebbdba"))
         return false
     opened = true
+    broken = true
     solution = method
     dissolve = 1.0
     _refresh_state()
