@@ -137,6 +137,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.09 — offline collector share card (source implemented; manual Godot validation pending)
+
+- [ ] Add a **Copy collector card (offline)** button to the existing Collector's Lens. The text card shows the actual item name, quality, family, known source region, material, item level, current/original Collector Roll Codes when supported, cosmetic appearance identifier, sockets, ethereal condition and favorite status. This is plain text for sharing in messages, not a trading credential.
+- [ ] The generated card always says **offline collection snapshot, self-reported, not verified ownership or rarity**. If local debug/test effects are active, it labels them explicitly; no fabricated global rarity or unique ownership count.
+- [ ] `scripts/v209_collector_share_card.gd` is a pure, read-only formatter; no changes to item seeds, item rolls, save format, vault ownership, collector flags or online services. `tests/v209_collector_share_card_smoke.gd` covers actual item metadata, legacy/non-weapon behavior, debug disclosure and no mutation.
+- [ ] **CI deliberately not triggered:** GitHub Actions funds unavailable. The branch is committed but there is no pull request yet, to avoid starting automatic CI. Run `godot --headless --path GhostGirl2 --script res://tests/v209_collector_share_card_smoke.gd` locally; F5-test Collector's Lens layout/clipboard before merging.
+
 ### v2.03 — physical bow grips, more airborne motion and blunt weapon variety (source implementation; F5 approval pending)
 
 **User-provided visual defect (2026-11-25):** The front and left idle bows were floating away from the correct wrist in the inventory preview and in the world. The physical full-color bow and independent palette layer had a shared pivot, but its **grip target** was under-calibrated in those authored facings. Color reroll is shader-only; it must never cause the weapon to move.
