@@ -398,7 +398,8 @@ func _fallback_tip(grip: Vector2, face: String, distance: float) -> Vector2:
 		_: return grip + Vector2(distance * 0.45, -distance * 0.9)
 
 func _process(delta: float) -> void:
-	self_modulate.a = FX_LEVEL.alpha(GENTLE.EFFECT_ALPHA)
+	# A little more edge presence on the small world-scale paired swords only.
+	self_modulate.a = FX_LEVEL.alpha(0.72 if item != null and item.weapon_style() == "dual_sword" else GENTLE.EFFECT_ALPHA)
 	elapsed += delta
 	if inventory == null and player != null:
 		# Self-heal when an older game.gd forgot to call bind_inventory().
@@ -687,12 +688,12 @@ func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) 
 			var taper: float = maxf(0.14, sin((0.11 + u * 0.87) * PI))
 			var chroma: float = fposmod(u * 0.59 + elapsed * (0.095 if mythic else 0.014) + seed_phase + hand_phase, 1.0)
 			var ink: Color = _gradient_at(chroma)
-			var brightness: float = (0.115 if mythic else 0.040) * power * pulse * taper
+			var brightness: float = (0.115 if mythic else 0.065) * power * pulse * taper
 			draw_circle(at, (7.4 if mythic else 3.6) * taper, Color(ink.r, ink.g, ink.b, brightness))
 			draw_circle(at, 2.5 * taper, Color(ink.r, ink.g, ink.b, brightness * 1.85))
 		var shine: Color = _gradient_at(fposmod(0.67 + seed_phase + elapsed * 0.11 + hand_phase, 1.0))
 		var edge_offset: float = -1.3 if hand_index == 0 else 1.3
-		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.16) * power * pulse), 1.45, true)
+		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.25) * power * pulse), 1.45, true)
 		_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)
 		var colors: Array[Color] = effect_palette
 		ANOMALOUS.draw_edge(self, PackedVector2Array([blade_root, tip]), colors, collector_look, elapsed, intensity)
