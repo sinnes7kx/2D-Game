@@ -29,7 +29,7 @@ func _verify() -> void:
         var portal: Node2D = instance.get_node("Gameplay/Portals/MoonlitCavePath")
         var chest: Node2D = instance.get_node("Gameplay/TreasureChests/V201MoonlitCaveCache")
         cave.call("restore_from_inventory", inventory)
-        if cave.collision_layer != 2 or portal.visible or chest.visible or portal.is_in_group("interactable"):
+        if cave.collision_layer != 2 or not cave.is_in_group("breakable_cover") or portal.visible or chest.visible or portal.is_in_group("interactable"):
             _fail("Locked cave has a passable shortcut or visible reward")
             return
         if str(portal.get("destination")) != "briar_hollow":
@@ -57,7 +57,7 @@ func _verify() -> void:
             "thermal_shock":
                 cave.call("on_elemental_arrow_hit", 2, 0, false, false)
                 cave.call("on_elemental_arrow_hit", 1, 0, false, false)
-        if not cave.opened or cave.collision_layer != 0 or not portal.visible or not chest.visible or not portal.is_in_group("interactable"):
+        if not cave.opened or cave.collision_layer != 0 or cave.is_in_group("breakable_cover") or not portal.visible or not chest.visible or not portal.is_in_group("interactable"):
             _fail("Method did not physically open route and cache: " + method)
             return
         if not inventory.has_collected("v201_moonthorn_cave_cleared") or not inventory.has_collected("v201_moonthorn_cave_cleared_" + method):
