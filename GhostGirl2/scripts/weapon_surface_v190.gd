@@ -27,7 +27,7 @@ static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, over
 	mat.set_shader_parameter("surface_speed", float(look.get("surface_speed", 0.5)))
 	mat.set_shader_parameter("cell_size", cell)
 	mat.set_shader_parameter("overlay_only", overlay)
-	mat.set_shader_parameter("strength", 0.38 if overlay else 0.40)
+	mat.set_shader_parameter("strength", 0.94 if overlay else 0.40)
 	mat.set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
 
 static func key(item: GhostItemInstance) -> String:
@@ -39,5 +39,7 @@ static func bow_pigment(item: GhostItemInstance, look: Dictionary) -> Array[Colo
 	var blended: Array[Color] = []
 	for i in range(limbs.size()):
 		var u: float = float(i) / float(limbs.size() - 1)
-		blended.append(limbs[i].lerp(GhostCosmeticRNGV152.sample_palette(pigment, u), 0.42))
+		# Keep the independently seeded limb ramp dominant. Mixing too much
+		# brighter surface pigment erased onyx/dark bow rolls.
+		blended.append(limbs[i].lerp(GhostCosmeticRNGV152.sample_palette(pigment, u), 0.16))
 	return blended
