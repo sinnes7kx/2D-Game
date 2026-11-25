@@ -137,6 +137,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.07 — Sanctum collector captions and restrained display lighting (source implemented; CI/F5 pending)
+
+- [ ] Sanctum pedestals now display each stored item's full quality-aware name, collector material and available discovery-region label. Empty pedestals have explicit, nonmisleading text; captions update on exhibition changes and withdrawal. Read-only model snapshots and the existing interaction path to Collector's Lens remain intact.
+- [ ] Add a subtle quality-colored highlight to occupied frames only, without changing the original room painting, artwork, item seed, rarity, appearance or save format. This is presentation, **not** verified item ownership or an online showroom.
+- [ ] Run `tests/v207_sanctum_captions_smoke.gd` in CI to verify captions/provenance, six physical pedestals, exact saved item identity before/after display, withdrawal cleanup and empty states. F5 visual legibility/overlap across all slots and older GPU performance remain pending.
+- [ ] This is independent of v2.06 broader vault storage PR and does not include it.
+
 ### v2.03 — physical bow grips, more airborne motion and blunt weapon variety (source implementation; F5 approval pending)
 
 **User-provided visual defect (2026-11-25):** The front and left idle bows were floating away from the correct wrist in the inventory preview and in the world. The physical full-color bow and independent palette layer had a shared pivot, but its **grip target** was under-calibrated in those authored facings. Color reroll is shader-only; it must never cause the weapon to move.
