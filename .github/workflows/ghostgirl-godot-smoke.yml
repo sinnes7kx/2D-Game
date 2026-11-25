@@ -118,6 +118,9 @@ jobs:
       - name: Verify Sanctum collection exhibition and persistent assignments
         run: godot --headless --path GhostGirl2 --script res://tests/v182_exhibition_smoke.gd
 
+      - name: Verify Sanctum collector captions and read-only provenance
+        run: godot --headless --path GhostGirl2 --script res://tests/v207_sanctum_captions_smoke.gd
+
       - name: Verify regional weapon appearance and provenance
         run: godot --headless --path GhostGirl2 --script res://tests/v183_regional_smoke.gd
 

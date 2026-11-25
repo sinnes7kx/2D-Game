@@ -7,6 +7,7 @@ var inventory: Node
 var model: Node2D
 var displayed: GhostItemInstance
 var caption: Label
+var provenance: Label
 var time: float = 0.0
 
 func _ready() -> void:
@@ -20,13 +21,21 @@ func _ready() -> void:
 	model.rotation = -0.35
 	add_child(model)
 	caption = Label.new()
-	caption.position = Vector2(-88, 9)
-	caption.size = Vector2(176, 42)
+	caption.position = Vector2(-90, 12)
+	caption.size = Vector2(180, 38)
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	caption.add_theme_font_size_override("font_size", 12)
 	caption.add_theme_color_override("font_color", Color("e0c7d9"))
 	add_child(caption)
+	provenance = Label.new()
+	provenance.position = Vector2(-90, 46)
+	provenance.size = Vector2(180, 32)
+	provenance.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	provenance.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	provenance.add_theme_font_size_override("font_size", 10)
+	provenance.add_theme_color_override("font_color", Color("b6a6b9"))
+	add_child(provenance)
 	_refresh()
 
 func bind_inventory(value: Node) -> void:
@@ -50,8 +59,26 @@ func _refresh() -> void:
 	if displayed != null:
 		view = inventory._deserialize_item(inventory._serialize_item(displayed, Vector2i(-1, -1)))
 	model.call("set_item", view)
-	caption.text = "%02d  ·  %s" % [slot + 1, displayed.definition.display_name if displayed != null else "Empty display"]
+	caption.text = display_caption(displayed, slot)
+	caption.add_theme_color_override("font_color", displayed.quality_color().lerp(Color("f5e6ec"), 0.32) if displayed != null else Color("a99ba9"))
+	provenance.text = display_provenance(displayed)
 	queue_redraw()
+
+# Read-only labels always use the actual stored instance, not the icon's
+# base name or a generated replacement. No seed is presented as ownership proof.
+static func display_caption(item: GhostItemInstance, display_slot: int) -> String:
+	if item == null:
+		return "%02d  ·  Empty display" % [display_slot + 1]
+	return "%02d  ·  %s" % [display_slot + 1, item.display_name()]
+
+static func display_provenance(item: GhostItemInstance) -> String:
+	if item == null:
+		return "Awaiting a cherished find"
+	var location: String = item.origin_label()
+	var material: String = item.collector_material_label()
+	if location.is_empty():
+		return material
+	return "%s  ·  %s" % [material, location]
 
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint() or not is_instance_valid(model):
@@ -76,3 +103,9 @@ func _draw() -> void:
 	if displayed != null:
 		var ink: Color = displayed.quality_color()
 		draw_circle(Vector2(0,-22),20.0,Color(ink.r,ink.g,ink.b,0.07))
+		# Restrained display illumination; glow only, never edits the owned item.
+		var pulse: float = 0.88 + 0.12 * sin(time * 1.4 + float(slot))
+		draw_circle(Vector2(0, -107), 39.0, Color(ink.r, ink.g, ink.b, 0.024 * pulse))
+		draw_arc(Vector2(0, -107), 39.0, PI * 0.12, PI * 0.88, 24, Color(ink.r, ink.g, ink.b, 0.28 * pulse), 1.4, true)
+		for side in [-1.0, 1.0]:
+			draw_circle(Vector2(side * 34.0, -143.0), 2.1, Color(ink.r, ink.g, ink.b, 0.47 * pulse))
