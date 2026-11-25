@@ -46,7 +46,7 @@ func _find_secret() -> void:
                 continue
             if clue.has_method("is_resolved") and clue.call("is_resolved"):
                 continue
-            if bool(clue.get("opened")):
+            if clue.is_in_group("v201_cave_blocker") and bool(clue.get("opened")):
                 continue
             var delta: Vector2 = (point - actor.global_position).normalized()
             target_hint = delta * 23.0
