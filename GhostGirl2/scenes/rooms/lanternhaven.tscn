@@ -5,6 +5,17 @@
 [ext_resource type="Script" path="res://scripts/town_stash_v193.gd" id="3_stash"]
 [ext_resource type="Script" path="res://scripts/lantern_shrine.gd" id="4_shrine"]
 
+[ext_resource type="Script" path="res://scripts/world_critter_v202.gd" id="v202_critter"]
+[ext_resource type="Script" path="res://scripts/fletcher_range_v202.gd" id="v202_range"]
+[ext_resource type="Script" path="res://scripts/fletcher_vane_v202.gd" id="v202_vane"]
+[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="v202_chest"]
+[ext_resource type="Resource" path="res://items/v202_fletcher_moonflight_bow.tres" id="v202_bow"]
+[ext_resource type="Script" path="res://scripts/collectible_item.gd" id="v202_pickup"]
+[ext_resource type="Resource" path="res://items/v202_luminous_eyes.tres" id="v202_eyes"]
+[ext_resource type="Resource" path="res://items/v202_moonlit_tiara.tres" id="v202_tiara"]
+[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_luminous_eyes.svg" id="v202_eyes_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_moonlit_tiara.svg" id="v202_tiara_icon"]
+
 [sub_resource type="RectangleShape2D" id="WestWallShape"]
 size = Vector2(160, 2400)
 
@@ -37,17 +48,6 @@ size = Vector2(215, 138)
 
 [sub_resource type="RectangleShape2D" id="StashCollisionShape"]
 size = Vector2(84, 52)
-
-[ext_resource type="Script" path="res://scripts/world_critter_v202.gd" id="v202_critter"]
-[ext_resource type="Script" path="res://scripts/fletcher_range_v202.gd" id="v202_range"]
-[ext_resource type="Script" path="res://scripts/fletcher_vane_v202.gd" id="v202_vane"]
-[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="v202_chest"]
-[ext_resource type="Resource" path="res://items/v202_fletcher_moonflight_bow.tres" id="v202_bow"]
-[ext_resource type="Script" path="res://scripts/collectible_item.gd" id="v202_pickup"]
-[ext_resource type="Resource" path="res://items/v202_luminous_eyes.tres" id="v202_eyes"]
-[ext_resource type="Resource" path="res://items/v202_moonlit_tiara.tres" id="v202_tiara"]
-[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_luminous_eyes.svg" id="v202_eyes_icon"]
-[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_moonlit_tiara.svg" id="v202_tiara_icon"]
 
 [node name="Lanternhaven" type="Node2D"]
 y_sort_enabled = true
