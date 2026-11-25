@@ -197,5 +197,10 @@ static func authored_blade_spans(face: String, action: String, frame_index: int)
 				grip += forward * (-lead_reach[n] * 0.86)
 				grip += across * (-side * lead_reach[n] * 0.18)
 		var tip: Vector2 = grip + across * lateral + forward * advance
+		# The authored right wrist can reach the edge of the 256x220 frame.
+		# Confine *drawing only* to the approved atlas bounds; gameplay
+		# reach and attack timing remain unchanged.
+		tip.x = clampf(tip.x, -121.0, 121.0)
+		tip.y = clampf(tip.y, -116.0, 116.0)
 		result.append(PackedVector2Array([grip, tip]))
 	return result
