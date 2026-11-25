@@ -142,7 +142,9 @@ func refresh() -> void:
 # angle, wrist motion and attack-frame changes without approximating a world
 # offset. Non-bow effects stay Ghost-body-local exactly as before.
 func _bow_mask_node() -> AnimatedSprite2D:
-	return body.get_node_or_null("BowPaletteV139") as AnimatedSprite2D if body != null else null
+	if body == null:
+		return null
+	return body.get_node_or_null("BowPaletteV139") as AnimatedSprite2D
 
 func _sync_transform_parent() -> void:
 	if body == null:
