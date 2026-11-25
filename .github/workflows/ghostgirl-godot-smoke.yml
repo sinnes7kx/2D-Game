@@ -195,5 +195,8 @@ jobs:
       - name: Verify living wildlife and two creative world puzzles
         run: godot --headless --path GhostGirl2 --script res://tests/v202_living_world_puzzles_smoke.gd
 
+      - name: Verify seeded eye styles and full pupil coverage anchors
+        run: godot --headless --path GhostGirl2 --script res://tests/v204_eye_palette_coverage_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10

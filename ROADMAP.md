@@ -125,6 +125,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
 
+### v2.04 — seeded eye silhouettes and eye coverage (feature branch; Godot CI / F5 pending)
+
+- [ ] The existing `v202_luminous_eyes` accessory now draws opaque eye-shaped backing across the original black pupils, with four eye variants (Moonveil, Cathedral slit, Starborn, Hollow ring) selected deterministically from the saved cosmetic seed. A separate versioned continuous color gradient follows the cosmetic UID; cosmetic rerolls can yield new variants and shades without touching stats, item identity or the saved `wings` slot.
+- [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
+- [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
+
 ### v2.03 — physical bow grips, more airborne motion and blunt weapon variety (source implementation; F5 approval pending)
 
 **User-provided visual defect (2026-11-25):** The front and left idle bows were floating away from the correct wrist in the inventory preview and in the world. The physical full-color bow and independent palette layer had a shared pivot, but its **grip target** was under-calibrated in those authored facings. Color reroll is shader-only; it must never cause the weapon to move.
