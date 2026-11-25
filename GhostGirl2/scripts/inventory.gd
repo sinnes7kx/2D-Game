@@ -576,7 +576,9 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 
 func vault_store(index: int, persist: bool = true) -> bool:
 	var item: GhostItemInstance = get_item(index)
-	if item == null or item.definition == null or item.get_slot() not in ["sword", "wand"]:
+	# Any recognized equipment item is a collectible, not just weapons.
+	# Unknown/consumable slots must never be silently moved into the vault.
+	if item == null or item.definition == null or not equipment.has(item.get_slot()):
 		return false
 	if vault.size() + unresolved_vault.size() >= VAULT_CAPACITY:
 		return false
