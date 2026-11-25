@@ -1441,10 +1441,12 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
 			continue
 		candidate.call("hit", power, poise_bonus * (1.0 + _stat("poise_power_pct") / 100.0))
-		if jump_attack_active:
-			PHYSICAL_FEEL.burst(get_tree().current_scene, candidate.global_position + Vector2(0, -14), "slam", 1.40, attack_direction, sword.visual_seed() if sword != null else 1)
-		_spawn_blade_blood(candidate.global_position + Vector2(0.0, -32.0), fx_color, fx_accent, fx_impact, fx_tier, sword.visual_seed() if sword != null else 0)
-		_spawn_rose_slash(candidate.global_position + Vector2(0.0, -28.0))
+		var blunt_contact: bool = sword != null and sword.physical_damage_kind() == "blunt"
+		if jump_attack_active or blunt_contact:
+			PHYSICAL_FEEL.burst(get_tree().current_scene, candidate.global_position + Vector2(0, -14), "slam", 1.40 if jump_attack_active else 0.92, attack_direction, sword.visual_seed() if sword != null else 1)
+		if not blunt_contact:
+			_spawn_blade_blood(candidate.global_position + Vector2(0.0, -32.0), fx_color, fx_accent, fx_impact, fx_tier, sword.visual_seed() if sword != null else 0)
+			_spawn_rose_slash(candidate.global_position + Vector2(0.0, -28.0))
 		_spawn_spectacle("strike", candidate.global_position + Vector2(0.0, -27.0), fx_color, fx_motif, fx_tier, fx_accent, fx_trail)
 		if counter_hit and not counter_shown:
 			_spawn_precision_feedback("riposte", candidate.global_position + Vector2(0.0, -30.0), attack_direction)
