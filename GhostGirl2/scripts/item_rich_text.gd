@@ -46,9 +46,11 @@ static func _visual_row(item: Variant, channel: String, caption: String) -> Stri
 	if tones.is_empty():
 		return ""
 	var dots: Array[String] = []
-	for i in range(tones.size()):
-		dots.append("[url=visual:%s:%d][font_size=22][color=%s]●[/color][/font_size][/url]" % [channel, i, color_to_tag(tones[i])])
-	return "[font_size=11][color=%s]%s[/color][/font_size]  %s" % [MUTED, caption, "  ".join(dots)]
+	for ink in tones:
+		dots.append("[font_size=20][color=%s]●[/color][/font_size]" % color_to_tag(ink))
+	# One wide hover target covers both the caption and the entire color row.
+	# The player no longer has to aim at a specific tiny dot.
+	return "[url=visual:%s][font_size=13][color=%s]%s[/color][/font_size]   %s[/url]" % [channel, MUTED, caption, "  ".join(dots)]
 
 static func _cosmetic_dots(item: Variant) -> String:
 	var rows: Array[String] = []
@@ -68,39 +70,20 @@ static func _cosmetic_dots(item: Variant) -> String:
 # of the ordinary item body: Alt only pins the panel for interactive reading.
 static func visual_dot_details(item: Variant, meta: String) -> String:
 	var tokens: PackedStringArray = meta.split(":")
-	if tokens.size() != 3 or tokens[0] != "visual":
+	if item == null or tokens.size() < 2 or tokens[0] != "visual":
 		return ""
 	var channel: String = tokens[1]
-	var index: int = int(tokens[2])
 	var tones: Array[Color] = visual_colors(item, channel)
-	if index < 0 or index >= tones.size():
+	if tones.is_empty():
 		return ""
-	var label: String = "FX LIGHT"
-	var explanation: String = "This is an effect-light gradient, not a full-weapon recolor. The original painted metal remains visible."
 	match channel:
 		"surface":
-			label = "BOW LIMB TINT" if item.weapon_style() == "bow" else "SURFACE TINT"
-			explanation = "These are tint-ramp stops. The shader blends them with the painted weapon and surface effects, so the finished material will look different."
+			return "Bow colors · whole bow palette" if item.weapon_style() == "bow" else "Weapon colors · material gradient"
 		"string":
-			label = "BOWSTRING LIGHT"
-			explanation = "Separate cosmetic gradient for the bowstring highlight. It does not set the bow limbs or arrow color."
-	var details: Array[String] = ["%s  ·  %d/%d  ·  #%s" % [label, index + 1, tones.size(), tones[index].to_html(false).to_upper()], explanation]
-	if channel == "glow" and item.get_slot() in ["sword", "wand"]:
-		var fx: Dictionary = item.effect_rolls()
-		details.append("Aura: " + GhostWeaponFXLibrary.motif_name(int(fx.get("motif", 0))))
-		details.append("Trail: " + GhostWeaponFXLibrary.trail_name(int(fx.get("trail", 0))))
-		details.append("On hit: " + GhostWeaponFXLibrary.impact_name(item.get_slot(), int(fx.get("impact", 0))))
-		if item.get_slot() == "wand":
-			details.append("Spell: " + GhostWeaponFXLibrary.spell_form_name(int(fx.get("form", 0))))
-		if item.weapon_style() == "bow":
-			var bow: Dictionary = item.bow_rolls()
-			details.append("Arrow: " + GhostBowImprintsV138.name_for_element(int(bow.get("element", 0))))
-		var code: String = ROLL_CODE.current(item)
-		if not code.is_empty():
-			details.append("Appearance roll: " + code + "  (see P to inspect)")
-		if ROLL_CODE.debug_active(item):
-			details.append("TEST LOOK ACTIVE — genuine rarity is unchanged")
-	return "\n".join(details)
+			return "Bowstring glow · separate from the bow colors"
+		"glow":
+			return "Special glow · effects around the item"
+	return ""
 
 static func _swatch_colors(colors: Array[Color]) -> String:
 	var pieces: Array[String] = []
@@ -162,6 +145,18 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	var flavor: String = str(item.definition.description).strip_edges()
 	if not flavor.is_empty():
 		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])
+	# Keep special seeded visuals visible in the ordinary hover tooltip,
+	# even when ALT is not held. Detailed roll codes stay in Inspect.
+	if item.visual_signature() > 0:
+		var level: int = item.visual_signature()
+		var signature_label: String = "Mythic Radiance" if level == 4 else ("Moonfall Halo" if level == 5 else GhostCosmeticRNGV152.signature_name(level))
+		out.append("[font_size=13][color=%s]✦ Special look: %s[/color][/font_size]" % [GOLD, escape(signature_label)])
+	if slot in ["sword", "wand"]:
+		var visible_fx: Dictionary = item.effect_rolls()
+		out.append(_label("Glow: " + GhostWeaponFXLibrary.motif_name(int(visible_fx.get("motif", 0))) + "  ·  Trail: " + GhostWeaponFXLibrary.trail_name(int(visible_fx.get("trail", 0)))))
+		if item.weapon_style() == "bow":
+			var arrow_style: Dictionary = item.bow_rolls()
+			out.append(_label("Arrow: " + GhostBowImprintsV138.name_for_element(int(arrow_style.get("element", 0)))))
 	if not advanced:
 		if slot in ["sword", "wand"]:
 			out.append("[font_size=11][color=%s]P  ·  Inspect weapon[/color][/font_size]" % MUTED)
