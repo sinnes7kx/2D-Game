@@ -73,9 +73,9 @@ func _draw() -> void:
 	# long shaft, outside crescent and inside cutting edge. No damage.
 	var widths: Array[float] = [16.0, 9.0, 4.0]
 	var strengths: Array[float] = [0.11, 0.19, 0.27]
-	for pass in range(3):
-		var width: float = widths[pass]
-		var strength: float = strengths[pass]
+	for layer_index in range(3):
+		var width: float = widths[layer_index]
+		var strength: float = strengths[layer_index]
 		var ink: Color = Color(base.r, base.g, base.b, alpha * strength)
 		draw_line(foot, head, ink, width * 0.65, true)
 		draw_polyline(outer, ink, width, true)
