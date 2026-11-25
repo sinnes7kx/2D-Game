@@ -325,6 +325,13 @@ func _bind_room() -> void:
 		for rose in room_view.get_node("Gameplay/HookAnchors").get_children():
 			if rose.has_method("restore_secret"):
 				rose.call("restore_secret", inventory)
+	# v2.01: restore blocked cave routes and their physical collision before
+	# registering portals. Uses the existing collected-pickup save dictionary.
+	var cave_puzzles: Node = room_view.get_node_or_null("Gameplay/V201WorldPuzzles")
+	if cave_puzzles != null:
+		for cave in cave_puzzles.get_children():
+			if cave.has_method("restore_from_inventory"):
+				cave.call("restore_from_inventory", inventory)
 	for node in room_view.get_node("Gameplay/Portals").get_children():
 		portals[node.name] = node
 		node.set("opened", _portal_unlocked(str(node.get("destination"))))
@@ -421,6 +428,8 @@ func _process(_delta: float) -> void:
 		if switch_hint.is_empty() and player.carrying == null:
 			switch_hint = _rose_weight_hint()
 		ui.set_prompt("G  DROP    R  THROW" if player.carrying != null else switch_hint)
+	elif current_target.is_in_group("v201_cave_blocker"):
+		ui.set_prompt("E  EXAMINE THE CRACKED BOULDER  ·  TRY YOUR TOOLS")
 	elif current_target.is_in_group("town_stash"):
 		ui.set_prompt("E  OPEN STASH")
 	elif current_target.is_in_group("moor_vigil_memory"):
@@ -525,6 +534,9 @@ func _choose_target():
 func interact() -> void:
 	var target = _choose_target()
 	if target == null:
+		return
+	if target.is_in_group("v201_cave_blocker"):
+		ui.show_pickup(str(target.call("inspect_text")), Color("d6c6d8"))
 		return
 	if target.is_in_group("town_stash") and can_access_town_stash():
 		ui.call("open_town_stash")

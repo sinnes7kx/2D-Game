@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/world/moonthorn_woods.png" id="background"]
 [ext_resource type="Texture2D" path="res://assets/world/layers/moonthorn_woods_foreground.png" id="foreground"]
@@ -15,6 +15,7 @@
 
 [ext_resource type="Script" path="res://scripts/elemental_kindling_v140.gd" id="v140_kindling"]
 [ext_resource type="Script" path="res://scripts/elemental_hidden_relic_v140.gd" id="v140_reveal"]
+[ext_resource type="Script" path="res://scripts/moonlit_cave_boulder_v201.gd" id="v201_cave"]
 [ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="v140_chest"]
 [ext_resource type="Resource" path="res://items/moon_gem.tres" id="v140_loot"]
 
@@ -41,6 +42,9 @@ size = Vector2(275, 230)
 
 [sub_resource type="RectangleShape2D" id="col7"]
 size = Vector2(340, 140)
+
+[sub_resource type="RectangleShape2D" id="v201_boulder_shape"]
+size = Vector2(162, 104)
 
 [node name="MoonthornWoods" type="Node2D"]
 
@@ -302,3 +306,38 @@ chest_id = "v140_woods_light_reward_01"
 loot_data = ExtResource("v140_loot")
 loot_seed = 142137
 guaranteed_quality = "rare"
+
+
+; v2.01: optional, original cave opening near MoonlitHollow.
+; The old Briar Hollow route remains unobstructed; the stone has multiple
+; independent solutions. The boulder owns the persisted opened flag.
+[node name="MoonlitCavePath" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(390, 1064)
+visible = false
+script = ExtResource("portal")
+interaction_name = "Enter the forgotten moonlit cave"
+destination = "briar_hollow"
+
+[node name="V201WorldPuzzles" type="Node2D" parent="Gameplay"]
+
+[node name="MoonlitCaveBoulder" type="StaticBody2D" parent="Gameplay/V201WorldPuzzles"]
+position = Vector2(390, 1110)
+collision_layer = 2
+collision_mask = 0
+z_index = 13
+script = ExtResource("v201_cave")
+portal_path = NodePath("../../Portals/MoonlitCavePath")
+reward_chest_path = NodePath("../../TreasureChests/V201MoonlitCaveCache")
+discovery_id = "v201_moonthorn_cave_cleared"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V201WorldPuzzles/MoonlitCaveBoulder"]
+position = Vector2(0, 8)
+shape = SubResource("v201_boulder_shape")
+
+[node name="V201MoonlitCaveCache" parent="Gameplay/TreasureChests" instance=ExtResource("v140_chest")]
+position = Vector2(548, 1076)
+visible = false
+chest_id = "v201_moonthorn_cave_cache"
+loot_data = ExtResource("v140_loot")
+loot_seed = 201025
+guaranteed_quality = "magic"

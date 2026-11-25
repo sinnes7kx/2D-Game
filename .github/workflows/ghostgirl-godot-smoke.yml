@@ -181,5 +181,8 @@ jobs:
       - name: Verify M0 collection rollback and protected save fidelity
         run: godot --headless --path GhostGirl2 --script res://tests/v200_collection_transfer_integrity_smoke.gd
 
+      - name: Verify creative Moonthorn cave traversal, persistence and upright bow
+        run: godot --headless --path GhostGirl2 --script res://tests/v201_moonlit_cave_exploration_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
