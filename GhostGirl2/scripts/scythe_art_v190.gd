@@ -47,7 +47,8 @@ static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2A
 			return PackedVector2Array()
 		anchor = Vector2(34, 27)
 	var direction: Vector2 = Vector2(-0.55 if face == "left" else 0.55, -0.84)
-	var rows: Array = guides.get(name, [])
+	var guide_key: String = name.replace("_air_", "_") if name.contains("_air_") else name
+	var rows: Array = guides.get(guide_key, [])
 	if not rows.is_empty():
 		var row: Array = rows[clampi(frame, 0, rows.size() - 1)]
 		if row.size() == 4:
