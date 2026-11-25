@@ -22,9 +22,9 @@ START = "<" * 7
 DIVIDER = "=" * 7
 END = ">" * 7
 CONFLICT_MARKER = re.compile(
-    r"^(?:" + re.escape(START) + r"(?:\\s|$)|" +
-    re.escape(DIVIDER) + r"\\s*$|" +
-    re.escape(END) + r"(?:\\s|$))"
+    r"^(?:" + re.escape(START) + r"(?:\s|$)|" +
+    re.escape(DIVIDER) + r"\s*$|" +
+    re.escape(END) + r"(?:\s|$))"
 )
 
 
