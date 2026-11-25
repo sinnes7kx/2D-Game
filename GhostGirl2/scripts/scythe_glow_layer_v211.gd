@@ -71,9 +71,11 @@ func _draw() -> void:
 	var base: Color = RNG.sample_palette(palette, 0.60).lerp(Color("ddd7fa"), 0.20)
 	# Separate expanded aura drawn over the entire scythe silhouette:
 	# long shaft, outside crescent and inside cutting edge. No damage.
+	var widths: Array[float] = [16.0, 9.0, 4.0]
+	var strengths: Array[float] = [0.11, 0.19, 0.27]
 	for pass in range(3):
-		var width: float = [16.0, 9.0, 4.0][pass]
-		var strength: float = [0.11, 0.19, 0.27][pass]
+		var width: float = widths[pass]
+		var strength: float = strengths[pass]
 		var ink: Color = Color(base.r, base.g, base.b, alpha * strength)
 		draw_line(foot, head, ink, width * 0.65, true)
 		draw_polyline(outer, ink, width, true)
