@@ -62,7 +62,7 @@ func _ready() -> void:
 		selected_item = null
 		refresh())
 	search = LineEdit.new()
-	search.placeholder_text = "Search weapon, rarity or region"
+	search.placeholder_text = "Search equipment, rarity or region"
 	search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	filters.add_child(search)
 	search.text_changed.connect(func(_value: String) -> void: refresh())
@@ -124,7 +124,7 @@ func refresh() -> void:
 	var query: String = search.text.strip_edges().to_lower()
 	var candidates: Array = inventory.vault if source_view.selected == 0 else inventory.contents
 	for item in candidates:
-		if item.get_slot() not in ["sword", "wand"]:
+		if not inventory.equipment.has(item.get_slot()):
 			continue
 		if favorites.button_pressed and not item.collector_favorite:
 			continue
@@ -138,7 +138,7 @@ func refresh() -> void:
 		shown.append(item)
 		var index: int = list.add_item(label_text, item.definition.icon)
 		list.set_item_custom_fg_color(index, item.quality_color())
-	count_label.text = "%d / %d weapons and wands stored" % [inventory.vault.size() + inventory.unresolved_vault.size(), inventory.VAULT_CAPACITY]
+	count_label.text = "%d / %d equipment treasures stored" % [inventory.vault.size() + inventory.unresolved_vault.size(), inventory.VAULT_CAPACITY]
 	if shown.has(selected_item):
 		list.select(shown.find(selected_item))
 	_refresh_displays()
@@ -152,7 +152,7 @@ func _select(index: int) -> void:
 func _update_buttons() -> void:
 	var stored: bool = selected_item != null and inventory.vault.has(selected_item)
 	var carried: bool = selected_item != null and inventory.contents.has(selected_item)
-	deposit.disabled = not _can_transfer() or not carried or (selected_item.get_slot() not in ["sword", "wand"] if carried else true)
+	deposit.disabled = not _can_transfer() or not carried or (not inventory.equipment.has(selected_item.get_slot()) if carried else true)
 	display_button.disabled = not stored
 	clear_display.disabled = not stored or selected_item.exhibition_slot < 0 if stored else true
 	withdraw.disabled = not stored or not _can_transfer()
@@ -193,7 +193,7 @@ func _withdraw() -> void:
 		source_view.select(1)
 		refresh()
 	else:
-		details.text = "Cannot withdraw: backpack full or save unavailable. Weapon remains in vault."
+		details.text = "Cannot withdraw: backpack full or save unavailable. Item remains in vault."
 
 func _inspect() -> void:
 	if selected_item != null:
