@@ -27,7 +27,7 @@ def main() -> int:
     failures += require("scripts/scythe_glow_layer_v211.gd", (
         "const STOPS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50]",
         'ghost-girl-v211-scythe-aura:',
-        "if int(digest[0]) % 100 < 70:",
+        "if int(digest[0]) < 179:",
         "CanvasItemMaterial.BLEND_MODE_ADD",
         "SCYTHE.contours(head, axis, profile, side)",
         "draw_line(foot, head, ink",
