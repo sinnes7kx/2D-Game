@@ -93,6 +93,11 @@ var attack_time_left: float = 0.0
 var attack_duration: float = 0.0
 var attack_hit_done: bool = false
 var heavy_attack: bool = false
+# v2.12 single dagger only: hold heavy for a bounded, single-hit stab.
+const DAGGER_CHARGE_MIN: float = 0.16
+const DAGGER_CHARGE_MAX: float = 0.58
+var dagger_charge_active: bool = false
+var dagger_charge_time: float = 0.0
 var active_attack_style: String = "unarmed"
 var attack_hit_threshold: float = 0.58
 var attack_direction: Vector2 = Vector2.DOWN
@@ -1295,6 +1300,8 @@ func _begin_attack(heavy: bool) -> void:
 			attack_hit_threshold = 0.58
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
+	dagger_charge_active = heavy and active_attack_style == "dagger"
+	dagger_charge_time = 0.0
 	# Actual moving-air sound, without the old bright WAV transient on swords.
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, "heavy_swing" if heavy else "swing", -16.5 if heavy else -18.5)
 	attack_hit_done = false
@@ -1354,6 +1361,19 @@ func _queue_combat(action: String) -> void:
 		buffered_attack_valid = false
 
 func _advance_attack(delta: float) -> void:
+	# The heavy dagger recoils first, then releases exactly one physical stab.
+	# Do not reach the hit threshold while the player is charging.
+	if dagger_charge_active:
+		dagger_charge_time += delta
+		if dagger_charge_time < DAGGER_CHARGE_MIN or (Input.is_action_pressed("attack_heavy") and dagger_charge_time < DAGGER_CHARGE_MAX):
+			if body_art.frame >= 2:
+				body_art.pause()
+			return
+		dagger_charge_active = false
+		body_art.play()
+		# Continue from the authored stab/recovery section after wind-up;
+		# damage, stamina cost and hit count remain the existing heavy values.
+		attack_time_left = attack_duration * 0.65
 	attack_time_left = maxf(0.0, attack_time_left - delta)
 	if not attack_hit_done and attack_time_left <= attack_duration * attack_hit_threshold:
 		attack_hit_done = true
