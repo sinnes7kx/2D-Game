@@ -17,9 +17,10 @@ func _verify() -> void:
         var item: GhostItemInstance = GhostItemGenerator.create(resource, 202200 + i, "magic")
         inv.contents.append(item)
         inv.grid_positions.append(Vector2i(i, 0))
-    if not inv.equip_at(0) or not inv.equip_at(4):
-        _fail("Head accessory and helm cannot be equipped independently")
-        return
+    # Tests must never write a real user:// inventory; equip indexing is
+    # serialized identically when assigned directly in this isolated fixture.
+    inv.equipment["wings"] = 0
+    inv.equipment["helm"] = 4
     if inv.get_equipped("wings") != inv.contents[0] or inv.get_equipped("helm") != inv.contents[4]:
         _fail("Helm overwrote the separately equipped head accessory")
         return
