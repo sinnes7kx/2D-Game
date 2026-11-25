@@ -125,6 +125,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
 
+### v2.06 — full equipment collection vault (source implementation; CI and F5 pending)
+
+- [ ] Expand the existing collection vault from sword/wand-only filtering to all **recognized equipment slots** (dress, head accessory, helm, trinket, charm, sword, wand). Non-equipment/unknown slots remain excluded; equipped items still must be unequipped before depositing.
+- [ ] Existing capacity, unresolved-record reservations, rollback on failed save, favorite/lock protection, and Sanctum exhibition references remain unchanged. Display uses the existing non-weapon icon fallback, not fake weapon geometry.
+- [ ] A new `tests/v206_equipment_vault_smoke.gd` checks luminous eye/tiara storage, equipped-item rejection, blocked-save rollback on both directions, protected collector flags, palette/seed/stat fidelity, JSON reload and vault UI visibility. This test uses synthetic in-memory inventory only.
+- [ ] Verify CI and F5 user experience for both storage modes, full inventory, old saves, and persistent display. No save schema, drop rates, cosmetic rolls or trading claims changed.
+
 ### v2.03 — physical bow grips, more airborne motion and blunt weapon variety (source implementation; F5 approval pending)
 
 **User-provided visual defect (2026-11-25):** The front and left idle bows were floating away from the correct wrist in the inventory preview and in the world. The physical full-color bow and independent palette layer had a shared pivot, but its **grip target** was under-calibrated in those authored facings. Color reroll is shader-only; it must never cause the weapon to move.
