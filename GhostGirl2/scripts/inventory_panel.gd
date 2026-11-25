@@ -68,6 +68,13 @@ func _ready() -> void:
 	$Layout/DetailsHeader.hide()
 	description.hide()
 	_create_cosmetic_radio_panel()
+	var details_well: PanelContainer = $Layout/DetailsWell
+	if OS.is_debug_build():
+		details_well.custom_minimum_size = Vector2(0, 196)
+	else:
+		# Release inventories show only reroll / saved looks here.
+		details_well.custom_minimum_size = Vector2(0, 42)
+		details_well.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	confirmation.confirmed.connect(_confirm_delete)
 	confirmation.canceled.connect(_cancel_delete)
 	_clear()
