@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/world/briar_hollow.png" id="background"]
 [ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
@@ -22,6 +22,8 @@
 [ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_bandit_mask.svg" id="v202_bandit_mask_icon"]
 [ext_resource type="Resource" path="res://items/v202_starfall_diadem.tres" id="v202_starfall_diadem_res"]
 [ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_starfall_diadem.svg" id="v202_starfall_diadem_icon"]
+
+[ext_resource type="Script" path="res://scripts/world_puzzle_v202.gd" id="v202_puzzle"]
 
 [sub_resource type="RectangleShape2D" id="col0"]
 size = Vector2(3072, 140)
@@ -315,3 +317,21 @@ item_seed = 202106
 [node name="Icon" type="Sprite2D" parent="Gameplay/Collectibles/StarfallDiademFind"]
 texture = ExtResource("v202_starfall_diadem_icon")
 scale = Vector2(0.53, 0.53)
+
+; v2.02 collectible discovery with multiple existing spell/tool solutions.
+[node name="V202WorldPuzzles" type="Node2D" parent="Gameplay"]
+
+[node name="ResonantBellstone" type="Node2D" parent="Gameplay/V202WorldPuzzles"]
+position = Vector2(1780, 890)
+script = ExtResource("v202_puzzle")
+puzzle_kind = "bell_stone"
+discovery_id = "v202_briar_bellstone"
+reward_chest_path = NodePath("../../TreasureChests/ResonantBellstoneReward")
+
+[node name="ResonantBellstoneReward" parent="Gameplay/TreasureChests" instance=ExtResource("chest")]
+position = Vector2(1890, 1010)
+visible = false
+chest_id = "v202_briar_bellstone_reward_claimed"
+loot_data = ExtResource("item_briar_wand")
+loot_seed = 202180
+guaranteed_quality = "rare"
