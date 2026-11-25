@@ -4,6 +4,7 @@ extends Node2D
 ## rendered separately and are never part of physics collision/damage logic.
 const ITEM_ID: String = "gloamrose_dual_swords_v174"
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const SWORD_SCRIPT: Script = preload("res://scripts/v174_dual_sword_blade.gd")
 var body: AnimatedSprite2D = null
 var player: Node2D = null
@@ -108,28 +109,36 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 			spans[hand] = GENTLE.smooth(body, animation_name, spans[hand], hand)
 	return spans
 
+# The actual approved body's screen-space wrist guides are the source of
+# truth. Only covered/missing wrists use the pose's conservative fallback.
+# This changes art geometry, never weapon reach, collision or item data.
+static func hand_grip(face: String, hand: int, action: String = "idle", frame_index: int = 0) -> Vector2:
+	var source_frame: int = clampi(frame_index, 0, 7) if action in ["a", "b", "c"] else 0
+	var authored: Vector2 = HAND.hand_anchor(face, source_frame, hand)
+	if authored != Vector2.INF:
+		return authored
+	match face:
+		"back": return Vector2(-25, 13) if hand == 0 else Vector2(25, 13)
+		"left": return Vector2(-34, 24) if hand == 0 else Vector2(-7, 25)
+		"right": return Vector2(7, 25) if hand == 0 else Vector2(36, 24)
+		_: return Vector2(-17, 31) if hand == 0 else Vector2(51, 27)
+
 static func authored_blade_spans(face: String, action: String, frame_index: int) -> Array:
 	# Pure per-frame geometry, also exercised in CI without granting inventory
 	# items or touching persistent player saves.
 	var forward: Vector2 = Vector2(0, 1)
 	var across: Vector2 = Vector2(1, 0)
-	var left_grip: Vector2 = Vector2(-27, 22)
-	var right_grip: Vector2 = Vector2(27, 22)
+	var left_grip: Vector2 = hand_grip(face, 0, action, frame_index)
+	var right_grip: Vector2 = hand_grip(face, 1, action, frame_index)
 	match face:
 		"back":
 			forward = Vector2(0, -1)
-			left_grip = Vector2(-25, 13)
-			right_grip = Vector2(25, 13)
 		"left":
 			forward = Vector2(-1, 0)
 			across = Vector2(0, 1)
-			left_grip = Vector2(-24, 20)
-			right_grip = Vector2(-7, 25)
 		"right":
 			forward = Vector2(1, 0)
 			across = Vector2(0, 1)
-			left_grip = Vector2(7, 25)
-			right_grip = Vector2(24, 20)
 	var n: int = clampi(frame_index, 0, 7)
 	var result: Array = []
 	for hand_index in range(2):
@@ -188,5 +197,10 @@ static func authored_blade_spans(face: String, action: String, frame_index: int)
 				grip += forward * (-lead_reach[n] * 0.86)
 				grip += across * (-side * lead_reach[n] * 0.18)
 		var tip: Vector2 = grip + across * lateral + forward * advance
+		# The authored right wrist can reach the edge of the 256x220 frame.
+		# Confine *drawing only* to the approved atlas bounds; gameplay
+		# reach and attack timing remain unchanged.
+		tip.x = clampf(tip.x, -121.0, 121.0)
+		tip.y = clampf(tip.y, -116.0, 116.0)
 		result.append(PackedVector2Array([grip, tip]))
 	return result

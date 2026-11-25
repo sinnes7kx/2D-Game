@@ -125,6 +125,15 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
 
+### v2.00 — dual-sword hand alignment, bow-native effects and M0 item safety (source implementation; F5 pending)
+
+- [ ] Verify both dual swords grip the independently authored left/right hands in front, back, left and right idle, walk and attack animations. Covered wrists use conservative fallbacks; the real model/sprite alignment must be inspected at 100% and 200% zoom. No attack reach, damage or item stats change.
+- [ ] Bow prestige FX (seeded aura, limb/string glows, trails, rare signature, collector motes, socket echoes) now use a **child of BowPaletteV139** for their drawing transform when a bow is equipped; they must follow the actual full-color bow pose/mask in idle and charged release, then return to Ghost body when another weapon is equipped. The heavy-charge string light is cosmetic only. Check all four directions, animations, and both bow families in F5.
+- [ ] The previous upside-down bow idle is rotated 180° around the **same grip pivot** on both physical bow and tint mask. Visual approval is still required because automated pivot calculations cannot prove correct painting orientation.
+- [ ] M0 next milestone: new `tests/v200_collection_transfer_integrity_smoke.gd` checks a **protected, favorite item with a saved V2 cosmetic appearance** through rejected vault deposit/withdraw (save blocked), successful storage/exhibition/withdrawal, and a JSON reload without changed stats, seeds, favorite or protection. This is a synthetic fixture, not the user's private saves.
+- [ ] Run v1.74/v1.92.2/v1.97/v1.98/v2.00 smoke suite on GitHub CI; perform real F5 inventory → vault → exhibition → reload and low-spec performance tests before calling M0 complete.
+- [ ] The older `scripts - Copy/` directory is absent from the tracked main tree as of this change; the duplicate-conflict warning in old roadmap notes is historical, not an active file in the current checkout. Continue rejecting unresolved tracked merge markers.
+
 ### Current visual defect slice (v1.92.3, source implementation)
 
 - User screenshots show cyan/purple hair and inconsistent dress dye, missing held-weapon preview effects (especially bows), and a front-facing screen-right dagger grip offset. The body shader used whole-texture UVs and violet-pixel weapon classification; both are unsafe for mixed body atlases. Disable both color passes pending authored per-frame fabric masks; dress palette data and accessory/halo effects remain. This intentionally suspends dress fabric dye rather than risking recoloring hair/skin.

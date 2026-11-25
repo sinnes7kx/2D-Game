@@ -73,7 +73,11 @@ static func idle_hold_pose(face: String) -> Dictionary:
 		source = Vector2(34.0, 27.0)
 	if flip:
 		source.x = -source.x
-	var angle: float = 80.0 if flip else (-82.0 if face != "back" else -78.0)
+	# v2.00: align the painted bow upright, with the grip fixed at the
+	# same authored hand point after rotating the entire bow and seed mask.
+	var angle: float = (80.0 if flip else (-82.0 if face != "back" else -78.0)) + 180.0
+	if angle > 180.0:
+		angle -= 360.0
 	return {
 		"source_face": source_face,
 		"flip_h": flip,

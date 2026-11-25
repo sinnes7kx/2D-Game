@@ -137,6 +137,45 @@ func refresh() -> void:
 			bow_string_colors = item.bow_string_gradient_colors()
 	queue_redraw()
 
+# The bow glow, signature, ambient motes and drawn-charge light all share
+# the *actual* colored bow layer's parent transform. This follows its carry
+# angle, wrist motion and attack-frame changes without approximating a world
+# offset. Non-bow effects stay Ghost-body-local exactly as before.
+func _bow_mask_node() -> AnimatedSprite2D:
+	if body == null:
+		return null
+	return body.get_node_or_null("BowPaletteV139") as AnimatedSprite2D
+
+func _sync_transform_parent() -> void:
+	if body == null:
+		return
+	var mask: AnimatedSprite2D = _bow_mask_node()
+	var target: Node2D = mask if item != null and item.weapon_style() == "bow" and mask != null else body
+	if get_parent() != target:
+		reparent(target, false)
+		position = Vector2.ZERO
+		rotation = 0.0
+		scale = Vector2.ONE
+		queue_redraw()
+
+func _bow_charge_progress() -> float:
+	if player == null or item == null or item.weapon_style() != "bow" or not bool(player.get("bow_draw_active")):
+		return 0.0
+	# Match the 0.46 second hold used by player.gd without changing charge time.
+	return clampf(float(player.get("bow_draw_time")) / 0.46, 0.0, 1.0)
+
+func _draw_bow_charge_light(grip: Vector2, tip: Vector2, normal: Vector2, intensity: float) -> void:
+	var progress: float = _bow_charge_progress()
+	if progress <= 0.0:
+		return
+	var string_center: Vector2 = grip.lerp(tip, 0.54) + normal * 5.0
+	var hue: Color = _bow_string_at(0.52)
+	var strength: float = minf(intensity, 1.4) * progress
+	# Small breath/halo attached to the drawn string; not an extra projectile.
+	draw_circle(string_center, 6.0 + progress * 4.5, Color(hue.r, hue.g, hue.b, 0.030 * strength))
+	draw_circle(string_center, 2.0 + progress * 2.2, Color(hue.r, hue.g, hue.b, 0.20 * strength))
+	draw_arc(string_center, 9.0 + 2.0 * progress, -PI * 0.72, PI * 0.72, 20, Color(hue.r, hue.g, hue.b, 0.23 * strength), 1.3, true)
+
 func _facing(name: String) -> String:
 	for suffix in ["front", "back", "left", "right"]:
 		if name.ends_with(suffix):
@@ -282,7 +321,9 @@ func _axial_span() -> PackedVector2Array:
 			bow_animation = str(mask.animation)
 			frame_index = 0 if STEADY_IDLE.matches(animation) else mask.frame
 			mirrored = mask.flip_h
-			offset = mask.position
+			# A child inherits mask position/rotation automatically. flip_h
+			# flips pixels, not child nodes: mirror guide X explicitly below.
+			offset = Vector2.ZERO if get_parent() == mask else mask.position
 		var axes: Array = bow_axes_by_animation.get(bow_animation, [])
 		if not axes.is_empty():
 			var guide: Variant = axes[clampi(frame_index, 0, axes.size() - 1)]
@@ -372,6 +413,7 @@ func _process(delta: float) -> void:
 		refresh()
 	elif item != null and (last_uid != item.cosmetic_uid or last_seed != item.visual_seed() or last_signature != item.visual_signature() or last_fx_key != _fx_key(item)):
 		refresh()
+	_sync_transform_parent()
 	if item != null:
 		queue_redraw()
 
@@ -440,6 +482,7 @@ func _draw() -> void:
 	if narrow:
 		ANOMALOUS.draw_edge(self, PackedVector2Array([grip, tip]), effect_palette, collector_look, elapsed, 1.1)
 		_draw_bow_dual_glow(grip, tip, tangent, normal, minf(intensity, 1.15))
+		_draw_bow_charge_light(grip, tip, normal, intensity)
 		_draw_ambient_fireflies(grip, tip, tangent, normal, minf(intensity, 1.35))
 		_draw_socketed_jewel_echo(grip, tip, normal)
 		if visual_signature_level > 0:
