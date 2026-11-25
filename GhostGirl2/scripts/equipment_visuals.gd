@@ -5,6 +5,7 @@ extends Node2D
 var inventory
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
+const HEAD_COSMETICS_V202 = preload("res://scripts/head_cosmetics_v202.gd")
 var wand_surface_key: String = ""
 var wand_surface: ShaderMaterial
 @onready var player_art: AnimatedSprite2D = get_parent().get_node("Ghost") as AnimatedSprite2D
@@ -69,12 +70,12 @@ func _rebuild_ambient_sources(feather: GhostItemInstance, amulet: GhostItemInsta
 		ambient_particle_sources.append({"anchor": Vector2(10, -8), "radius": Vector2(14, 12), "color": _item_ambient_color(sword_item), "count": 3})
 	# A named socketable gives the dress/accessory a *tiny* distinct light.
 	# Weapon jewels are handled by EquippedPrestigeFX to avoid duplicates.
-	for slot in ["dress", "wings", "trinket", "charm"]:
+	for slot in ["dress", "wings", "helm", "trinket", "charm"]:
 		var gear: GhostItemInstance = inventory.get_equipped(slot)
 		if gear == null:
 			continue
 		var anchor: Vector2 = Vector2(0, 7)
-		if slot == "wings":
+		if slot in ["wings", "helm"]:
 			anchor = Vector2(0, -76)
 		elif slot in ["trinket", "charm"]:
 			anchor = Vector2(0, -16)
@@ -133,6 +134,9 @@ func _ready() -> void:
 	if player_art.material != null:
 		player_art.material = player_art.material.duplicate(true)
 	wings.hide()
+	var head_layer: Node2D = HEAD_COSMETICS_V202.new() as Node2D
+	head_layer.name = "HeadCosmeticsV202"
+	add_child(head_layer)
 	pendant.hide()
 	wand_visual.hide()
 	sword_visual.hide()
@@ -186,7 +190,9 @@ func refresh() -> void:
 		cloth_shader.set_shader_parameter("cloth_filagree_strength", 0.0)
 		cloth_shader.set_shader_parameter("cloth_filagree_phase", float(posmod(fabric.visual_seed(), 997)) * TAU / 997.0 if fabric != null else 0.0)
 	var feather: GhostItemInstance = inventory.get_equipped("wings")
-	wings.visible = feather != null
+	# Old Rosewing Mantle retains its exact former appearance; new head
+	# accessories use a separate, frame-attached overlay, not the old tiara.
+	wings.visible = feather != null and feather.definition != null and str(feather.definition.item_id) == "rosewing_mantle"
 	if feather != null:
 		wings.modulate = feather.palette_color()
 	accessories_glow = feather != null and (GhostWeaponFXLibrary.tier(feather.quality) >= 2 or feather.visual_signature() in [4, 5])
@@ -210,6 +216,9 @@ func refresh() -> void:
 	sword_visual.hide()
 	wand_visual.hide()
 	_rebuild_ambient_sources(feather, amulet, inventory.get_equipped("wand"))
+	var head_layer: Node2D = get_node_or_null("HeadCosmeticsV202") as Node2D
+	if head_layer != null:
+		head_layer.queue_redraw()
 	queue_redraw()
 
 func _process(delta: float) -> void:
