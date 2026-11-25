@@ -11,6 +11,7 @@ var thrown_timer: float = 0.0
 var held: bool = false
 # One genuine stone impact per throw; cosmetic rebounds cannot farm puzzle hits.
 var v201_cave_impact_delivered: bool = false
+var v201_previous_thrown_speed: float = 0.0
 var z_height: float = 0.0
 var z_velocity: float = 0.0
 var original_collision_layer: int = 4
@@ -32,6 +33,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	impact_cooldown = maxf(0.0, impact_cooldown - delta)
 	thrown_timer = maxf(0.0, thrown_timer - delta)
+	if thrown_timer > 0.0 and not held:
+		v201_previous_thrown_speed = linear_velocity.length()
 	if held:
 		return
 	if z_height > 0.0 or z_velocity > 0.0:
@@ -53,6 +56,7 @@ func pick_up(attachment: Marker2D) -> void:
 		return
 	held = true
 	v201_cave_impact_delivered = false
+	v201_previous_thrown_speed = 0.0
 	thrown_timer = 0.0
 	freeze = true
 	linear_velocity = Vector2.ZERO
@@ -75,6 +79,7 @@ func release_to(parent_node: Node2D, world_position: Vector2, direction: Vector2
 	rotation = 0.0
 	held = false
 	v201_cave_impact_delivered = false
+	v201_previous_thrown_speed = 0.0
 	thrown_timer = 2.7 if should_throw else 0.0
 	shadow.visible = true
 	collision_layer = original_collision_layer
@@ -87,6 +92,7 @@ func release_to(parent_node: Node2D, world_position: Vector2, direction: Vector2
 	if should_throw and get_tree().current_scene != null and get_tree().current_scene.has_node("Inventory"):
 		throw_bonus = float(get_tree().current_scene.get_node("Inventory").call("get_stat_total", "throw_force_pct"))
 	linear_velocity = direction * (470.0 if should_throw else 92.0) * (1.0 + throw_bonus / 100.0)
+	v201_previous_thrown_speed = linear_velocity.length()
 	angular_velocity = randf_range(-2.0, 2.0) if should_throw else 0.0
 	add_collision_exception_with(character)
 	get_tree().create_timer(0.48).timeout.connect(func() -> void:
@@ -95,12 +101,13 @@ func release_to(parent_node: Node2D, world_position: Vector2, direction: Vector2
 	)
 
 func _on_body_impact(other: Node) -> void:
-	if not held and thrown_timer > 0.0 and linear_velocity.length() > 135.0:
+	var impact_speed: float = maxf(v201_previous_thrown_speed, linear_velocity.length())
+	if not held and thrown_timer > 0.0 and impact_speed > 135.0:
 		# The player can improvise with a real carried stone. Only a genuine
 		# high-speed collision with the cave obstruction counts, once per throw.
 		if not v201_cave_impact_delivered and other != null and other.is_in_group("v201_cave_blocker") and other.has_method("receive_thrown_impact"):
 			v201_cave_impact_delivered = true
-			other.call("receive_thrown_impact", linear_velocity.length(), global_position)
+			other.call("receive_thrown_impact", impact_speed, global_position)
 		_spawn_impact()
 
 func _spawn_impact() -> void:
