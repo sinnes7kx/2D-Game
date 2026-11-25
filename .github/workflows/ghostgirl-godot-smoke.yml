@@ -175,5 +175,11 @@ jobs:
       - name: Verify gold tooltip color constant and both info views
         run: godot --headless --path GhostGirl2 --script res://tests/v199_tooltip_gold_constant_smoke.gd
 
+      - name: Verify dual-sword wrist alignment and bow-parented live FX
+        run: godot --headless --path GhostGirl2 --script res://tests/v200_weapon_attachment_smoke.gd
+
+      - name: Verify M0 collection rollback and protected save fidelity
+        run: godot --headless --path GhostGirl2 --script res://tests/v200_collection_transfer_integrity_smoke.gd
+
       - name: Load main scene for ten frames
         run: godot --headless --path GhostGirl2 --quit-after 10
