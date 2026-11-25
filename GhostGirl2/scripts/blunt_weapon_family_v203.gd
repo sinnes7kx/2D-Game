@@ -14,14 +14,14 @@ static func kind_from_id(item_id: String) -> String:
 # Full-head outline: long-running collector glow must describe the
 # *actual* spiked or flanged shape, never a single line on one side.
 static func _rim(canvas: Node2D, path: PackedVector2Array, gradient: Array[Color], look: Dictionary, time: float, strength: float) -> void:
-	var ink: Color = FX.color_at(gradient, look, 0.56, time)
-	var closed: PackedVector2Array = path.duplicate()
-	if closed.size() < 3:
-		return
-	closed.append(closed[0])
-	canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, 0.09), 8.0, true)
-	canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, 0.19), 3.2, true)
-	FX.draw_edge(canvas, closed, gradient, look, time, strength)
+    var ink: Color = FX.color_at(gradient, look, 0.56, time)
+    var closed: PackedVector2Array = path.duplicate()
+    if closed.size() < 3:
+    	return
+    closed.append(closed[0])
+    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, 0.09), 8.0, true)
+    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, 0.19), 3.2, true)
+    FX.draw_edge(canvas, closed, gradient, look, time, strength)
 
 static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Dictionary, look: Dictionary, gradient: Array[Color], time: float, kind: String, glow: bool) -> void:
     if grip.distance_squared_to(head) < 16.0 or profile.is_empty():
