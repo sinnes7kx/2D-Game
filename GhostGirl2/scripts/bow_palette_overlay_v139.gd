@@ -20,6 +20,10 @@ func _bow_style_name(item: GhostItemInstance) -> String:
 	return "thornrose"
 
 func _resolved_animation_name(item: GhostItemInstance, animation_name: String) -> String:
+	# Aerial strike clips preserve the exact same painted bow and recolor mask.
+	# Normalize only lookup names, never the physical bow or child FX pivot.
+	if animation_name.contains("_air_"):
+		animation_name = animation_name.replace("_air_", "_")
 	if sprite_frames != null and sprite_frames.has_animation(animation_name):
 		return animation_name
 	var style: String = _bow_style_name(item)
@@ -69,6 +73,18 @@ const UPRIGHT_IDLE_ANGLES: Dictionary = {
 	"right": 98.0
 }
 
+# v2.03: calibration from the approved idle bodies (atlas pixels, before
+# Ghost.scale=0.52). The left hand needs a modest south-east shift; front
+# bows were floating beyond the wrist and need to tuck left/down.
+# This is PHYSICAL grip placement, never a field in the cosmetic seed:
+# recoloring cannot move the bow, its mask or child FX.
+const WRIST_CORRECTIONS_V203: Dictionary = {
+	"front": Vector2(-20.0, 10.0),
+	"back": Vector2(-4.0, 5.0),
+	"left": Vector2(16.0, 13.0),
+	"right": Vector2(-3.0, 5.0)
+}
+
 static func idle_hold_pose(face: String) -> Dictionary:
 	var flip: bool = face == "left"
 	# Front/back use the matching authored bow view. Only left uses the
@@ -78,6 +94,7 @@ static func idle_hold_pose(face: String) -> Dictionary:
 	if hand == Vector2.INF:
 		# Back hair occludes the original hand at pose zero.
 		hand = Vector2(34.0, 27.0)
+	hand += WRIST_CORRECTIONS_V203.get(face, Vector2.ZERO)
 	var source: Vector2 = HAND.hand_anchor(source_face, 0, 1)
 	if source == Vector2.INF:
 		source = Vector2(34.0, 27.0)
@@ -92,7 +109,8 @@ static func idle_hold_pose(face: String) -> Dictionary:
 		"rotation_deg": angle,
 		"position": hand - source.rotated(deg_to_rad(angle)),
 		"hand": hand,
-		"source_handle": source
+		"source_handle": source,
+		"wrist_correction": WRIST_CORRECTIONS_V203.get(face, Vector2.ZERO)
 	}
 
 func _show_idle_bow(item: GhostItemInstance, source_animation: String) -> bool:

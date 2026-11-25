@@ -50,6 +50,8 @@ jobs:
       - name: Import project resources
         run: godot --headless --editor --path GhostGirl2 --import
 
+      - name: Verify bow grip/reroll alignment, airborne attacks and blunt families
+        run: godot --headless --path GhostGirl2 --script res://tests/v203_bow_airborne_blunt_smoke.gd
       - name: Compile weapon prestige FX script
         run: godot --headless --path GhostGirl2 --check-only --script res://scripts/weapon_prestige_fx.gd
       

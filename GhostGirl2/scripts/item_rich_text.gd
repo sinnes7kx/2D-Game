@@ -115,6 +115,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	var slot: String = str(item.get_slot())
 	var item_class: String = str(item.definition.item_class)
 	var category: String = ("HEAD ACCESSORY" if slot == "wings" else ("TIARA / DIADEM" if slot == "helm" else slot)) if slot != "none" else item_class
+	if slot == "sword" and item.physical_damage_kind() == "blunt":
+		category = "BLUNT WEAPON"
 	var unique_socketable: bool = item.definition.unique and item_class in ["gem", "rune"]
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
 	if slot == "sword":

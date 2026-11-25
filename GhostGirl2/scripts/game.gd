@@ -47,6 +47,11 @@ const SWORD_LOOT_TABLE = [
 	preload("res://items/moonlace_dual_daggers_v173.tres"),
 	preload("res://items/gloamrose_dual_swords_v174.tres")
 ]
+const BLUNT_LOOT_TABLE = [
+	preload("res://items/v203_mournful_mace.tres"),
+	preload("res://items/v203_rosequartz_morningstar.tres"),
+	preload("res://items/v203_nightchain_flail.tres")
+]
 const BOW_LOOT_TABLE = [
 	preload("res://items/thornrose_bow.tres"),
 	preload("res://items/moonveil_bow.tres")
@@ -166,6 +171,10 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# Existing saved item instances remain untouched.
 	if posmod(seed_value, 23) == 0:
 		return BOW_LOOT_TABLE[posmod(int(seed_value / 23), BOW_LOOT_TABLE.size())] as GhostItemData
+	# New v2.03 blunt heads arrive in a small separate new-drop lane.
+	# Preserve the existing 1/7 sword table index mapping for old seeds.
+	if posmod(seed_value, 7) != 0 and posmod(seed_value, 41) == 0:
+		return BLUNT_LOOT_TABLE[posmod(int(seed_value / 41), BLUNT_LOOT_TABLE.size())] as GhostItemData
 	# One in seven ordinary monster drops becomes a sword, deterministic by seed.
 	if posmod(seed_value, 7) != 0:
 		return original

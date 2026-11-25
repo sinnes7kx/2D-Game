@@ -7,6 +7,7 @@ const SURFACE = preload("res://scripts/living_metal_v187.gd")
 const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const BLUNT_V203 = preload("res://scripts/blunt_weapon_family_v203.gd")
 
 static func matches(name: String) -> bool:
 	return name.begins_with("halberd_") or name.begins_with("attack_halberd_") or name.begins_with("maul_") or name.begins_with("attack_maul_") or name.begins_with("ashglass_maul_") or name.begins_with("attack_ashglass_maul_")
@@ -39,7 +40,8 @@ static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2A
 			return PackedVector2Array()
 		anchor = Vector2(34,27)
 	var direction: Vector2 = Vector2(-0.62 if face == "left" else 0.62,-0.78)
-	var rows: Array = guides.get(name,[])
+	var guide_key: String = name.replace("_air_", "_") if name.contains("_air_") else name
+	var rows: Array = guides.get(guide_key,[])
 	if not rows.is_empty():
 		var line: Array = rows[clampi(frame,0,rows.size()-1)]
 		if line.size() == 4:
@@ -61,8 +63,12 @@ static func maul_outline(head: Vector2, axis: Vector2, p: Dictionary, ashglass: 
 	var bevel: float = 3.5 if ashglass else 2.2
 	return PackedVector2Array([head-axis*depth-n*(half_width-bevel),head-axis*(depth-bevel)-n*half_width,head+axis*(depth-bevel)-n*half_width,head+axis*depth-n*(half_width-bevel),head+axis*depth+n*(half_width-bevel),head+axis*(depth-bevel)+n*half_width,head-axis*(depth-bevel)+n*half_width,head-axis*depth+n*(half_width-bevel)])
 
-static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictionary, look: Dictionary, colors: Array[Color], phase: float, style: String, ashglass: bool, side: float, glow: bool) -> void:
+static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictionary, look: Dictionary, colors: Array[Color], phase: float, style: String, ashglass: bool, side: float, glow: bool, item_id: String = "") -> void:
 	if p.is_empty() or grip.distance_squared_to(head)<16.0:
+		return
+	var blunt_kind: String = BLUNT_V203.kind_from_id(item_id)
+	if style == "maul" and not blunt_kind.is_empty():
+		BLUNT_V203.draw_blunt(canvas, grip, head, p, look, colors, phase, blunt_kind, glow)
 		return
 	var axis: Vector2 = (head-grip).normalized()
 	var n: Vector2 = Vector2(-axis.y,axis.x)

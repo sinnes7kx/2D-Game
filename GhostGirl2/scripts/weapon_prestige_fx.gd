@@ -226,6 +226,9 @@ func _axial_span() -> PackedVector2Array:
 	if body == null or item == null:
 		return empty
 	var animation: String = str(body.animation)
+	# Aerial clips change pose tempo, not physical weapon guide identity.
+	if animation.contains("_air_"):
+		animation = animation.replace("_air_", "_")
 	if body.sprite_frames != null:
 		var repaired: Dictionary = body.sprite_frames.get_meta("v186_heavy_fallbacks", {})
 		animation = str(repaired.get(animation, animation))

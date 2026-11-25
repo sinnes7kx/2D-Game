@@ -111,6 +111,15 @@ func weapon_style() -> String:
 		return definition.weapon_style
 	return "unarmed"
 
+# v2.03 mauls, maces, morningstars and flails are *blunt* weapons.
+# This is presentation/impact classification, not a reroll or new item field.
+func physical_damage_kind() -> String:
+	match weapon_style():
+		"maul": return "blunt"
+		"bow": return "pierce"
+		"dagger", "spear": return "pierce"
+		_: return "slash"
+
 func light_swing_duration() -> float:
 	match weapon_style():
 		"scythe": return 0.49

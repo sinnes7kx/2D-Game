@@ -8,6 +8,7 @@ const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
+const AIR_V203 = preload("res://scripts/airborne_attacks_v203.gd")
 const HEAVY_V192 = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE_V190 = preload("res://scripts/scythe_art_v190.gd")
 const SCYTHE_RIG_V190 = preload("res://scripts/scythe_rig_v190.gd")
@@ -50,7 +51,7 @@ const DODGE_COST: float = 24.0
 const DODGE_DURATION: float = 0.33
 const DODGE_SPEED: float = 362.0
 const JUMP_COST: float = 16.0
-const JUMP_DURATION: float = 0.56
+const JUMP_DURATION: float = 0.62
 const JUMP_SPEED: float = 208.0
 const JUMP_ATTACK_TRIGGER: float = 0.58
 const JUMP_ATTACK_DAMAGE_BONUS: float = 1.10
@@ -166,6 +167,7 @@ func _ready() -> void:
 	HEAVY_V192.install(body_art)
 	GENTLE.install(body_art)
 	STEADY_IDLE.install(body_art)
+	AIR_V203.install(body_art)
 	var scythe_rig: Node2D = SCYTHE_RIG_V190.new()
 	scythe_rig.name = "ScytheRigV190"
 	body_art.add_child(scythe_rig)
@@ -258,7 +260,7 @@ func _physics_process(delta: float) -> void:
 			_begin_jump()
 			bow_draw_airborne = true
 			var keep_frame: int = mini(5, floori(clampf(bow_draw_time / BOW_FULL_DRAW_TIME, 0.0, 1.0) * 5.0))
-			_play_action_frames("attack_" + _bow_art_style() + "_heavy_" + facing_name, 0.70)
+			_play_action_frames(AIR_V203.air_name("attack_" + _bow_art_style() + "_heavy_" + facing_name), 0.70)
 			body_art.set_frame_and_progress(keep_frame, 0.0)
 			body_art.pause()
 		_advance_bow_draw(delta)
@@ -531,12 +533,15 @@ func _process(delta: float) -> void:
 		body_art.scale = Vector2.ONE * BASE_ART_SCALE
 	elif jump_time_left > 0.0:
 		var jump_progress: float = 1.0 - jump_time_left / maxf(0.01, jump_duration)
-		var arc: float = sin(jump_progress * PI)
+		var air_pose: Dictionary = AIR_V203.airborne_pose(jump_progress, jump_attack_active, jump_direction.x)
+		var arc: float = float(air_pose["arc"])
 		var hover_x: float = jump_direction.x * 2.0 * arc
-		body_art.position = BASE_ART_POS + Vector2(hover_x, -20.0 * arc - (4.0 if jump_attack_active else 0.0))
-		body_art.rotation = (0.04 if jump_attack_active else 0.02) * jump_direction.x
-		body_art.scale = Vector2.ONE * (BASE_ART_SCALE + 0.012 * arc)
-		hand.position = _hand_position_for_facing() + Vector2(hover_x, -16.0 * arc)
+		var height: float = float(air_pose["height"])
+		body_art.position = BASE_ART_POS + Vector2(hover_x, -height)
+		body_art.rotation = float(air_pose["rotation"])
+		body_art.scale = Vector2.ONE * (BASE_ART_SCALE + float(air_pose["stretch"]))
+		# Hand marker stays attached to her raised art, not the ground shadow.
+		hand.position = _hand_position_for_facing() + Vector2(hover_x, -height * 0.88)
 	elif spell_time_left > 0.0:
 		var charge: float = clampf(1.0 - spell_time_left / spell_cast_duration, 0.0, 1.0)
 		body_art.position = BASE_ART_POS + Vector2(0, -3.0 * sin(charge * PI))
@@ -921,8 +926,10 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 		else:
 			attack_animation = "attack_sword_heavy_" + facing_name
 	else:
-		attack_animation = "attack_unarmed_heavy_" + facing_name
-	_play_action_frames(attack_animation, maxf(0.26, jump_time_left))
+		attack_animation = "attack_wand_heavy_" + facing_name if world.inventory != null and world.inventory.get_equipped("wand") != null else "attack_unarmed_heavy_" + facing_name
+	# Every style has a distinct airborne heavy clip with a faster plunge beat.
+	# The physical hit remains the existing single jump-hit event.
+	_play_action_frames(AIR_V203.air_name(attack_animation), maxf(0.26, jump_time_left))
 
 func _advance_jump(delta: float) -> void:
 	jump_time_left = maxf(0.0, jump_time_left - delta)
@@ -933,7 +940,10 @@ func _advance_jump(delta: float) -> void:
 	velocity = jump_direction * JUMP_SPEED * speed_scale
 	if jump_attack_active and not jump_attack_triggered and progress >= JUMP_ATTACK_TRIGGER:
 		jump_attack_triggered = true
-		_strike_jump_attack()
+		# An airborne BOW only fires its genuine arrow on release; never
+		# register a second invisible heavy melee hit during the jump.
+		if _weapon_style() != "bow":
+			_strike_jump_attack()
 	if jump_time_left <= 0.0:
 		# A tiny carry-through avoids a hard dead stop at the first grounded frame.
 		velocity = jump_direction * (28.0 if jump_attack_active else 18.0)
@@ -1097,6 +1107,8 @@ func _begin_bow_shot(charged: bool, airborne: bool) -> void:
 	set_facing(bow_firing_direction)
 	var animation: String = "attack_" + _bow_art_style() + ("_heavy_" if charged else "_light_") + facing_name
 	if airborne:
+		animation = AIR_V203.air_name(animation)
+	if airborne:
 		jump_attack_active = true
 		jump_attack_triggered = true
 	if charged:
@@ -1134,6 +1146,8 @@ func _advance_bow_draw(delta: float) -> void:
 		set_facing(aim)
 		if facing_name != previous_face:
 			var name: String = "attack_" + _bow_art_style() + "_heavy_" + facing_name
+			if bow_draw_airborne or jump_time_left > 0.0:
+				name = AIR_V203.air_name(name)
 			_play_action_frames(name, 0.70)
 			body_art.pause()
 	var fraction: float = clampf(bow_draw_time / BOW_FULL_DRAW_TIME, 0.0, 1.0)
@@ -1152,6 +1166,10 @@ func _release_bow_charge() -> void:
 	# A rushed release still fires one normal arrow. Environmental targets
 	# requiring a charged shot only accept fully drawn releases.
 	_launch_bow_arrow(bow_firing_direction, fully_drawn)
+	if bow_draw_airborne or jump_time_left > 0.0:
+		var aerial_release: String = AIR_V203.air_name("attack_" + _bow_art_style() + "_heavy_" + facing_name)
+		if body_art.sprite_frames.has_animation(aerial_release):
+			_play_action_frames(aerial_release, 0.22)
 	if fully_drawn:
 		_emit_air_wake("charged", bow_firing_direction)
 		COMBAT_JUICE.play(get_tree().current_scene, global_position, "charged_swing", -16.5)
@@ -1426,10 +1444,12 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
 			continue
 		candidate.call("hit", power, poise_bonus * (1.0 + _stat("poise_power_pct") / 100.0))
-		if jump_attack_active:
-			PHYSICAL_FEEL.burst(get_tree().current_scene, candidate.global_position + Vector2(0, -14), "slam", 1.40, attack_direction, sword.visual_seed() if sword != null else 1)
-		_spawn_blade_blood(candidate.global_position + Vector2(0.0, -32.0), fx_color, fx_accent, fx_impact, fx_tier, sword.visual_seed() if sword != null else 0)
-		_spawn_rose_slash(candidate.global_position + Vector2(0.0, -28.0))
+		var blunt_contact: bool = sword != null and sword.physical_damage_kind() == "blunt"
+		if jump_attack_active or blunt_contact:
+			PHYSICAL_FEEL.burst(get_tree().current_scene, candidate.global_position + Vector2(0, -14), "slam", 1.40 if jump_attack_active else 0.92, attack_direction, sword.visual_seed() if sword != null else 1)
+		if not blunt_contact:
+			_spawn_blade_blood(candidate.global_position + Vector2(0.0, -32.0), fx_color, fx_accent, fx_impact, fx_tier, sword.visual_seed() if sword != null else 0)
+			_spawn_rose_slash(candidate.global_position + Vector2(0.0, -28.0))
 		_spawn_spectacle("strike", candidate.global_position + Vector2(0.0, -27.0), fx_color, fx_motif, fx_tier, fx_accent, fx_trail)
 		if counter_hit and not counter_shown:
 			_spawn_precision_feedback("riposte", candidate.global_position + Vector2(0.0, -30.0), attack_direction)
@@ -1564,8 +1584,16 @@ func _draw() -> void:
 	if dodge_time_left > 0.0:
 		draw_circle(Vector2(0, -28), 30, Color(0.70, 0.75, 0.90, 0.09))
 	if jump_time_left > 0.0:
-		var air: float = sin((1.0 - jump_time_left / maxf(0.01, jump_duration)) * PI)
+		var jump_progress: float = 1.0 - jump_time_left / maxf(0.01, jump_duration)
+		var air: float = sin(jump_progress * PI)
 		draw_arc(Vector2(0, -12), 22.0 + air * 8.0, 0.0, TAU, 28, Color(0.88, 0.78, 0.98, 0.10 + 0.07 * air), 1.4, true)
+		if jump_attack_active:
+			# Aerial silk-arc motion is presentation-only; the real hit path remains
+			# _strike_jump_attack(), exactly once at its original progress gate.
+			var fade: float = 0.55 * sin(clampf((jump_progress - 0.07) / 0.88, 0.0, 1.0) * PI)
+			var side: float = -1.0 if facing_name == "left" else 1.0
+			var center: Vector2 = Vector2(side * 13.0, -46.0 - air * 21.0)
+			draw_arc(center, 29.0, -PI * 0.67, PI * 0.13, 20, Color(0.78, 0.71, 0.93, maxf(0.0, fade)), 1.45, true)
 
 func maximum_health() -> float:
 	var vitality: float = world.inventory.get_stat_total("vitality_pct") if world != null and world.inventory != null else 0.0
