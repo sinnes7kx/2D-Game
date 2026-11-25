@@ -30,7 +30,6 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
     if kind == "flail":
         # A short chain trails in a pendulum on the attack clock; no additional
         # collision probes, physics bodies, independent strikes or damage.
-        var reach: Vector2 = head - shaft_tip
         var wiggle: float = sin(time * 7.3) * 6.0
         var ball: Vector2 = head + normal * wiggle
         for link in range(5):
