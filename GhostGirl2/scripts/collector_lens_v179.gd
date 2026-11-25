@@ -4,6 +4,7 @@ extends Control
 const MODEL = preload("res://scripts/collector_lens_model_v179.gd")
 const ROLL_CODE = preload("res://scripts/collector_roll_code_v1931.gd")
 const MARKUP = preload("res://scripts/item_rich_text.gd")
+const SHARE_CARD = preload("res://scripts/v209_collector_share_card.gd")
 var model: Node2D
 var stage: Control
 var heading: Label
@@ -98,6 +99,13 @@ func _ready() -> void:
 	copy_roll.text = "Copy roll"
 	controls.add_child(copy_roll)
 	copy_roll.pressed.connect(_copy_roll)
+	# Keep the existing compact toolbar from overflowing at smaller widths.
+	var card_row: HBoxContainer = HBoxContainer.new()
+	layout.add_child(card_row)
+	var card_button: Button = Button.new()
+	card_button.text = "Copy collector card (offline)"
+	card_row.add_child(card_button)
+	card_button.pressed.connect(_copy_card)
 	var close: Button = Button.new()
 	close.text = "Close  ·  Esc"
 	controls.add_child(close)
@@ -189,3 +197,14 @@ func _copy_roll() -> void:
 		return
 	DisplayServer.clipboard_set(code)
 	status.text = "Genuine V1 roll copied · not verified ownership"
+
+# Copies a human-readable offline showcase, not an owned item or minted seed.
+func _copy_card() -> void:
+	if inspected == null:
+		return
+	var card: String = SHARE_CARD.compose(inspected)
+	if card.is_empty():
+		status.text = "Collector card unavailable"
+		return
+	DisplayServer.clipboard_set(card)
+	status.text = "Offline collector card copied · ownership is not verified"
