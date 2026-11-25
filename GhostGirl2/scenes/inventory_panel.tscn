@@ -97,13 +97,15 @@ mouse_filter = 0
 script = ExtResource("2_grid")
 
 [node name="DetailsHeader" type="HBoxContainer" parent="Layout"]
+visible = false
 layout_mode = 2
 
 [node name="DetailsLabel" type="Label" parent="Layout/DetailsHeader"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.82, 0.69, 0.53, 1)
-text = "SELECTED ITEM"
+text = ""
 
 [node name="ComparisonLabel" type="Label" parent="Layout/DetailsHeader"]
 visible = false
@@ -119,7 +121,7 @@ theme_override_font_sizes/font_size = 12
 tooltip_text = "Debug build only: select visual signatures, rarity, color behavior and glow motifs. Nothing is saved."
 
 [node name="DetailsWell" type="PanelContainer" parent="Layout"]
-custom_minimum_size = Vector2(0, 142)
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("ItemWell")
@@ -129,7 +131,8 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="ItemDescription" type="RichTextLabel" parent="Layout/DetailsWell/DetailsVBox"]
-custom_minimum_size = Vector2(0, 90)
+visible = false
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_vertical = 3
 scroll_active = true
@@ -137,7 +140,7 @@ fit_content = false
 bbcode_enabled = true
 theme_override_font_sizes/normal_font_size = 15
 selection_enabled = true
-text = "Select a treasure to inspect."
+text = ""
 
 [node name="SeedRow" type="HBoxContainer" parent="Layout/DetailsWell/DetailsVBox"]
 visible = false

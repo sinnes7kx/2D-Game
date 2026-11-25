@@ -6,6 +6,11 @@ var phase: float = 0.0
 
 func _ready() -> void:
     z_index = 8
+    # The parent accessory layer is additive. Solid eyes need normal mixing
+    # to cover the original pupils instead of drawing translucent green marks.
+    var ink_material: CanvasItemMaterial = CanvasItemMaterial.new()
+    ink_material.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX
+    material = ink_material
     set_process(true)
 
 func _process(delta: float) -> void:
@@ -52,15 +57,15 @@ static func eye_variant_index(seed: int) -> int:
     return posmod(seed, EYE_VARIANTS.size())
 
 static func eye_centers(face: String) -> Array[Vector2]:
-    # Original v2.02 spread (+/-9) fell BETWEEN the black pupils.
-    # These are Ghost-local anchors; EquipmentVisuals copies Ghost's transform.
+    # The earlier y=-72 position sat on the hairline above the pupils.
+    # Shared Ghost-local coordinates work in the live character and preview.
     match face:
         "front":
-            return [Vector2(-19.0, -72.0), Vector2(19.0, -72.0)]
+            return [Vector2(-17.0, -22.0), Vector2(17.0, -22.0)]
         "left":
-            return [Vector2(-15.0, -72.0)]
+            return [Vector2(-12.0, -21.0)]
         "right":
-            return [Vector2(15.0, -72.0)]
+            return [Vector2(12.0, -21.0)]
     return []
 
 func _eye_ellipse(center: Vector2, radius: Vector2, tint: Color) -> void:

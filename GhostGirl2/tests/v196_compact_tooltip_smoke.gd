@@ -18,7 +18,7 @@ func _verify() -> void:
     if compact.contains("VISUAL EFFECTS") or compact.contains("ROLL ·") or compact.contains("Mythic animation"):
         _fail("Default tooltip leaked advanced technical detail")
         return
-    if compact != MARKUP.item_info(item, false) or not compact.contains("[url=visual:surface:0]") or not compact.contains("[url=visual:string:0]") or not compact.contains("[url=visual:glow:0]"):
+    if compact != MARKUP.item_info(item, false) or not compact.contains("[url=visual:surface]") or not compact.contains("[url=visual:string]") or not compact.contains("[url=visual:glow]"):
         _fail("The three bow color channels must have distinct hoverable swatches")
         return
     if not compact.contains(MARKUP.FLAVOUR) or not compact.contains(template.description.strip_edges()):
@@ -32,7 +32,7 @@ func _verify() -> void:
         _fail("Limb dots do not match the actual shader tint ramp")
         return
     var hint: String = MARKUP.visual_dot_details(item, "visual:surface:1")
-    if not hint.contains("BOW LIMB TINT") or not hint.contains("shader") or not hint.contains("#"):
+    if not hint.contains("Bow colors") or not hint.contains("whole bow"):
         _fail("Limb dot does not explain mixing with original painted art")
         return
     if MARKUP.visual_dot_details(item, "visual:glow:99") != "":
@@ -49,7 +49,7 @@ func _verify() -> void:
         return
     popup.call("set_pinned", true)
     popup.call("_on_current_dot_hover", "visual:glow:0")
-    if not help.visible or not help.text.contains("Aura:") or not help.text.contains("FX LIGHT"):
+    if not help.visible or not help.text.contains("Special glow"):
         _fail("Pinned metadata dot did not show the relevant effect descriptions")
         return
     popup.call("_on_current_dot_exit", "visual:glow:0")
@@ -62,7 +62,7 @@ func _verify() -> void:
         _fail("Unpinned tooltip allowed detached visual help")
         return
     popup.free()
-    print("v1.96 PASS: compact ALT tooltip, labelled large swatches, truthful bow shader tint, flavour styling, pinned dot hover")
+    print("v1.96/v2.10 PASS: compact special FX tooltip, larger swatch row targets and pinned color help")
     quit(0)
 
 func _fail(message: String) -> void:
