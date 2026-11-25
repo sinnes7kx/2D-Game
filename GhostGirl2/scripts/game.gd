@@ -965,7 +965,11 @@ func _give_weapon_test_samples() -> void:
 	# Optional testing action; existing saves remain intact and no duplicates
 	# are created. Real copies can also be found in the new world chests.
 	var found: int = 0
-	for path in ["res://items/rose_reaper_scythe.tres", "res://items/lunar_vigil_halberd.tres"]:
+	var trial_paths: Array[String] = ["res://items/rose_reaper_scythe.tres", "res://items/lunar_vigil_halberd.tres"]
+	if OS.is_debug_build():
+		# Test the three real blunt silhouettes without changing natural drops.
+		trial_paths.append_array(["res://items/v203_mournful_mace.tres", "res://items/v203_rosequartz_morningstar.tres", "res://items/v203_nightchain_flail.tres"])
+	for path in trial_paths:
 		var template: GhostItemData = load(path) as GhostItemData
 		if template != null and not inventory.has_item(template.item_id):
 			if inventory.add_loot(template, 160016 + found, "normal") != null:
