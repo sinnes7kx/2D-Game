@@ -27,6 +27,17 @@ static func install(sprite: AnimatedSprite2D) -> void:
     var frames: SpriteFrames = sprite.sprite_frames
     if bool(frames.get_meta("v203_air_attacks_installed", false)):
         return
+    # Wands use the approved unarmed action body plus their separate frame-
+    # authored wand layer. Give them a real named aerial clip as well.
+    for face in FACINGS:
+        var source: String = "attack_unarmed_heavy_" + face
+        var wand_ground: String = "attack_wand_heavy_" + face
+        if frames.has_animation(source) and not frames.has_animation(wand_ground):
+            frames.add_animation(wand_ground)
+            frames.set_animation_speed(wand_ground, frames.get_animation_speed(source))
+            frames.set_animation_loop(wand_ground, false)
+            for i in range(mini(8, frames.get_frame_count(source))):
+                frames.add_frame(wand_ground, frames.get_frame_texture(source, i), frames.get_frame_duration(source, i))
     for original in frames.get_animation_names():
         var name: String = str(original)
         if not name.begins_with("attack_") or not (name.contains("_heavy_") or name.begins_with("attack_thornrose_light_") or name.begins_with("attack_moonveil_light_")):
