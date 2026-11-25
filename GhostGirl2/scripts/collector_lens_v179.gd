@@ -118,6 +118,7 @@ func _ready() -> void:
 	controls.add_child(copy_roll)
 	copy_roll.pressed.connect(_copy_roll)
 	# Standalone action row keeps the existing toolbar uncluttered.
+	# Keep the existing compact toolbar from overflowing at smaller widths.
 	var card_row: HBoxContainer = HBoxContainer.new()
 	layout.add_child(card_row)
 	var card_button: Button = Button.new()
@@ -228,7 +229,7 @@ func _copy_roll() -> void:
 	DisplayServer.clipboard_set(code)
 	status.text = "Genuine V1 roll copied · not verified ownership"
 
-# Purely textual local collection snapshot; never edits item identity.
+# Copies a human-readable offline showcase, not an owned item or minted seed.
 func _copy_card() -> void:
 	if inspected == null:
 		return
