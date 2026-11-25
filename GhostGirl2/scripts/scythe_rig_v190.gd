@@ -2,6 +2,7 @@ extends Node2D
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const HEAVY = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
+const SCYTHE_GLOW = preload("res://scripts/scythe_glow_layer_v211.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 const SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 var body: AnimatedSprite2D
@@ -15,8 +16,13 @@ var style: String = ""
 var active_item_id: String = ""
 var ashglass: bool = false
 var phase: float = 0.0
+var scythe_glow: Node2D
 
 func _ready() -> void:
+	scythe_glow = SCYTHE_GLOW.new() as Node2D
+	scythe_glow.name = "WorldScytheGlowV211"
+	scythe_glow.z_index = 1
+	add_child(scythe_glow)
 	body = get_parent() as AnimatedSprite2D
 	player = body.get_parent()
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://resources/long_weapon_glow_axes_v143.json"))
@@ -35,6 +41,8 @@ func _process(delta: float) -> void:
 	active_item_id = str(item.definition.item_id) if item != null and item.definition != null else ""
 	visible = item != null and ((style == "scythe" and SCYTHE.matches(str(body.animation))) or (style in ["halberd", "maul"] and HEAVY.matches(str(body.animation))))
 	if not visible:
+		if is_instance_valid(scythe_glow):
+			scythe_glow.call("clear_pose")
 		return
 	var next: String = SURFACE.key(item) + ":%d:%d:%d:%d" % [item.debug_color_mode, item.debug_glow_motif, item.debug_forge_guard, item.debug_forge_grip]
 	if next != key:
@@ -64,6 +72,10 @@ func _draw() -> void:
 	if points.size() == 2:
 		var side: float = -1.0 if name_now.ends_with("_left") else 1.0
 		if style == "scythe":
-			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, true)
+			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, false)
+			if is_instance_valid(scythe_glow):
+				var world: Node = player.get("world") as Node
+				var inv: Node = world.get("inventory") as Node if world != null else null
+				scythe_glow.call("set_pose", inv.get_equipped("sword") if inv != null else null, points[0], points[1], profile, side)
 		else:
 			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, true, active_item_id)
