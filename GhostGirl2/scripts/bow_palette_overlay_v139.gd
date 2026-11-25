@@ -81,8 +81,8 @@ const UPRIGHT_IDLE_ANGLES: Dictionary = {
 const WRIST_CORRECTIONS_V203: Dictionary = {
 	"front": Vector2(-20.0, 10.0),
 	"back": Vector2(-4.0, 5.0),
-	"left": Vector2(16.0, 13.0),
-	"right": Vector2(-3.0, 5.0)
+	"left": Vector2(22.0, 13.0),
+	"right": Vector2(-9.0, 5.0)
 }
 
 static func idle_hold_pose(face: String) -> Dictionary:
@@ -279,7 +279,7 @@ func _process(_delta: float) -> void:
 				flip_h = true
 				show_behind_parent = false
 				z_index = 4
-				position = Vector2(-3.0, -1.0)
+				position = Vector2(3.0, -1.0)
 				if str(self.animation) != mirrored_bow:
 					self.animation = StringName(mirrored_bow)
 				set_frame_and_progress(clampi(overlay_frame, 0, sprite_frames.get_frame_count(mirrored_bow) - 1), body.frame_progress)
@@ -289,7 +289,7 @@ func _process(_delta: float) -> void:
 			bow_carry_visual.flip_h = true
 			bow_carry_visual.show_behind_parent = false
 			bow_carry_visual.z_index = 3
-			bow_carry_visual.position = Vector2(-3.0, -1.0)
+			bow_carry_visual.position = Vector2(3.0, -1.0)
 			bow_carry_visual.rotation_degrees = 0.0
 			bow_carry_visual.scale = Vector2.ONE
 			if str(bow_carry_visual.animation) != mirrored_bow:
