@@ -152,12 +152,14 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])
 	# Keep special seeded visuals visible in the ordinary hover tooltip,
 	# even when ALT is not held. Detailed roll codes stay in Inspect.
+	var preview_only: bool = ROLL_CODE.debug_active(item)
 	if item.has_rare_seeded_appearance():
-		out.append("[font_size=13][color=%s]✦ Rare appearance: %s[/color][/font_size]" % [GOLD, escape(item.collector_material_label())])
+		var appearance_label: String = "TEST material" if preview_only else "Rare appearance"
+		out.append("[font_size=13][color=%s]✦ %s: %s[/color][/font_size]" % [GOLD, appearance_label, escape(item.collector_material_label())])
 	if item.visual_signature() > 0:
 		var level: int = item.visual_signature()
 		var signature_label: String = "Mythic Radiance" if level == 4 else ("Moonfall Halo" if level == 5 else GhostCosmeticRNGV152.signature_name(level))
-		out.append("[font_size=13][color=%s]✦ Special look: %s[/color][/font_size]" % [GOLD, escape(signature_label)])
+		out.append("[font_size=13][color=%s]✦ %s: %s[/color][/font_size]" % [GOLD, "TEST effect" if preview_only else "Special look", escape(signature_label)])
 	if slot in ["sword", "wand"]:
 		var visible_fx: Dictionary = item.effect_rolls()
 		out.append(_label("Glow: " + GhostWeaponFXLibrary.motif_name(int(visible_fx.get("motif", 0))) + "  ·  Trail: " + GhostWeaponFXLibrary.trail_name(int(visible_fx.get("trail", 0)))))
