@@ -143,6 +143,14 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.09.1 — current-main vault parser fix and offline collector card (source committed; local validation pending)
+
+- [x] Remove the stale `query` reference from the current v2.08 vault UI after `FILTERS.filtered(..., search.text)` already handles the text search. This resolves the user-reported Godot parser issue while keeping the integrated family, quality and sorting controls.
+- [x] Add `Copy collector card (offline)` to Collector's Lens. The copied text contains the actual saved item's name, quality, family, material, source when available, appearance identifier and original/current Collector Roll Codes when supported; it clearly disclaims verified rarity and ownership, and labels debug/test appearances.
+- [x] Provide a Godot smoke fixture and a no-dependency `python3 GhostGirl2/tests/v209_offline_source_preflight.py` structural check. The card formatter never calls inventory saves, changes item seeds, modifies ownership or grants a reward.
+- [ ] This source is **only on `fix/v2091-mainline-collector-card`**. No PR or GitHub Actions workflow triggered while credits are exhausted. Run the Python preflight and both Godot smoke tests locally, then F5-check inventory, vault filters, Collector's Lens clipboard and old saves before integrating.
+- [ ] The locally reported `lanternhaven.gdshader` obsolete `SCREEN_TEXTURE` issue cannot be patched here because that file is not tracked on GitHub `main`; preserve the user's local file until its exact contents can be reviewed.
+
 ### v2.08 — collection vault organization (stacked source; CI/F5 pending)
 
 - [ ] Add family and quality filters plus stable original-order, quality, name and equipment-family sorting to the existing stash panel. Existing text search and favorites filter still work in combination; sorting never changes `inventory.contents` or `inventory.vault`.
