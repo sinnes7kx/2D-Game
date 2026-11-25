@@ -91,9 +91,9 @@ func _ready() -> void:
 	scythe_glow_choices = OptionButton.new()
 	scythe_glow_choices.name = "ScytheGlowPreviewV211"
 	scythe_glow_choices.tooltip_text = "Preview only · changes no item rolls or saved appearance"
-	scythe_glow_choices.add_item("Rolled glow", -1)
+	scythe_glow_choices.add_item("Rolled glow")
 	for step in range(6):
-		scythe_glow_choices.add_item("%d%% glow" % (step * 10), step)
+		scythe_glow_choices.add_item("%d%% glow" % (step * 10))
 	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
 	controls.add_child(scythe_glow_choices)
 	var reset: Button = Button.new()
@@ -155,7 +155,7 @@ func close_lens() -> void:
 func _select_scythe_glow(index: int) -> void:
 	if inspected == null or inspected.weapon_style() != "scythe":
 		return
-	var value: int = scythe_glow_choices.get_item_id(index)
+	var value: int = index - 1
 	model.call("set_glow_preview_override", value)
 	var actual: int = SCYTHE_GLOW.rolled_level(inspected)
 	status.text = ("Rolled glow · %d%%" % (actual * 10)) if value < 0 else ("Preview glow · %d%% · not saved" % (value * 10))
