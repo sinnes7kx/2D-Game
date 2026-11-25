@@ -126,6 +126,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Maintain a simple defect table: repro steps, affected scene/script, Godot build, severity, validation result, and patch version.
 - [ ] Keep performance and memory affordable on older GPUs; validate the 2D project on lower-spec hardware if accessible.
 
+### v2.06 — full equipment collection vault (source implementation; CI and F5 pending)
+
+- [ ] Expand the existing collection vault from sword/wand-only filtering to all **recognized equipment slots** (dress, head accessory, helm, trinket, charm, sword, wand). Non-equipment/unknown slots remain excluded; equipped items still must be unequipped before depositing.
+- [ ] Existing capacity, unresolved-record reservations, rollback on failed save, favorite/lock protection, and Sanctum exhibition references remain unchanged. Display uses the existing non-weapon icon fallback, not fake weapon geometry.
+- [ ] A new `tests/v206_equipment_vault_smoke.gd` checks luminous eye/tiara storage, equipped-item rejection, blocked-save rollback on both directions, protected collector flags, palette/seed/stat fidelity, JSON reload and vault UI visibility. This test uses synthetic in-memory inventory only.
+- [ ] Verify CI and F5 user experience for both storage modes, full inventory, old saves, and persistent display. No save schema, drop rates, cosmetic rolls or trading claims changed.
 ### v2.05 — multi-slot collector identity regression (PR source; CI/F5 pending)
 
 - [ ] New `tests/v205_multislot_collector_identity_smoke.gd` checks four real item definitions (dual swords, bow, glowing eyes and tiara) with synthetic collectible seeds. It tests saved-look restoration, appearance-only UID changes, birth/current roll-code separation, equipped-slot mapping, collected flags and whole-inventory JSON encode/decode without accessing `user://`.
@@ -137,19 +143,20 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
-### v2.09.1 — local Godot unblocker and zero-budget preflight (branch source; F5 pending)
+### v2.09.1 — current-main vault parser fix and offline collector card (source committed; local validation pending)
 
-- [x] Remove the obsolete `query` reference from `collection_vault_v181.gd`; the `FILTERS.filtered(..., search.text)` path already implements search. This fixes the reported GDScript parser blocker without changing the item database, transfer code, save schema or filter semantics.
-- [x] Consolidate the vault parser fix and offline Collector Share Card on `feat/v209-local-collector-share-card`, based on the current v2.08 integration. The older isolated `fix/v208-vault-undefined-query` branch is superseded by this consolidated source.
-- [ ] Run `python3 GhostGirl2/tests/v209_offline_source_preflight.py` locally for structural checks (does **not** compile or run GDScript). Run Godot import, `v208_vault_filters_smoke.gd`, `v209_collector_share_card_smoke.gd`, and F5 inventory inspection locally. No GitHub Actions jobs triggered while credits are exhausted.
-- [ ] The separate `lanternhaven.gdshader` shown in a local editor screenshot is **not tracked in the current GitHub project**; its obsolete `SCREEN_TEXTURE` API needs a local Godot shader migration or the correct source file to be added intentionally. Do not assume the repo contains it.
+- [x] Remove the stale `query` reference from the current v2.08 vault UI after `FILTERS.filtered(..., search.text)` already handles the text search. This resolves the user-reported Godot parser issue while keeping the integrated family, quality and sorting controls.
+- [x] Add `Copy collector card (offline)` to Collector's Lens. The copied text contains the actual saved item's name, quality, family, material, source when available, appearance identifier and original/current Collector Roll Codes when supported; it clearly disclaims verified rarity and ownership, and labels debug/test appearances.
+- [x] Provide a Godot smoke fixture and a no-dependency `python3 GhostGirl2/tests/v209_offline_source_preflight.py` structural check. The card formatter never calls inventory saves, changes item seeds, modifies ownership or grants a reward.
+- [ ] This source is **only on `fix/v2091-mainline-collector-card`**. No PR or GitHub Actions workflow triggered while credits are exhausted. Run the Python preflight and both Godot smoke tests locally, then F5-check inventory, vault filters, Collector's Lens clipboard and old saves before integrating.
+- [ ] The locally reported `lanternhaven.gdshader` obsolete `SCREEN_TEXTURE` issue cannot be patched here because that file is not tracked on GitHub `main`; preserve the user's local file until its exact contents can be reviewed.
 
-### v2.09 — offline collector share card (source implemented; manual Godot validation pending)
+### v2.08 — collection vault organization (stacked source; CI/F5 pending)
 
-- [ ] Add a **Copy collector card (offline)** button to the existing Collector's Lens. The text card shows the actual item name, quality, family, known source region, material, item level, current/original Collector Roll Codes when supported, cosmetic appearance identifier, sockets, ethereal condition and favorite status. This is plain text for sharing in messages, not a trading credential.
-- [ ] The generated card always says **offline collection snapshot, self-reported, not verified ownership or rarity**. If local debug/test effects are active, it labels them explicitly; no fabricated global rarity or unique ownership count.
-- [ ] `scripts/v209_collector_share_card.gd` is a pure, read-only formatter; no changes to item seeds, item rolls, save format, vault ownership, collector flags or online services. `tests/v209_collector_share_card_smoke.gd` covers actual item metadata, legacy/non-weapon behavior, debug disclosure and no mutation.
-- [ ] **CI deliberately not triggered:** GitHub Actions funds unavailable. The branch is committed but there is no pull request yet, to avoid starting automatic CI. Run `godot --headless --path GhostGirl2 --script res://tests/v209_collector_share_card_smoke.gd` locally; F5-test Collector's Lens layout/clipboard before merging.
+- [ ] Add family and quality filters plus stable original-order, quality, name and equipment-family sorting to the existing stash panel. Existing text search and favorites filter still work in combination; sorting never changes `inventory.contents` or `inventory.vault`.
+- [ ] Prevent actions against an item hidden by a filter by clearing invisible selection. On reopening, reset list controls to an understandable default. All operations continue to use exact item references and established save protections.
+- [ ] Add `tests/v208_vault_filters_smoke.gd` covering real head/weapon item fixtures, stable ordering, filtered selection safety, immutable save snapshots and the actual UI controls. No new item fields, source timestamps, unsupported acquisition ordering, or invented rarity scores.
+- [ ] This is a **stacked PR dependent on the broader equipment vault PR #49**. Merge #49 into `main` before integrating this slice into `main`. Headless CI and live F5 (narrow layouts, large collections, older GPU) remain acceptance gates.
 
 ### v2.03 — physical bow grips, more airborne motion and blunt weapon variety (source implementation; F5 approval pending)
 

@@ -1,5 +1,6 @@
 extends Control
 signal inspect_requested(item: GhostItemInstance)
+const FILTERS = preload("res://scripts/v208_vault_filters.gd")
 var inventory: Node
 var selected_item: GhostItemInstance
 var list: ItemList
@@ -7,6 +8,9 @@ var details: Label
 var count_label: Label
 var search: LineEdit
 var favorites: CheckButton
+var family_filter: OptionButton
+var quality_filter: OptionButton
+var order_filter: OptionButton
 var deposit: Button
 var withdraw: Button
 var inspect: Button
@@ -62,7 +66,7 @@ func _ready() -> void:
 		selected_item = null
 		refresh())
 	search = LineEdit.new()
-	search.placeholder_text = "Search weapon, rarity or region"
+	search.placeholder_text = "Search equipment, rarity or region"
 	search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	filters.add_child(search)
 	search.text_changed.connect(func(_value: String) -> void: refresh())
@@ -70,6 +74,30 @@ func _ready() -> void:
 	favorites.text = "Favorites only"
 	filters.add_child(favorites)
 	favorites.toggled.connect(func(_value: bool) -> void: refresh())
+	var advanced: HBoxContainer = HBoxContainer.new()
+	advanced.add_theme_constant_override("separation", 10)
+	layout.add_child(advanced)
+	family_filter = OptionButton.new()
+	family_filter.name = "FamilyFilterV208"
+	for label_text in ["All equipment", "Swords / bows", "Wands", "Dresses", "Head accessories", "Tiaras / helms", "Trinkets", "Charms"]:
+		family_filter.add_item(label_text)
+	family_filter.tooltip_text = "Filter by actual equipment slot"
+	family_filter.item_selected.connect(func(_i: int) -> void: refresh())
+	advanced.add_child(family_filter)
+	quality_filter = OptionButton.new()
+	quality_filter.name = "QualityFilterV208"
+	for label_text in ["Any quality", "Normal", "Magic", "Rare", "Set", "Unique"]:
+		quality_filter.add_item(label_text)
+	quality_filter.tooltip_text = "Filter by actual item quality"
+	quality_filter.item_selected.connect(func(_i: int) -> void: refresh())
+	advanced.add_child(quality_filter)
+	order_filter = OptionButton.new()
+	order_filter.name = "SortFilterV208"
+	for label_text in ["Original order", "Highest quality first", "Name A-Z", "Equipment family"]:
+		order_filter.add_item(label_text)
+	order_filter.tooltip_text = "Only changes this list; never rearranges stored inventory"
+	order_filter.item_selected.connect(func(_i: int) -> void: refresh())
+	advanced.add_child(order_filter)
 	list = ItemList.new()
 	list.custom_minimum_size = Vector2(0, 320)
 	list.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -111,6 +139,9 @@ func open_vault(value: Node, candidate: GhostItemInstance, preferred_slot: int =
 	source_view.select(1 if candidate != null and inventory.contents.has(candidate) else 0)
 	search.clear()
 	favorites.set_pressed_no_signal(false)
+	family_filter.select(0)
+	quality_filter.select(0)
+	order_filter.select(0)
 	show()
 	refresh()
 	if preferred_slot >= 0 and preferred_slot < display_slot.item_count:
@@ -121,13 +152,9 @@ func refresh() -> void:
 		return
 	list.clear()
 	shown.clear()
-	var query: String = search.text.strip_edges().to_lower()
 	var candidates: Array = inventory.vault if source_view.selected == 0 else inventory.contents
-	for item in candidates:
-		if item.get_slot() not in ["sword", "wand"]:
-			continue
-		if favorites.button_pressed and not item.collector_favorite:
-			continue
+	var filtered: Array[GhostItemInstance] = FILTERS.filtered(candidates, FILTERS.FAMILIES[family_filter.selected], FILTERS.QUALITIES[quality_filter.selected], order_filter.selected, favorites.button_pressed, search.text)
+	for item in filtered:
 		var label_text: String = "%s%s%s  ·  %s%s" % ["★ " if item.collector_favorite else "", "[Protected] " if item.collector_locked else "", item.display_name(), item.collector_material_label(), " · Display %d" % (item.exhibition_slot + 1) if item.exhibition_slot >= 0 else ""]
 		if item.ethereal:
 			label_text += " · Broken" if item.is_broken() else " · %d/%d durability" % [item.durability, item.max_durability]
@@ -136,9 +163,12 @@ func refresh() -> void:
 		shown.append(item)
 		var index: int = list.add_item(label_text, item.definition.icon)
 		list.set_item_custom_fg_color(index, item.quality_color())
-	count_label.text = "%d / %d weapons and wands stored" % [inventory.vault.size() + inventory.unresolved_vault.size(), inventory.VAULT_CAPACITY]
+	count_label.text = "%d / %d equipment treasures stored" % [inventory.vault.size() + inventory.unresolved_vault.size(), inventory.VAULT_CAPACITY]
 	if shown.has(selected_item):
 		list.select(shown.find(selected_item))
+	else:
+		# Never let hidden selections trigger item transfers or changes.
+		selected_item = null
 	_refresh_displays()
 	_update_buttons()
 
@@ -150,7 +180,7 @@ func _select(index: int) -> void:
 func _update_buttons() -> void:
 	var stored: bool = selected_item != null and inventory.vault.has(selected_item)
 	var carried: bool = selected_item != null and inventory.contents.has(selected_item)
-	deposit.disabled = not _can_transfer() or not carried or (selected_item.get_slot() not in ["sword", "wand"] if carried else true)
+	deposit.disabled = not _can_transfer() or not carried or (not inventory.equipment.has(selected_item.get_slot()) if carried else true)
 	display_button.disabled = not stored
 	clear_display.disabled = not stored or selected_item.exhibition_slot < 0 if stored else true
 	withdraw.disabled = not stored or not _can_transfer()
@@ -191,7 +221,7 @@ func _withdraw() -> void:
 		source_view.select(1)
 		refresh()
 	else:
-		details.text = "Cannot withdraw: backpack full or save unavailable. Weapon remains in vault."
+		details.text = "Cannot withdraw: backpack full or save unavailable. Item remains in vault."
 
 func _inspect() -> void:
 	if selected_item != null:
