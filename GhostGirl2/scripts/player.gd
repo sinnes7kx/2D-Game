@@ -940,7 +940,10 @@ func _advance_jump(delta: float) -> void:
 	velocity = jump_direction * JUMP_SPEED * speed_scale
 	if jump_attack_active and not jump_attack_triggered and progress >= JUMP_ATTACK_TRIGGER:
 		jump_attack_triggered = true
-		_strike_jump_attack()
+		# An airborne BOW only fires its genuine arrow on release; never
+		# register a second invisible heavy melee hit during the jump.
+		if _weapon_style() != "bow":
+			_strike_jump_attack()
 	if jump_time_left <= 0.0:
 		# A tiny carry-through avoids a hard dead stop at the first grounded frame.
 		velocity = jump_direction * (28.0 if jump_attack_active else 18.0)
@@ -1103,7 +1106,7 @@ func _begin_bow_shot(charged: bool, airborne: bool) -> void:
 		bow_firing_direction = facing
 	set_facing(bow_firing_direction)
 	var animation: String = "attack_" + _bow_art_style() + ("_heavy_" if charged else "_light_") + facing_name
-	if airborne and charged:
+	if airborne:
 		animation = AIR_V203.air_name(animation)
 	if airborne:
 		jump_attack_active = true
