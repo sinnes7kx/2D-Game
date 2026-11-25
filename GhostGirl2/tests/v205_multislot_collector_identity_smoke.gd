@@ -87,12 +87,12 @@ func _verify() -> void:
         if item.affixes != expected["affixes"] or item.sockets != expected["sockets"]:
             _fail("Item affixes/sockets changed on JSON reload: " + str(i))
             return
-        if item.cosmetic_snapshot() != expected["current"] or item.saved_cosmetic_looks != expected["saved_looks"]:
-            print("CURRENT_EXPECTED ", JSON.stringify(expected["current"]))
-            print("CURRENT_ACTUAL ", JSON.stringify(item.cosmetic_snapshot()))
-            print("SAVED_EXPECTED ", JSON.stringify(expected["saved_looks"]))
-            print("SAVED_ACTUAL ", JSON.stringify(item.saved_cosmetic_looks))
-            _fail("Current appearance or bookmarked looks changed: " + str(i))
+        # Godot JSON parses nested snapshot numbers as floats (e.g. 3.0).
+        # Compare the actual JSON-roundtripped representation, not the
+        # pre-serialization typed-int Array[Dictionary] instance.
+        var saved_looks_on_disk: Variant = JSON.parse_string(JSON.stringify(expected["saved_looks"]))
+        if item.cosmetic_snapshot() != expected["current"] or item.saved_cosmetic_looks != saved_looks_on_disk:
+            _fail("Current appearance or bookmarked looks changed after JSON reload: " + str(i))
             return
         if item.birth_roll_code_v1 != expected["birth_code"] or item.birth_roll_uid_v1 != expected["birth_uid"] or ROLL.current(item) != expected["roll"]:
             _fail("Birth/current rarity fingerprint changed: " + str(i))
