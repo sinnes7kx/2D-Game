@@ -926,7 +926,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 		else:
 			attack_animation = "attack_sword_heavy_" + facing_name
 	else:
-		attack_animation = "attack_unarmed_heavy_" + facing_name
+		attack_animation = "attack_wand_heavy_" + facing_name if world.inventory != null and world.inventory.get_equipped("wand") != null else "attack_unarmed_heavy_" + facing_name
 	# Every style has a distinct airborne heavy clip with a faster plunge beat.
 	# The physical hit remains the existing single jump-hit event.
 	_play_action_frames(AIR_V203.air_name(attack_animation), maxf(0.26, jump_time_left))
