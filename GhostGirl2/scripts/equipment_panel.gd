@@ -77,7 +77,8 @@ func refresh() -> void:
 			if item != null:
 				swatch.color = item.palette_color()
 		if item != null:
-			active.append("%s: %s  ·  %s" % [key.capitalize(), item.display_name(), item.palette_name()])
+			var label: String = "Head Accessory" if key == "wings" else ("Tiara / Diadem" if key == "helm" else key.capitalize())
+			active.append("%s: %s  ·  %s" % [label, item.display_name(), item.palette_name()])
 	var totals: Array[String] = []
 	for stat in ["vitality_pct", "melee_power_pct", "spell_power_pct", "attack_speed_pct", "find_bonus_pct"]:
 		var value: float = inventory.get_stat_total(stat)
