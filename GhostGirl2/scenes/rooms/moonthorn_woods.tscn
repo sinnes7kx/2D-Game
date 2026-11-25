@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3]
+[gd_scene load_steps=35 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/world/moonthorn_woods.png" id="background"]
 [ext_resource type="Texture2D" path="res://assets/world/layers/moonthorn_woods_foreground.png" id="foreground"]
@@ -25,6 +25,8 @@
 [ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_crescent_halo.svg" id="v202_crescent_halo_icon"]
 [ext_resource type="Resource" path="res://items/v202_rose_horns.tres" id="v202_rose_horns_res"]
 [ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_rose_horns.svg" id="v202_rose_horns_icon"]
+
+[ext_resource type="Script" path="res://scripts/world_puzzle_v202.gd" id="v202_puzzle"]
 
 [sub_resource type="RectangleShape2D" id="col0"]
 size = Vector2(3072, 155)
@@ -398,3 +400,21 @@ item_seed = 202104
 [node name="Icon" type="Sprite2D" parent="Gameplay/Collectibles/RoseHornsFind"]
 texture = ExtResource("v202_rose_horns_icon")
 scale = Vector2(0.53, 0.53)
+
+; v2.02 collectible discovery with multiple existing spell/tool solutions.
+[node name="V202WorldPuzzles" type="Node2D" parent="Gameplay"]
+
+[node name="MoonrootKnot" type="Node2D" parent="Gameplay/V202WorldPuzzles"]
+position = Vector2(2500, 1040)
+script = ExtResource("v202_puzzle")
+puzzle_kind = "root_knot"
+discovery_id = "v202_moonthorn_root_knot"
+reward_chest_path = NodePath("../../TreasureChests/MoonrootKnotReward")
+
+[node name="MoonrootKnotReward" parent="Gameplay/TreasureChests" instance=ExtResource("v140_chest")]
+position = Vector2(2640, 1170)
+visible = false
+chest_id = "v202_moonthorn_root_knot_reward_claimed"
+loot_data = ExtResource("v140_loot")
+loot_seed = 202140
+guaranteed_quality = "normal"
