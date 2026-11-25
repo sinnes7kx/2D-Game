@@ -58,7 +58,17 @@ func _carry_transform_for_animation(source_animation: String, frame_index: int) 
 # Idle reference: bow held gently across the torso, not upright alongside it.
 # The image is a full 256x220 bow-only atlas tile; rotate about the *source
 # handle*, then translate that pivot onto Ghost Girl's genuine hand.
-# Front/back share the horizontal side-silhouette; left mirrors right.
+# Use each authored view when possible; left mirrors the right source.
+# Direction-specific orientation for the extracted bow-only artwork.
+# This table uses the actual corrected final angle, not an extra runtime 180°,
+# so the two bow layers and their child glow cannot accidentally double-flip.
+const UPRIGHT_IDLE_ANGLES: Dictionary = {
+	"front": 98.0,
+	"back": 102.0,
+	"left": -100.0,
+	"right": 98.0
+}
+
 static func idle_hold_pose(face: String) -> Dictionary:
 	var flip: bool = face == "left"
 	# Front/back use the matching authored bow view. Only left uses the
@@ -73,11 +83,9 @@ static func idle_hold_pose(face: String) -> Dictionary:
 		source = Vector2(34.0, 27.0)
 	if flip:
 		source.x = -source.x
-	# v2.00: align the painted bow upright, with the grip fixed at the
-	# same authored hand point after rotating the entire bow and seed mask.
-	var angle: float = (80.0 if flip else (-82.0 if face != "back" else -78.0)) + 180.0
-	if angle > 180.0:
-		angle -= 360.0
+	# Rotate the source *once* and always recompute position around the
+	# same grip. Never apply independent flip/rotation to the prestige FX.
+	var angle: float = float(UPRIGHT_IDLE_ANGLES.get(face, 98.0))
 	return {
 		"source_face": source_face,
 		"flip_h": flip,
