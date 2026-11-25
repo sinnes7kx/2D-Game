@@ -137,6 +137,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.09.1 — local Godot unblocker and zero-budget preflight (branch source; F5 pending)
+
+- [x] Remove the obsolete `query` reference from `collection_vault_v181.gd`; the `FILTERS.filtered(..., search.text)` path already implements search. This fixes the reported GDScript parser blocker without changing the item database, transfer code, save schema or filter semantics.
+- [x] Consolidate the vault parser fix and offline Collector Share Card on `feat/v209-local-collector-share-card`, based on the current v2.08 integration. The older isolated `fix/v208-vault-undefined-query` branch is superseded by this consolidated source.
+- [ ] Run `python3 GhostGirl2/tests/v209_offline_source_preflight.py` locally for structural checks (does **not** compile or run GDScript). Run Godot import, `v208_vault_filters_smoke.gd`, `v209_collector_share_card_smoke.gd`, and F5 inventory inspection locally. No GitHub Actions jobs triggered while credits are exhausted.
+- [ ] The separate `lanternhaven.gdshader` shown in a local editor screenshot is **not tracked in the current GitHub project**; its obsolete `SCREEN_TEXTURE` API needs a local Godot shader migration or the correct source file to be added intentionally. Do not assume the repo contains it.
+
 ### v2.09 — offline collector share card (source implemented; manual Godot validation pending)
 
 - [ ] Add a **Copy collector card (offline)** button to the existing Collector's Lens. The text card shows the actual item name, quality, family, known source region, material, item level, current/original Collector Roll Codes when supported, cosmetic appearance identifier, sockets, ethereal condition and favorite status. This is plain text for sharing in messages, not a trading credential.
