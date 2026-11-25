@@ -614,7 +614,8 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 
 ## 15. Next-build task order — actionable sprint
 
-**Integration gate (2026-11-25):** PR #37 reached `main`, while subsequent PRs #38 and #39 were merged into **stacked feature branches**, not `main`. A green nested PR is not a mainline release. PR #40 targets `main` to integrate v1.97–v1.98 together. Its headless CI must pass; after merge, verify the new scripts and tests are visible from `main` and run a mainline smoke workflow. Real F5 bow hand placement in four directions, audio feel, item migrations, vault, inventory, and old saves are still open.
+**Integration gate (2026-11-25):** PR #37 reached `main`, while subsequent PRs #38 and #39 were merged into **stacked feature branches**, not `main`. A green nested PR is not a mainline release. PR #40 targets `main` to integrate v1.97–v1.98 together. Its headless CI must pass; after merge, verify the new scripts and tests are visible from `main` and run a mainline smoke workflow. Real F5 bow hand placement in four directions, audio feel, item migrations, vault, inventory, and old saves are still open. **Build blocker resolved:** PR #41 restored the missing `GOLD` constant on `main`, and Godot run 45514483189 passed. The earlier PR #40 failed CI against the pre-hotfix mainline due to that missing constant. PR #40 must be rechecked after that fix, not judged against its stale failure.
+
 
 **Sprint A: stability before spectacle**
 
