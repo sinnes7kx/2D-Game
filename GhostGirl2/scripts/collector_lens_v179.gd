@@ -102,7 +102,8 @@ func _ready() -> void:
 	for step in range(6):
 		scythe_glow_choices.add_item("%d%% glow" % (step * 10))
 	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
-	glow_row.add_child(scythe_glow_choices)	glow_row.hide()
+	glow_row.add_child(scythe_glow_choices)
+	glow_row.hide()
 	var reset: Button = Button.new()
 	reset.text = "Reset view"
 	controls.add_child(reset)
