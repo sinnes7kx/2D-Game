@@ -204,8 +204,10 @@ func _bind_room() -> void:
 		for rack in room_view.get_node("Gameplay/V138FletcherShowcase").get_children():
 			if rack.has_method("restore_from_inventory"):
 				rack.call("restore_from_inventory", inventory)
-	if room_view.has_node("Gameplay/Collectibles"):
-		for pickup in room_view.get_node("Gameplay/Collectibles").get_children():
+	for collection_path in ["Gameplay/Collectibles", "Gameplay/V202HeadFinds"]:
+		if not room_view.has_node(collection_path):
+			continue
+		for pickup in room_view.get_node(collection_path).get_children():
 			var data: Resource = pickup.get("item_data") as Resource
 			if data != null and (inventory.has_collected(str(pickup.get("pickup_id"))) or (bool(data.get("unique")) and inventory.has_item(str(data.get("item_id"))))):
 				pickup.remove_from_group("interactable")
