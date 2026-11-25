@@ -38,6 +38,17 @@ size = Vector2(215, 138)
 [sub_resource type="RectangleShape2D" id="StashCollisionShape"]
 size = Vector2(84, 52)
 
+[ext_resource type="Script" path="res://scripts/world_critter_v202.gd" id="v202_critter"]
+[ext_resource type="Script" path="res://scripts/fletcher_range_v202.gd" id="v202_range"]
+[ext_resource type="Script" path="res://scripts/fletcher_vane_v202.gd" id="v202_vane"]
+[ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="v202_chest"]
+[ext_resource type="Resource" path="res://items/v202_fletcher_moonflight_bow.tres" id="v202_bow"]
+[ext_resource type="Script" path="res://scripts/collectible_item.gd" id="v202_pickup"]
+[ext_resource type="Resource" path="res://items/v202_luminous_eyes.tres" id="v202_eyes"]
+[ext_resource type="Resource" path="res://items/v202_moonlit_tiara.tres" id="v202_tiara"]
+[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_luminous_eyes.svg" id="v202_eyes_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_moonlit_tiara.svg" id="v202_tiara_icon"]
+
 [node name="Lanternhaven" type="Node2D"]
 y_sort_enabled = true
 
@@ -244,3 +255,109 @@ mouse_filter = 2
 theme_override_colors/font_color = Color(0.83, 0.73, 0.62, 0.9)
 theme_override_font_sizes/font_size = 20
 text = "MARKET COURTYARD"
+
+; v2.02 living town: editor-owned, deterministic wildlife and a quiet companion
+; attached to the player separately. Critters cannot collide with the player.
+[node name="V202Wildlife" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="LanternHare01" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(1310, 1590)
+script = ExtResource("v202_critter")
+species = "hare"
+wander_radius = 44.0
+
+[node name="LanternHare02" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(2110, 1380)
+script = ExtResource("v202_critter")
+species = "hare"
+wander_radius = 36.0
+
+[node name="CrescentCrow01" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(1140, 1740)
+script = ExtResource("v202_critter")
+species = "crow"
+wander_radius = 30.0
+
+[node name="CrescentCrow02" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(2470, 1110)
+script = ExtResource("v202_critter")
+species = "crow"
+wander_radius = 32.0
+
+[node name="TownMoth01" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(1560, 1240)
+script = ExtResource("v202_critter")
+species = "moth"
+wander_radius = 51.0
+
+[node name="TownMoth02" type="Node2D" parent="Gameplay/V202Wildlife"]
+position = Vector2(2080, 1220)
+script = ExtResource("v202_critter")
+species = "moth"
+wander_radius = 45.0
+
+; The stage progression is mandatory for the perfect score, not for ordinary
+; loot hunting. The rare reward sits in a locked existing chest until 300/300.
+[node name="V202Range" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="FletcherRange" type="Node2D" parent="Gameplay/V202Range"]
+position = Vector2(1450, 1950)
+script = ExtResource("v202_range")
+reward_chest_path = NodePath("../../TreasureChests/FletcherPerfectChest")
+
+[node name="Vane01" type="Node2D" parent="Gameplay/V202Range/FletcherRange"]
+position = Vector2(330, -110)
+script = ExtResource("v202_vane")
+stage_index = 0
+
+[node name="Vane02" type="Node2D" parent="Gameplay/V202Range/FletcherRange"]
+position = Vector2(530, -155)
+script = ExtResource("v202_vane")
+stage_index = 1
+
+[node name="Vane03" type="Node2D" parent="Gameplay/V202Range/FletcherRange"]
+position = Vector2(770, -215)
+script = ExtResource("v202_vane")
+stage_index = 2
+
+[node name="TreasureChests" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="FletcherPerfectChest" parent="Gameplay/TreasureChests" instance=ExtResource("v202_chest")]
+position = Vector2(2300, 1970)
+visible = false
+interaction_name = "Claim the fletcher's perfect-score bow"
+chest_id = "v202_fletcher_prize_claimed"
+loot_data = ExtResource("v202_bow")
+loot_seed = 202022
+guaranteed_quality = "rare"
+
+; Head adornments are distinct collectibles: old wings save key remains an
+; accessory; actual tiaras/diadems are now in the added helm save key.
+[node name="V202HeadFinds" type="Node2D" parent="Gameplay"]
+
+[node name="LuminousEyesFind" type="Node2D" parent="Gameplay/V202HeadFinds"]
+position = Vector2(1240, 1110)
+script = ExtResource("v202_pickup")
+item_data = ExtResource("v202_eyes")
+interaction_name = "Collect the Moonlit Eyes"
+pickup_id = "v202_town_luminous_eyes"
+item_seed = 202101
+
+[node name="Icon" type="Sprite2D" parent="Gameplay/V202HeadFinds/LuminousEyesFind"]
+texture = ExtResource("v202_eyes_icon")
+scale = Vector2(0.57, 0.57)
+
+[node name="MoonlitTiaraFind" type="Node2D" parent="Gameplay/V202HeadFinds"]
+position = Vector2(2470, 920)
+script = ExtResource("v202_pickup")
+item_data = ExtResource("v202_tiara")
+interaction_name = "Collect the Moonlit Tiara"
+pickup_id = "v202_town_moonlit_tiara"
+item_seed = 202102
+
+[node name="Icon" type="Sprite2D" parent="Gameplay/V202HeadFinds/MoonlitTiaraFind"]
+texture = ExtResource("v202_tiara_icon")
+scale = Vector2(0.57, 0.57)
