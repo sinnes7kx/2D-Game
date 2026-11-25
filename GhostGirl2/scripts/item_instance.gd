@@ -120,7 +120,7 @@ func physical_damage_kind() -> String:
 		"dagger", "spear": return "pierce"
 		_: return "slash"
 
-
+func light_swing_duration() -> float:
 	match weapon_style():
 		"scythe": return 0.49
 		"halberd": return 0.57
