@@ -8,6 +8,7 @@ const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const BLUNT_V203 = preload("res://scripts/blunt_weapon_family_v203.gd")
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 
 static func matches(name: String) -> bool:
 	return name.begins_with("halberd_") or name.begins_with("attack_halberd_") or name.begins_with("maul_") or name.begins_with("attack_maul_") or name.begins_with("ashglass_maul_") or name.begins_with("attack_ashglass_maul_")
@@ -103,6 +104,12 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 		var core: Color = trim.darkened(0.25)
 		canvas.draw_colored_polygon(PackedVector2Array([head-axis*4.0,head+n*5.0,head+axis*4.0,head-n*5.0]),core)
 		canvas.draw_line(head-n*3.0,head+n*3.0,trim,0.75,true)
-		if glow:
-			var rim: PackedVector2Array = PackedVector2Array([outline[0],outline[1],outline[2],outline[3]])
-			FX.draw_edge(canvas,rim,colors,look,phase,0.60)
+		if glow and FX_LEVEL.intensity > 0.0:
+			# Illuminate the complete head silhouette, not only one side.
+			# The shaft stays faint so the actual maul shape remains dominant.
+			var halo: Color = FX.color_at(colors, look, 0.65, phase)
+			var outer_halo: Color = Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.10))
+			canvas.draw_polyline(closed, outer_halo, 8.0, true)
+			canvas.draw_polyline(closed, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.22)), 3.5, true)
+			canvas.draw_line(foot, head, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.085)), 7.0, true)
+			FX.draw_edge(canvas, closed, colors, look, phase, 0.60)
