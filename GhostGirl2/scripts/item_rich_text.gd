@@ -76,6 +76,11 @@ static func visual_dot_details(item: Variant, meta: String) -> String:
 	var tones: Array[Color] = visual_colors(item, channel)
 	if tones.is_empty():
 		return ""
+	# Legacy per-dot meta still works, but the new UI uses one large target.
+	if tokens.size() == 3:
+		var legacy_index: int = int(tokens[2])
+		if legacy_index < 0 or legacy_index >= tones.size():
+			return ""
 	match channel:
 		"surface":
 			return "Bow colors · whole bow palette" if item.weapon_style() == "bow" else "Weapon colors · material gradient"
