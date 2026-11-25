@@ -28,7 +28,7 @@ static func rolled_level(item: GhostItemInstance) -> int:
 	var digest: PackedByteArray = ("ghost-girl-v211-scythe-aura:" + identity).sha256_buffer()
 	# Most cosmetic appearances have no aura; other five bands are
 	# equally represented within the remaining 30%. No fake rarity name.
-	if int(digest[0]) % 100 < 70:
+	if int(digest[0]) < 179: # 179/256 ~= 69.9%
 		return 0
 	return 1 + int(digest[1]) % 5
 
