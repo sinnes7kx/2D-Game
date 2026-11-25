@@ -119,6 +119,16 @@ func on_grasping_roses() -> bool:
 func on_bow_hit(charged: bool, airborne: bool) -> bool:
     return _complete("aerial_shot") if charged and airborne and not opened else false
 
+func receive_thrown_impact(speed: float, _origin: Vector2 = Vector2.ZERO) -> void:
+    if opened or speed < 135.0:
+        return
+    if ice_left > 0.0:
+        _complete("frost_crate")
+    elif speed >= 410.0:
+        _complete("thrown_stone")
+    else:
+        receive_damage(speed * 0.15, _origin)
+
 func receive_damage(amount: float, _origin: Vector2 = Vector2.ZERO) -> void:
     if opened or amount <= 0.0:
         return
