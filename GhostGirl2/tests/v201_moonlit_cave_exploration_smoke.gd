@@ -4,6 +4,7 @@ extends SceneTree
 const CAVE = preload("res://scripts/moonlit_cave_boulder_v201.gd")
 const BOW = preload("res://scripts/bow_palette_overlay_v139.gd")
 const ROOM: PackedScene = preload("res://scenes/rooms/moonthorn_woods.tscn")
+const CARRY: PackedScene = preload("res://scenes/carryable.tscn")
 
 class FakeInventory extends Node:
     var collected_pickups: Dictionary = {}
@@ -19,7 +20,7 @@ func _initialize() -> void:
     call_deferred("_verify")
 
 func _verify() -> void:
-    var methods: Array[String] = ["frost_smash", "frost_hook", "patient_hook", "repeated_force", "rose_roots", "aerial_shot", "thermal_shock"]
+    var methods: Array[String] = ["frost_smash", "frost_hook", "patient_hook", "repeated_force", "rose_roots", "aerial_shot", "thermal_shock", "thrown_stone", "frost_crate"]
     for method in methods:
         var inventory: FakeInventory = FakeInventory.new()
         root.add_child(inventory)
@@ -57,6 +58,20 @@ func _verify() -> void:
             "thermal_shock":
                 cave.call("on_elemental_arrow_hit", 2, 0, false, false)
                 cave.call("on_elemental_arrow_hit", 1, 0, false, false)
+            "thrown_stone", "frost_crate":
+                if method == "frost_crate":
+                    cave.call("on_moonfall")
+                var thrown: RigidBody2D = CARRY.instantiate() as RigidBody2D
+                root.add_child(thrown)
+                thrown.set("thrown_timer", 1.0)
+                thrown.linear_velocity = Vector2(520.0, 0.0)
+                thrown.set("v201_previous_thrown_speed", 520.0)
+                thrown.call("_on_body_impact", cave)
+                thrown.call("_on_body_impact", cave) # A rebound must not trigger a second hit.
+                if not bool(thrown.get("v201_cave_impact_delivered")):
+                    _fail("Physical carried stone did not register cave contact")
+                    return
+                thrown.free()
         if not cave.opened or cave.collision_layer != 0 or cave.is_in_group("breakable_cover") or not portal.visible or not chest.visible or not portal.is_in_group("interactable"):
             _fail("Method did not physically open route and cache: " + method)
             return
@@ -115,7 +130,7 @@ func _verify() -> void:
             _fail("Corrected upright bow moved away from the hand on " + face)
             return
 
-    print("v2.01 PASS: 7 creative cave solutions, physical route/cache, persistence/rollback and upright bow pivots")
+    print("v2.01 PASS: 9 creative cave solutions, physical route/cache, persistence/rollback and upright bow pivots")
     quit(0)
 
 func _fail(message: String) -> void:
