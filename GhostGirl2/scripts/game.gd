@@ -223,6 +223,12 @@ func _bind_room() -> void:
 	var fletcher: Node = room_view.get_node_or_null("Gameplay/V202Range/FletcherRange")
 	if fletcher != null:
 		fletcher.call("restore_from_inventory", inventory)
+	# v2.02 two optional wild-world puzzles restore their persistent secrets.
+	var small_puzzles: Node = room_view.get_node_or_null("Gameplay/V202WorldPuzzles")
+	if small_puzzles != null:
+		for secret in small_puzzles.get_children():
+			if secret.has_method("restore_from_inventory"):
+				secret.call("restore_from_inventory", inventory)
 	# v1.32 Moor Vigil: restore editor-placed memorials, boss altar and
 	# cosmetic attunement after chest state is restored.
 	for container_path in ["Gameplay/V132Vigil", "Gameplay/V132Attunements", "Gameplay/V134VesperVigil"]:
@@ -434,6 +440,8 @@ func _process(_delta: float) -> void:
 		if switch_hint.is_empty() and player.carrying == null:
 			switch_hint = _rose_weight_hint()
 		ui.set_prompt("G  DROP    R  THROW" if player.carrying != null else switch_hint)
+	elif current_target.is_in_group("v202_world_puzzle"):
+		ui.set_prompt("E  EXAMINE THE MYSTERIOUS OBJECT")
 	elif current_target.is_in_group("v202_archery_range"):
 		ui.set_prompt(str(current_target.call("prompt_text")))
 	elif current_target.is_in_group("v201_cave_blocker"):
@@ -542,6 +550,9 @@ func _choose_target():
 func interact() -> void:
 	var target = _choose_target()
 	if target == null:
+		return
+	if target.is_in_group("v202_world_puzzle"):
+		ui.show_pickup(str(target.call("inspect_text")), Color("cfc0df"))
 		return
 	if target.is_in_group("v202_archery_range"):
 		target.call("interact")
