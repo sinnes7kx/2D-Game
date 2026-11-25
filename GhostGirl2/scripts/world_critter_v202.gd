@@ -48,27 +48,27 @@ func _draw() -> void:
                 draw_colored_polygon(PackedVector2Array([Vector2(0, -18), Vector2(side * 12.0 * flap, -26), Vector2(side * 9.0 * flap, -13)]), Color("82798c"))
             draw_circle(Vector2(0, -17 + drift * 3.0), 1.3, Color("f1d9d4"))
         "hare":
-            draw_ellipse(Vector2(0, 3), Vector2(16, 9), ink)
+            _draw_critter_ellipse(Vector2(0, 3), Vector2(16, 9), ink)
             draw_circle(Vector2(10 * facing, -6), 8.0, Color("6c606e"))
             for j in [-1.0, 1.0]:
                 draw_line(Vector2(10 * facing + j * 2.5, -10), Vector2(10 * facing + j * 4.0, -29), Color("6c606e"), 5.0, true)
             draw_circle(Vector2(13 * facing, -7), 1.6, highlight)
             draw_circle(Vector2(-13 * facing, 2), 4.6, Color("a698aa"))
         "crow":
-            draw_ellipse(Vector2(0, 0), Vector2(16, 8), Color("36333f"))
+            _draw_critter_ellipse(Vector2(0, 0), Vector2(16, 8), Color("36333f"))
             draw_circle(Vector2(12 * facing, -7), 7.0, Color("393543"))
             draw_colored_polygon(PackedVector2Array([Vector2(14 * facing, -8), Vector2(27 * facing, -5), Vector2(14 * facing, -3)]), Color("b59b84"))
             draw_line(Vector2(-10 * facing, -3), Vector2(-21 * facing, -12), Color("5b5364"), 3.0, true)
             draw_circle(Vector2(13 * facing, -8), 1.3, Color("d3c1d9"))
         "fox":
-            draw_ellipse(Vector2(0, 0), Vector2(22, 8), Color("76545f"))
+            _draw_critter_ellipse(Vector2(0, 0), Vector2(22, 8), Color("76545f"))
             draw_circle(Vector2(15 * facing, -10), 9.0, Color("8e6974"))
             for side in [-1.0, 1.0]:
                 draw_colored_polygon(PackedVector2Array([Vector2(12 * facing + side * 5, -14), Vector2(16 * facing + side * 8, -30), Vector2(17 * facing + side * 10, -12)]), Color("5e4356"))
             draw_line(Vector2(-13 * facing, -3), Vector2(-30 * facing, -13 + drift * 2), Color("916b79"), 9.0, true)
             draw_circle(Vector2(19 * facing, -10), 1.3, highlight)
 
-func draw_ellipse(center: Vector2, size: Vector2, ink: Color) -> void:
+func _draw_critter_ellipse(center: Vector2, size: Vector2, ink: Color) -> void:
     draw_set_transform(center, 0.0, size / Vector2(10.0, 10.0))
     draw_circle(Vector2.ZERO, 10.0, ink)
     draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
