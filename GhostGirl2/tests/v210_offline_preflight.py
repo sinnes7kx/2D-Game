@@ -48,7 +48,7 @@ def main() -> int:
     )
     errors += check(
         "scripts/item_rich_text.gd",
-        ("[url=visual:%s]", "Special look:", "Glow: ", "Bow colors · whole bow palette"),
+        ("[url=visual:%s]", "Special look", "Glow: ", "Bow colors · whole bow palette"),
         ("[url=visual:%s:%d]",),
     )
     if errors:
