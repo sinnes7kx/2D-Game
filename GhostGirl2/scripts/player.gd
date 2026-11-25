@@ -1269,8 +1269,10 @@ func _begin_attack(heavy: bool) -> void:
 			attack_duration = 1.02 if heavy else [0.57, 0.60, 0.65][combo_step]
 			attack_hit_threshold = 0.58
 		"dagger":
-			attack_duration = 0.66 if heavy else [0.31, 0.34, 0.36][combo_step]
-			attack_hit_threshold = 0.55
+			# A fast straight jab, or a deliberately committed heavy stab.
+			# The heavy clip spends longer drawing back before its single hit.
+			attack_duration = 0.94 if heavy else [0.28, 0.30, 0.32][combo_step]
+			attack_hit_threshold = 0.39 if heavy else 0.51
 		"dual_dagger":
 			# Three alternating cuts, one confirmed strike per animation.
 			attack_duration = 0.72 if heavy else [0.32, 0.35, 0.38][combo_step]
@@ -1308,7 +1310,10 @@ func _begin_attack(heavy: bool) -> void:
 		attack_animation = "attack_counter_" + facing_name
 	elif holding_sword:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-			if active_attack_style in ["dagger", "dual_dagger"] and (heavy or combo_step == 2 or counter_window > 0.0):
+			if active_attack_style == "dagger":
+				# Always use the hand-anchored thrust, not the legacy slash atlas.
+				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
+			elif active_attack_style == "dual_dagger" and (heavy or combo_step == 2 or counter_window > 0.0):
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
 			elif active_attack_style == "dual_dagger" and not heavy:
 				attack_animation = "attack_dual_dagger_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
@@ -1353,7 +1358,8 @@ func _advance_attack(delta: float) -> void:
 	if not attack_hit_done and attack_time_left <= attack_duration * attack_hit_threshold:
 		attack_hit_done = true
 		if heavy_attack:
-			_emit_air_wake("heavy", attack_direction)
+			if active_attack_style != "dagger":
+				_emit_air_wake("heavy", attack_direction)
 			COMBAT_JUICE.play(get_tree().current_scene, global_position, "swing", -24.0)
 			camera_kick = maxf(camera_kick, 1.9)
 			camera_push = attack_direction * 1.4
@@ -1381,7 +1387,8 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		"dagger":
 			reach = 143.0 if heavy_attack else 112.0
 			power *= 0.90 if heavy_attack else 0.77
-			attack_arc = 0.16 if heavy_attack else 0.21
+			# Dagger strikes have a narrow forward hit cone, not a sweep.
+			attack_arc = 0.08 if heavy_attack else 0.10
 			poise_bonus = 0.70
 		"dual_dagger":
 			reach = 153.0 if heavy_attack else 122.0
@@ -1449,7 +1456,10 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 			PHYSICAL_FEEL.burst(get_tree().current_scene, candidate.global_position + Vector2(0, -14), "slam", 1.40 if jump_attack_active else 0.92, attack_direction, sword.visual_seed() if sword != null else 1)
 		if not blunt_contact:
 			_spawn_blade_blood(candidate.global_position + Vector2(0.0, -32.0), fx_color, fx_accent, fx_impact, fx_tier, sword.visual_seed() if sword != null else 0)
-			_spawn_rose_slash(candidate.global_position + Vector2(0.0, -28.0))
+			# Daggers already have a physical blade and dedicated tip glow;
+			# the large crescent slash contradicted the stabbing motion.
+			if active_attack_style != "dagger":
+				_spawn_rose_slash(candidate.global_position + Vector2(0.0, -28.0))
 		_spawn_spectacle("strike", candidate.global_position + Vector2(0.0, -27.0), fx_color, fx_motif, fx_tier, fx_accent, fx_trail)
 		if counter_hit and not counter_shown:
 			_spawn_precision_feedback("riposte", candidate.global_position + Vector2(0.0, -30.0), attack_direction)
