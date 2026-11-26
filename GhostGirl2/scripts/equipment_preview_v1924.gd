@@ -11,6 +11,11 @@ var actor: CharacterBody2D
 var body: AnimatedSprite2D
 var inventory: Node
 var facing_index: int = 0
+var preview_zoom: float = 1.0
+var preview_pan: Vector2 = Vector2.ZERO
+const BASE_SCALE: float = 1.55
+const BASE_POSITION: Vector2 = Vector2(117, 204)
+const ZOOM_PIVOT: Vector2 = Vector2(117, 118)
 const FACES: Array[String] = ["front", "right", "back", "left"]
 const DIRECTIONS: Array[Vector2] = [Vector2.DOWN, Vector2.RIGHT, Vector2.UP, Vector2.LEFT]
 
@@ -43,7 +48,7 @@ func deactivate() -> void:
 
 func _build() -> void:
 	stretch = true
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	viewport = SubViewport.new()
 	viewport.name = "EquipmentPreviewViewport"
 	viewport.size = Vector2i(234, 236)
@@ -65,8 +70,7 @@ func _build() -> void:
 	camera.enabled = false
 	body = actor.get_node("Ghost") as AnimatedSprite2D
 	body.sprite_frames = body.sprite_frames.duplicate() as SpriteFrames
-	actor.scale = Vector2.ONE * 1.55
-	actor.position = Vector2(117, 204)
+	_apply_preview_zoom()
 	preview_world.add_child(actor)
 	actor.get_node("RoseHook").process_mode = Node.PROCESS_MODE_DISABLED
 	for path in ["EquipmentVisuals", "Ghost/WeaponLayers", "Ghost/BowPaletteV139", "Ghost/EquippedPrestigeFX"]:
@@ -96,3 +100,34 @@ func _notification(what: int) -> void:
 			activate()
 		else:
 			deactivate()
+
+func _apply_preview_zoom() -> void:
+	if not is_instance_valid(actor):
+		return
+	actor.scale = Vector2.ONE * BASE_SCALE * preview_zoom
+	actor.position = ZOOM_PIVOT + (BASE_POSITION - ZOOM_PIVOT) * preview_zoom + preview_pan
+
+func set_preview_zoom(value: float) -> void:
+	preview_zoom = clampf(value, 1.0, 3.0)
+	if is_equal_approx(preview_zoom, 1.0):
+		preview_pan = Vector2.ZERO
+	_apply_preview_zoom()
+
+func reset_preview_zoom() -> void:
+	preview_pan = Vector2.ZERO
+	set_preview_zoom(1.0)
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			set_preview_zoom(preview_zoom * (1.15 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0 / 1.15))
+			accept_event()
+		elif event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
+			reset_preview_zoom()
+			accept_event()
+	elif event is InputEventMouseMotion and preview_zoom > 1.0 and (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
+		var factor: Vector2 = Vector2(234, 236) / size.max(Vector2.ONE)
+		var limit: float = 120.0 * (preview_zoom - 1.0)
+		preview_pan = (preview_pan + event.relative * factor).clamp(Vector2.ONE * -limit, Vector2.ONE * limit)
+		_apply_preview_zoom()
+		accept_event()

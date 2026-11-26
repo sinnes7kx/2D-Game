@@ -12,6 +12,7 @@ var live_preview: SubViewportContainer
 var fx_value: Label
 var fx_slider: HSlider
 var eye_edit_button: Button
+var stats_toggle: Button
 const SLOT_NAMES = ["dress", "wings", "helm", "trinket", "charm", "wand", "sword"]
 
 func _display_icon(item: Variant) -> Texture2D:
@@ -25,6 +26,7 @@ func _display_icon(item: Variant) -> Texture2D:
 func _ready() -> void:
 	visible = false
 	_install_live_preview()
+	_install_stats_toggle()
 	for i in range(SLOT_NAMES.size()):
 		var button: Button = slots.get_node(SLOT_NAMES[i].capitalize()) as Button
 		button.pressed.connect(_on_slot_pressed.bind(SLOT_NAMES[i]))
@@ -123,7 +125,8 @@ func _install_live_preview() -> void:
 	live_preview.name = "LiveEquipmentPreview"
 	live_preview.position = doll.position
 	live_preview.size = doll.size
-	live_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	live_preview.mouse_filter = Control.MOUSE_FILTER_STOP
+	live_preview.tooltip_text = "Wheel to zoom · Drag to pan · Double-click to reset"
 	slots.add_child(live_preview)
 	slots.move_child(live_preview, doll.get_index())
 	doll.hide()
@@ -162,9 +165,14 @@ func _install_live_preview() -> void:
 	fx_slider.value_changed.connect(_set_fx_intensity)
 	var reset: Button = Button.new()
 	reset.text = "Reset"
-	reset.tooltip_text = "Restore 100% effects intensity"
-	reset.pressed.connect(func() -> void: fx_slider.value = 1.0)
+	reset.tooltip_text = "Restore 200% effects intensity"
+	reset.pressed.connect(func() -> void: fx_slider.value = FX_SETTING.DEFAULT_INTENSITY)
 	row.add_child(reset)
+	var zoom_reset: Button = Button.new()
+	zoom_reset.text = "1×"
+	zoom_reset.tooltip_text = "Reset character preview zoom"
+	zoom_reset.pressed.connect(func() -> void: live_preview.call("reset_preview_zoom"))
+	row.add_child(zoom_reset)
 	eye_edit_button = Button.new()
 	eye_edit_button.name = "EditEyesV215"
 	eye_edit_button.text = "Edit eyes"
@@ -184,3 +192,21 @@ func _edit_equipped_eyes() -> void:
 func _set_fx_intensity(value: float) -> void:
 	FX_SETTING.set_intensity(value)
 	fx_value.text = "%d%%" % roundi(FX_SETTING.intensity * 100.0)
+
+func _install_stats_toggle() -> void:
+	var layout: VBoxContainer = $Layout
+	var footer: Label = $Layout/FooterTitle
+	footer.hide()
+	stats_toggle = Button.new()
+	stats_toggle.name = "EquipmentStatsToggle"
+	stats_toggle.toggle_mode = true
+	stats_toggle.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	stats_toggle.text = "▸ Character & equipment stats"
+	layout.add_child(stats_toggle)
+	layout.move_child(stats_toggle, summary.get_index())
+	stats_toggle.toggled.connect(_set_stats_expanded)
+	_set_stats_expanded(false)
+
+func _set_stats_expanded(expanded: bool) -> void:
+	summary.visible = expanded
+	stats_toggle.text = ("▾" if expanded else "▸") + " Character & equipment stats"

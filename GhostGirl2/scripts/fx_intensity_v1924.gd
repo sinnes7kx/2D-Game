@@ -1,6 +1,7 @@
 extends RefCounted
 ## Session-only display preference. Never part of an item seed or save.
-static var intensity: float = 1.0
+const DEFAULT_INTENSITY: float = 2.0
+static var intensity: float = DEFAULT_INTENSITY
 static var revision: int = 0
 
 static func set_intensity(value: float) -> void:
