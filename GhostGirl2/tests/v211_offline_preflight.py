@@ -42,7 +42,7 @@ def main() -> int:
     ))
     failures += require("scripts/scythe_rig_v190.gd", (
         '"WorldScytheGlowV211"', "scythe_glow.call(\"set_pose\"",
-        "equipped == null or equipped.glow_level_override != 0",
+        "var show_light: bool = equipped == null or equipped.glow_level_override != 0",
     ))
     failures += require("scripts/collector_lens_v179.gd", (
         '"ScytheGlowPreviewV211"',
