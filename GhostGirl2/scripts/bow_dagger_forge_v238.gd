@@ -19,7 +19,9 @@ static func install(frames: SpriteFrames) -> void:
 		if not frames.has_animation(source) or frames.get_frame_count(source) < 8:
 			continue
 		for prefix in ["forge_bow", "forge_dagger"]:
-			var actions: Array[String] = ["light", "heavy"] if prefix == "forge_bow" else ["pierce", "heavy_pierce"]
+			var actions: Array[String] = ["light", "heavy"]
+			if prefix == "forge_dagger":
+				actions.assign(["pierce", "heavy_pierce"])
 			var names: Array[String] = [prefix + "_idle_" + face, prefix + "_walk_" + face]
 			for action in actions:
 				names.append("attack_" + prefix + "_" + action + "_" + face)
