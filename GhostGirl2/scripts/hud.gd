@@ -79,10 +79,10 @@ func _ready() -> void:
 	fps_readout.z_index = 110
 	$Overlay.add_child(fps_readout)
 	fps_readout.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	fps_readout.offset_left = -140.0
+	fps_readout.offset_left = -250.0
 	fps_readout.offset_right = -12.0
 	fps_readout.offset_top = 10.0
-	fps_readout.offset_bottom = 32.0
+	fps_readout.offset_bottom = 52.0
 	fps_readout.hide()
 	collector_lens = COLLECTOR_LENS.new()
 	collector_lens.name = "CollectorLensV179"
@@ -153,7 +153,9 @@ func _process(delta: float) -> void:
 		fps_refresh_left -= delta
 		if fps_refresh_left <= 0.0:
 			fps_refresh_left = 0.25
-			fps_readout.text = "%d FPS" % Engine.get_frames_per_second()
+			var fps: float = float(Engine.get_frames_per_second())
+			var texture_mib: float = float(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) / 1048576.0
+			fps_readout.text = "%d FPS  ·  %.1f ms\nTextures: %.0f MiB" % [roundi(fps), 1000.0 / maxf(1.0, fps), texture_mib]
 	# ALT locks the tooltip at its last position so its star and color
 	# details can be inspected without the panel chasing the pointer.
 	if item_compare_popup != null and item_compare_popup.visible:

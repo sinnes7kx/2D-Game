@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.27 — independent silk inertia and idle texture reuse (source implementation; engine review pending)
+
+- Give hair and heavier dress separate, bounded two-axis motion response and settling speeds; fade the deformation in on supported clips and handle material replacement. Extend the approximate geometric zones to wand and paired-weapon walking clips that already use approved hook-free body artwork. Face/weapon protection remains approximate; no combat, baked weapon or enemy animation changes. Shift+F4 remains a session off switch.
+- Preserve 24-step sword/dagger idle timing with 13 unique texture references instead of 24: reuse the mathematically symmetric return samples, and share cache entries across clips with the same source texture pair and sample count. For twelve 256×220 blade idles, the theoretical maximum avoided allocation is 132 RGBA textures, about 28.4 MiB, before renderer overhead or cross-clip sharing. No animation slots removed, no new art.
+- Extend Shift+F2 diagnostic readout with estimated average frame interval and engine-reported texture memory (not total GPU memory; backend may report zero). Add synthetic smoke for symmetric reuse, independent response/decay, and supported clean walk coverage. F5, shader compile, memory/FPS measurements and original art zone calibration still pending; no Actions dispatch. Enemy animation remains deferred.
+
 ### v2.26 — silk motion and rendering efficiency (source implementation; engine review pending)
 
 - Optional subtle continuous secondary motion in geometric outer-hair and lower-hem zones of supported neutral/ordinary walk poses and selected separate-weapon idles. Velocity-driven lag, quiet idle sway and hitstop freeze. Original source artwork stays intact; this is an approximate shader prototype, not authored per-frame hair/fabric masks. Unsupported baked weapon clips remain unchanged. Shift+F4 toggles the motion off/on for the session.
