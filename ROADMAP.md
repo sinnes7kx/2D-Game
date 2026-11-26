@@ -4,7 +4,7 @@
 >
 > **This is the canonical product-priority document for the repository.** See [AGENTS.md](AGENTS.md) for instructions to coding agents.
 
-_Last updated: 2026-11-25 · Godot 4 · living design and delivery plan, not a claim of completion or a release-date promise._
+_Last updated: 2026-11-26 · Godot 4 · living design and delivery plan, not a claim of completion or a release-date promise._
 
 ## Read this first: the game we are building
 
@@ -142,6 +142,17 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] The existing `v202_luminous_eyes` accessory now draws opaque eye-shaped backing across the original black pupils, with four eye variants (Moonveil, Cathedral slit, Starborn, Hollow ring) selected deterministically from the saved cosmetic seed. A separate versioned continuous color gradient follows the cosmetic UID; cosmetic rerolls can yield new variants and shades without touching stats, item identity or the saved `wings` slot.
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
+
+### v2.15 — pose-aware eyes, authentic carried bow inspection, accessible eye customization, B inventory and visible FX (source-only; F5 pending)
+
+- [x] Recalibrate luminous-eye masks against the real pupils in the user-supplied character-screen screenshot: the previous bright rings were about 18–21 preview pixels left and 16–17 pixels below the dark pupils. Use new direction-aware base anchors plus per-frame offsets for idle, walk, attack, dodge and jump, with no back-facing eyes. Recompute overlay drawings on actual animation changes and keep the opaque normal-blend pupil backing. **All four directions and all animation families still require F5 visual inspection**; this is calibrated source art, not claimed pixel-perfect test footage.
+- [x] Add a dedicated **Edit eyes** button on the equipment screen and always-available (not debug-only) **Shape** and **Color** exclusive choice groups for the actual equipped/selected `v202_luminous_eyes`. Changes to `eye_style_override` and `eye_palette_override` are cosmetic, recorded separately from the genuine `cosmetic_uid`, item seed, inherent rarity, and birth roll. Optional save keys default to `-1` on legacy items and saved looks; old bookmarks restore their original natural style. Blocked writes roll back the in-memory choices. Existing seed rerolls and favorites remain available.
+- [x] Map **B** to Inventory & Equipment in the real Godot InputMap and HUD; move the previous **B healing shortcut to N** to prevent opening inventory while consuming healing dew. Keep TAB and I as existing aliases. Update the control guide; do not change healing stats.
+- [x] Collector's Lens bows no longer use an independent icon recolor: display the **same front idle, bow-only 256×220 authored atlas** and the same v139 bow-only mask/seeded surface palette as the actual in-hand bow, with both layers sharing the same grip pivot, rotation and opacity. Wand/icon fallback remains unchanged.
+- [x] Restore independent native scythe cutting-edge FX while preserving 0–50% optional whole-scythe aura; improve aura readability at gameplay scale and re-render on FX-intensity changes. Make bow special FX follow a **visible** bow or carry node instead of inheriting hidden color-mask visibility; raise bow-only light visibility without changing projectile damage or item stats.
+- [x] Add `tests/v215_eyes_bows_input_fx_smoke.gd` plus `tests/v215_offline_preflight.py`; run the new synthetic Godot test and historic eye-coverage test in the local quick suite. Test fixtures never write to `user://`.
+- [ ] **No GitHub Actions, no PR, no main merge.** The work is on `fix/v215-eye-poses-bow-parity-inventory-fx` directly based on the current mainline v2.13 branch. Run `python3 GhostGirl2/tests/v215_offline_preflight.py`, `bash GhostGirl2/tools/run_smoke_suite.sh quick`, F5-check eye cover for every pose/view, inspect-vs-equipped bows in each facing and animations, new eye controls and saved look restore, key B/N behavior, and full FX intensity 0–200%. Back up `user://ghost_girl_treasures_v2.json` before testing saves or downgrading; older builds will not preserve the two optional eye-style preference keys when re-saving.
+- [ ] True frame-by-frame pupil alignment and rendered bow color match are **not verified without the Godot renderer**; the new anchors and mask parity require visual feedback before release.
 
 ### v2.13.1 — Godot cosmetic radio parser hotfix (source committed; local F5 pending)
 
