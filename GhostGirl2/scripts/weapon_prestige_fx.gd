@@ -4,6 +4,7 @@ const CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
+const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.72.3 — blade-only twinblade enchantments and high-visibility seeded Mythic shimmer.
@@ -396,6 +397,8 @@ func _blade_span(animation: String, face: String, frame_index: int) -> PackedVec
 	if attacking and not poses.is_empty():
 		var count: int = body.sprite_frames.get_frame_count(body.animation) if body != null and body.sprite_frames != null else 8
 		var pose_index: int = roundi(float(frame_index) * 7.0 / float(maxi(1, count - 1)))
+		if body != null and SWORD_V224.has_samples(body.sprite_frames, str(body.animation)):
+			pose_index = SWORD_V224.source_pose_index(body.sprite_frames, str(body.animation), frame_index)
 		var pose: Array = poses[clampi(pose_index, 0, poses.size() - 1)]
 		grip = Vector2(float(pose[0]), float(pose[1]))
 		tip = Vector2(float(pose[2]), float(pose[3]))
