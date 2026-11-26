@@ -143,6 +143,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.25 — fluid dodging, wand casting and landing (source implementation; engine review pending)
+
+- Expand 16-frame directional dodges to 24 samples and eight-frame directional wand casts to 22 samples. Preserve each original texture and weighted clip duration, including the final pose hold. These are procedural opaque-interior transitions, not newly painted limb poses.
+- Explicit nearest-source maps drive wand atlas region, wrist alignment, prestige/glimmer and spell origin together. Dodge eye guides map all 16 authored poses to eight beats. Nonexpanded clips, original source art, seed identities and saves remain unchanged.
+- Ease render-only dodge displacement and roll to/from neutral, smooth landing recovery, reset cast scale and restart repeated casts/dodges. Physical dodge speed, 0.24-second invulnerability, stamina and spell release/cooldown timings remain unchanged.
+- Add synthetic quick smoke for sample counts, preserved keys, alpha, duration, shared wand indexing and bounded motion. No Godot engine or GPU profiling in this source-only change. Worst-case extra RGBA texture data is roughly 19 MiB (88 generated 256×220 textures); preview skips generation. No automatic Actions dispatch.
+
 ### v2.24 — ground sword attack sampling and follow-through (source implementation; engine review pending)
 
 - Expand ordinary four-direction light/heavy sword ground clips from eight to 22 samples (eight exact approved keyframes plus 14 procedural opaque-interior paint transitions). Preserve total weighted duration and final hold; no loop seam, no generated double silhouette. Heavy/light share cached samples when source sequences match. Preview, airborne, bows, wands, counters, dagger-charge indexes and other families keep their previous frame counts. This is not 14 newly painted limb poses.

@@ -93,12 +93,15 @@ static func pose_eye_centers(animation_name: String, frame_index: int, face: Str
     if base.is_empty():
         return base
     var frame: int = clampi(frame_index, 0, 7)
+    # Dodge has 16 authored poses; its eye guide contains eight beats.
+    if animation_name.begins_with("dodge_"):
+        frame = clampi(roundi(float(frame_index) * 7.0 / 15.0), 0, 7)
     var offset: Vector2 = Vector2.ZERO
     if animation_name.contains("walk"):
         var dx: Array[float] = [-1.0, 0.0, 1.0, 2.0, 1.0, 0.0, -1.0, -1.0]
         var dy: Array[float] = [0.0, 1.0, 1.5, 0.5, 0.0, -1.0, -1.0, 0.0]
         offset = Vector2(dx[frame], dy[frame])
-    elif animation_name.begins_with("attack_") or animation_name.contains("_heavy_") or animation_name.contains("_light_"):
+    elif animation_name.begins_with("attack_") or animation_name.begins_with("wand_cast_") or animation_name.contains("_heavy_") or animation_name.contains("_light_"):
         var dx: Array[float] = [0.0, 1.0, 2.0, 2.0, 1.0, 0.0, -1.0, 0.0]
         var dy: Array[float] = [0.0, -1.0, -2.0, -3.0, -2.0, -1.0, 0.0, 0.0]
         offset = Vector2(dx[frame] * (-1.0 if face == "left" else 1.0), dy[frame])

@@ -111,7 +111,7 @@ func _apply_wand_pose() -> void:
 	if wand_visual == null or player_art == null:
 		return
 	var anim: String = str(player_art.animation)
-	var frame_index: int = int(player_art.frame)
+	var frame_index: int = WAND_ANCHORS_V216.visible_frame(player_art)
 	var fallback_face: String = str(get_parent().get("facing_name"))
 	anim = WAND_ANCHORS_V216.pose_name(anim, fallback_face)
 	var row_data: Dictionary = wand_pose_rows.get(anim, {})
@@ -268,7 +268,7 @@ func _process(delta: float) -> void:
 		# animation frame, not a static facing rotation, selects the artwork.
 		_apply_wand_pose()
 		var active_animation: String = str(player_art.animation)
-		var active_frame: int = 0 if active_animation.begins_with("wand_idle_") else player_art.frame
+		var active_frame: int = WAND_ANCHORS_V216.visible_frame(player_art)
 		wand_visual.position = WAND_ANCHORS_V216.alignment_offset(active_animation, active_frame, facing)
 		if str(player_art.animation).begins_with("wand_idle_"):
 			var guide: Dictionary = wand_pose_rows.get(str(player_art.animation), {})
