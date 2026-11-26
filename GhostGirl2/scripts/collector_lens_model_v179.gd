@@ -110,7 +110,7 @@ func _draw() -> void:
 	var style: String = item.weapon_style()
 	match style:
 		"bow":
-			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, 0.0)
+			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, FX_LEVEL.intensity * CHOICES_V216.effect_scale(item) if glow_enabled and CHOICES_V216.bow_body_visible(item) else 0.0)
 		"dagger":
 			if item.uses_forge_dagger():
 				FORGE_V238.draw_dagger(self, PackedVector2Array([Vector2(0, 14), Vector2(0, -25)]), profiles[0])

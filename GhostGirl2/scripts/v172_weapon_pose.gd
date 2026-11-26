@@ -21,6 +21,10 @@ var player: Node2D = null
 var last_animation: String = ""
 var last_frame: int = -1
 var twin_axes: Dictionary = {}
+var forge_palette_key: String = ""
+var forge_limb_colors: Array[Color] = []
+var forge_string_colors: Array[Color] = []
+var forge_fx_revision: int = -1
 const TWIN_AXES_PATH: String = "res://resources/new_weapon_axes_v170.json"
 
 static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
@@ -164,6 +168,20 @@ func _process(_delta: float) -> void:
 		return
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_now: String = str(body.animation)
+	if animation_now.contains("forge_bow_"):
+		var world: Node = player.get("world") as Node if player != null else null
+		var inventory: Node = world.get("inventory") as Node if world != null else null
+		var held: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
+		if held != null and held.uses_forge_bow():
+			var key: String = "%s:%s:%s:%s:%s" % [held.get_instance_id(), held.cosmetic_uid, held.visual_seed(), held.gradient_version, held.effect_palette_channel()]
+			if key != forge_palette_key:
+				forge_palette_key = key
+				forge_limb_colors = held.bow_limb_gradient_colors()
+				forge_string_colors = held.bow_string_gradient_colors()
+				queue_redraw()
+			if forge_fx_revision != FORGE_FX.revision:
+				forge_fx_revision = FORGE_FX.revision
+				queue_redraw()
 	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
@@ -324,7 +342,7 @@ func _draw() -> void:
 		if held.uses_forge_bow():
 			var amount: float = clampf(float(player.get("bow_draw_time")) / 0.46, 0.0, 1.0) if bool(player.get("bow_draw_active")) else 0.0
 			var glow: float = FORGE_CHOICES.effect_scale(held) * FORGE_FX.intensity if FORGE_CHOICES.bow_body_visible(held) else 0.0
-			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, held.bow_limb_gradient_colors(), held.bow_string_gradient_colors(), amount, glow)
+			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, glow)
 		else:
 			FORGE_V238.draw_dagger(self, span, profile)
 	elif animation_name.contains("crossbow_"):
