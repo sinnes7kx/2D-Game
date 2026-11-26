@@ -52,8 +52,12 @@ func _body_sprite() -> AnimatedSprite2D:
 func _face() -> String:
     var sprite: AnimatedSprite2D = _body_sprite()
     if sprite != null:
+        var clip: String = str(sprite.animation)
+        var direction: String = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(clip)
+        if not direction.is_empty():
+            return "back" if direction.begins_with("back") else "front"
         for suffix in ["front", "left", "right", "back"]:
-            if str(sprite.animation).ends_with("_" + suffix):
+            if clip.ends_with("_" + suffix):
                 return suffix
     var actor: Node = get_parent().get_parent() if get_parent() != null else null
     return str(actor.get("facing_name")) if actor != null else "front"

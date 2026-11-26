@@ -285,9 +285,13 @@ func _process(delta: float) -> void:
 			wand_visual.rotation = GENTLE.angle_at(GENTLE.phase_of(player_art))
 		if wand_points.size() == 2:
 			var grip: Vector2 = wand_points[0]
-			wand_visual.position = WAND_ANCHORS_V216.target_grip(facing, active_animation, active_frame) - (grip * WAND_ANCHORS_V216.VISUAL_SCALE).rotated(wand_visual.rotation)
-		wand_visual.show_behind_parent = facing == "back"
-		wand_visual.z_index = -2 if facing == "back" else 6
+			var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(active_animation, player_art.frame)
+			var target_grip: Vector2 = wrist if wrist != Vector2.INF else WAND_ANCHORS_V216.target_grip(facing, active_animation, active_frame)
+			wand_visual.position = target_grip - (grip * WAND_ANCHORS_V216.VISUAL_SCALE).rotated(wand_visual.rotation)
+		var diagonal_wrist: bool = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(active_animation, player_art.frame) != Vector2.INF
+		var behind: bool = facing == "back" and not diagonal_wrist
+		wand_visual.show_behind_parent = behind
+		wand_visual.z_index = -2 if behind else 6
 	var ethereal_visible: bool = dress_ethereal_alpha < 1.0 and ETHEREAL_FX.intensity > 0.0
 	if dress_now != null or dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty() or ethereal_visible or ethereal_was_visible != ethereal_visible:
 		queue_redraw()

@@ -25,5 +25,19 @@ func _initialize() -> void:
 	assert(ART.resolve("sword_idle_front", "front_right", "front", false, frames) == "sword_idle_front")
 	assert(ART.resolve("attack_front", "front_right", "front", false, frames) == "attack_front")
 	assert(ART.resolve("idle_front", "front", "front", false, frames) == "idle_front")
-	print("v247 diagonal art: frame structure and safe fallbacks")
+	if frames.has_animation("sword_modular_idle_front_right"):
+		assert(ART.armed_clip("sword_modular_idle_front", "front_right", "front", frames) == "sword_modular_idle_front_right")
+	assert(ART.wrist("sword_modular_idle_front_right",0) != Vector2.INF)
+	assert(ART.cardinal_for_clip("wand_walk_back_left") == "back")
+	assert(ART.cardinal_for_clip("sword_modular_idle_front_right") == "front")
+	if frames.has_animation("sword_modular_idle_back_left"):
+		assert(ART.wrist("sword_modular_idle_back_left",0) != Vector2.INF)
+	if frames.has_animation("dodge_back_left"):
+		assert(ART.action_clip("dodge","back_left","dodge_back",frames) == "dodge_back_left")
+	else:
+		assert(ART.action_clip("dodge","back_left","dodge_back",frames) == "dodge_back")
+	if frames.has_animation("jump_front_right"):
+		assert(frames.get_frame_count("jump_front_right") == 8)
+		assert(not frames.get_animation_loop("jump_front_right"))
+	print("v248 diagonal art: frame structure, wrist guides, action fallbacks")
 	quit(0)

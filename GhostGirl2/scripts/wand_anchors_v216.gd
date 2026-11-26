@@ -19,6 +19,11 @@ static func is_wand_pose(animation_name: String) -> bool:
 	return animation_name.begins_with("wand_") or animation_name.begins_with("attack_wand_")
 
 static func pose_name(animation_name: String, face: String) -> String:
+	var diagonal: String = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_name)
+	if not diagonal.is_empty() and animation_name.begins_with("wand_"):
+		var side: String = "left" if diagonal.ends_with("left") else "right"
+		var action: String = "walk" if animation_name.contains("_walk_") else "idle"
+		return "wand_" + action + "_" + side
 	if animation_name.begins_with("attack_wand_"):
 		return "wand_cast_" + face
 	return animation_name if rows().has(animation_name) else "wand_idle_" + face
@@ -68,6 +73,9 @@ static func span(animation_name: String, frame_index: int, face: String = "front
 # Keeping this delta in one place prevents the painted wand, wand light and
 # projectile muzzle from disagreeing across direction/pose changes.
 static func target_grip(face: String, animation_name: String = "", frame_index: int = 0) -> Vector2:
+	var diagonal: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, frame_index)
+	if diagonal != Vector2.INF:
+		return diagonal
 	var index: int = body_frame(animation_name, frame_index)
 	var wrist: Vector2 = HAND.hand_anchor(face, index, 0 if face == "left" else 1)
 	if wrist != Vector2.INF:
@@ -82,6 +90,12 @@ static func visible_frame(body: AnimatedSprite2D) -> int:
 	if body == null:
 		return 0
 	var name: String = str(body.animation)
+	if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(name).is_empty():
+		var guide_name: String = pose_name(name, "front")
+		var record: Dictionary = rows().get(guide_name, {})
+		var guides: Array = record.get("guides", [])
+		var count: int = mini(maxi(1, int(record.get("count", 8))), maxi(1, guides.size()))
+		return 0 if name.contains("_idle_") else clampi(body.frame, 0, count - 1)
 	return 0 if name.begins_with("wand_idle_") else SAMPLES.source_pose_index(body.sprite_frames, name, body.frame)
 
 static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2Array:
@@ -96,7 +110,8 @@ static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2
 	var tip: Vector2 = grip + (points[1] - grip) * VISUAL_SCALE
 	if animation_name.begins_with("wand_idle_"):
 		tip = grip + (tip - grip).rotated(GENTLE.angle_at(GENTLE.phase_of(body)))
-	var delta: Vector2 = alignment_offset(animation_name, frame, face)
+	var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, body.frame)
+	var delta: Vector2 = wrist - grip if wrist != Vector2.INF else alignment_offset(animation_name, frame, face)
 	return PackedVector2Array([grip + delta, tip + delta])
 
 static func world_tip(actor: Node2D) -> Vector2:

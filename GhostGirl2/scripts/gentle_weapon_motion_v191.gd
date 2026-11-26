@@ -132,7 +132,13 @@ static func is_walk_clip(name: String) -> bool:
 static func same_walk_family(a: String, b: String) -> bool:
 	if not is_walk_clip(a) or not is_walk_clip(b):
 		return false
-	return a.get_slice("_", a.get_slice_count("_") - 1) in ["front", "back", "left", "right"] and b.get_slice("_", b.get_slice_count("_") - 1) in ["front", "back", "left", "right"] and a.left(a.rfind("_")) == b.left(b.rfind("_"))
+	return _walk_family(a) == _walk_family(b)
+
+static func _walk_family(name: String) -> String:
+	for suffix in ["front_left", "front_right", "back_left", "back_right", "front", "back", "left", "right"]:
+		if name.ends_with("_" + suffix):
+			return name.trim_suffix("_" + suffix)
+	return name
 
 static func seek_phase(body: AnimatedSprite2D, phase: float) -> void:
 	if body == null or body.sprite_frames == null:
