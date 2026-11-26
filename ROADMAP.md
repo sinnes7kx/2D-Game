@@ -54,6 +54,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 ---
 
+### Halo effects and collectible familiar (source implementation; engine review pending)
+
+- Halo effects use stable cosmetic UID channels, orbiting motifs and rare arcs; respect session FX intensity. Dual-sword heavy duration 0.96 to 0.60 seconds (same base damage and cost).
+- Add optional companion equipment key and Moonwisp item, cosmetic-only with seeded palette/motifs. Existing saves without companion key retain default Moonmoth. Natural familiar drops use a subset of the previously unchanged ordinary drop lane (seed divisible by 97); existing items unchanged. Verify vault, inventory, F5 visuals, save reload and equipment preview. No engine validation yet.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

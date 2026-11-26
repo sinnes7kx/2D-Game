@@ -2,7 +2,7 @@ extends PanelContainer
 signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal edit_eyes_requested(item: GhostItemInstance)
-## Seven equipment slots (legacy wings key remains head accessories); sword and wand are mutually exclusive.
+## Eight equipment slots (legacy wings key remains head accessories); sword and wand are mutually exclusive.
 var inventory
 @onready var slots: Control = $Layout/EquipmentSlots
 @onready var summary: RichTextLabel = $Layout/Details
@@ -12,7 +12,7 @@ var live_preview: SubViewportContainer
 var fx_value: Label
 var fx_slider: HSlider
 var eye_edit_button: Button
-const SLOT_NAMES = ["dress", "wings", "helm", "trinket", "charm", "wand", "sword"]
+const SLOT_NAMES = ["dress", "wings", "helm", "trinket", "charm", "wand", "sword", "companion"]
 
 func _display_icon(item: Variant) -> Texture2D:
 	if item == null or item.definition == null or item.definition.icon == null:

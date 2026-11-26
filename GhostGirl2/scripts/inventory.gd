@@ -18,7 +18,7 @@ const SPECIAL_JEWEL_EXILE: GhostItemData = preload("res://items/exile_jewel.tres
 const SPECIAL_JEWELS: Array[GhostItemData] = [SPECIAL_JEWEL_MALADY, SPECIAL_JEWEL_DELIRIUM, SPECIAL_JEWEL_EXILE]
 var contents: Array[GhostItemInstance] = []
 var grid_positions: Array[Vector2i] = []  # y = page * GRID_ROWS + local row
-var equipment: Dictionary = {"dress": -1, "wings": -1, "helm": -1, "trinket": -1, "charm": -1, "wand": -1, "sword": -1}
+var equipment: Dictionary = {"dress": -1, "wings": -1, "helm": -1, "trinket": -1, "charm": -1, "wand": -1, "sword": -1, "companion": -1}
 var collected_pickups: Dictionary = {}
 const VAULT_CAPACITY: int = 240
 const EXHIBITION_CAPACITY: int = 6
