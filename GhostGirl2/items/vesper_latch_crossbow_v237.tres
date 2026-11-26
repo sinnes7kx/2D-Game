@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/ui/weapons_v237/vesper_latch_crossbow_v237.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "vesper_latch_crossbow_v237"
+display_name = "Vesper Latch Crossbow"
+description = "A compact darkwood crossbow with a narrow forged latch and restrained brass fittings."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+weapon_style = "crossbow"
+stat_id = "attack_speed_pct"
+min_stat = 3.0
+max_stat = 9.0
+max_sockets = 2
+item_level = 12
+min_weapon_damage = 12.0
+max_weapon_damage = 18.0
+inventory_width = 2
+inventory_height = 3

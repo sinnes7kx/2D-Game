@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.37 — crossbow forge and synchronized handling (source implementation; engine review pending)
+
+- Add Vesper Latch Crossbow and Ossuary Arbalest, with distinct compact/broad construction and copied comparable stats. All four bases use bounded seed-driven limb widths, grip wraps, four ornament motifs, muted metal bevels and a progressively cocked string; shared equipped and inspection geometry. Existing ranged loot frequency unchanged.
+- Synchronize fire and reload poses to physics action time, including hitstop/menu pause. Crossbow-only aim rotates the stock around the painted wrist to the true bolt heading; the muzzle uses identical span math. No new body atlases or changes to shot damage, timings, ammo, costs or save fields.
+- Extend loot coverage smoke and add source/geometry smoke. Godot parser, visual quality and gameplay runtime not verified. No Actions dispatch.
+
 ### v2.36 — crossbow family (source implementation; engine review pending)
 
 - Blackthorn and Silver Reliquary crossbows: new class, distinct seeded stock/limb models, icons and natural ranged loot lane. Four directional idle/walk/fire/reload clips reuse clean body references. No new painted poses or atlases.

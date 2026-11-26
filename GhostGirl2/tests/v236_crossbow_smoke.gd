@@ -38,7 +38,7 @@ func _initialize() -> void:
 		elif result.weapon_style == "bow":
 			bows[result.item_id] = true
 	game.free()
-	if bows.size() != 4 or crossbows.size() != 2:
+	if bows.size() != 4 or crossbows.size() != 4:
 		_fail("Ranged loot coverage changed")
 		return
 	print("v2.36 PASS: crossbow spans, bases, ranged loot and foley")
