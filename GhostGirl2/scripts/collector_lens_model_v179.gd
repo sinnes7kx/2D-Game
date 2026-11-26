@@ -110,7 +110,7 @@ func _draw() -> void:
 			var p: Dictionary = profiles[0].duplicate()
 			p["scythe_span"] = float(look.get("scythe_span", 1.0))
 			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
-			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, false)
+			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled)
 			if is_instance_valid(scythe_glow):
 				if glow_enabled:
 					scythe_glow.call("set_pose", item, Vector2(-12, 20), Vector2(-12, -56), p, 1.0, glow_preview_override)
