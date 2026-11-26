@@ -147,7 +147,7 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 
 - Preserve independent hair/dress inertia through unsupported pose transitions while leaving those frames completely unwarped. Off and teleports reset motion; hitstop preserves the response. Add a small bounded hem-fold ripple in supported poses. Geometric deformation remains approximate, not authored masks.
 - Cache weighted cumulative frame durations after gameplay/preview animation setup for constant-time phase lookup, with resource-change invalidation and exact fallback for unprepared or edited resources. Avoid per-render empty prestige glow redraws at zero item/global intensity. No new textures or enemy behavior changes.
-- Add synthetic phase-cache equivalence/invalidation smoke and source checks; no measured FPS improvement or engine/shader compilation claimed. F5 validate pose transitions, hitstop, toggling glow and Shift+F2 diagnostics.
+- Restore the missing v2.24 sword smoke registration, lost in the merged runner. Add synthetic phase-cache equivalence/invalidation smoke and source checks; no measured FPS improvement or engine/shader compilation claimed. F5 validate pose transitions, hitstop, toggling glow and Shift+F2 diagnostics.
 
 ### v2.27 — independent silk inertia and idle texture reuse (source implementation; engine review pending)
 
