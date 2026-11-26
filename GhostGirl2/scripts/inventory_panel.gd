@@ -602,7 +602,8 @@ func focus_eye_item(item: GhostItemInstance) -> void:
 		return
 	# Equipment stays equipped: this is selection only, no item transfer.
 	selected_index = index
-	active_page = inventory.page_for_index(index) if inventory.has_method("page_for_index") else 0
+	var grid_position: Vector2i = inventory.grid_positions[index] if index < inventory.grid_positions.size() else Vector2i.ZERO
+	active_page = clampi(grid_position.y / inventory.GRID_ROWS, 0, inventory.GRID_PAGES - 1)
 	slots.call("set_page", active_page)
 	page_number.text = "%d / 8" % (active_page + 1)
 	refresh()
