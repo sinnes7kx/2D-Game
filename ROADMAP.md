@@ -150,13 +150,6 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - Ease render-only dodge displacement and roll to/from neutral, smooth landing recovery, reset cast scale and restart repeated casts/dodges. Physical dodge speed, 0.24-second invulnerability, stamina and spell release/cooldown timings remain unchanged.
 - Add synthetic quick smoke for sample counts, preserved keys, alpha, duration, shared wand indexing and bounded motion. No Godot engine or GPU profiling in this source-only change. Worst-case extra RGBA texture data is roughly 19 MiB (88 generated 256×220 textures); preview skips generation. No automatic Actions dispatch.
 
-### v2.24 — ground sword attack sampling and follow-through (source implementation; engine review pending)
-
-- Expand ordinary four-direction light/heavy sword ground clips from eight to 22 samples (eight exact approved keyframes plus 14 procedural opaque-interior paint transitions). Preserve total weighted duration and final hold; no loop seam, no generated double silhouette. Heavy/light share cached samples when source sequences match. Preview, airborne, bows, wands, counters, dagger-charge indexes and other families keep their previous frame counts. This is not 14 newly painted limb poses.
-- Shared nearest-source silhouette indexing for baked blade glow and eye accessory anchors; body and child FX receive small render-time anticipation/swing/recovery transforms. Actual art alignment needs F5 inspection, since binary PNGs could not be reviewed through the repository connector.
-- Fix timed action playback inheriting sprint/idle speed_scale, preserve custom rate and frame progress on confirmed-hitstop and dagger-charge resumes, and explicitly restart repeat ground combo clips. Combat timers, costs, hitboxes, damage, save schema and original artwork remain unchanged.
-- Synthetic local quick smoke checks timing, sample index and alpha preservation, original texture identity, final hold and bounded follow-through. Source-only checks; Godot/parser/F5 and measured performance pending. Extra generated data is approximately 12 MiB when all four heavy/light texture sequences match, up to 24 MiB if all eight differ. No Actions dispatch.
-
 ### v2.23 — directional stride continuity and locomotion sampling (source implementation; engine review pending)
 
 - Expand each ordinary eight-frame walk cycle to 24 procedural samples at unchanged weighted cycle duration, preserving every original texture at every third frame. Intermediate paint borrows only overlapping opaque interior colors and retains one approved silhouette; these are not newly hand-drawn limb poses. Cache four cycles; equipment preview skips generation.
