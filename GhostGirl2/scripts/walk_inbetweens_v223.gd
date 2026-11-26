@@ -66,7 +66,7 @@ static func _intermediates(keys: Array[Texture2D]) -> Array[Texture2D]:
 	var atlases: Dictionary = {}
 	for texture in keys:
 		var image: Image = GUARD.frame_image(texture, atlases)
-		if image == null or image.is_empty() or image.get_size() != keys[0].get_size():
+		if image == null or image.is_empty() or image.get_size() != Vector2i(keys[0].get_size()):
 			return []
 		if image.is_compressed():
 			if image.decompress() != OK:

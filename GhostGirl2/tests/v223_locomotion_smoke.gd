@@ -44,7 +44,7 @@ func _verify() -> void:
 					if not is_equal_approx(base.get_pixel(x, y).a, actual.get_pixel(x, y).a):
 						_fail("Intermediate frame damaged silhouette")
 						return
-			if i % 3 == 0 and frames.get_frame_texture(name, i) != originals[name][i / 3]:
+			if i % 3 == 0 and frames.get_frame_texture(name, i) != originals[name][floori(float(i) / 3.0)]:
 				_fail("Approved keyframe replaced")
 				return
 		if not is_equal_approx(total / 24.0, 1.25):
