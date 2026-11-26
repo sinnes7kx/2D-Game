@@ -1,6 +1,7 @@
 extends PanelContainer
 signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
+signal edit_eyes_requested(item: GhostItemInstance)
 ## Seven equipment slots (legacy wings key remains head accessories); sword and wand are mutually exclusive.
 var inventory
 @onready var slots: Control = $Layout/EquipmentSlots
@@ -10,6 +11,7 @@ const FX_SETTING = preload("res://scripts/fx_intensity_v1924.gd")
 var live_preview: SubViewportContainer
 var fx_value: Label
 var fx_slider: HSlider
+var eye_edit_button: Button
 const SLOT_NAMES = ["dress", "wings", "helm", "trinket", "charm", "wand", "sword"]
 
 func _display_icon(item: Variant) -> Texture2D:
@@ -59,6 +61,9 @@ func refresh() -> void:
 	if inventory == null or not is_node_ready():
 		return
 	live_preview.call("refresh")
+	if is_instance_valid(eye_edit_button):
+		var eyes: GhostItemInstance = inventory.get_equipped("wings")
+		eye_edit_button.visible = eyes != null and eyes.definition != null and str(eyes.definition.item_id) == "v202_luminous_eyes"
 	var active: Array[String] = []
 	for i in range(SLOT_NAMES.size()):
 		var key: String = SLOT_NAMES[i]
@@ -160,6 +165,21 @@ func _install_live_preview() -> void:
 	reset.tooltip_text = "Restore 100% effects intensity"
 	reset.pressed.connect(func() -> void: fx_slider.value = 1.0)
 	row.add_child(reset)
+	eye_edit_button = Button.new()
+	eye_edit_button.name = "EditEyesV215"
+	eye_edit_button.text = "Edit eyes"
+	eye_edit_button.tooltip_text = "Open eye shape and color editor for equipped luminous eyes"
+	eye_edit_button.visible = false
+	eye_edit_button.pressed.connect(_edit_equipped_eyes)
+	layout.add_child(eye_edit_button)
+	layout.move_child(eye_edit_button, row.get_index() + 1)
+
+func _edit_equipped_eyes() -> void:
+	if inventory == null:
+		return
+	var eyes: GhostItemInstance = inventory.get_equipped("wings")
+	if eyes != null and eyes.definition != null and str(eyes.definition.item_id) == "v202_luminous_eyes":
+		edit_eyes_requested.emit(eyes)
 
 func _set_fx_intensity(value: float) -> void:
 	FX_SETTING.set_intensity(value)
