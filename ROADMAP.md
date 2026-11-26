@@ -54,6 +54,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 ---
 
+### Melee chains and impact feedback (source implementation; engine review pending)
+
+- Two consecutive light melee attacks followed by heavy within the existing chain grace grant 25% damage, one confirmed-hit double ring and a unique impact cue. Dodge recovery opens a 0.48-second heavy lunge window; movement uses normal collision-aware sliding. Existing stamina costs, weapon stats and hit counts retained. Ranged and wand combos deferred.
+- Grounded plunge landing produces a slam cue; wall rays produce material contact audio without damaging walls or wearing weapons. Existing wood contact gets foley. Sharp confirmed flesh hits have moderately larger stylized blood bursts. F5 test combo timing, interruption, walls, audio and old saves before release.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.
