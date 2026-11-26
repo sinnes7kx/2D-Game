@@ -98,8 +98,8 @@ func _ready() -> void:
 	glow_row.add_child(glow_caption)
 	scythe_glow_choices = OptionButton.new()
 	scythe_glow_choices.name = "ScytheGlowPreviewV211"
-	scythe_glow_choices.tooltip_text = "Preview only · changes no item rolls or saved appearance"
-	scythe_glow_choices.add_item("Rolled glow")
+	scythe_glow_choices.tooltip_text = "Full-scythe aura is separate from the always-available curved blade highlights · previews are not saved"
+	scythe_glow_choices.add_item("Rolled aura")
 	for step in range(6):
 		scythe_glow_choices.add_item("%d%% glow" % (step * 10))
 	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
@@ -162,7 +162,7 @@ func open_item(value: GhostItemInstance) -> void:
 	_position_model()
 	status.text = "Drag to rotate  ·  Wheel to zoom  ·  Display-only motion" if bool(model.call("is_modular")) else "Original artwork + animated effects  ·  Drag to rotate  ·  Wheel to zoom"
 	if value.weapon_style() == "scythe":
-		status.text = "Rolled silhouette glow: %d%% · use selector to preview 0–50%% (unsaved)" % (SCYTHE_GLOW.rolled_level(value) * 10)
+		status.text = "Curved blade highlights + rolled full-scythe aura %d%% · preview 0–50%% (not saved)" % (SCYTHE_GLOW.rolled_level(value) * 10)
 
 func close_lens() -> void:
 	hide()
@@ -175,7 +175,7 @@ func _select_scythe_glow(index: int) -> void:
 	var value: int = index - 1
 	model.call("set_glow_preview_override", value)
 	var actual: int = SCYTHE_GLOW.rolled_level(inspected)
-	status.text = ("Rolled glow · %d%%" % (actual * 10)) if value < 0 else ("Preview glow · %d%% · not saved" % (value * 10))
+	status.text = ("Blade highlights + rolled aura %d%%" % (actual * 10)) if value < 0 else ("Blade highlights + preview aura %d%% · not saved" % (value * 10))
 
 func _toggle_glow(active: bool) -> void:
 	model.set("glow_enabled", active)
