@@ -15,9 +15,8 @@ uniform float cloth_filagree_phase = 0.0;
 // and lower hem zones. No hue-derived masks. Only supported 256x220 poses
 // enable this branch; the face, central torso and weapon poses are protected.
 uniform float silk_enabled : hint_range(0.0, 1.0) = 0.0;
-uniform float silk_phase = 0.0;
-uniform float silk_lag : hint_range(-1.0, 1.0) = 0.0;
-uniform float silk_energy : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 silk_flow = vec4(0.0);
+uniform vec3 silk_state = vec3(0.0);
 varying vec2 silk_local;
 varying vec4 silk_ink;
 void vertex() {
@@ -32,10 +31,13 @@ void fragment() {
         float outer = smoothstep(38.0, 55.0, abs(p.x)) * (1.0 - smoothstep(76.0, 94.0, abs(p.x)));
         float hair = outer * smoothstep(-87.0, -65.0, p.y) * (1.0 - smoothstep(-28.0, -14.0, p.y));
         float hem = (1.0 - smoothstep(37.0, 55.0, abs(p.x))) * smoothstep(58.0, 80.0, p.y) * (1.0 - smoothstep(95.0, 106.0, p.y));
-        float wave = sin(silk_phase + p.y * 0.075);
-        float hair_dx = (0.65 * wave + 1.4 * silk_lag) * (0.55 + 0.45 * silk_energy);
-        float hem_dx = (0.75 * sin(silk_phase * 1.13 - p.y * 0.052) + 1.35 * silk_lag) * (0.55 + 0.45 * silk_energy);
-        vec2 shift = vec2(hair * hair_dx + hem * hem_dx, hem * 0.7 * sin(silk_phase * 1.2 + p.x * 0.06));
+        float phase = silk_state.x;
+        float gain = (0.55 + 0.45 * clamp(silk_state.y, 0.0, 1.0)) * clamp(silk_state.z, 0.0, 1.0);
+        float wave = sin(phase + p.y * 0.075);
+        vec2 hair_shift = vec2(0.65 * wave + 1.4 * silk_flow.x, 0.45 * silk_flow.y);
+        vec2 hem_shift = vec2(0.75 * sin(phase * 1.13 - p.y * 0.052) + 1.35 * silk_flow.z,
+                              0.7 * sin(phase * 1.2 + p.x * 0.06) + 0.65 * silk_flow.w);
+        vec2 shift = (hair * hair_shift + hem * hem_shift) * gain;
         if (dot(shift, shift) > 0.000001) {
             // UV offset is in actual backing-texture pixels. Local frame
             // borders are never sampled by either deformation envelope.

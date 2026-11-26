@@ -38,7 +38,7 @@ static func install(sprite: AnimatedSprite2D) -> void:
         var alternate: Texture2D = frames.get_frame_texture(name, alternate_index)
         if neutral == null or alternate == null:
             continue
-        var key: String = "%s:%d:%d" % [name, neutral.get_rid().get_id(), alternate.get_rid().get_id()]
+        var key: String = "%d:%d" % [neutral.get_instance_id(), alternate.get_instance_id()]
         var requested_steps: int = SWORD_STEPS if is_smooth_blade_idle(name) else STEPS
         key += ":%d" % requested_steps
         var generated: Array = _textures_by_key.get(key, [])
@@ -104,6 +104,12 @@ static func _create_steps(neutral: Texture2D, alternate: Texture2D, steps: int =
     var overlap: Rect2i = base.get_used_rect().intersection(breath.get_used_rect())
     results.append(neutral) # Exact approved pixels on the resting beat.
     for i in range(1, steps):
+        # The 24-sample cosine breath has a symmetric return half. Reuse
+        # the exact outgoing texture instead of allocating another image.
+        # All frame slots, durations, and the original silhouette remain.
+        if steps == SWORD_STEPS and i > steps / 2:
+            results.append(results[steps - i])
+            continue
         var amount: float = float(BLEND_STEPS[i]) if steps == STEPS else 0.18 * (0.5 - 0.5 * cos(TAU * float(i) / float(steps)))
         var blended: PackedByteArray = _mix_rgba(original, other, amount, base.get_width(), overlap)
         var image: Image = Image.create_from_data(base.get_width(), base.get_height(), false, Image.FORMAT_RGBA8, blended)

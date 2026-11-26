@@ -44,9 +44,15 @@ func _verify() -> void:
                     return
                 refs[texture.get_instance_id()] = true
                 total += frames.get_frame_duration(name, i)
-            if refs.size() != expected:
-                _fail("Idle has repeated frame references: " + name)
+            var unique_expected: int = 13 if expected == STEADY.SWORD_STEPS else expected
+            if refs.size() != unique_expected:
+                _fail("Idle texture reuse or frame count is wrong: " + name)
                 return
+            if expected == STEADY.SWORD_STEPS:
+                for i in range(1, 12):
+                    if frames.get_frame_texture(name, i) != frames.get_frame_texture(name, expected - i):
+                        _fail("Symmetric idle samples did not reuse texture: " + name)
+                        return
             if not is_equal_approx(total / frames.get_animation_speed(name), STEADY.CYCLE_SECONDS):
                 _fail("Idle cycle duration not stabilized: " + name)
                 return
