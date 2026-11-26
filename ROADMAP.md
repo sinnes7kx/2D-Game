@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.29 — independent silk ripples and bounded idle preparation (source implementation; engine review pending)
+
+- Separate left/right hair-tip phases and skirt-fold phases in the existing approximate geometric deformation regions. Keep the same 2.5-pixel maximum per axis, original artwork, supported pose scope and Shift+F4 toggle. Skip oscillation math outside both envelopes.
+- Prepare eligible changed RGB channel offsets once per idle texture pair rather than scanning alpha and comparing unchanged pixels for every generated sample. Use the original interpolation/rounding formula; preserve every frame slot, texture-reuse rule and alpha value. Limit the idle decompressed atlas cache to four sheets during preparation; release it at install completion. This trades possible repeated atlas reads for a lower retained temporary-image count.
+- Add synthetic byte-equivalence smoke over alpha boundaries, multiple weights and empty overlap. No engine or shader compilation, F5 or measured startup/FPS claim. Enemy animations remain deferred.
+
 ### v2.28 — continuous silk response and cached animation timing (source implementation; engine review pending)
 
 - Preserve independent hair/dress inertia through unsupported pose transitions while leaving those frames completely unwarped. Off and teleports reset motion; hitstop preserves the response. Add a small bounded hem-fold ripple in supported poses. Geometric deformation remains approximate, not authored masks.

@@ -9,6 +9,7 @@ const SWORD_STEPS: int = 24 # Procedural interior-paint in-betweens; original si
 const BLEND_STEPS: Array = [0.0, 0.024, 0.055, 0.095, 0.145, 0.112, 0.069, 0.027]
 static var _textures_by_key: Dictionary = {}
 static var _atlas_images: Dictionary = {}
+const ATLAS_CACHE_LIMIT: int = 4
 
 static func matches(name: String) -> bool:
     return name.begins_with("sword_idle_") or name.begins_with("dagger_idle_") or name.begins_with("nocturne_dagger_idle_") or name.begins_with("spear_idle_") \
@@ -73,6 +74,10 @@ static func _source_image(texture: Texture2D) -> Image:
             return null
         var key: int = tile.atlas.get_rid().get_id()
         if not _atlas_images.has(key):
+            # Keep at most four decompressed sheets during idle preparation.
+            # Existing extracted frame images own their pixels independently.
+            if _atlas_images.size() >= ATLAS_CACHE_LIMIT:
+                _atlas_images.erase(_atlas_images.keys()[0])
             _atlas_images[key] = tile.atlas.get_image()
         var whole: Image = _atlas_images[key] as Image
         if whole == null or whole.is_empty():
@@ -102,6 +107,9 @@ static func _create_steps(neutral: Texture2D, alternate: Texture2D, steps: int =
     if original.size() != other.size():
         return results
     var overlap: Rect2i = base.get_used_rect().intersection(breath.get_used_rect())
+    # All intermediate samples share the same eligible RGB channels.
+    # Scan once rather than repeating alpha checks and equality tests.
+    var channels: PackedInt32Array = _changed_channels(original, other, base.get_width(), overlap)
     results.append(neutral) # Exact approved pixels on the resting beat.
     for i in range(1, steps):
         # The 24-sample cosine breath has a symmetric return half. Reuse
@@ -111,7 +119,7 @@ static func _create_steps(neutral: Texture2D, alternate: Texture2D, steps: int =
             results.append(results[steps - i])
             continue
         var amount: float = float(BLEND_STEPS[i]) if steps == STEPS else 0.18 * (0.5 - 0.5 * cos(TAU * float(i) / float(steps)))
-        var blended: PackedByteArray = _mix_rgba(original, other, amount, base.get_width(), overlap)
+        var blended: PackedByteArray = _mix_prepared(original, other, amount, channels)
         var image: Image = Image.create_from_data(base.get_width(), base.get_height(), false, Image.FORMAT_RGBA8, blended)
         results.append(ImageTexture.create_from_image(image))
     return results
@@ -135,4 +143,31 @@ static func _mix_rgba(base: PackedByteArray, other: PackedByteArray, mix: float,
             for channel in range(3):
                 if base[p + channel] != other[p + channel]:
                     out[p + channel] = clampi(roundi(lerpf(float(base[p + channel]), float(other[p + channel]), weight)), 0, 255)
+    return out
+
+
+# Gather exactly the channels the existing blend would modify.
+# This temporary list is freed after generating one idle sequence.
+static func _changed_channels(base: PackedByteArray, other: PackedByteArray, width: int, bounds: Rect2i) -> PackedInt32Array:
+    var channels: PackedInt32Array = PackedInt32Array()
+    if width <= 0 or base.size() != other.size() or base.is_empty():
+        return channels
+    var height: int = floori(float(base.size()) / float(width * 4))
+    var region: Rect2i = bounds.intersection(Rect2i(0, 0, width, height))
+    for y in range(region.position.y, region.end.y):
+        var first: int = (y * width + region.position.x) * 4
+        var last: int = (y * width + region.end.x) * 4
+        for p in range(first, last, 4):
+            if base[p + 3] < 232 or other[p + 3] < 232:
+                continue
+            for channel in range(3):
+                if base[p + channel] != other[p + channel]:
+                    channels.append(p + channel)
+    return channels
+
+static func _mix_prepared(base: PackedByteArray, other: PackedByteArray, mix: float, channels: PackedInt32Array) -> PackedByteArray:
+    var out: PackedByteArray = base.duplicate()
+    var weight: float = clampf(mix, 0.0, 0.2)
+    for p in channels:
+        out[p] = clampi(roundi(lerpf(float(base[p]), float(other[p]), weight)), 0, 255)
     return out
