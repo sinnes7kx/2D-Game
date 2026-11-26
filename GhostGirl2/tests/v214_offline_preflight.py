@@ -24,7 +24,7 @@ def check(name: str, needed: tuple[str, ...], forbidden: tuple[str, ...] = ()) -
 def main() -> int:
     issues = []
     issues += check("scripts/scythe_rig_v190.gd", (
-        "SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, equipped == null or equipped.glow_level_override != 0)",
+        "SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, show_light)",
         'scythe_glow.call("clear_pose")',
     ), ("phase, side, false)",))
     issues += check("scripts/collector_lens_model_v179.gd", (
