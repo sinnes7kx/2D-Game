@@ -5,7 +5,7 @@ func _initialize() -> void:
     call_deferred("_verify")
 
 func _verify() -> void:
-    for cue in ["swing", "hit", "parry", "dodge", "spell", "debris", "evade"]:
+    for cue in ["swing", "hit", "parry", "dodge", "spell", "spell_heavy", "spell_release", "spell_release_heavy", "spell_hit", "debris", "evade"]:
         var clip: AudioStreamWAV = JUICE._render(cue)
         if clip == null or clip.data.size() < 1000 or clip.mix_rate != 22050:
             _fail("Missing or malformed generated cue: " + cue)

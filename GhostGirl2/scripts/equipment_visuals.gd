@@ -113,8 +113,7 @@ func _apply_wand_pose() -> void:
 	var anim: String = str(player_art.animation)
 	var frame_index: int = int(player_art.frame)
 	var fallback_face: String = str(get_parent().get("facing_name"))
-	if not wand_pose_rows.has(anim):
-		anim = "wand_idle_" + fallback_face
+	anim = WAND_ANCHORS_V216.pose_name(anim, fallback_face)
 	var row_data: Dictionary = wand_pose_rows.get(anim, {})
 	var row: int = int(row_data.get("row", 0))
 	var count: int = maxi(1, int(row_data.get("count", 1)))
@@ -243,7 +242,7 @@ func _process(delta: float) -> void:
 	sword_visual.hide()
 	wand_visual.hide()
 	var wand_item: GhostItemInstance = inventory.get_equipped("wand")
-	if wand_item != null:
+	if wand_item != null and WAND_ANCHORS_V216.is_wand_pose(str(player_art.animation)):
 		var visual_index: int = posmod(wand_item.visual_seed(), WAND_POSE_ATLASES.size())
 		if visual_index != last_wand_sprite_index or wand_visual.texture == null:
 			last_wand_sprite_index = visual_index
@@ -269,7 +268,7 @@ func _process(delta: float) -> void:
 		# animation frame, not a static facing rotation, selects the artwork.
 		_apply_wand_pose()
 		var active_animation: String = str(player_art.animation)
-		var active_frame: int = 0 if GENTLE.modular_idle(active_animation) and active_animation.begins_with("wand_idle_") else player_art.frame
+		var active_frame: int = 0 if active_animation.begins_with("wand_idle_") else player_art.frame
 		wand_visual.position = WAND_ANCHORS_V216.alignment_offset(active_animation, active_frame, facing)
 		if str(player_art.animation).begins_with("wand_idle_"):
 			var guide: Dictionary = wand_pose_rows.get(str(player_art.animation), {})

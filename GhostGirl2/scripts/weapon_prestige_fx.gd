@@ -115,8 +115,8 @@ func refresh() -> void:
 	var sword: GhostItemInstance = inventory.get_equipped("sword")
 	var wand: GhostItemInstance = inventory.get_equipped("wand")
 	# Prefer the visible weapon. Casting temporarily activates wand cosmetics.
-	var casting: bool = player != null and float(player.get("spell_time_left")) > 0.0
-	item = (wand if wand != null else sword) if casting else (sword if sword != null else wand)
+	var wand_pose: bool = body != null and WAND_ANCHORS_V216.is_wand_pose(str(body.animation))
+	item = wand if wand_pose and wand != null else (sword if sword != null else wand)
 	if item != null:
 		last_uid = item.cosmetic_uid
 		last_seed = item.visual_seed()
@@ -304,7 +304,16 @@ func _axial_span() -> PackedVector2Array:
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 43.0 if style == "dagger" else 82.0)])
 	if style == "blade":
 		# Authored coordinates when available; safe idle blade otherwise.
-		return _blade_span(animation, face, body.frame)
+		var blade: PackedVector2Array = _blade_span(animation, face, body.frame)
+		var tracked: PackedVector2Array = PackedVector2Array()
+		for point in blade:
+			var local: Vector2 = point
+			if body.flip_h:
+				local.x = -local.x
+			if body.flip_v:
+				local.y = -local.y
+			tracked.append(local + body.offset)
+		return tracked
 	if style in ["scythe", "halberd"]:
 		var axes: Array = long_axes_by_animation.get(animation, [])
 		if not axes.is_empty():
@@ -385,7 +394,9 @@ func _blade_span(animation: String, face: String, frame_index: int) -> PackedVec
 				[182, 139, 228, 72], [180, 148, 241, 130],
 				[172, 140, 210, 189], [172, 140, 206, 188]]
 	if attacking and not poses.is_empty():
-		var pose: Array = poses[clampi(frame_index, 0, poses.size() - 1)]
+		var count: int = body.sprite_frames.get_frame_count(body.animation) if body != null and body.sprite_frames != null else 8
+		var pose_index: int = roundi(float(frame_index) * 7.0 / float(maxi(1, count - 1)))
+		var pose: Array = poses[clampi(pose_index, 0, poses.size() - 1)]
 		grip = Vector2(float(pose[0]), float(pose[1]))
 		tip = Vector2(float(pose[2]), float(pose[3]))
 	# SpriteFrames textures are 256 x 220 and centered by AnimatedSprite2D.
@@ -410,10 +421,10 @@ func _process(delta: float) -> void:
 			bind_inventory(level.get_node("Inventory"))
 	if inventory == null:
 		return
-	var casting: bool = player != null and float(player.get("spell_time_left")) > 0.0
+	var wand_pose: bool = body != null and WAND_ANCHORS_V216.is_wand_pose(str(body.animation))
 	var wand: GhostItemInstance = inventory.get_equipped("wand")
 	var sword: GhostItemInstance = inventory.get_equipped("sword")
-	var selected: GhostItemInstance = (wand if wand != null else sword) if casting else (sword if sword != null else wand)
+	var selected: GhostItemInstance = wand if wand_pose and wand != null else (sword if sword != null else wand)
 	if selected != item:
 		refresh()
 	elif item != null and (last_uid != item.cosmetic_uid or last_seed != item.visual_seed() or last_signature != item.visual_signature() or last_fx_key != _fx_key(item)):
@@ -439,6 +450,11 @@ func _gradient_at(t: float) -> Color:
 # Round, feathered light replaces the old large square-ended 26px line strips.
 func _draw() -> void:
 	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0:
+		return
+	var visible_clip: String = str(body.animation)
+	if item.get_slot() == "wand" and not WAND_ANCHORS_V216.is_wand_pose(visible_clip):
+		return
+	if item.weapon_style() == "blade" and not (visible_clip.begins_with("sword_") or visible_clip.begins_with("attack_sword_")):
 		return
 	# Modular heavy weapons own their actual edge/rim glow; do not double it.
 	if item.weapon_style() in ["halberd", "maul"] and player != null and player.has_node("Ghost/ScytheRigV190") and preload("res://scripts/heavy_weapon_art_v192.gd").matches(str(body.animation)):

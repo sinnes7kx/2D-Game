@@ -145,9 +145,19 @@ func _verify() -> void:
 				_fail("Missing authored wand guide: " + animation_name)
 				return
 			var actual: Vector2 = raw[0] + WAND.alignment_offset(animation_name, 0, face)
-			if actual.distance_to(WAND.target_grip(face)) > 0.02:
+			if actual.distance_to(WAND.target_grip(face, animation_name, 0)) > 0.02:
 				_fail("Shared wand guide does not land at player wrist: " + animation_name)
 				return
+	for face in ["front", "back", "left", "right"]:
+		var clip: String = "wand_cast_" + face
+		for frame in range(8):
+			var raw: PackedVector2Array = WAND.span(clip, frame, face)
+			if raw.size() != 2 or (raw[0] + WAND.alignment_offset(clip, frame, face)).distance_to(WAND.target_grip(face, clip, frame)) > 0.02:
+				_fail("Wand cast frame drifted from shared moving wrist")
+				return
+		if WAND.target_grip(face, clip, 1).distance_to(WAND.target_grip(face, clip, 4)) < 1.0:
+			_fail("Wand cast wrist incorrectly frozen")
+			return
 	var panel: Control = PANEL.instantiate() as Control
 	root.add_child(panel)
 	panel.call("bind_inventory", inv)
