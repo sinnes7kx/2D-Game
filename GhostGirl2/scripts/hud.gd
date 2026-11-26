@@ -377,6 +377,11 @@ func _open_eye_editor(item: GhostItemInstance) -> void:
 	inventory_panel.show()
 	equipment_panel.show()
 	inventory_panel.call("focus_eye_item", item)
+	# The old pinned hover must not cover the newly opened eye controls.
+	tooltip_pinned = false
+	if is_instance_valid(item_compare_popup):
+		item_compare_popup.call("set_pinned", false)
+		item_compare_popup.hide()
 	_hide_item_hover()
 
 func _open_collector_lens(item: GhostItemInstance) -> void:
