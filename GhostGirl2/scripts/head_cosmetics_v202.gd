@@ -72,15 +72,16 @@ static func eye_variant_index(seed: int) -> int:
     return posmod(seed, EYE_VARIANTS.size())
 
 static func eye_centers(face: String) -> Array[Vector2]:
-    # Centered 256x220 Ghost-local coordinates, brought down to the
-    # actual black-eye region, not the top of the fringe.
+    # Centered 256x220 Ghost-local coordinates calibrated against the
+    # real dark pupils in the supplied equipment screenshot. The old
+    # centers were approx. 18px screen-space left and 17px too low.
     match face:
         "front":
-            return [Vector2(-17.0, -7.0), Vector2(17.0, -7.0)]
+            return [Vector2(9.0, -43.0), Vector2(37.0, -43.0)]
         "left":
-            return [Vector2(-12.0, -7.0)]
+            return [Vector2(8.0, -42.0)]
         "right":
-            return [Vector2(12.0, -7.0)]
+            return [Vector2(32.0, -42.0)]
     return []
 
 static func pose_eye_centers(animation_name: String, frame_index: int, face: String) -> Array[Vector2]:
