@@ -4,6 +4,7 @@ extends RefCounted
 const PATH: String = "res://resources/wand_pose_guides_v163.json"
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const SAMPLES = preload("res://scripts/walk_inbetweens_v223.gd")
 static var _rows: Dictionary = {}
 
 static func rows() -> Dictionary:
@@ -76,11 +77,17 @@ static func alignment_offset(animation_name: String, frame_index: int, face: Str
 	var points: PackedVector2Array = span(animation_name, frame_index, face)
 	return target_grip(face, animation_name, frame_index) - points[0] if points.size() == 2 else Vector2.ZERO
 
+static func visible_frame(body: AnimatedSprite2D) -> int:
+	if body == null:
+		return 0
+	var name: String = str(body.animation)
+	return 0 if name.begins_with("wand_idle_") else SAMPLES.source_pose_index(body.sprite_frames, name, body.frame)
+
 static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2Array:
 	if body == null:
 		return PackedVector2Array()
 	var animation_name: String = str(body.animation)
-	var frame: int = 0 if animation_name.begins_with("wand_idle_") else body.frame
+	var frame: int = visible_frame(body)
 	var points: PackedVector2Array = span(animation_name, frame, face)
 	if points.size() != 2:
 		return points

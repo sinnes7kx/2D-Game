@@ -10,6 +10,7 @@ const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
+const MOTION_V225 = preload("res://scripts/action_motion_samples_v225.gd")
 const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const AIR_V203 = preload("res://scripts/airborne_attacks_v203.gd")
@@ -184,6 +185,8 @@ func _ready() -> void:
 	GENTLE.install(body_art)
 	STEADY_IDLE.install(body_art)
 	AIR_V203.install(body_art)
+	if not equipment_preview_only:
+		MOTION_V225.install(body_art)
 	var scythe_rig: Node2D = SCYTHE_RIG_V190.new()
 	scythe_rig.name = "ScytheRigV190"
 	body_art.add_child(scythe_rig)
@@ -565,8 +568,9 @@ func _process(delta: float) -> void:
 			body_art.rotation = (0.045 if heavy_attack else 0.075) * motion * turn
 		body_art.scale = Vector2.ONE * BASE_ART_SCALE
 	elif dodge_time_left > 0.0:
-		body_art.position = BASE_ART_POS - dodge_direction * 8.0
-		body_art.rotation = -0.09 * dodge_direction.x
+		var flow: Vector3 = MOTION_V225.dodge_flow(GENTLE.phase_of(body_art))
+		body_art.position = BASE_ART_POS - dodge_direction * flow.x + Vector2(0.0, -flow.y)
+		body_art.rotation = -flow.z * dodge_direction.x
 		body_art.scale = Vector2.ONE * BASE_ART_SCALE
 	elif jump_time_left > 0.0:
 		var jump_progress: float = 1.0 - jump_time_left / maxf(0.01, jump_duration)
@@ -583,6 +587,7 @@ func _process(delta: float) -> void:
 		var charge: float = clampf(1.0 - spell_time_left / spell_cast_duration, 0.0, 1.0)
 		body_art.position = BASE_ART_POS + Vector2(0, -3.0 * sin(charge * PI))
 		body_art.rotation = sin(charge * PI) * 0.045
+		body_art.scale = Vector2.ONE * BASE_ART_SCALE
 		hand.position = _hand_position_for_facing() + spell_direction * (12.0 * sin(charge * PI))
 	elif is_throwing:
 		var progress: float = clampf(throw_time / THROW_DURATION, 0.0, 1.0)
@@ -617,7 +622,7 @@ func _process(delta: float) -> void:
 	# A restrained landing compression eases the transition into walking.
 	# This scales the existing sprite; it never edits its approved pixels.
 	if landing_recoil_left > 0.0 and jump_time_left <= 0.0 and hurt_recoil_left <= 0.0:
-		var landing_weight: float = pow(landing_recoil_left / LANDING_RECOIL, 1.3)
+		var landing_weight: float = MOTION_V225.landing_weight(landing_recoil_left / LANDING_RECOIL)
 		body_art.scale *= Vector2(1.0 + 0.065 * landing_weight, 1.0 - 0.095 * landing_weight)
 		body_art.position.y += 3.6 * landing_weight
 	# Feedback without altering Ghost Girl's approved textures or equipment tint.
@@ -815,6 +820,7 @@ func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> vo
 	spell_cooldown = spell_cast_duration
 	body_art.speed_scale = 1.0
 	_play_action_frames("wand_cast_" + facing_name, spell_cast_duration)
+	body_art.set_frame_and_progress(0, 0.0)
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, "spell_heavy" if heavy or moonfall or not new_kind.is_empty() else "spell", -17.0)
 
 func _advance_spell(delta: float) -> void:
@@ -1085,6 +1091,7 @@ func _begin_dodge() -> void:
 	# Brief safe window, then vulnerability during the final roll recovery.
 	invulnerable_time = maxf(invulnerable_time, 0.24)
 	_play_action_frames("dodge_" + facing_name, DODGE_DURATION)
+	body_art.set_frame_and_progress(0, 0.0)
 
 
 # Called only from a confirmed hostile strike/bolt collision, directly before

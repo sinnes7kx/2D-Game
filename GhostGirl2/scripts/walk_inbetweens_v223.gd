@@ -12,6 +12,12 @@ static var _cache: Dictionary = {}
 static func source_pose_index(frames: SpriteFrames, name: String, frame: int) -> int:
 	if frames == null:
 		return frame
+	# v2.25 uses explicit maps for nonuniform, nonlooping action samples.
+	var actions: Dictionary = frames.get_meta("v225_action_sample_sources", {})
+	if actions.has(name):
+		var mapping: Array = actions[name]
+		if not mapping.is_empty():
+			return int(mapping[clampi(frame, 0, mapping.size() - 1)])
 	var expanded: Dictionary = frames.get_meta(META, {})
 	if not expanded.has(name):
 		return frame
