@@ -69,7 +69,9 @@ func _process(delta: float) -> void:
 			(bow_painted_mask.material as ShaderMaterial).set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
 		queue_redraw()
 	if is_instance_valid(bow_body_glow) and item != null:
-		bow_body_glow.visible = item.weapon_style() == "bow" and glow_enabled and CHOICES_V216.bow_body_visible(item)
+		bow_body_glow.visible = item.weapon_style() == "bow" and glow_enabled and FX_LEVEL.intensity > 0.0 and CHOICES_V216.bow_body_visible(item)
+		var mode: int = CHOICES_V216.bow_mode(item)
+		bow_body_glow.modulate.a = clampf(CHOICES_V216.opacity(item, 0.14) * (1.5 if mode == 3 else 0.8) * FX_LEVEL.intensity, 0.0, 1.0)
 	if is_visible_in_tree() and item != null and (glow_enabled or (is_modular() and int(look.get("surface_mode", 0)) >= 2)):
 		elapsed += delta
 		queue_redraw()
