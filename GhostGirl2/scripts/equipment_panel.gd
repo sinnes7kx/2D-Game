@@ -148,9 +148,9 @@ func _install_live_preview() -> void:
 	layout.move_child(row, $Layout/FooterTitle.get_index())
 	var direction: OptionButton = OptionButton.new()
 	direction.name = "Facing"
-	for face in ["Front", "Right", "Back", "Left"]:
+	for face in ["Front", "Right", "Back", "Left", "Front-right", "Back-right", "Back-left", "Front-left"]:
 		direction.add_item(face)
-	direction.tooltip_text = "View the actual equipped character from any direction"
+	direction.tooltip_text = "Eight headings; diagonal original-skin unarmed artwork when installed. Equipped weapons retain their validated cardinal poses."
 	direction.item_selected.connect(func(i: int) -> void: live_preview.call("set_direction", i))
 	row.add_child(direction)
 	var fx_label: Label = Label.new()

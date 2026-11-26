@@ -86,6 +86,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Four idle rows and four walking rows; the latter depict front-right/front-left/left/right, not true rear walking. Original pose fallback for rear walk, weapon-equipped locomotion, and combat/actions because the generated sheet does not contain validated hand guides or action frames. Painted halo/ornaments are part of the alternate art; do not claim a fully modular skin until those are separated and guides authored.
 - Optional PNG must be copied to GhostGirl2/assets/ghost/skins/rose_nocturne_v246.png before opening Godot. Missing asset disables the alternate selector and leaves the original game working. No binary upload in this connector pass. F5 and skin switching with equipped items remain pending.
 
+### Original Ghost Girl diagonal locomotion (source implementation; asset overlay required)
+
+- New reference-guided original-style diagonal body atlas, cleaned and normalized to 2048×1760, four idle and four walk rows, eight 256×220 cells each. No rotated cardinal art, baked weapons, halo or sparkle layers. Preserve original cardinal art and cycle timing. Actual diagonal art selected for original skin unarmed locomotion; combat and armed poses retain cardinal fallbacks until new hand guides and weapon/action poses are validated. Rose Nocturne remains separate.
+- Equipment preview adds diagonal headings, with safe cardinal fallback when armed. Optional PNG distributed separately at `GhostGirl2/assets/ghost/skins/ghost_diagonal_v247.png`; missing file leaves game functional. Registered regression assertions for eight-frame structure and fallback selection. F5/engine verification remains pending.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

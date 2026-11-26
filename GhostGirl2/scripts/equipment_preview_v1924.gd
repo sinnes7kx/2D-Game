@@ -16,8 +16,8 @@ var preview_pan: Vector2 = Vector2.ZERO
 const BASE_SCALE: float = 1.55
 const BASE_POSITION: Vector2 = Vector2(117, 204)
 const ZOOM_PIVOT: Vector2 = Vector2(117, 118)
-const FACES: Array[String] = ["front", "right", "back", "left"]
-const DIRECTIONS: Array[Vector2] = [Vector2.DOWN, Vector2.RIGHT, Vector2.UP, Vector2.LEFT]
+const FACES: Array[String] = ["front", "right", "back", "left", "front_right", "back_right", "back_left", "front_left"]
+const DIRECTIONS: Array[Vector2] = [Vector2.DOWN, Vector2.RIGHT, Vector2.UP, Vector2.LEFT, Vector2(1,1), Vector2(1,-1), Vector2(-1,-1), Vector2(-1,1)]
 
 func bind_inventory(value: Node) -> void:
 	inventory = value
@@ -86,9 +86,10 @@ func refresh() -> void:
 	if not is_instance_valid(actor) or inventory == null:
 		return
 	actor.call("set_facing", DIRECTIONS[facing_index])
-	var clip: String = str(actor.call("_weapon_motion_prefix", false)) + FACES[facing_index]
+	var cardinal: String = str(actor.get("facing_name"))
+	var clip: String = str(actor.call("_weapon_motion_prefix", false)) + cardinal
 	if not body.sprite_frames.has_animation(clip):
-		clip = "idle_" + FACES[facing_index]
+		clip = "idle_" + cardinal
 	clip = str(actor.call("_resolve_skin_clip", clip))
 	if body.sprite_frames.has_animation(clip) and (str(body.animation) != clip or not body.is_playing()):
 		body.play(clip)
