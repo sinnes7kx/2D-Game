@@ -54,10 +54,10 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 ---
 
-### Compact rarity preview buttons (source implementation; engine review pending)
+### Melee chains and impact feedback (source implementation; engine review pending)
 
-- Replace the cosmetic radio grid with Common, Uncommon, Rare, Exceptional, Legendary, Exalted, Godlike and Natural debug buttons. Map them to existing material tiers 0–6; retain granular Test Effects menu. Presets clear temporary overrides and never modify saved seed, UID, stats or real rarity. Godlike is a label for the existing Anomaly tier, not an authenticated rare drop.
-- F5 review required for selection, layout, preview and reset. Existing natural ticket counts unchanged.
+- Two consecutive light melee attacks followed by heavy within the existing chain grace grant 25% damage, one confirmed-hit double ring and a unique impact cue. Dodge recovery opens a 0.48-second heavy lunge window; movement uses normal collision-aware sliding. Existing stamina costs, weapon stats and hit counts retained. Ranged and wand combos deferred.
+- Grounded plunge landing produces a slam cue; wall rays produce material contact audio without damaging walls or wearing weapons. Existing wood contact gets foley. Sharp confirmed flesh hits have moderately larger stylized blood bursts. F5 test combo timing, interruption, walls, audio and old saves before release.
 
 ## 1. Current project baseline — verify before planning implementation
 
