@@ -472,7 +472,8 @@ func _draw() -> void:
 	# Explicit owner-selected glow always produces a small visible metal/glass
 	# highlight even if this weapon lacks an authored prestige animation.
 	# Paired/twin blades and heavy rigs retain their own precise edge paths.
-	if item.glow_level_override > 0 and style not in ["dual_sword", "dual_dagger", "twinblade"]:
+	var seeded_special: bool = GhostWeaponFXLibrary.tier(item.quality) >= 2 or item.visual_signature() > 0
+	if (item.glow_level_override > 0 or (item.glow_level_override < 0 and seeded_special)) and style not in ["dual_sword", "dual_dagger", "twinblade"]:
 		_draw_v216_visible_fallback(grip, tip, intensity)
 	if style == "dual_sword":
 		# Glow is applied to BOTH physical sword blades, never across the grips.
@@ -971,8 +972,8 @@ func _draw_v216_visible_fallback(grip: Vector2, tip: Vector2, intensity: float) 
 	var color: Color = _gradient_at(0.72)
 	var power: float = clampf(intensity, 0.0, 1.6)
 	var root: Vector2 = grip.lerp(tip, 0.35)
-	draw_line(root, tip, Color(color.r, color.g, color.b, 0.14 * power), 4.8, true)
-	draw_line(root, tip, Color(color.r, color.g, color.b, 0.38 * power), 1.35, true)
+	draw_line(root, tip, Color(color.r, color.g, color.b, 0.20 * power), 5.6, true)
+	draw_line(root, tip, Color(color.r, color.g, color.b, 0.48 * power), 1.5, true)
 	draw_circle(tip, 2.0, Color(color.r, color.g, color.b, 0.31 * power))
 
 func _draw_bow_dual_glow(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2, intensity: float) -> void:
