@@ -143,6 +143,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.25 — fluid dodging, wand casting and landing (source implementation; engine review pending)
+
+- Expand 16-frame directional dodges to 24 samples and eight-frame directional wand casts to 22 samples. Preserve each original texture and weighted clip duration, including the final pose hold. These are procedural opaque-interior transitions, not newly painted limb poses.
+- Explicit nearest-source maps drive wand atlas region, wrist alignment, prestige/glimmer and spell origin together. Dodge eye guides map all 16 authored poses to eight beats. Nonexpanded clips, original source art, seed identities and saves remain unchanged.
+- Ease render-only dodge displacement and roll to/from neutral, smooth landing recovery, reset cast scale and restart repeated casts/dodges. Physical dodge speed, 0.24-second invulnerability, stamina and spell release/cooldown timings remain unchanged.
+- Add synthetic quick smoke for sample counts, preserved keys, alpha, duration, shared wand indexing and bounded motion. No Godot engine or GPU profiling in this source-only change. Worst-case extra RGBA texture data is roughly 19 MiB (88 generated 256×220 textures); preview skips generation. No automatic Actions dispatch.
+
 ### v2.23 — directional stride continuity and locomotion sampling (source implementation; engine review pending)
 
 - Expand each ordinary eight-frame walk cycle to 24 procedural samples at unchanged weighted cycle duration, preserving every original texture at every third frame. Intermediate paint borrows only overlapping opaque interior colors and retains one approved silhouette; these are not newly hand-drawn limb poses. Cache four cycles; equipment preview skips generation.
