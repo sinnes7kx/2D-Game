@@ -289,7 +289,7 @@ func _process(delta: float) -> void:
 		wand_visual.show_behind_parent = facing == "back"
 		wand_visual.z_index = -2 if facing == "back" else 6
 	var ethereal_visible: bool = dress_ethereal_alpha < 1.0 and ETHEREAL_FX.intensity > 0.0
-	if dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty() or ethereal_visible or ethereal_was_visible != ethereal_visible:
+	if dress_now != null or dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty() or ethereal_visible or ethereal_was_visible != ethereal_visible:
 		queue_redraw()
 	ethereal_was_visible = ethereal_visible
 
@@ -313,6 +313,8 @@ func _draw() -> void:
 		for i in range(3):
 			var p: Vector2 = Vector2(cos(aura_time * 0.8 + i * 2.1) * 14.0, -31.0 + sin(aura_time + i * 2.1) * 10.0)
 			draw_circle(p, 1.5, Color(accessory_color.r, accessory_color.g, accessory_color.b, 0.17))
+	if last_dress != null and ETHEREAL_FX.intensity > 0.0:
+		_draw_dress_sparkles()
 	if not dress_aura_enabled:
 		return
 	if dress_signature == 4:
@@ -391,3 +393,19 @@ func _draw_ethereal_shine() -> void:
 		if i % 3 == 0:
 			draw_line(point - Vector2(2.4, 0), point + Vector2(2.4, 0), Color(ink.r, ink.g, ink.b, brightness * 0.65), 0.7, true)
 			draw_line(point - Vector2(0, 2.4), point + Vector2(0, 2.4), Color(ink.r, ink.g, ink.b, brightness * 0.65), 0.7, true)
+
+func _draw_dress_sparkles() -> void:
+	var count: int = 7 + mini(5, GhostWeaponFXLibrary.tier(last_dress.quality) * 2)
+	if dress_signature >= 4 or dress_ethereal_alpha < 1.0:
+		count += 4
+	for i in range(count):
+		var life: float = fposmod(aura_time * (0.32 + float(i % 4) * 0.05) + float(i) / float(count), 1.0)
+		var a: float = aura_time * 0.85 + float(i) * 2.4
+		var point: Vector2 = Vector2(8.0 + sin(a) * (18.0 + float(i % 3) * 5.0), -25.0 + life * 76.0)
+		var ink: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, float(i) / float(count)).lerp(Color.WHITE, 0.48)
+		var gain: float = ETHEREAL_FX.alpha(pow(sin(life * PI), 2.0) * 0.83)
+		draw_circle(point, 5.0, Color(ink.r, ink.g, ink.b, gain * 0.12))
+		draw_circle(point, 1.55, Color(ink.r, ink.g, ink.b, gain))
+		if i % 2 == 0:
+			draw_line(point - Vector2(3.0, 0), point + Vector2(3.0, 0), Color(ink.r, ink.g, ink.b, gain * 0.8), 0.85, true)
+			draw_line(point - Vector2(0, 3.0), point + Vector2(0, 3.0), Color(ink.r, ink.g, ink.b, gain * 0.8), 0.85, true)

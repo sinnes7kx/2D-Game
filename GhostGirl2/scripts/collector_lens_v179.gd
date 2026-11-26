@@ -146,13 +146,10 @@ func open_item(value: GhostItemInstance) -> void:
 	model.call("set_item", value)
 	heading.text = value.display_name()
 	heading.add_theme_color_override("font_color", value.quality_color())
-	var look: Dictionary = value.collector_appearance()
-	info.text = ""
-	if not look.is_empty():
-		info.text = "[color=#dfc38e]MATERIAL  ·  %s[/color]\n[color=#c8b6db]PARTICLES  ·  %s[/color]\n\n" % [value.collector_material_label().to_upper(), ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"][clampi(int(look.get("particle_tier", 0)), 0, 6)]]
-	if (bool(model.call("is_modular")) or bool(model.call("has_painted_surface"))) and not look.is_empty():
-		info.text += "[color=#bfc9dd]SURFACE  ·  %s[/color]\n\n" % preload("res://scripts/living_metal_v187.gd").LABELS[clampi(int(look.get("surface_mode", 0)), 0, 6)]
-	info.text += MARKUP.item_info(value, true)
+	info.text = MARKUP.item_info(value, false)
+	var impact: String = MARKUP.impact_text(value)
+	if not impact.is_empty():
+		info.text += "\n[right][color=%s]%s[/color][/right]" % [MARKUP.color_to_tag(MARKUP.impact_color(value)), MARKUP.escape(impact)]
 	info.scroll_to_line(0)
 	glow_button.disabled = false
 	motion_button.disabled = false

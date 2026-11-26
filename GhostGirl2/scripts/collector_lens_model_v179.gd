@@ -114,11 +114,18 @@ func _draw() -> void:
 		"dagger":
 			if item.uses_forge_dagger():
 				FORGE_V238.draw_dagger(self, PackedVector2Array([Vector2(0, 14), Vector2(0, -25)]), profiles[0])
+				segments.append(PackedVector2Array([Vector2(0, 6), Vector2(0, -25)]))
 			else:
 				_grip(Vector2(0, 20), Vector2(0, 5), 3.2, 0)
 				_blade(Vector2(0, 5), Vector2(0, -35), 3.2, 0)
 		"crossbow":
-			CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, str(item.definition.item_id))
+			var base: String = str(item.definition.item_id)
+			var fx: Dictionary = look if glow_enabled and CHOICES_V216.effect_scale(item) > 0.0 else {}
+			if base == "blackthorn_crossbow_v236":
+				for x in [-20.0, 20.0]:
+					CROSSBOW_V236.draw_weapon(self, Vector2(x, 12), Vector2(x, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed)
+			else:
+				CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed)
 		"halberd", "maul":
 			var p: Dictionary = profiles[0].duplicate()
 			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
@@ -179,7 +186,17 @@ func _draw_trident() -> void:
 
 func _draw_light() -> void:
 	for i in range(segments.size()):
-		ANOMALOUS.draw_edge(self, segments[i], gradients, look, elapsed, float(look.get("glow_strength", 1.0)) * 0.80, i % 2 == 1)
+		var path: PackedVector2Array = segments[i]
+		ANOMALOUS.draw_edge(self, path, gradients, look, elapsed, float(look.get("glow_strength", 1.0)), i % 2 == 0)
+		# The held weapon uses a soft light core in addition to material edges.
+		for j in range(10):
+			var u: float = 0.12 + 0.8 * float(j) / 9.0
+			var at: Vector2 = ANOMALOUS.point_on_path(path, u)
+			var ink: Color = ANOMALOUS.color_at(gradients, look, u, elapsed).lerp(Color.WHITE, 0.25)
+			var strength: float = CHOICES_V216.effect_scale(item)
+			draw_circle(at, 6.0, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.055 * strength)))
+			draw_circle(at, 2.5, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.19 * strength)))
+			draw_circle(at, 0.9, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.48 * strength)))
 
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.
