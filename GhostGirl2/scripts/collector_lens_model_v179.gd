@@ -6,6 +6,7 @@ const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const HEAVY = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
 const SCYTHE_GLOW = preload("res://scripts/scythe_glow_layer_v211.gd")
+const CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const PAINTED_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 const BOW_POSE = preload("res://scripts/bow_palette_overlay_v139.gd")
 var painted_preview: Sprite2D
@@ -110,7 +111,7 @@ func _draw() -> void:
 			var p: Dictionary = profiles[0].duplicate()
 			p["scythe_span"] = float(look.get("scythe_span", 1.0))
 			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
-			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled)
+			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0)
 			if is_instance_valid(scythe_glow):
 				if glow_enabled:
 					scythe_glow.call("set_pose", item, Vector2(-12, 20), Vector2(-12, -56), p, 1.0, glow_preview_override)
@@ -144,7 +145,7 @@ func _draw() -> void:
 			else:
 				_grip(Vector2(0, 20), Vector2(0, 5), 3.2, 0)
 				_blade(Vector2(0, 5), Vector2(0, -35), 3.2, 0)
-	if glow_enabled:
+	if glow_enabled and CHOICES_V216.effect_scale(item) > 0.0:
 		_draw_light()
 		# Weapon signatures are drawn along the same edge as equipped art.
 
