@@ -27,7 +27,6 @@ def main() -> int:
     failures += require("scripts/scythe_glow_layer_v211.gd", (
         "const STOPS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50]",
         'ghost-girl-v211-scythe-aura:',
-        "if int(digest[0]) % 100 < 70:",
         "if int(digest[0]) < 179:",
         "CanvasItemMaterial.BLEND_MODE_ADD",
         "SCYTHE.contours(head, axis, profile, side)",
@@ -43,11 +42,11 @@ def main() -> int:
     ))
     failures += require("scripts/scythe_rig_v190.gd", (
         '"WorldScytheGlowV211"', "scythe_glow.call(\"set_pose\"",
-        "SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, false)",
+        "equipped == null or equipped.glow_level_override != 0",
     ))
     failures += require("scripts/collector_lens_v179.gd", (
         '"ScytheGlowPreviewV211"',
-        "index - 1", "Preview glow", "not saved",
+        "index - 1", "owned_inventory.save_game()", "Saved scythe aura",
     ))
     failures += require("scripts/heavy_weapon_art_v192.gd", (
         "FX.draw_edge(canvas, closed, colors, look, phase, 0.60)",
