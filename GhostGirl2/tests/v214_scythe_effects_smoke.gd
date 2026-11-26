@@ -31,32 +31,32 @@ func _verify() -> void:
 	FX_LEVEL.set_intensity(1.0)
 	var model: Node2D = MODEL.new()
 	root.add_child(model)
-	model.set_item(scythe)
-	model.set_glow_preview_override(0)
+	model.call("set_item", scythe)
+	model.call("set_glow_preview_override", 0)
 	await process_frame
 	var aura: Node2D = model.get_node("ScytheGlowLayerV211") as Node2D
 	if aura == null or aura.visible or int(aura.get("level")) != 0:
 		_fail("Zero aura should stay invisible while separate blade rim is available")
 		return
-	model.set_glow_preview_override(5)
+	model.call("set_glow_preview_override", 5)
 	await process_frame
 	if not aura.visible or int(aura.get("level")) != 5 or not is_equal_approx(SCYTHE_AURA.opacity(5), 0.5):
 		_fail("50% inspection aura unavailable")
 		return
 	var old_rev: int = int(aura.get("last_fx_revision"))
 	FX_LEVEL.set_intensity(0.5)
-	aura.set_pose(scythe, aura.grip, aura.head, aura.profile, aura.side, 5)
+	aura.call("set_pose", scythe, aura.get("grip"), aura.get("head"), aura.get("profile"), aura.get("side"), 5)
 	if int(aura.get("last_fx_revision")) == old_rev:
 		_fail("Scythe aura did not respond to display intensity changes")
 		return
 	FX_LEVEL.set_intensity(original_intensity)
 	var lens: Control = LENS.new()
 	root.add_child(lens)
-	lens.open_item(scythe)
+	lens.call("open_item", scythe)
 	if not (lens.get("status") as Label).text.contains("Blade highlights"):
 		_fail("Collector Lens must explain the two independent FX layers")
 		return
-	lens.close_lens()
+	lens.call("close_lens")
 	if inv._serialize_item(scythe, Vector2i.ZERO) != before:
 		_fail("Display FX changed saved item stats or cosmetic identity")
 		return
