@@ -169,7 +169,7 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 
 - Fix saved Off/10–50% glow on the physical arrow's decorative head, particles, elemental effects, and painted echo arrows. Keep the actual shaft fully opaque, one physical projectile, unchanged collision, damage, elemental mechanics and range scoring. Natural retains the existing full-strength decoration.
 - Apply the same saved multiplier to release and impact FX; the separate lantern trail uses its existing global intensity factor and now initializes opacity before the first draw. No new seed traits, rarity changes, save schema, artwork or automatic Actions triggers.
-- Extend v2.03 synthetic smoke with linear opacity/pigment/damage checks. Source comparison verifies physics code is unchanged; actual Godot parser, render and F5 checks remain pending. Rebased directly on main after v2.19 merged.
+- Extend v2.03 synthetic smoke with linear opacity/pigment/damage checks. Source comparison verifies physics code is unchanged; actual Godot parser, render and F5 checks remain pending. This is an independent main-based PR, not dependent on v2.19.
 
 ### v2.16 — saved glow choices, glowing bows, seeded arrow signatures and authored wand alignment (source committed; Godot F5 pending)
 
