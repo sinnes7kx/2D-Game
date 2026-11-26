@@ -1,217 +1,43 @@
-name: Ghost Girl Godot 4.7 smoke
+name: Ghost Girl Godot checks (manual, budget-safe)
 
+# No push/pull_request trigger: branch commits must not spend Actions credits.
 on:
-  pull_request:
-    paths:
-      - 'GhostGirl2/**'
-      - '.github/workflows/ghostgirl-godot-smoke.yml'
   workflow_dispatch:
+    inputs:
+      suite:
+        description: "Quick smoke or complete historical regression suite"
+        required: true
+        default: quick
+        type: choice
+        options:
+          - quick
+          - full
 
 permissions:
   contents: read
 
+concurrency:
+  group: ghostgirl-manual-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  parse-and-boot:
-    name: Godot 4.7 headless import, script parse and boot
+  local-equivalent-smoke:
+    name: Godot 4.7 manual smoke
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Checkout game
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           persist-credentials: false
           lfs: true
-
-      - name: Install Godot (no .NET required)
+      - name: Install Godot 4.7
         uses: chickensoft-games/setup-godot@v2
         with:
           version: '4.7.2'
           use-dotnet: false
           include-templates: false
-
-      - name: Engine version
-        run: godot --version
-
-      - name: Validate v1.72.2 structure and references
-        run: python3 GhostGirl2/tests/validate_v1722.py
-
-      - name: Validate v1.72.3 Mythic and blade-only effects
-        run: python3 GhostGirl2/tests/validate_v1723.py
-
-      - name: Validate v1.73 dual daggers
-        run: python3 GhostGirl2/tests/validate_v173.py
-
-      - name: Validate v1.74 dual-sword equipment and animation references
-        run: python3 GhostGirl2/tests/validate_v174.py
-
-      - name: Validate v1.75 hook-free body, bow mirror and Mythic glows
-        run: python3 GhostGirl2/tests/validate_v175.py
-
-      - name: Reject unresolved merge markers and unsafe duplicate scripts
-        run: python3 GhostGirl2/tests/validate_active_source_hygiene.py --self-test
-
-      - name: Import project resources
-        run: godot --headless --editor --path GhostGirl2 --import
-
-      - name: Verify bow grip/reroll alignment, airborne attacks and blunt families
-        run: godot --headless --path GhostGirl2 --script res://tests/v203_bow_airborne_blunt_smoke.gd
-      - name: Compile weapon prestige FX script
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/weapon_prestige_fx.gd
-      
-      - name: Compile dual-dagger animation rig
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v173_dual_daggers.gd
-
-      - name: Compile both dual-dagger blade layers
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v173_dual_dagger_blade.gd
-
-      - name: Compile dual-sword animation rig
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v174_dual_swords.gd
-
-      - name: Compile both dual-sword blade layers
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v174_dual_sword_blade.gd
-
-      - name: Verify dual-sword animations on a real Godot player scene
-        run: godot --headless --path GhostGirl2 --script res://tests/v174_animation_smoke.gd
-
-      - name: Compile hook-free weapon animation installer
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v175_hookfree_weapon_body.gd
-
-      - name: Compile bow palette overlay with left mirror
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/bow_palette_overlay_v139.gd
-
-      - name: Verify hook-free weapon frames and left bow mirror in Godot
-        run: godot --headless --path GhostGirl2 --script res://tests/v175_hookfree_mirror_smoke.gd
-
-      - name: Compile revised physical weapon pose renderer
-        run: godot --headless --path GhostGirl2 --check-only --script res://scripts/v172_weapon_pose.gd
-
-      - name: Verify v1.76 polearm thrust and Sanctum armory
-        run: godot --headless --path GhostGirl2 --script res://tests/v176_polearm_smoke.gd
-
-      - name: Validate independent collector appearance rolls
-        run: godot --headless --path GhostGirl2 --script res://tests/v177_collector_smoke.gd
-
-      - name: Validate modular physical weapon profiles
-        run: godot --headless --path GhostGirl2 --script res://tests/v178_modular_smoke.gd
-
-      - name: Verify collector inspection modal and item preservation
-        run: godot --headless --path GhostGirl2 --script res://tests/v179_lens_smoke.gd
-
-      - name: Verify preloaded core animation resource and repeatable installation
-        run: godot --headless --path GhostGirl2 --script res://tests/v1791_core_animation_smoke.gd
-
-      - name: Verify anomalous steel color modes and hand anchor regression
-        run: godot --headless --path GhostGirl2 --script res://tests/v180_anomalous_smoke.gd
-
-      - name: Verify actual inventory inspect button and twinblade assets
-        run: godot --headless --path GhostGirl2 --script res://tests/v1801_twinblade_inspect_smoke.gd
-
-      - name: Verify collection vault transfer and item protection
-        run: godot --headless --path GhostGirl2 --script res://tests/v181_vault_smoke.gd
-
-      - name: Verify head accessories and tiaras survive safe vault transfers
-        run: godot --headless --path GhostGirl2 --script res://tests/v206_equipment_vault_smoke.gd
-
-      - name: Verify stable vault family and quality filtering and sorting
-        run: godot --headless --path GhostGirl2 --script res://tests/v208_vault_filters_smoke.gd
-
-      - name: Verify Sanctum collection exhibition and persistent assignments
-        run: godot --headless --path GhostGirl2 --script res://tests/v182_exhibition_smoke.gd
-
-      - name: Verify Sanctum collector captions and read-only provenance
-        run: godot --headless --path GhostGirl2 --script res://tests/v207_sanctum_captions_smoke.gd
-
-      - name: Verify regional weapon appearance and provenance
-        run: godot --headless --path GhostGirl2 --script res://tests/v183_regional_smoke.gd
-
-      - name: Verify Ethereal weapon durability and preservation
-        run: godot --headless --path GhostGirl2 --script res://tests/v184_ethereal_smoke.gd
-
-      - name: Verify universal inspection and effect menu
-        run: godot --headless --path GhostGirl2 --script res://tests/v185_inspection_smoke.gd
-
-      - name: Verify dagger thrusts and repaired animation frames
-        run: godot --headless --path GhostGirl2 --script res://tests/v186_animation_smoke.gd
-
-      - name: Verify Living Metal material patterns
-        run: godot --headless --path GhostGirl2 --script res://tests/v187_surface_smoke.gd
-
-      - name: Verify variable palettes and bounded special effects
-        run: godot --headless --path GhostGirl2 --script res://tests/v188_palette_smoke.gd
-
-      - name: Verify independent forged weapon identities
-        run: godot --headless --path GhostGirl2 --script res://tests/v189_forging_smoke.gd
-
-      - name: Verify enchanted arsenal weapon material integration
-        run: godot --headless --path GhostGirl2 --script res://tests/v190_arsenal_smoke.gd
-
-      - name: Verify gentle weapon idle motion and opacity
-        run: godot --headless --path GhostGirl2 --script res://tests/v191_gentle_motion_smoke.gd
-
-      - name: Verify modular halberds and warmauls
-        run: godot --headless --path GhostGirl2 --script res://tests/v192_heavy_weapons_smoke.gd
-
-      - name: Verify legacy inventory dropdown compatibility
-        run: godot --headless --path GhostGirl2 --script res://tests/v1921_dropdown_compat_smoke.gd
-
-      - name: Verify equipped visual effect consistency
-        run: godot --headless --path GhostGirl2 --script res://tests/v1923_equipped_fx_smoke.gd
-
-      - name: Verify live equipment preview and effect intensity
-        run: godot --headless --path GhostGirl2 --script res://tests/v1924_live_preview_smoke.gd
-
-      - name: Verify collection recovery and legacy migration
-        run: godot --headless --path GhostGirl2 --script res://tests/v1922_collection_recovery_smoke.gd
-
-      - name: Verify Lanternhaven town and stash access
-        run: godot --headless --path GhostGirl2 --script res://tests/v193_town_smoke.gd
-
-      - name: Verify quality-coded pinned item tooltips
-        run: godot --headless --path GhostGirl2 --script res://tests/v193_quality_tooltip_smoke.gd
-      - name: Verify Collector Roll Code and item identity
-        run: godot --headless --path GhostGirl2 --script res://tests/v1931_roll_code_smoke.gd
-
-      - name: Verify original combat impact audio and controls
-        run: godot --headless --path GhostGirl2 --script res://tests/v194_impact_audio_smoke.gd
-
-      - name: Verify smooth eight-frame sword, trident and bow idles
-        run: godot --headless --path GhostGirl2 --script res://tests/v195_steady_weapon_idle_smoke.gd
-
-      - name: Verify compact tooltip and interactive visual swatches
-        run: godot --headless --path GhostGirl2 --script res://tests/v196_compact_tooltip_smoke.gd
-
-      - name: Verify dagger idle, Reaper glow and versioned dark gradients
-        run: godot --headless --path GhostGirl2 --script res://tests/v197_dagger_reaper_dark_gradient_smoke.gd
-
-      - name: Verify sword whoosh, bow idle hand alignment and miss feedback
-        run: godot --headless --path GhostGirl2 --script res://tests/v198_weapon_swing_bow_pose_smoke.gd
-
-      - name: Verify gold tooltip color constant and both info views
-        run: godot --headless --path GhostGirl2 --script res://tests/v199_tooltip_gold_constant_smoke.gd
-
-      - name: Verify dual-sword wrist alignment and bow-parented live FX
-        run: godot --headless --path GhostGirl2 --script res://tests/v200_weapon_attachment_smoke.gd
-
-      - name: Verify M0 collection rollback and protected save fidelity
-        run: godot --headless --path GhostGirl2 --script res://tests/v200_collection_transfer_integrity_smoke.gd
-
-      - name: Verify multitype collector identity, saved looks and JSON reload
-        run: godot --headless --path GhostGirl2 --script res://tests/v205_multislot_collector_identity_smoke.gd
-
-      - name: Verify creative Moonthorn cave traversal, persistence and upright bow
-        run: godot --headless --path GhostGirl2 --script res://tests/v201_moonlit_cave_exploration_smoke.gd
-
-      - name: Verify split accessory/helm slots, old saves and preview cosmetics
-        run: godot --headless --path GhostGirl2 --script res://tests/v202_headgear_migration_smoke.gd
-
-      - name: Verify three-stage 300-point fletcher range and prize rollback
-        run: godot --headless --path GhostGirl2 --script res://tests/v202_fletcher_range_smoke.gd
-
-      - name: Verify living wildlife and two creative world puzzles
-        run: godot --headless --path GhostGirl2 --script res://tests/v202_living_world_puzzles_smoke.gd
-
-      - name: Verify seeded eye styles and full pupil coverage anchors
-        run: godot --headless --path GhostGirl2 --script res://tests/v204_eye_palette_coverage_smoke.gd
-
-      - name: Load main scene for ten frames
-        run: godot --headless --path GhostGirl2 --quit-after 10
+      - name: Run chosen suite
+        env:
+          SUITE: ${{ inputs.suite }}
+        run: bash GhostGirl2/tools/run_smoke_suite.sh "$SUITE"
