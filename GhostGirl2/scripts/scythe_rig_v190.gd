@@ -40,9 +40,11 @@ func _process(delta: float) -> void:
 	style = item.weapon_style() if item != null else ""
 	active_item_id = str(item.definition.item_id) if item != null and item.definition != null else ""
 	visible = item != null and ((style == "scythe" and SCYTHE.matches(str(body.animation))) or (style in ["halberd", "maul"] and HEAVY.matches(str(body.animation))))
-	if not visible:
+	if not visible or style != "scythe":
+		# The separate scythe aura must not linger when switching weapons.
 		if is_instance_valid(scythe_glow):
 			scythe_glow.call("clear_pose")
+	if not visible:
 		return
 	var next: String = SURFACE.key(item) + ":%d:%d:%d:%d" % [item.debug_color_mode, item.debug_glow_motif, item.debug_forge_guard, item.debug_forge_grip]
 	if next != key:
@@ -72,7 +74,7 @@ func _draw() -> void:
 	if points.size() == 2:
 		var side: float = -1.0 if name_now.ends_with("_left") else 1.0
 		if style == "scythe":
-			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, false)
+			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, true)
 			if is_instance_valid(scythe_glow):
 				var world: Node = player.get("world") as Node
 				var inv: Node = world.get("inventory") as Node if world != null else null
