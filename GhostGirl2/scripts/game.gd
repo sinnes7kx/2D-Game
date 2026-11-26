@@ -73,7 +73,9 @@ const BLUNT_LOOT_TABLE = [
 ]
 const CROSSBOW_LOOT_V236 = [
 	preload("res://items/blackthorn_crossbow_v236.tres"),
-	preload("res://items/silver_reliquary_crossbow_v236.tres")
+	preload("res://items/silver_reliquary_crossbow_v236.tres"),
+	preload("res://items/vesper_latch_crossbow_v237.tres"),
+	preload("res://items/ossuary_arbalest_v237.tres")
 ]
 const BOW_LOOT_TABLE = [
 	preload("res://items/thornrose_bow.tres"),

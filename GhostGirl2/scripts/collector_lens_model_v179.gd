@@ -109,7 +109,7 @@ func _draw() -> void:
 	var style: String = item.weapon_style()
 	match style:
 		"crossbow":
-			CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, str(item.definition.item_id) == "silver_reliquary_crossbow_v236")
+			CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, str(item.definition.item_id))
 		"halberd", "maul":
 			var p: Dictionary = profiles[0].duplicate()
 			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))

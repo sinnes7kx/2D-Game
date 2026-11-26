@@ -783,6 +783,8 @@ func _play_action_frames(animation_name: String, duration: float) -> void:
 	body_art.play(animation_name, action_animation_rate)
 
 func _resume_timed_action() -> void:
+	if crossbow_stage != 0:
+		return # Crossbow poses follow the physics clock, not sprite playback.
 	# AnimatedSprite2D.play() defaults to rate 1.0. Preserve the original
 	# rate and exact frame/progress instead of speeding up or slowing down.
 	var frame_index: int = body_art.frame
@@ -1232,7 +1234,13 @@ func _begin_crossbow(heavy: bool, airborne: bool) -> void:
 		jump_attack_active = true
 		jump_attack_triggered = true
 	_play_action_frames("attack_crossbow_fire_" + facing_name, CROSSBOW_V236.FIRE_TIME)
-	body_art.set_frame_and_progress(0, 0.0)
+	_sync_crossbow_pose()
+
+func _sync_crossbow_pose() -> void:
+	var duration: float = CROSSBOW_V236.FIRE_TIME if crossbow_stage == 1 else (CROSSBOW_V236.HEAVY_RELOAD if crossbow_heavy else CROSSBOW_V236.RELOAD_TIME)
+	var sample: Vector2 = CROSSBOW_V236.action_sample(crossbow_left, duration)
+	body_art.pause()
+	body_art.set_frame_and_progress(int(sample.x), sample.y)
 
 func _advance_crossbow(delta: float) -> void:
 	if world.inventory.get_equipped("sword") != crossbow_item:
@@ -1240,6 +1248,7 @@ func _advance_crossbow(delta: float) -> void:
 		return
 	crossbow_left = maxf(0.0, crossbow_left - delta)
 	if crossbow_stage == 1:
+		_sync_crossbow_pose()
 		if not crossbow_fired and crossbow_left <= CROSSBOW_V236.FIRE_TIME - CROSSBOW_V236.RELEASE_AT:
 			crossbow_fired = true
 			_launch_crossbow_bolt()
@@ -1247,13 +1256,15 @@ func _advance_crossbow(delta: float) -> void:
 			crossbow_stage = 2
 			crossbow_left = CROSSBOW_V236.HEAVY_RELOAD if crossbow_heavy else CROSSBOW_V236.RELOAD_TIME
 			_play_action_frames("attack_crossbow_reload_" + facing_name, crossbow_left)
-			body_art.set_frame_and_progress(0, 0.0)
+			_sync_crossbow_pose()
 			COMBAT_JUICE.play(get_tree().current_scene, global_position, "crossbow_reload", -17.0)
 	elif crossbow_stage == 2:
 		if not str(body_art.animation).contains("crossbow_reload_"):
 			_play_action_frames("attack_crossbow_reload_" + facing_name, maxf(0.05, crossbow_left))
+		_sync_crossbow_pose()
 		if crossbow_left <= 0.0:
 			_clear_crossbow()
+			body_art.play()
 
 func _launch_crossbow_bolt() -> void:
 	if crossbow_item == null:
@@ -1274,7 +1285,7 @@ func _launch_crossbow_bolt() -> void:
 	bolt.set("caster_rid", get_rid())
 	bolt.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(crossbow_item))
 	bolt.set("full_palette", crossbow_item.glow_gradient_colors())
-	var points: PackedVector2Array = CROSSBOW_V236.span(str(body_art.animation), facing_name, body_art.frame)
+	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(str(body_art.animation), facing_name, body_art.frame), crossbow_heading)
 	var origin: Vector2 = global_position + Vector2(0, -39) + crossbow_heading * 31.0
 	if points.size() == 2:
 		origin = body_art.to_global(points[1])

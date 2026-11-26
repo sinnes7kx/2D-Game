@@ -195,6 +195,11 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
+	if animation_name.contains("crossbow_"):
+		var points: PackedVector2Array = _authored_weapon_span(animation_name, frame_index)
+		if animation_name.contains("_fire_") and player != null:
+			return CROSSBOW_V236.aimed_span(body, points, player.get("crossbow_heading"))
+		return points
 	var idle: bool = GENTLE.modular_idle(animation_name) or STEADY.is_smooth_blade_idle(animation_name)
 	var span: PackedVector2Array = _authored_weapon_span(animation_name, 0 if idle else frame_index)
 	if idle:
@@ -303,7 +308,9 @@ func _draw() -> void:
 		if held == null or held.definition == null:
 			return
 		var loaded: bool = int(player.get("crossbow_stage")) == 0 or (int(player.get("crossbow_stage")) == 1 and not bool(player.get("crossbow_fired")))
-		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, str(held.definition.item_id) == "silver_reliquary_crossbow_v236")
+		var reload_duration: float = CROSSBOW_V236.HEAVY_RELOAD if bool(player.get("crossbow_heavy")) else CROSSBOW_V236.RELOAD_TIME
+		var cocking: float = 1.0 - clampf(float(player.get("crossbow_left")) / reload_duration, 0.0, 1.0) if int(player.get("crossbow_stage")) == 2 else 0.0
+		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, str(held.definition.item_id), cocking)
 	elif animation_name.contains("sword_modular_"):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
