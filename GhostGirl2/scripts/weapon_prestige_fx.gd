@@ -150,7 +150,14 @@ func _sync_transform_parent() -> void:
 	if body == null:
 		return
 	var mask: AnimatedSprite2D = _bow_mask_node()
-	var target: Node2D = mask if item != null and item.weapon_style() == "bow" and mask != null else body
+	var target: Node2D = body
+	if item != null and item.weapon_style() == "bow":
+		var carry: AnimatedSprite2D = body.get_node_or_null("BowCarryV166") as AnimatedSprite2D
+		# Never parent weapon FX beneath an invisible color mask.
+		if mask != null and mask.visible:
+			target = mask
+		elif carry != null and carry.visible:
+			target = carry
 	if get_parent() != target:
 		reparent(target, false)
 		position = Vector2.ZERO
@@ -399,7 +406,7 @@ func _fallback_tip(grip: Vector2, face: String, distance: float) -> Vector2:
 
 func _process(delta: float) -> void:
 	# A little more edge presence on the small world-scale paired swords only.
-	self_modulate.a = FX_LEVEL.alpha(0.72 if item != null and item.weapon_style() == "dual_sword" else GENTLE.EFFECT_ALPHA)
+	self_modulate.a = FX_LEVEL.alpha(0.80 if item != null and item.weapon_style() == "bow" else (0.72 if item != null and item.weapon_style() == "dual_sword" else GENTLE.EFFECT_ALPHA))
 	elapsed += delta
 	if inventory == null and player != null:
 		# Self-heal when an older game.gd forgot to call bind_inventory().
