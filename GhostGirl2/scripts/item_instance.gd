@@ -22,6 +22,10 @@ var rare_visual_mod: int = -1
 # cosmetic snapshots and normal RNG; never changes genuine rare rolls.
 var debug_visual_override: int = -1
 var debug_mythic_variant: int = -1
+# User-chosen eye styling is cosmetic personalization, never a rarity roll.
+# -1 means original deterministic drop look (old saves are unchanged).
+var eye_style_override: int = -1
+var eye_palette_override: int = -1
 var collector_favorite: bool = false
 var collector_locked: bool = false
 const REGIONAL = preload("res://scripts/regional_treasures_v183.gd")
@@ -185,7 +189,8 @@ func _cosmetic_fields() -> Array[String]:
 		"weapon_fx_style_index", "weapon_fx_color_index", "weapon_fx_accent_index",
 		"weapon_fx_trail_index", "weapon_impact_style_index", "wand_cast_style_index",
 		"wand_lance_index", "bow_element_index", "bow_formation_index",
-		"bow_glow_index", "bow_trail_index", "bow_detail_index"]
+		"bow_glow_index", "bow_trail_index", "bow_detail_index",
+		"eye_style_override", "eye_palette_override"]
 
 func cosmetic_snapshot() -> Dictionary:
 	var look: Dictionary = {"seed": cosmetic_seed_number(), "cosmetic_seed": cosmetic_seed,
