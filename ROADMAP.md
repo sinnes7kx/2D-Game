@@ -68,6 +68,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Replace the painted fountain basin with an original stone fire ring at the same plaza coordinates, preserve existing collision and all routes. Animated warm flame, embers, eight town lantern highlights, four roadside lanterns and drifting forest motes. Visual-only, bounded redraws follow existing performance profiles. Existing town and road base artwork retained; full painterly overhaul remains open.
 - Nine source structure checks passed against committed branch; register scene-structure smoke test for hearth, collision, return route, scenery props and forest ambience. Actual headless and F5 runs remain required.
 
+### Lanternhaven Oath Tree and cobbled gathering square (source implementation; runtime review pending)
+
+- Original twisted Oath Tree sprite with carved bark, roots, hanging ribbons and y-sorted placement, two timber benches and individually shaded concentric cobblestones around the hearth. Small root/seat collision footprints; existing portals, stash, shrine, archery, breakables and saves retained. No multiplayer or seating interaction yet. First original vector detailing pass, not the full painterly town overhaul.
+- Extend registered hearth/road smoke test with landmark collision checks. Consolidated main-target PR includes still-unmerged #97; use one integration path, not two overlapping merges. Engine playtest and mainline CI remain release gates.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

@@ -94,19 +94,5 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
         FX.draw_signature(canvas, outline, gradient, look, time)
 
 static func draw_seeded_aura(canvas: Node2D, head: Vector2, gradient: Array[Color], look: Dictionary, time: float) -> void:
-    if FX_LEVEL.intensity <= 0.0 or gradient.is_empty():
-        return
     var tier: int = clampi(int(look.get("particle_tier", 0)), 0, 6)
-    var motif: int = int(look.get("glow_motif", 0))
-    for i in range(3 + tier):
-        var a: float = time * (1.8 + tier * 0.23) + TAU * float(i) / float(3 + tier)
-        var at: Vector2 = head + Vector2(cos(a), sin(a)) * (17.0 + tier * 1.5)
-        var color: Color = FX.color_at(gradient, look, float(i) / float(3 + tier), time)
-        var ink: Color = Color(color.r, color.g, color.b, FX_LEVEL.alpha(0.55))
-        if motif % 3 == 0:
-            canvas.draw_circle(at, 1.7, ink)
-        elif motif % 3 == 1:
-            canvas.draw_line(at - Vector2(2, 0), at + Vector2(2, 0), ink, 1.0, true)
-            canvas.draw_line(at - Vector2(0, 2), at + Vector2(0, 2), ink, 1.0, true)
-        else:
-            canvas.draw_arc(at, 3.0, a, a + PI, 8, ink, 1.0, true)
+    preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(canvas, head, Vector2.UP, Vector2.ONE * (17.0 + tier * 1.5), gradient, look, time)

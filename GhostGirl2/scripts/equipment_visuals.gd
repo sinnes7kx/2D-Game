@@ -235,8 +235,8 @@ func _process(delta: float) -> void:
 		dress_ethereal_ink = dress_now.palette_color().lerp(Color("e9e9ff"), 0.52) if dress_now != null else Color.WHITE
 	var spectral_material: ShaderMaterial = player_art.material as ShaderMaterial
 	if spectral_material != null:
-		spectral_material.set_shader_parameter("ethereal_opacity", dress_ethereal_alpha)
-		spectral_material.set_shader_parameter("ethereal_shine", ETHEREAL_FX.intensity if dress_ethereal_alpha < 1.0 else 0.0)
+		_apply_ethereal_body(spectral_material)
+
 		spectral_material.set_shader_parameter("ethereal_ink", dress_ethereal_ink)
 		spectral_material.set_shader_parameter("ethereal_phase", aura_time * 1.6)
 	var player = get_parent()
@@ -409,3 +409,30 @@ func _draw_dress_sparkles() -> void:
 		if i % 2 == 0:
 			draw_line(point - Vector2(3.0, 0), point + Vector2(3.0, 0), Color(ink.r, ink.g, ink.b, gain * 0.8), 0.85, true)
 			draw_line(point - Vector2(0, 3.0), point + Vector2(0, 3.0), Color(ink.r, ink.g, ink.b, gain * 0.8), 0.85, true)
+
+# All separately drawn weapon layers have their own material. Only legacy
+# baked sword/dagger/spear art needs a frame-guide protection corridor.
+func _apply_ethereal_body(mat: ShaderMaterial) -> void:
+	var clip: String = str(player_art.animation)
+	var opacity: float = dress_ethereal_alpha
+	var width: float = 0.0
+	var span: Vector4 = Vector4.ZERO
+	if opacity < 1.0:
+		var sword: GhostItemInstance = inventory.get_equipped("sword")
+		if sword != null and sword.weapon_style() in ["blade", "dagger", "spear"] and not WAND_ANCHORS_V216.is_wand_pose(clip):
+			var pose: Node = player_art.get_node_or_null("WeaponPoseV172")
+			var separate: bool = pose != null and bool(pose.call("_is_equipped", clip))
+			var armed: bool = clip.contains("sword_") or clip.contains("dagger_") or clip.contains("spear_") or clip.contains("trident_")
+			if armed and not separate:
+				var guide: Node = player_art.get_node_or_null("EquippedPrestigeFX")
+				var points: PackedVector2Array = guide.call("_axial_span") if guide != null else PackedVector2Array()
+				if points.size() == 2 and points[0].distance_squared_to(points[1]) > 16.0:
+					span = Vector4(points[0].x, points[0].y, points[1].x, points[1].y)
+					width = 12.0 if sword.weapon_style() == "blade" else 10.0
+				else:
+					# Prefer a readable weapon to fading unsupported baked art.
+					opacity = 1.0
+	mat.set_shader_parameter("ethereal_weapon_span", span)
+	mat.set_shader_parameter("ethereal_weapon_width", width)
+	mat.set_shader_parameter("ethereal_opacity", opacity)
+	mat.set_shader_parameter("ethereal_shine", ETHEREAL_FX.intensity if opacity < 1.0 else 0.0)

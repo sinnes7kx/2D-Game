@@ -13,6 +13,9 @@ uniform float ethereal_opacity : hint_range(0.0, 1.0) = 1.0;
 uniform float ethereal_shine : hint_range(0.0, 2.0) = 0.0;
 uniform vec4 ethereal_ink : source_color = vec4(0.78, 0.85, 1.0, 1.0);
 uniform float ethereal_phase = 0.0;
+// Legacy baked weapon frames: preserve the authored blade corridor.
+uniform vec4 ethereal_weapon_span = vec4(0.0);
+uniform float ethereal_weapon_width = 0.0;
 // v1.92.3: baked body art has no trustworthy per-frame fabric/weapon mask.
 // Never infer hair, skin or equipment from hue or whole-atlas UV coordinates.
 // Preserve the approved original pixels until authored cloth masks exist.
@@ -66,12 +69,20 @@ void fragment() {
             COLOR = texture(TEXTURE, UV - shift * TEXTURE_PIXEL_SIZE) * silk_ink;
         }
     }
+    float weapon_keep = 0.0;
+    if (ethereal_weapon_width > 0.0) {
+        vec2 a = ethereal_weapon_span.xy;
+        vec2 ab = ethereal_weapon_span.zw - a;
+        float t = clamp(dot(silk_local - a, ab) / max(dot(ab, ab), 0.001), 0.0, 1.0);
+        float dist = length(silk_local - (a + ab * t));
+        weapon_keep = 1.0 - smoothstep(ethereal_weapon_width, ethereal_weapon_width + 2.0, dist);
+    }
     if (ethereal_shine > 0.001) {
         // A broad, gentle moving band preserves the painted silhouette.
         float sweep = 0.5 + 0.5 * sin(silk_local.y * 0.037 - silk_local.x * 0.018 - ethereal_phase);
         float shimmer = (0.28 + 0.23 * pow(sweep, 3.0)) * ethereal_shine;
         vec3 moonlight = mix(ethereal_ink.rgb, vec3(1.0), 0.48);
-        COLOR.rgb = mix(COLOR.rgb, moonlight, clamp(shimmer, 0.0, 0.84));
+        COLOR.rgb = mix(COLOR.rgb, moonlight, clamp(shimmer, 0.0, 0.84) * (1.0 - weapon_keep));
     }
-    COLOR.a *= ethereal_opacity;
+    COLOR.a *= mix(ethereal_opacity, 1.0, weapon_keep);
 }
