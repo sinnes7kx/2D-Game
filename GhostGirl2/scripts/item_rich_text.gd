@@ -133,87 +133,43 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 				out.append(_label("◇ " + name))
 	if item_class in ["gem", "rune"]:
 		out.append("[font_size=14][color=%s]+%.1f%% %s[/color][/font_size]" % [GOLD if unique_socketable else BLUE, item.definition.socket_bonus_value, escape(GhostPaletteLibrary.stat_label(item.definition.socket_bonus_id))])
-	if slot != "none":
-		out.append(_cosmetic_dots(item))
-	if slot in ["sword", "wand"] and not item.regional_imprint_label().is_empty():
-		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, escape(item.regional_imprint_label())])
-	if slot in ["sword", "wand"] and advanced:
-		var code: String = ROLL_CODE.current(item)
-		var birth: String = item.birth_roll_code_v1 if ROLL_CODE.valid_code(item.birth_roll_code_v1) else "unknown (legacy)"
-		out.append("[font_size=14][color=#dfc38e]ROLL · %s[/color][/font_size]" % code)
-		out.append(_label("Original · " + birth))
-		if ROLL_CODE.debug_active(item):
-			out.append(_label("TEST FX active · genuine rolls unchanged"))
-		if advanced:
-			out.append(_label("V1 · - means not ranked / not applicable"))
-			out.append(_label(ROLL_CODE.breakdown(code)))
-			if birth != "unknown (legacy)":
-				out.append(_label("Original seed" if item.cosmetic_uid == item.birth_roll_uid_v1 else "Current seed differs from original"))
-	if advanced:
+	if slot == "dress" and item.is_ethereal_dress():
+		out.append("[color=#c1d8e4]Ethereal[/color]")
+	if advanced and slot != "none":
+		var dots: String = _cosmetic_dots(item)
+		if not dots.is_empty():
+			out.append(dots)
+		if slot in ["sword", "wand"]:
+			var code: String = ROLL_CODE.current(item)
+			var birth: String = item.birth_roll_code_v1 if ROLL_CODE.valid_code(item.birth_roll_code_v1) else "unknown"
+			out.append("[font_size=14][color=#dfc38e]ROLL · %s[/color][/font_size]" % code)
+			out.append(_label("Original · " + birth))
+			if ROLL_CODE.debug_active(item):
+				out.append(_label("Test preview · genuine roll unchanged"))
 		if LOOK_CHOICES_V219.has_personalization(item):
-			out.append(_label("Personalized appearance · not a new rarity roll"))
-		for detail in LOOK_CHOICES_V219.appearance_details(item):
-			out.append(_label(detail))
+			out.append(_label("Personalized appearance · not a new roll"))
 	var flavor: String = str(item.definition.description).strip_edges()
 	if not flavor.is_empty():
 		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])
-	# Keep special seeded visuals visible in the ordinary hover tooltip,
-	# even when ALT is not held. Detailed roll codes stay in Inspect.
-	var preview_only: bool = ROLL_CODE.debug_active(item)
-	if item.has_rare_seeded_appearance():
-		var appearance_label: String = "TEST material" if preview_only else "Rare appearance"
-		out.append("[font_size=13][color=%s]✦ %s: %s[/color][/font_size]" % [GOLD, appearance_label, escape(item.collector_material_label())])
-	if item.visual_signature() > 0:
-		var level: int = item.visual_signature()
-		var signature_label: String = "Mythic Radiance" if level == 4 else ("Moonfall Halo" if level == 5 else GhostCosmeticRNGV152.signature_name(level))
-		out.append("[font_size=13][color=%s]✦ %s: %s[/color][/font_size]" % [GOLD, "TEST effect" if preview_only else "Special look", escape(signature_label)])
-	if slot in ["sword", "wand"]:
-		var visible_fx: Dictionary = item.effect_rolls()
-		out.append(_label("Glow: " + GhostWeaponFXLibrary.motif_name(int(visible_fx.get("motif", 0))) + "  ·  Trail: " + GhostWeaponFXLibrary.trail_name(int(visible_fx.get("trail", 0)))))
-		if item.weapon_style() == "bow":
-			var arrow_style: Dictionary = item.bow_rolls()
-			out.append(_label("Arrow: " + GhostBowImprintsV138.name_for_element(int(arrow_style.get("element", 0)))))
 	if not advanced:
 		if slot in ["sword", "wand"]:
-			out.append("[font_size=11][color=%s]P  ·  Inspect weapon[/color][/font_size]" % MUTED)
-		out.append("[font_size=11][color=%s]HOLD ALT  ·  Pin for color details[/color][/font_size]" % MUTED)
-		return "\n".join(out)
-	
-	if slot == "sword":
-		out.append(_label("Light strike %.2fs  ·  %.1f stamina" % [item.light_swing_duration(), item.light_stamina_cost()]))
-	if slot in ["dress", "wings", "helm", "trinket", "charm"] and item.visual_signature() in [4, 5]:
-		out.append("[font_size=13][color=%s]✦ %s[/color][/font_size]" % [GOLD, "Moonfall Halo" if item.visual_signature() == 5 else "Mythic Radiance"])
-		out.append(_label("Luminous dress aura" if slot == "dress" else "Spectral accessory glimmer"))
-	if slot in ["sword", "wand"]:
-		if not item.origin_label().is_empty():
-			out.append(_label("Found in " + item.origin_label()))
-		var fx: Dictionary = item.effect_rolls()
-		# ALT reveals what the item *does visually*, not its internal RNG identifiers.
-		if item.visual_signature() > 0:
-			var signature_level: int = item.visual_signature()
-			var signature_title: String = "Mythic Radiance" if signature_level == 4 else ("Moonfall Halo" if signature_level == 5 else GhostCosmeticRNGV152.signature_name(signature_level))
-			out.append("[font_size=13][color=%s]✦ %s · %s[/color][/font_size]" % [GOLD, "TEST EFFECT" if ROLL_CODE.debug_active(item) else "EXTREMELY RARE", escape(signature_title)])
-			if signature_level == 4:
-				var layers: Array[String] = ["Lightning arcs", "Cinder motes", "Astral pulses", "Spectral petals"]
-				out.append(_label("Mythic animation · " + layers[item.mythic_layer_variant()]))
-		out.append("[font_size=12][color=%s]✧  VISUAL EFFECTS[/color][/font_size]" % GOLD)
-		out.append(_label("Aura  ·  " + GhostWeaponFXLibrary.motif_name(int(fx["motif"]))))
-		out.append(_label("Trail  ·  " + GhostWeaponFXLibrary.trail_name(int(fx["trail"]))))
-		out.append(_label("On hit  ·  " + GhostWeaponFXLibrary.impact_name(slot, int(fx["impact"]))))
-		if slot == "wand":
-			out.append(_label("Spell  ·  " + GhostWeaponFXLibrary.spell_form_name(int(fx["form"]))))
-			if int(fx["lance"]) > 0:
-				out.append(_label("Rare beam appearance"))
-		elif item.weapon_style() == "bow":
-			var bow: Dictionary = item.bow_rolls()
-			var limb: Array[Color] = item.bow_limb_gradient_colors()
-			var string_colors: Array[Color] = item.bow_string_gradient_colors()
-			out.append("[font_size=12][color=%s]Bow limbs[/color]  %s[/font_size]" % [MUTED, _swatch_colors(limb)])
-			out.append("[font_size=12][color=%s]Bowstring[/color]  %s[/font_size]" % [MUTED, _swatch_colors(string_colors)])
-			out.append(_label("Arrow  ·  " + GhostBowImprintsV138.name_for_element(int(bow["element"]))))
-		if int(item.saved_cosmetic_looks.size()) > 0:
-			out.append(_label("★ %d saved appearances" % item.saved_cosmetic_looks.size()))
+			out.append("[font_size=11][color=%s]P · Inspect[/color][/font_size]" % MUTED)
+		out.append("[font_size=11][color=%s]HOLD ALT · Colors & roll[/color][/font_size]" % MUTED)
 	return "\n".join(out)
+
+static func impact_text(item: Variant) -> String:
+	if item == null or item.get_slot() not in ["sword", "wand"]:
+		return ""
+	if item.get_slot() == "sword" and item.physical_damage_kind() == "blunt":
+		return "Heavy impact"
+	return GhostWeaponFXLibrary.impact_name(item.get_slot(), int(item.effect_rolls().get("impact", 0)))
+
+static func impact_color(item: Variant) -> Color:
+	if item.get_slot() == "wand":
+		return GhostWeaponFXLibrary.color(int(item.effect_rolls().get("color", 0))).lightened(0.25)
+	if item.physical_damage_kind() == "blunt":
+		return Color("d9b795")
+	return Color("df829c").lerp(GhostWeaponFXLibrary.color(int(item.effect_rolls().get("color", 0))), 0.19)
 
 static func changes(candidate: Variant, worn: Variant) -> String:
 	if candidate == null or worn == null:

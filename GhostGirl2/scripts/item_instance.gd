@@ -239,7 +239,7 @@ func restore_cosmetic_look(index: int) -> bool:
 	# them must return the natural look rather than retaining a later edit.
 	eye_style_override = clampi(int(snapshot.get("eye_style_override", -1)), -1, 3)
 	eye_palette_override = clampi(int(snapshot.get("eye_palette_override", -1)), -1, 5)
-	glow_level_override = clampi(int(snapshot.get("glow_level_override", -1)), -1, 5)
+	glow_level_override = clampi(int(snapshot.get("glow_level_override", -1)), -1, 7)
 	bow_glow_mode_override = clampi(int(snapshot.get("bow_glow_mode_override", -1)), -1, 3)
 	bow_projectile_style_override = clampi(int(snapshot.get("bow_projectile_style_override", -1)), -1, 8)
 	for field in _cosmetic_fields():
@@ -530,6 +530,8 @@ func details(advanced: bool = false) -> String:
 	if definition == null:
 		return ""
 	var lines: Array[String] = ["%s · Level %d" % [get_slot().to_upper(), item_level]]
+	if is_ethereal_dress():
+		lines.append("Ethereal appearance · 70% transparent")
 	if get_slot() == "sword":
 		lines.append("%.1f damage · %.0f reach" % [weapon_damage(), weapon_reach()])
 	var stats: Dictionary = all_stats()
@@ -568,6 +570,9 @@ func origin_label() -> String:
 
 # Only independently drawn weapon families are eligible in this release.
 # Never make Ghost Girl's body transparent to imitate a spectral weapon.
+func is_ethereal_dress() -> bool:
+	return get_slot() == "dress" and COLLECTOR_LOOK.ticket(cosmetic_uid, visual_seed(), "dress-ethereal-v240") < 500
+
 func supports_ethereal() -> bool:
 	return get_slot() == "wand" or (get_slot() == "sword" and weapon_style() in ["twinblade", "dual_dagger", "dual_sword", "scythe", "halberd", "maul"])
 

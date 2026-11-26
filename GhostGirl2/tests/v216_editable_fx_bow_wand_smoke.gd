@@ -38,6 +38,11 @@ func _verify() -> void:
 	if AURA.rolled_level(scythe) != 5 or not is_equal_approx(AURA.opacity(5), 0.5):
 		_fail("User-selected scythe 50% aura not applied")
 		return
+	for level in [6, 7]:
+		scythe.glow_level_override = level
+		if AURA.rolled_level(scythe) != level or not is_equal_approx(AURA.opacity(level), float(level) / 10.0) or not is_equal_approx(CHOICES.opacity(scythe), float(level) / 10.0):
+			_fail("Extended scythe opacity did not apply")
+			return
 	scythe.glow_level_override = 0
 	if AURA.rolled_level(scythe) != 0 or CHOICES.effect_scale(scythe) != 0.0:
 		_fail("Saved Off did not remove optional aura")
@@ -96,6 +101,12 @@ func _verify() -> void:
 		return
 	if restored.item_seed != original_seed or restored.cosmetic_uid != bow.cosmetic_uid or restored.all_stats() != original_stats:
 		_fail("Personalization altered stats, seed or cosmetic identity")
+		return
+	var extended: Dictionary = serialized.duplicate(true)
+	extended["glow_level_override"] = 7
+	var restored_max: GhostItemInstance = inv._deserialize_item(extended)
+	if restored_max == null or restored_max.glow_level_override != 7 or not is_equal_approx(CHOICES.effect_scale(restored_max), 0.70):
+		_fail("70% glow failed save restore")
 		return
 	var legacy: Dictionary = serialized.duplicate(true)
 	legacy.erase("glow_level_override")

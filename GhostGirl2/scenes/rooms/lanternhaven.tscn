@@ -11,9 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/treasure_chest.tscn" id="v202_chest"]
 [ext_resource type="Resource" path="res://items/v202_fletcher_moonflight_bow.tres" id="v202_bow"]
 [ext_resource type="Script" path="res://scripts/collectible_item.gd" id="v202_pickup"]
-[ext_resource type="Resource" path="res://items/v202_luminous_eyes.tres" id="v202_eyes"]
 [ext_resource type="Resource" path="res://items/v202_moonlit_tiara.tres" id="v202_tiara"]
-[ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_luminous_eyes.svg" id="v202_eyes_icon"]
 [ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_moonlit_tiara.svg" id="v202_tiara_icon"]
 
 [sub_resource type="RectangleShape2D" id="WestWallShape"]
@@ -338,18 +336,6 @@ guaranteed_quality = "rare"
 ; accessory; actual tiaras/diadems are now in the added helm save key.
 [node name="V202HeadFinds" type="Node2D" parent="Gameplay"]
 
-[node name="LuminousEyesFind" type="Node2D" parent="Gameplay/V202HeadFinds"]
-position = Vector2(1240, 1110)
-script = ExtResource("v202_pickup")
-item_data = ExtResource("v202_eyes")
-interaction_name = "Collect the Moonlit Eyes"
-pickup_id = "v202_town_luminous_eyes"
-item_seed = 202101
-
-[node name="Icon" type="Sprite2D" parent="Gameplay/V202HeadFinds/LuminousEyesFind"]
-texture = ExtResource("v202_eyes_icon")
-scale = Vector2(0.57, 0.57)
-
 [node name="MoonlitTiaraFind" type="Node2D" parent="Gameplay/V202HeadFinds"]
 position = Vector2(2470, 920)
 script = ExtResource("v202_pickup")
@@ -361,3 +347,13 @@ item_seed = 202102
 [node name="Icon" type="Sprite2D" parent="Gameplay/V202HeadFinds/MoonlitTiaraFind"]
 texture = ExtResource("v202_tiara_icon")
 scale = Vector2(0.57, 0.57)
+
+[node name="From_westwood_road" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(430, 1180)
+
+[node name="westwood_road" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(245, 1180)
+script = ExtResource("2_portal")
+destination = "westwood_road"
+interaction_name = "Follow the westward forest road"
+opened = true

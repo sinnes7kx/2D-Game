@@ -4,6 +4,8 @@ const ITEM_MARKUP = preload("res://scripts/item_rich_text.gd")
 const SINGLE_WIDTH: float = 328.0
 const DOUBLE_WIDTH: float = 664.0
 var pinned: bool = false
+var impact_label: Label
+var anomaly_label: Label
 var _current_item: Variant = null
 var _equipped_item: Variant = null
 
@@ -21,7 +23,21 @@ func _ready() -> void:
     current_body.bbcode_enabled = true
     equipped_body.bbcode_enabled = true
     mouse_filter = Control.MOUSE_FILTER_IGNORE
-    rare_star.mouse_filter = Control.MOUSE_FILTER_STOP
+    rare_star.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    impact_label = Label.new()
+    impact_label.add_theme_font_size_override("font_size", 11)
+    impact_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+    impact_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    current_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    current_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+    current_title.get_parent().add_child(impact_label)
+    anomaly_label = Label.new()
+    anomaly_label.add_theme_font_size_override("font_size", 15)
+    anomaly_label.add_theme_color_override("font_color", Color("e8d0ac"))
+    anomaly_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    current_panel.get_node("Layout").add_child(anomaly_label)
+    current_panel.get_node("Layout").move_child(anomaly_label, current_body.get_index())
+    anomaly_label.hide()
     current_body.meta_hover_started.connect(_on_current_dot_hover)
     current_body.meta_hover_ended.connect(_on_current_dot_exit)
     equipped_body.meta_hover_started.connect(_on_equipped_dot_hover)
@@ -39,18 +55,23 @@ func display_item(item: Variant, equipped: Variant = null, _advanced: bool = fal
     equipped_panel.visible = comparing
     current_title.text = item.display_name()
     _quality_border(current_panel, item)
-    rare_star.visible = item.has_method("has_rare_seeded_appearance") and bool(item.call("has_rare_seeded_appearance"))
-    rare_star.tooltip_text = _rare_details(item) if rare_star.visible else ""
+    rare_star.hide()
+    var look: Dictionary = item.collector_appearance()
+    anomaly_label.visible = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0))) == 6
+    anomaly_label.text = "Anomalous · Test" if preload("res://scripts/collector_roll_code_v1931.gd").debug_active(item) else "Anomalous"
+    impact_label.text = ITEM_MARKUP.impact_text(item)
+    impact_label.visible = not impact_label.text.is_empty()
+    impact_label.add_theme_color_override("font_color", ITEM_MARKUP.impact_color(item))
     current_title.add_theme_color_override("font_color", item.quality_color())
     # ALT pins the compact tooltip; detailed roll history lives in P/Inspect.
-    current_body.text = ITEM_MARKUP.item_info(item, false)
+    current_body.text = ITEM_MARKUP.item_info(item, _advanced)
     current_body.scroll_to_line(0)
     var lines: int = current_body.text.count("\n") + 2
     if comparing:
         equipped_title.text = "EQUIPPED · " + equipped.display_name()
         _quality_border(equipped_panel, equipped)
         equipped_title.add_theme_color_override("font_color", equipped.quality_color())
-        equipped_body.text = ITEM_MARKUP.changes(item, equipped) + "\n\n" + ITEM_MARKUP.item_info(equipped, false)
+        equipped_body.text = ITEM_MARKUP.changes(item, equipped) + "\n\n" + ITEM_MARKUP.item_info(equipped, _advanced)
         equipped_body.scroll_to_line(0)
         lines = maxi(lines, equipped_body.text.count("\n") + 2)
     var screen: Vector2 = get_viewport_rect().size
@@ -118,6 +139,8 @@ func _rare_details(item: Variant) -> String:
     return "\n".join(lines)
 
 func _process(_delta: float) -> void:
+    if visible and is_instance_valid(anomaly_label) and anomaly_label.visible:
+        anomaly_label.modulate.a = 0.78 + 0.22 * (0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.0014))
     if visible and not pinned:
         _place_popup()
 

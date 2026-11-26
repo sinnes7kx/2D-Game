@@ -1313,7 +1313,7 @@ func _launch_crossbow_bolt() -> void:
 	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(str(body_art.animation), facing_name, body_art.frame), crossbow_heading)
 	var origin: Vector2 = global_position + Vector2(0, -39) + crossbow_heading * 31.0
 	if points.size() == 2:
-		origin = body_art.to_global(points[1])
+		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(str(crossbow_item.definition.item_id))))
 	root.add_child(bolt)
 	bolt.global_position = origin
 	COMBAT_JUICE.play(root, origin, "crossbow_fire", -14.5)
@@ -1520,7 +1520,7 @@ func _begin_attack(heavy: bool) -> void:
 	active_attack_style = _weapon_style()
 	match active_attack_style:
 		"scythe":
-			attack_duration = 0.91 if heavy else [0.49, 0.52, 0.56][combo_step]
+			attack_duration = 1.12 if heavy else [0.49, 0.52, 0.56][combo_step]
 			attack_hit_threshold = 0.54
 		"halberd":
 			attack_duration = 1.02 if heavy else [0.57, 0.60, 0.65][combo_step]
@@ -1555,7 +1555,8 @@ func _begin_attack(heavy: bool) -> void:
 	dagger_charge_active = heavy and active_attack_style == "dagger"
 	dagger_charge_time = 0.0
 	# Actual moving-air sound, without the old bright WAV transient on swords.
-	COMBAT_JUICE.play(get_tree().current_scene, global_position, "heavy_swing" if heavy else "swing", -16.5 if heavy else -18.5)
+	var swing_cue: String = "scythe_heavy" if heavy and active_attack_style == "scythe" else ("heavy_swing" if heavy else "swing")
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, swing_cue, -15.0 if swing_cue == "scythe_heavy" else (-16.5 if heavy else -18.5))
 	attack_hit_done = false
 	heavy_attack = heavy
 	# The empty-hand branch must always play visible unarmed attack frames.
@@ -1754,10 +1755,12 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		camera_push = attack_direction * (6.5 if jump_attack_active else (3.5 if heavy_attack else 1.8))
 	# Heavy and plunging attacks physically interact with ordinary wooden
 	# barricades, not progression locks. Each prop is hit once per strike.
-	if heavy_attack:
+	if heavy_attack or (sword != null and sword.physical_damage_kind() != "blunt"):
 		var broken_attempts: int = 0
 		for object in get_tree().get_nodes_in_group("breakable_cover"):
 			if not is_instance_valid(object) or not object is Node2D or not object.has_method("receive_damage") or bool(object.get("broken")):
+				continue
+			if not heavy_attack and not object.is_in_group("fellable_tree"):
 				continue
 			var toward: Vector2 = object.global_position - global_position
 			if toward.length_squared() > pow(minf(reach, 167.0), 2.0) or toward.length_squared() < 100.0:

@@ -565,7 +565,7 @@ func _create_glow_editor() -> void:
 	title.add_theme_font_size_override("font_size", 11)
 	content.add_child(title)
 	var sections: Array[Dictionary] = [
-		{"key": "glow", "title": "Light strength", "labels": ["Natural", "Off", "10%", "20%", "30%", "40%", "50%"]},
+		{"key": "glow", "title": "Light strength", "labels": ["Natural", "Off", "10%", "20%", "30%", "40%", "50%", "60%", "70%"]},
 		{"key": "bow_body", "title": "Bow body", "labels": ["Natural", "Off", "Limbs", "Limbs + string", "Full bow"]},
 		{"key": "projectile", "title": "Arrow appearance", "labels": ["Natural", "Plain", "Moonthread", "Twin Helix", "Halo Burst", "Petal Drift", "Glass Motes", "Comet Tail", "Starlace", "Wisp Bloom"]}
 	]
@@ -628,7 +628,7 @@ func _set_glow_choice(pressed: bool, key: String, value: int) -> void:
 		return
 	var field: String = "glow_level_override" if key == "glow" else ("bow_glow_mode_override" if key == "bow_body" else "bow_projectile_style_override")
 	var old_value: int = int(item.get(field))
-	item.set(field, clampi(value, -1, 5 if key == "glow" else (3 if key == "bow_body" else 8)))
+	item.set(field, clampi(value, -1, 7 if key == "glow" else (3 if key == "bow_body" else 8)))
 	if not inventory.save_game():
 		item.set(field, old_value)
 		_refresh_glow_editor(item)

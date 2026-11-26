@@ -538,7 +538,7 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	item.eye_style_override = clampi(int(saved.get("eye_style_override", -1)), -1, 3)
 	item.eye_palette_override = clampi(int(saved.get("eye_palette_override", -1)), -1, 5)
 	# Optional v2.16 cosmetic preferences. Missing keys mean Natural.
-	item.glow_level_override = clampi(int(saved.get("glow_level_override", -1)), -1, 5)
+	item.glow_level_override = clampi(int(saved.get("glow_level_override", -1)), -1, 7)
 	item.bow_glow_mode_override = clampi(int(saved.get("bow_glow_mode_override", -1)), -1, 3)
 	item.bow_projectile_style_override = clampi(int(saved.get("bow_projectile_style_override", -1)), -1, 8)
 	# These keys are optional: old saves preserve their exact appearance.

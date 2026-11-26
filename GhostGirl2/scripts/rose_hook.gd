@@ -22,6 +22,7 @@ const MODE_NONE: int = 0
 const MODE_OBJECT: int = 1
 const MODE_ANCHOR: int = 2
 const MODE_SWITCH: int = 3
+const MODE_TREE: int = 4
 const PHASE_IDLE: int = 0
 const PHASE_CAST: int = 1
 const PHASE_PULL: int = 2
@@ -46,9 +47,22 @@ func _ready() -> void:
     normal_player_collision_mask = girl.collision_mask
 
 func try_cast_object() -> bool:
+    if is_tree_latched():
+        if girl.global_position.distance_to(fixed_point) <= _effective_range() and target.has_method("pull_felling_hook"):
+            var obstruction: Dictionary = _raycast(girl.get_node("Hand").global_position, fixed_point)
+            if obstruction.is_empty() or obstruction.get("collider") == target:
+                target.call("pull_felling_hook", girl.global_position)
+        _start_retract()
+        return true
     return _cast(MODE_OBJECT)
 
+func is_tree_latched() -> bool:
+    return mode == MODE_TREE and phase == PHASE_PULL and is_instance_valid(target)
+
 func try_cast_anchor() -> bool:
+    if is_tree_latched():
+        _start_retract()
+        return true
     return _cast(MODE_ANCHOR)
 
 func _cast(new_mode: int) -> bool:
@@ -105,7 +119,7 @@ func _cast(new_mode: int) -> bool:
     fixed_point = point
     start_point = from
     end_point = point
-    mode = MODE_SWITCH if picked != null and picked.is_in_group("hook_switch") else new_mode
+    mode = MODE_TREE if picked != null and picked.is_in_group("fellable_tree") else (MODE_SWITCH if picked != null and picked.is_in_group("hook_switch") else new_mode)
     phase = PHASE_CAST
     clock = 0.0
     hook_tip.visible = true
@@ -195,7 +209,13 @@ func _physics_process(delta: float) -> void:
                 yanked_enemy = true
     elif phase == PHASE_PULL:
         if is_instance_valid(target):
-            if mode == MODE_OBJECT:
+            if mode == MODE_TREE:
+                hook_tip.global_position = fixed_point
+                if girl.global_position.distance_to(fixed_point) > _effective_range() or bool(target.get("broken")):
+                    _start_retract()
+                elif target.has_method("preview_felling_hook"):
+                    target.call("preview_felling_hook", girl.global_position)
+            elif mode == MODE_OBJECT:
                 if target.is_in_group("enemies"):
                     _start_retract()
                     return
@@ -218,7 +238,7 @@ func _physics_process(delta: float) -> void:
                 hook_tip.global_position = fixed_point
                 if girl.global_position.distance_to(fixed_point) < 73.0:
                     _start_retract()
-        if clock > max_hold_time:
+        if clock > (12.0 if mode == MODE_TREE else max_hold_time):
             _start_retract()
     elif phase == PHASE_RETRACT:
         var t: float = clampf(clock / 0.20, 0.0, 1.0)
@@ -234,12 +254,16 @@ func _physics_process(delta: float) -> void:
 func _start_retract() -> void:
     if phase == PHASE_IDLE or phase == PHASE_RETRACT:
         return
+    if is_tree_latched() and target.has_method("clear_felling_preview"):
+        target.call("clear_felling_preview")
     end_point = hook_tip.global_position
     phase = PHASE_RETRACT
     clock = 0.0
     hook_tip.play("retract")
 
 func _finish() -> void:
+    if is_tree_latched() and target.has_method("clear_felling_preview"):
+        target.call("clear_felling_preview")
     phase = PHASE_IDLE
     # If the tether was interrupted inside a traversal gap, return to last safe ground.
     if mode == MODE_ANCHOR and _inside_traversal_gap(girl.global_position):

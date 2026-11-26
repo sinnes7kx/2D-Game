@@ -4,6 +4,7 @@ extends Node2D
 ## v1.60 also enables a dedicated wand-hand overlay to replace the placeholder look.
 var inventory
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const ETHEREAL_FX = preload("res://scripts/fx_intensity_v1924.gd")
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 const HEAD_COSMETICS_V202 = preload("res://scripts/head_cosmetics_v202.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
@@ -30,6 +31,10 @@ var last_wand_frame: int = -1
 var last_wand_sprite_index: int = -1
 var last_dress: GhostItemInstance = null
 var last_dress_palette: int = -999
+var dress_ethereal_key: String = ""
+var dress_ethereal_alpha: float = 1.0
+var dress_ethereal_ink: Color = Color("d6dfff")
+var ethereal_was_visible: bool = false
 var aura_time: float = 0.0
 var dress_aura_enabled: bool = false
 var dress_signature: int = 0
@@ -223,6 +228,17 @@ func _process(delta: float) -> void:
 	var dress_now: GhostItemInstance = inventory.get_equipped("dress")
 	if dress_now != last_dress or (dress_now != null and dress_now.palette_index != last_dress_palette):
 		refresh()
+	var dress_key: String = "%s:%d" % [dress_now.cosmetic_uid, dress_now.visual_seed()] if dress_now != null else "none"
+	if dress_key != dress_ethereal_key:
+		dress_ethereal_key = dress_key
+		dress_ethereal_alpha = 0.30 if dress_now != null and dress_now.is_ethereal_dress() else 1.0
+		dress_ethereal_ink = dress_now.palette_color().lerp(Color("e9e9ff"), 0.52) if dress_now != null else Color.WHITE
+	var spectral_material: ShaderMaterial = player_art.material as ShaderMaterial
+	if spectral_material != null:
+		spectral_material.set_shader_parameter("ethereal_opacity", dress_ethereal_alpha)
+		spectral_material.set_shader_parameter("ethereal_shine", ETHEREAL_FX.intensity if dress_ethereal_alpha < 1.0 else 0.0)
+		spectral_material.set_shader_parameter("ethereal_ink", dress_ethereal_ink)
+		spectral_material.set_shader_parameter("ethereal_phase", aura_time * 1.6)
 	var player = get_parent()
 	transform = player_art.transform
 	var facing: String = str(player.get("facing_name"))
@@ -272,11 +288,15 @@ func _process(delta: float) -> void:
 			wand_visual.position = WAND_ANCHORS_V216.target_grip(facing, active_animation, active_frame) - (grip * WAND_ANCHORS_V216.VISUAL_SCALE).rotated(wand_visual.rotation)
 		wand_visual.show_behind_parent = facing == "back"
 		wand_visual.z_index = -2 if facing == "back" else 6
-	if dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty():
+	var ethereal_visible: bool = dress_ethereal_alpha < 1.0 and ETHEREAL_FX.intensity > 0.0
+	if dress_now != null or dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty() or ethereal_visible or ethereal_was_visible != ethereal_visible:
 		queue_redraw()
+	ethereal_was_visible = ethereal_visible
 
 func _draw() -> void:
 	# Node transform is already copied from Ghost. Draw in Ghost-local coords.
+	if dress_ethereal_alpha < 1.0 and ETHEREAL_FX.intensity > 0.0:
+		_draw_ethereal_shine()
 	for src in ambient_particle_sources:
 		var anchor: Vector2 = src.get("anchor", Vector2.ZERO)
 		if bool(src.get("halo", false)):
@@ -293,6 +313,8 @@ func _draw() -> void:
 		for i in range(3):
 			var p: Vector2 = Vector2(cos(aura_time * 0.8 + i * 2.1) * 14.0, -31.0 + sin(aura_time + i * 2.1) * 10.0)
 			draw_circle(p, 1.5, Color(accessory_color.r, accessory_color.g, accessory_color.b, 0.17))
+	if last_dress != null and ETHEREAL_FX.intensity > 0.0:
+		_draw_dress_sparkles()
 	if not dress_aura_enabled:
 		return
 	if dress_signature == 4:
@@ -351,3 +373,39 @@ func _draw() -> void:
 		var c: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, float(i) / float(maxi(1, 3 + (2 if dress_signature == 4 else 0))))
 		var alpha_boost: float = 1.0 if dress_signature != 4 else 1.55
 		draw_circle(mote, 1.6 + 0.3 * float(i % 2), Color(c.r, c.g, c.b, 0.18 * alpha_boost))
+
+# Compact soft light and drifting star motes; no lighting gameplay changes.
+func _draw_ethereal_shine() -> void:
+	var ink: Color = dress_ethereal_ink
+	var pulse: float = 0.87 + 0.13 * sin(aura_time * 1.7)
+	for i in range(5):
+		var center: Vector2 = Vector2(8.0, -42.0 + float(i) * 19.0)
+		for ring in range(4):
+			var radius: float = 29.0 - float(ring) * 5.0
+			draw_circle(center, radius, Color(ink.r, ink.g, ink.b, ETHEREAL_FX.alpha(0.018 * pulse)))
+	for i in range(9):
+		var age: float = fposmod(aura_time * (0.36 + float(i % 3) * 0.035) + float(i) / 9.0, 1.0)
+		var a: float = aura_time * 1.1 + float(i) * 2.4
+		var point: Vector2 = Vector2(8.0 + sin(a) * (21.0 + float(i % 3) * 5.0), 53.0 - age * 118.0)
+		var brightness: float = ETHEREAL_FX.alpha(sin(age * PI) * 0.72)
+		draw_circle(point, 4.0, Color(ink.r, ink.g, ink.b, brightness * 0.13))
+		draw_circle(point, 1.2, Color(ink.r, ink.g, ink.b, brightness))
+		if i % 3 == 0:
+			draw_line(point - Vector2(2.4, 0), point + Vector2(2.4, 0), Color(ink.r, ink.g, ink.b, brightness * 0.65), 0.7, true)
+			draw_line(point - Vector2(0, 2.4), point + Vector2(0, 2.4), Color(ink.r, ink.g, ink.b, brightness * 0.65), 0.7, true)
+
+func _draw_dress_sparkles() -> void:
+	var count: int = 7 + mini(5, GhostWeaponFXLibrary.tier(last_dress.quality) * 2)
+	if dress_signature >= 4 or dress_ethereal_alpha < 1.0:
+		count += 4
+	for i in range(count):
+		var life: float = fposmod(aura_time * (0.32 + float(i % 4) * 0.05) + float(i) / float(count), 1.0)
+		var a: float = aura_time * 0.85 + float(i) * 2.4
+		var point: Vector2 = Vector2(8.0 + sin(a) * (18.0 + float(i % 3) * 5.0), -25.0 + life * 76.0)
+		var ink: Color = GhostCosmeticRNGV152.sample_palette(dress_palette, float(i) / float(count)).lerp(Color.WHITE, 0.48)
+		var gain: float = ETHEREAL_FX.alpha(pow(sin(life * PI), 2.0) * 0.83)
+		draw_circle(point, 5.0, Color(ink.r, ink.g, ink.b, gain * 0.12))
+		draw_circle(point, 1.55, Color(ink.r, ink.g, ink.b, gain))
+		if i % 2 == 0:
+			draw_line(point - Vector2(3.0, 0), point + Vector2(3.0, 0), Color(ink.r, ink.g, ink.b, gain * 0.8), 0.85, true)
+			draw_line(point - Vector2(0, 3.0), point + Vector2(0, 3.0), Color(ink.r, ink.g, ink.b, gain * 0.8), 0.85, true)

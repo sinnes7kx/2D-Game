@@ -9,10 +9,13 @@ const SHARE_CARD = preload("res://scripts/v209_collector_share_card.gd")
 var model: Node2D
 var stage: Control
 var heading: Label
+var anomaly_title: Label
 var info: RichTextLabel
 var status: Label
 var glow_button: CheckButton
 var motion_button: CheckButton
+var options_menu: MenuButton
+var advanced_info: bool = false
 var scythe_glow_choices: OptionButton
 var inspected: GhostItemInstance
 var owned_inventory: Node = null
@@ -38,9 +41,11 @@ func _ready() -> void:
 	center.add_child(panel)
 	var frame: StyleBoxFlat = StyleBoxFlat.new()
 	frame.bg_color = Color("211b29")
-	frame.border_color = Color("746077")
+	frame.border_color = Color("a08567")
 	frame.set_border_width_all(1)
-	frame.set_corner_radius_all(8)
+	frame.set_corner_radius_all(4)
+	frame.shadow_color = Color(0.0, 0.0, 0.0, 0.65)
+	frame.shadow_size = 12
 	frame.content_margin_left = 18
 	frame.content_margin_right = 18
 	frame.content_margin_top = 16
@@ -50,13 +55,25 @@ func _ready() -> void:
 	layout.add_theme_constant_override("separation", 10)
 	panel.add_child(layout)
 	var eyebrow: Label = Label.new()
-	eyebrow.text = "COLLECTOR'S LENS"
+	eyebrow.text = "❦  COLLECTOR'S LENS"
 	eyebrow.add_theme_color_override("font_color", Color("d5ad8c"))
 	eyebrow.add_theme_font_size_override("font_size", 13)
 	layout.add_child(eyebrow)
 	heading = Label.new()
 	heading.add_theme_font_size_override("font_size", 24)
-	layout.add_child(heading)
+	var header: HBoxContainer = HBoxContainer.new()
+	layout.add_child(header)
+	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	heading.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	header.add_child(heading)
+	anomaly_title = Label.new()
+	anomaly_title.text = "Anomalous"
+	anomaly_title.add_theme_font_size_override("font_size", 22)
+	anomaly_title.add_theme_color_override("font_color", Color("e8d0ac"))
+	anomaly_title.add_theme_color_override("font_shadow_color", Color("63477d"))
+	anomaly_title.add_theme_constant_override("shadow_outline_size", 2)
+	header.add_child(anomaly_title)
+	anomaly_title.hide()
 	var columns: HBoxContainer = HBoxContainer.new()
 	columns.add_theme_constant_override("separation", 16)
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -65,6 +82,8 @@ func _ready() -> void:
 	well.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var well_style: StyleBoxFlat = StyleBoxFlat.new()
 	well_style.bg_color = Color("100e19")
+	well_style.border_color = Color("51404b")
+	well_style.set_border_width_all(1)
 	well_style.set_corner_radius_all(6)
 	well.add_theme_stylebox_override("panel", well_style)
 	columns.add_child(well)
@@ -93,6 +112,7 @@ func _ready() -> void:
 	motion_button = CheckButton.new()
 	motion_button.text = "Motion preview"
 	controls.add_child(motion_button)
+	motion_button.hide()
 	var glow_row: HBoxContainer = HBoxContainer.new()
 	glow_row.name = "ScytheGlowRowV211"
 	layout.add_child(glow_row)
@@ -102,33 +122,27 @@ func _ready() -> void:
 	glow_row.add_child(glow_caption)
 	scythe_glow_choices = OptionButton.new()
 	scythe_glow_choices.name = "ScytheGlowPreviewV211"
-	scythe_glow_choices.tooltip_text = "Choose a saved 0–50% full-scythe aura; Natural retains the original seed roll"
+	scythe_glow_choices.tooltip_text = "Choose a saved 0–70% full-scythe aura; Natural retains the original seed roll"
 	scythe_glow_choices.add_item("Natural (seeded)")
-	for step in range(6):
+	for step in range(8):
 		scythe_glow_choices.add_item("%d%% glow" % (step * 10))
 	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
 	glow_row.add_child(scythe_glow_choices)
 	glow_row.hide()
-	var reset: Button = Button.new()
-	reset.text = "Reset view"
-	controls.add_child(reset)
-	reset.pressed.connect(_reset_view)
-	var copy: Button = Button.new()
-	copy.text = "Copy look code"
-	controls.add_child(copy)
-	copy.pressed.connect(_copy_code)
-	var copy_roll: Button = Button.new()
-	copy_roll.text = "Copy roll"
-	controls.add_child(copy_roll)
-	copy_roll.pressed.connect(_copy_roll)
-	# Standalone action row keeps the existing toolbar uncluttered.
-	# Keep the existing compact toolbar from overflowing at smaller widths.
-	var card_row: HBoxContainer = HBoxContainer.new()
-	layout.add_child(card_row)
-	var card_button: Button = Button.new()
-	card_button.text = "Copy collector card (offline)"
-	card_row.add_child(card_button)
-	card_button.pressed.connect(_copy_card)
+	var spacer: Control = Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	controls.add_child(spacer)
+	options_menu = MenuButton.new()
+	options_menu.text = "Options"
+	var menu: PopupMenu = options_menu.get_popup()
+	menu.add_check_item("Motion preview", 0)
+	menu.add_item("Reset view", 1)
+	menu.add_separator()
+	menu.add_item("Copy look code", 2)
+	menu.add_item("Copy roll", 3)
+	menu.add_item("Copy collector card (offline)", 4)
+	menu.id_pressed.connect(_on_option_selected)
+	controls.add_child(options_menu)
 	var close: Button = Button.new()
 	close.text = "Close  ·  Esc"
 	controls.add_child(close)
@@ -145,27 +159,26 @@ func open_item(value: GhostItemInstance) -> void:
 	inspected = value
 	model.call("set_item", value)
 	heading.text = value.display_name()
+	var appearance: Dictionary = value.collector_appearance()
+	var is_anomaly: bool = maxi(int(appearance.get("material", 0)), int(appearance.get("particle_tier", 0))) == 6
+	anomaly_title.visible = is_anomaly
+	anomaly_title.text = "Anomalous · Test" if ROLL_CODE.debug_active(value) else "Anomalous"
 	heading.add_theme_color_override("font_color", value.quality_color())
-	var look: Dictionary = value.collector_appearance()
-	info.text = ""
-	if not look.is_empty():
-		info.text = "[color=#dfc38e]MATERIAL  ·  %s[/color]\n[color=#c8b6db]PARTICLES  ·  %s[/color]\n\n" % [value.collector_material_label().to_upper(), ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"][clampi(int(look.get("particle_tier", 0)), 0, 6)]]
-	if (bool(model.call("is_modular")) or bool(model.call("has_painted_surface"))) and not look.is_empty():
-		info.text += "[color=#bfc9dd]SURFACE  ·  %s[/color]\n\n" % preload("res://scripts/living_metal_v187.gd").LABELS[clampi(int(look.get("surface_mode", 0)), 0, 6)]
-	info.text += MARKUP.item_info(value, true)
-	info.scroll_to_line(0)
+	advanced_info = Input.is_key_pressed(KEY_ALT)
+	_refresh_info()
 	glow_button.disabled = false
 	motion_button.disabled = false
 	scythe_glow_choices.get_parent().visible = value.weapon_style() == "scythe"
-	scythe_glow_choices.select(clampi(value.glow_level_override + 1, 0, 6))
+	scythe_glow_choices.select(clampi(value.glow_level_override + 1, 0, 8))
 	scythe_glow_choices.disabled = owned_inventory == null or not (owned_inventory.contents.has(value) or owned_inventory.vault.has(value))
 	glow_button.set_pressed_no_signal(true)
 	motion_button.set_pressed_no_signal(false)
+	options_menu.get_popup().set_item_checked(options_menu.get_popup().get_item_index(0), false)
 	model.set("glow_enabled", true)
 	_reset_view()
 	show()
 	_position_model()
-	status.text = "Drag to rotate  ·  Wheel to zoom  ·  Display-only motion" if bool(model.call("is_modular")) else "Original artwork + animated effects  ·  Drag to rotate  ·  Wheel to zoom"
+	status.text = "Drag to rotate · Wheel to zoom · Hold Alt for colors & roll"
 	if value.weapon_style() == "scythe":
 		status.text = "Curved blade highlights · full-scythe glow %d%% · Natural keeps the original seed" % (SCYTHE_GLOW.rolled_level(value) * 10)
 
@@ -180,7 +193,7 @@ func _select_scythe_glow(index: int) -> void:
 	# Only an exact owned instance in backpack or vault can be personalized.
 	if not (owned_inventory.contents.has(inspected) or owned_inventory.vault.has(inspected)):
 		return
-	var value: int = clampi(index - 1, -1, 5)
+	var value: int = clampi(index - 1, -1, 7)
 	var previous: int = inspected.glow_level_override
 	inspected.glow_level_override = value
 	if not owned_inventory.save_game():
@@ -225,7 +238,16 @@ func _stage_input(event: InputEvent) -> void:
 			stage.accept_event()
 
 func _process(delta: float) -> void:
-	if not visible or not motion_button.button_pressed:
+	if not visible:
+		return
+	if anomaly_title.visible:
+		var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.0014)
+		anomaly_title.modulate = Color(1.0, 0.90 + pulse * 0.10, 0.82 + pulse * 0.18, 0.78 + pulse * 0.22)
+	var alt: bool = Input.is_key_pressed(KEY_ALT)
+	if alt != advanced_info:
+		advanced_info = alt
+		_refresh_info()
+	if not motion_button.button_pressed:
 		return
 	motion_time += delta
 	model.rotation = angle + sin(motion_time * 2.0) * 0.75
@@ -257,3 +279,25 @@ func _copy_card() -> void:
 		return
 	DisplayServer.clipboard_set(card)
 	status.text = "Offline collector card copied · ownership is not verified"
+
+func _refresh_info() -> void:
+	if inspected == null:
+		return
+	info.text = MARKUP.item_info(inspected, advanced_info)
+	var impact: String = MARKUP.impact_text(inspected)
+	if not impact.is_empty():
+		info.text += "\n[right][color=%s]%s[/color][/right]" % [MARKUP.color_to_tag(MARKUP.impact_color(inspected)), MARKUP.escape(impact)]
+	info.scroll_to_line(0)
+
+func _on_option_selected(id: int) -> void:
+	match id:
+		0:
+			motion_button.set_pressed_no_signal(not motion_button.button_pressed)
+			var menu: PopupMenu = options_menu.get_popup()
+			menu.set_item_checked(menu.get_item_index(0), motion_button.button_pressed)
+			if not motion_button.button_pressed:
+				_position_model()
+		1: _reset_view()
+		2: _copy_code()
+		3: _copy_roll()
+		4: _copy_card()

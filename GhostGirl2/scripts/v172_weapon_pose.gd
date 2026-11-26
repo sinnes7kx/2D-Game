@@ -182,7 +182,7 @@ func _process(_delta: float) -> void:
 			if forge_fx_revision != FORGE_FX.revision:
 				forge_fx_revision = FORGE_FX.revision
 				queue_redraw()
-	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
+	if animation_now.contains("twinblade") or animation_now.contains("crossbow_") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
@@ -355,7 +355,15 @@ func _draw() -> void:
 		var loaded: bool = int(player.get("crossbow_stage")) == 0 or (int(player.get("crossbow_stage")) == 1 and not bool(player.get("crossbow_fired")))
 		var reload_duration: float = CROSSBOW_V236.HEAVY_RELOAD if bool(player.get("crossbow_heavy")) else CROSSBOW_V236.RELOAD_TIME
 		var cocking: float = 1.0 - clampf(float(player.get("crossbow_left")) / reload_duration, 0.0, 1.0) if int(player.get("crossbow_stage")) == 2 else 0.0
-		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, str(held.definition.item_id), cocking)
+		var base: String = str(held.definition.item_id)
+		var look: Dictionary = held.collector_appearance() if FORGE_CHOICES.effect_scale(held) > 0.0 else {}
+		var colors: Array[Color] = held.glow_gradient_colors()
+		if base == "blackthorn_crossbow_v236":
+			var face: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
+			var off: PackedVector2Array = CROSSBOW_V236.offhand_span(animation_name, face, body.frame, tangent)
+			if off.size() == 2:
+				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed)
+		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed)
 	elif animation_name.contains("sword_modular_"):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
