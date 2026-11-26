@@ -1,6 +1,7 @@
 extends Node2D
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
+const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
