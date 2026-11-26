@@ -932,6 +932,17 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		release_fx.global_position = bolt.global_position
 		release_fx.call("configure", bolt.effect_color, bolt.accent_color, bolt.gradient_c, wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
 
+	if wand != null and wand.weapon_mod == "extra_projectiles":
+		var mod = preload("res://scripts/weapon_mods_v250.gd")
+		var original_heading: Vector2 = bolt.direction
+		bolt.damage *= 0.50
+		for index in [0, 2]:
+			var extra = MOON_SPELL_SCENE.instantiate()
+			mod.copy_launch(bolt, extra, ["owner_rid", "caster", "damage", "charged", "speed", "effect_motif", "full_palette", "effect_color", "accent_color", "gradient_c", "rare_signature", "mythic_layer_variant", "trail_style", "effect_tier", "impact_style", "spell_form", "effect_seed"])
+			extra.direction = original_heading.rotated(mod.angle(index, 3))
+			add_child(extra)
+			extra.global_position = bolt.global_position
+			removed_room_items.append(extra)
 	_wear_cast_wand(wand)
 
 func cast_moonfall(target_position: Vector2) -> void:

@@ -378,7 +378,8 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"saved_cosmetic_looks": item.saved_cosmetic_looks.duplicate(true),
 		"collector_favorite": item.collector_favorite, "collector_locked": item.collector_locked, "exhibition_slot": item.exhibition_slot, "origin_room": item.origin_room, "regional_rank": item.regional_rank,
 		"ethereal": item.ethereal, "durability": item.durability, "max_durability": item.max_durability,
-		"rolled_stat": item.stat_value, "rolled_affixes": item.affixes.duplicate(true), "rolled_sockets": item.sockets
+		"rolled_stat": item.stat_value, "rolled_affixes": item.affixes.duplicate(true), "rolled_sockets": item.sockets,
+		"weapon_mod_v250": item.weapon_mod
 	}
 
 # Preserve the pre-migration file before writing a changed grid format.
@@ -513,6 +514,7 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	if definition == null:
 		return null
 	var item: GhostItemInstance = GhostItemGenerator.create(definition, int(saved.get("seed", 0)), str(saved.get("quality", "normal")))
+	item.weapon_mod = preload("res://scripts/weapon_mods_v250.gd").sanitize(str(saved.get("weapon_mod_v250", "")), definition.equip_slot, definition.weapon_style, item.quality)
 	# v1/v2 saves lack these keys: retain deterministic roll defaults.
 	item.palette_index = clampi(int(saved.get("palette_index", item.palette_index)), 0, 5)
 	item.decoration_index = clampi(int(saved.get("decoration_index", item.decoration_index)), 0, 3)

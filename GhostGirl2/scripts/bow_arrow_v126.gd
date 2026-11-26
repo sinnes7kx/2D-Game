@@ -31,6 +31,9 @@ var visual_glow_scale: float = 1.0
 var procedural_look: Dictionary = {}
 var distance_travelled: float = 0.0
 var hit_ids: Dictionary = {}
+var can_return: bool = false
+var returning: bool = false
+var secondary_projectile: bool = false
 var trail_points: Array[Vector2] = []
 const BOW_IMPACT_V129: Script = preload("res://scripts/bow_impact_v129.gd")
 const ARROW_GLOW_V154: Script = preload("res://scripts/arrow_glow_v154.gd")
@@ -54,6 +57,15 @@ func _ready() -> void:
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
+	if returning:
+		if not is_instance_valid(caster) or not caster.is_inside_tree():
+			queue_free()
+			return
+		var toward: Vector2 = caster.global_position + Vector2(0, -39) - global_position
+		if toward.length() <= maxf(12.0, speed * delta):
+			queue_free()
+			return
+		direction = toward.normalized()
 	var travel: float = minf(speed * delta, range_left)
 	if travel <= 0.0:
 		queue_free()
@@ -71,17 +83,17 @@ func _physics_process(delta: float) -> void:
 	# echo arrows never create multiple activations or hitboxes.
 	# Light reveals nearby world secrets as its one physical arrow passes,
 	# even when it strikes a wall or creature. This does not add damage.
-	if not is_crossbow_bolt and element_index == 3:
+	if not is_crossbow_bolt and not returning and not secondary_projectile and element_index == 3:
 		_reveal_hidden_near_sweep(start, end)
-	if not is_crossbow_bolt and _check_world_elements(start, end):
+	if not is_crossbow_bolt and not returning and not secondary_projectile and _check_world_elements(start, end):
 		return
 	# Charged jump shots can strike painted moon targets. This is checked
 	# against the SAME swept segment as walls/enemies, without extra arrows.
-	if not is_crossbow_bolt and _check_elemental_targets(start, end):
+	if not is_crossbow_bolt and not returning and not secondary_projectile and _check_elemental_targets(start, end):
 		return
-	if not is_crossbow_bolt and _check_moon_targets(start, end):
+	if not is_crossbow_bolt and not returning and not secondary_projectile and _check_moon_targets(start, end):
 		return
-	if not is_crossbow_bolt and element_index == 2 and _freeze_water_on_sweep(start, end):
+	if not is_crossbow_bolt and not returning and not secondary_projectile and element_index == 2 and _freeze_water_on_sweep(start, end):
 		_impact(end, "water")
 		queue_free()
 		return
@@ -113,7 +125,14 @@ func _physics_process(delta: float) -> void:
 			if element_index == 2 and target.has_method("apply_frost_slow") and is_instance_valid(target) and not target.is_queued_for_deletion():
 				target.call("apply_frost_slow", 1.35, 0.78)
 			_impact(point, material)
-			if not charged or hit_ids.size() >= 2:
+			if not returning and (not charged or hit_ids.size() >= 2):
+				if can_return:
+					global_position = point
+					_begin_return()
+				else:
+					queue_free()
+				return
+			if returning:
 				queue_free()
 				return
 	if not wall.is_empty():
@@ -134,7 +153,17 @@ func _physics_process(delta: float) -> void:
 		trail_points.pop_back()
 	queue_redraw()
 	if range_left <= 0.0:
-		queue_free()
+		if can_return and not returning:
+			_begin_return()
+		else:
+			queue_free()
+
+func _begin_return() -> void:
+	returning = true
+	range_left = 950.0
+	damage *= 0.60
+	charged = false
+	trail_points.clear()
 
 func _reveal_hidden_near_sweep(start: Vector2, end: Vector2) -> void:
 	var line: Vector2 = end - start

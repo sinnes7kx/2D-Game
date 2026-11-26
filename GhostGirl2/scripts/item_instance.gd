@@ -75,6 +75,8 @@ var bow_detail_index: int = -1
 var stat_value: float = 0.0
 var quality: String = "normal"
 var affixes: Array[Dictionary] = []
+var weapon_mod: String = ""
+const WEAPON_MODS_V250 = preload("res://scripts/weapon_mods_v250.gd")
 var sockets: int = 0
 var socketed: Array[Dictionary] = []
 var item_level: int = 1
@@ -92,6 +94,8 @@ func display_name() -> String:
 	if definition == null:
 		return "Unknown"
 	var base: String = definition.display_name
+	if quality == "unique" and definition.item_class == "equipment":
+		base = WEAPON_MODS_V250.unique_name(definition.resource_path, base)
 	if ethereal:
 		base = ("Broken Ethereal " if is_broken() else "Ethereal ") + base
 	match quality:
@@ -101,7 +105,7 @@ func display_name() -> String:
 			return "Enchanted " + base
 		"rare": return "Glimmering " + base
 		"set": return "Vesper's " + base
-		"unique": return "The Forgotten " + base
+		"unique": return base if definition.item_class == "equipment" else "The Forgotten " + base
 		_: return base
 
 func get_slot() -> String:

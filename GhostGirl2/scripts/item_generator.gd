@@ -111,4 +111,5 @@ static func create(template: GhostItemData, seed_value: int, forced_quality: Str
         var socket_chance: int = rng.randi_range(0, 99)
         if template.equip_slot == "wand" or socket_chance < 78 or item.quality in ["rare", "set", "unique"]:
             item.sockets = rng.randi_range(1, maxi(1, socket_cap))
+    item.weapon_mod = preload("res://scripts/weapon_mods_v250.gd").roll(template.equip_slot, template.weapon_style, item.quality, seed_value)
     return item
