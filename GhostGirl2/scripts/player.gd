@@ -1243,6 +1243,7 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 		release.set("ink", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
 		release.set("accent", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
 		release.set("rare_variant", visual_variant)
+		release.self_modulate.a = VISUAL_CHOICES_V216.effect_scale(equipped)
 		root.add_child(release)
 		release.global_position = global_position + Vector2(0, -39) + heading.normalized() * 26.0
 	root.add_child(arrow)
