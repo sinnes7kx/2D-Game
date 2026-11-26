@@ -21,6 +21,7 @@ quick_tests=(
   v203_bow_airborne_blunt_smoke.gd
   v212_dagger_stab_smoke.gd
   v213_twinblade_audio_smoke.gd
+  v214_scythe_effects_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd
