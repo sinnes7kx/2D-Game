@@ -39,6 +39,8 @@ static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 				for i in range(frames.get_frame_count(base_name)):
 					frames.add_frame(target, frames.get_frame_texture(base_name, i))
 
+	install_single_swords(frames)
+
 	# v1.76: dedicated eight-frame thrust clips for both polearms.
 	# Source textures are the approved clean body, never the rose-hook art.
 	for weapon_art in ["spear", "briarwake_spear"]:
@@ -83,6 +85,44 @@ static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 			for index in sequence:
 				frames.add_frame(name, frames.get_frame_texture(source, index))
 
+# Use original clean unarmed body references, not additional sprite textures.
+# The same source index drives the wrist in every new clip.
+static func single_sword_sequence(name: String, face: String) -> Array[int]:
+	if name.contains("_idle_"):
+		var neutral: int = 1 if face == "back" else 0
+		return [neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral]
+	if name.contains("_walk_"):
+		return [1, 1, 2, 1, 1, 1, 2, 1] if face == "back" else [0, 1, 2, 1, 0, 1, 2, 1]
+	return [0, 1, 2, 3, 4, 5, 6, 7]
+
+static func install_single_swords(frames: SpriteFrames) -> void:
+	for face in ["front", "back", "left", "right"]:
+		var source: String = "attack_unarmed_light_" + face
+		if not frames.has_animation(source) or frames.get_frame_count(source) < 8:
+			continue
+		for name in ["sword_modular_idle_" + face, "sword_modular_walk_" + face, "attack_sword_modular_light_" + face, "attack_sword_modular_heavy_" + face, "attack_sword_modular_counter_" + face]:
+			if frames.has_animation(name):
+				continue
+			var loop: bool = not name.begins_with("attack_")
+			frames.add_animation(name)
+			frames.set_animation_loop(name, loop)
+			frames.set_animation_speed(name, 8.0 if loop else 16.0)
+			for index in single_sword_sequence(name, face):
+				frames.add_frame(name, frames.get_frame_texture(source, index))
+
+static func single_sword_span(name: String, face: String, frame_index: int) -> PackedVector2Array:
+	var index: int = clampi(frame_index, 0, 7)
+	var grip: Vector2 = DAGGER_THRUST.hand_anchor(face, single_sword_sequence(name, face)[index], 0 if face == "left" else 1)
+	if grip == Vector2.INF:
+		return PackedVector2Array()
+	var axis: Vector2 = DAGGER_THRUST.direction(face)
+	var tilt: float = -0.92
+	if name.begins_with("attack_"):
+		var angles: Array[float] = [-1.15, -1.42, -0.84, -0.30, 0.32, 0.72, 0.12, -0.92]
+		tilt = angles[index] * (1.14 if name.contains("_heavy_") else 1.0)
+	var sign: float = -1.0 if face == "left" else 1.0
+	return PackedVector2Array([grip, grip + axis.rotated(tilt * sign) * 60.0])
+
 # This exact body sequence and the wrist lookup share one source.
 static func polearm_sequence() -> Array[int]:
 	return [0, 1, 2, 4, 4, 5, 2, 0]
@@ -120,7 +160,7 @@ func _process(_delta: float) -> void:
 		return
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_now: String = str(body.animation)
-	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or MODULAR.surface_is_animated(self, body))):
+	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
@@ -143,6 +183,8 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
+	if equipped.uses_modular_single_sword():
+		return animation_name.begins_with("sword_modular_") or animation_name.begins_with("attack_sword_modular_")
 	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade")  :
 		return true
 	if equipped.weapon_style() == "dagger" and animation_name.contains("_pierce_"):
@@ -163,6 +205,9 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 	var empty: PackedVector2Array = PackedVector2Array()
 	if not _is_equipped(animation_name):
 		return empty
+	if animation_name.contains("sword_modular_"):
+		var face: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
+		return single_sword_span(animation_name, face, frame_index)
 	if animation_name.contains("twinblade"):
 		var guide_key: String = animation_name.replace("_air_", "_") if animation_name.contains("_air_") else animation_name
 		var guides: Array = twin_axes.get(guide_key, [])
@@ -245,7 +290,13 @@ func _draw() -> void:
 		return
 	var tangent: Vector2 = axis.normalized()
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
-	if animation_name.contains("twinblade"):
+	if animation_name.contains("sword_modular_"):
+		var look: Dictionary = MODULAR.equipped_profile(self, body)
+		if not look.is_empty():
+			var root: Vector2 = grip + tangent * 10.0
+			MODULAR.draw_grip(self, grip - tangent * 12.0, root, 3.0, look)
+			MODULAR.draw_blade(self, root, tip, 4.2, look)
+	elif animation_name.contains("twinblade"):
 		_draw_v176_twinblade(grip, tip, animation_name.contains("rosemirror"))
 	elif animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_"):
 		_draw_nightglass_stiletto(grip, tip, tangent, normal)

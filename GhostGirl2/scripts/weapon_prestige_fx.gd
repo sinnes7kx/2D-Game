@@ -305,6 +305,12 @@ func _axial_span() -> PackedVector2Array:
 				return PackedVector2Array([Vector2(float(pair[0]), float(pair[1])), Vector2(float(pair[2]), float(pair[3]))])
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 43.0 if style == "dagger" else 82.0)])
 	if style == "blade":
+		if item.uses_modular_single_sword():
+			var rig: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
+			if rig != null:
+				var shared: PackedVector2Array = rig.call("get_weapon_span", animation, body.frame)
+				return shared
+			return empty
 		# Authored coordinates when available; safe idle blade otherwise.
 		var blade: PackedVector2Array = _blade_span(animation, face, body.frame)
 		var tracked: PackedVector2Array = PackedVector2Array()

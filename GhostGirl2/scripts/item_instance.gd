@@ -122,6 +122,9 @@ func weapon_style() -> String:
 
 # v2.03 mauls, maces, morningstars and flails are *blunt* weapons.
 # This is presentation/impact classification, not a reroll or new item field.
+func uses_modular_single_sword() -> bool:
+	return definition != null and str(definition.item_id) in ["vesper_arming_sword_v235", "thornveil_sabre_v235", "ossuary_falchion_v235"]
+
 func physical_damage_kind() -> String:
 	match weapon_style():
 		"maul": return "blunt"

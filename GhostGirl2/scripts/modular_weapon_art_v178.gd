@@ -226,6 +226,18 @@ static func weapon_profile(look: Dictionary, item_id: String, hand: int = 0) -> 
 		p["shape"] = 0
 		p["width_scale"] = float(p["width_scale"]) * 0.79
 		p["guard_style"] = 1
+	elif item_id == "vesper_arming_sword_v235":
+		p["shape"] = 0
+		p["width_scale"] = float(p["width_scale"]) * 0.84
+		p["guard_style"] = 1
+	elif item_id == "thornveil_sabre_v235":
+		p["shape"] = 1
+		p["width_scale"] = float(p["width_scale"]) * 0.73
+		p["guard_style"] = 2
+	elif item_id == "ossuary_falchion_v235":
+		p["shape"] = 4
+		p["width_scale"] = float(p["width_scale"]) * 1.03
+		p["guard_style"] = 4
 	return p
 
 # Single source for the target double-ended sword silhouette. Both equipped
