@@ -65,10 +65,10 @@ func _rebuild_ambient_sources(feather: GhostItemInstance, amulet: GhostItemInsta
 	if _item_has_ambient_particles(amulet):
 		ambient_particle_sources.append({"anchor": Vector2.ZERO, "halo": true, "radius": Vector2(20, 7), "color": _item_ambient_color(amulet), "count": 2})
 	if _item_has_ambient_particles(wand_item):
-		ambient_particle_sources.append({"anchor": Vector2(8, -8), "radius": Vector2(12, 10), "color": _item_ambient_color(wand_item), "count": 3})
+		ambient_particle_sources.append({"anchor": Vector2(8, -8), "radius": Vector2(15, 12.5), "color": _item_ambient_color(wand_item), "count": 3})
 	var sword_item: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
 	if _item_has_ambient_particles(sword_item):
-		ambient_particle_sources.append({"anchor": Vector2(10, -8), "radius": Vector2(14, 12), "color": _item_ambient_color(sword_item), "count": 3})
+		ambient_particle_sources.append({"anchor": Vector2(10, -8), "radius": Vector2(17.5, 15), "color": _item_ambient_color(sword_item), "count": 3})
 	# A named socketable gives the dress/accessory a *tiny* distinct light.
 	# Weapon jewels are handled by EquippedPrestigeFX to avoid duplicates.
 	for slot in ["dress", "wings", "helm", "trinket", "charm"]:
@@ -257,22 +257,19 @@ func _process(delta: float) -> void:
 		wand_visual.modulate = Color(1.0, 1.0, 1.0, 0.98 * wand_item.weapon_opacity())
 		wand_visual.position = Vector2.ZERO
 		wand_visual.rotation = 0.0
-		wand_visual.scale = Vector2.ONE
+		wand_visual.scale = Vector2.ONE * WAND_ANCHORS_V216.VISUAL_SCALE
 		wand_visual.flip_h = false
 		# All poses are painted into Ghost-local coordinates. The actual
 		# animation frame, not a static facing rotation, selects the artwork.
 		_apply_wand_pose()
 		var active_animation: String = str(player_art.animation)
 		var active_frame: int = WAND_ANCHORS_V216.visible_frame(player_art)
-		wand_visual.position = WAND_ANCHORS_V216.alignment_offset(active_animation, active_frame, facing)
-		if str(player_art.animation).begins_with("wand_idle_"):
-			var guide: Dictionary = wand_pose_rows.get(str(player_art.animation), {})
-			var lines: Array = guide.get("guides", [])
-			if not lines.is_empty() and lines[0].size() == 4:
-				var grip: Vector2 = Vector2(float(lines[0][0]), float(lines[0][1]))
-				var angle: float = GENTLE.angle_at(GENTLE.phase_of(player_art))
-				wand_visual.rotation = angle
-				wand_visual.position += grip - grip.rotated(angle)
+		var wand_points: PackedVector2Array = WAND_ANCHORS_V216.span(active_animation, active_frame, facing)
+		if active_animation.begins_with("wand_idle_"):
+			wand_visual.rotation = GENTLE.angle_at(GENTLE.phase_of(player_art))
+		if wand_points.size() == 2:
+			var grip: Vector2 = wand_points[0]
+			wand_visual.position = WAND_ANCHORS_V216.target_grip(facing, active_animation, active_frame) - (grip * WAND_ANCHORS_V216.VISUAL_SCALE).rotated(wand_visual.rotation)
 		wand_visual.show_behind_parent = facing == "back"
 		wand_visual.z_index = -2 if facing == "back" else 6
 	if dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty():

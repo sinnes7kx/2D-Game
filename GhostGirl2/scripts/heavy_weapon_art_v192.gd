@@ -49,7 +49,7 @@ static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2A
 			var heading: Vector2 = Vector2(float(line[2])-float(line[0]),float(line[3])-float(line[1]))
 			if heading.length_squared() > 16.0:
 				direction = heading.normalized()
-	return PackedVector2Array([anchor, anchor + direction.normalized() * (82.0 if name.contains("halberd") else 54.0)])
+	return PackedVector2Array([anchor, anchor + direction.normalized() * (82.0 if name.contains("halberd") else 70.0)])
 
 static func halberd_outline(head: Vector2, axis: Vector2, p: Dictionary, side: float = 1.0) -> PackedVector2Array:
 	var n: Vector2 = Vector2(-axis.y,axis.x)*side
@@ -73,7 +73,7 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 		return
 	var axis: Vector2 = (head-grip).normalized()
 	var n: Vector2 = Vector2(-axis.y,axis.x)
-	var foot: Vector2 = grip-axis*(29.0 if style=="halberd" else 20.0)
+	var foot: Vector2 = grip-axis*(29.0 if style=="halberd" else 26.0)
 	var trim: Color = p["ornament_ink"]
 	canvas.draw_line(foot,head,Color("211b29"),5.6,true)
 	canvas.draw_line(foot,head,p["grip"],3.8,true)
@@ -109,7 +109,7 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 			# The shaft stays faint so the actual maul shape remains dominant.
 			var halo: Color = FX.color_at(colors, look, 0.65, phase)
 			var outer_halo: Color = Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.10))
-			canvas.draw_polyline(closed, outer_halo, 8.0, true)
+			canvas.draw_polyline(closed, outer_halo, 9.2, true)
 			canvas.draw_polyline(closed, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.22)), 3.5, true)
 			canvas.draw_line(foot, head, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.085)), 7.0, true)
 			FX.draw_edge(canvas, closed, colors, look, phase, 0.60)

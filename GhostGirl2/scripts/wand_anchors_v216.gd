@@ -5,6 +5,7 @@ const PATH: String = "res://resources/wand_pose_guides_v163.json"
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const SAMPLES = preload("res://scripts/walk_inbetweens_v223.gd")
+const VISUAL_SCALE: float = 1.20
 static var _rows: Dictionary = {}
 
 static func rows() -> Dictionary:
@@ -92,7 +93,7 @@ static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2
 	if points.size() != 2:
 		return points
 	var grip: Vector2 = points[0]
-	var tip: Vector2 = points[1]
+	var tip: Vector2 = grip + (points[1] - grip) * VISUAL_SCALE
 	if animation_name.begins_with("wand_idle_"):
 		tip = grip + (tip - grip).rotated(GENTLE.angle_at(GENTLE.phase_of(body)))
 	var delta: Vector2 = alignment_offset(animation_name, frame, face)
