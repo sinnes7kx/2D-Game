@@ -1235,15 +1235,16 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	arrow.set("glow_a", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
 	arrow.set("glow_b", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.5))
 	arrow.set("glow_c", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
-	var release: Node2D = Node2D.new()
-	release.set_script(BOW_RELEASE_FX)
-	release.set("direction", heading)
-	release.set("charged", charged)
-	release.set("ink", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
-	release.set("accent", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
-	release.set("rare_variant", visual_variant)
-	root.add_child(release)
-	release.global_position = global_position + Vector2(0, -39) + heading.normalized() * 26.0
+	if VISUAL_CHOICES_V216.effect_scale(equipped) > 0.0:
+		var release: Node2D = Node2D.new()
+		release.set_script(BOW_RELEASE_FX)
+		release.set("direction", heading)
+		release.set("charged", charged)
+		release.set("ink", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
+		release.set("accent", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
+		release.set("rare_variant", visual_variant)
+		root.add_child(release)
+		release.global_position = global_position + Vector2(0, -39) + heading.normalized() * 26.0
 	root.add_child(arrow)
 	arrow.global_position = global_position + Vector2(0, -39) + heading.normalized() * 31.0
 	# Exactly one authentic released arrow per scored range shot; cosmetic
