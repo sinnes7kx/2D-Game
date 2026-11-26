@@ -29,6 +29,7 @@ quick_tests=(
   v225_dodge_wand_motion_smoke.gd
   v226_silk_performance_smoke.gd
   v227_silk_memory_smoke.gd
+  v228_motion_efficiency_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

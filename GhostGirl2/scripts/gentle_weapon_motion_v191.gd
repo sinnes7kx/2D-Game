@@ -29,9 +29,42 @@ static func install(body: AnimatedSprite2D) -> void:
 static func angle_at(phase: float, hand: int = 0) -> float:
 	return sin(phase * TAU + float(hand) * PI) * IDLE_SWING
 
+# Build cumulative weights once after all runtime animation installers.
+# Store on the SpriteFrames resource rather than holding a global resource
+# reference. Invalidate on resource changes; unprepared clips use the
+# original exact calculation (including editor and synthetic fixtures).
+const TIMING_META: String = "v228_weighted_timing"
+
+static func prepare_timing(frames: SpriteFrames) -> void:
+	if frames == null:
+		return
+	var tables: Dictionary = {}
+	for value in frames.get_animation_names():
+		var name: String = str(value)
+		var prefix: PackedFloat64Array = PackedFloat64Array([0.0])
+		var sum: float = 0.0
+		for i in range(frames.get_frame_count(name)):
+			sum += frames.get_frame_duration(name, i)
+			prefix.append(sum)
+		tables[name] = prefix
+	frames.set_meta(TIMING_META, tables)
+	if not frames.has_meta("v228_timing_invalidation"):
+		var weak: WeakRef = weakref(frames)
+		frames.changed.connect(func():
+			var resource: SpriteFrames = weak.get_ref() as SpriteFrames
+			if resource != null and resource.has_meta(TIMING_META):
+				resource.remove_meta(TIMING_META)
+		)
+		frames.set_meta("v228_timing_invalidation", true)
+
 static func phase_of(body: AnimatedSprite2D) -> float:
 	if body == null or body.sprite_frames == null:
 		return 0.0
+	var tables: Dictionary = body.sprite_frames.get_meta(TIMING_META, {})
+	var prefix: PackedFloat64Array = tables.get(str(body.animation), PackedFloat64Array())
+	var count: int = body.sprite_frames.get_frame_count(body.animation)
+	if prefix.size() == count + 1 and body.frame >= 0 and body.frame < count:
+		return (prefix[body.frame] + (prefix[body.frame + 1] - prefix[body.frame]) * body.frame_progress) / maxf(prefix[count], 0.001)
 	var duration_sum: float = 0.0
 	var current: float = 0.0
 	for i in range(body.sprite_frames.get_frame_count(body.animation)):

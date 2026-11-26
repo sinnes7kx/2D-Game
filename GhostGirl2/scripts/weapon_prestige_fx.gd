@@ -27,6 +27,7 @@ var effect_palette: Array[Color] = [Color("f0cced"), Color("b4d6f7"), Color("efb
 var paint_a: Color = Color("f0cced")
 var paint_b: Color = Color("b4d6f7")
 var elapsed: float = 0.0
+var had_visible_fx: bool = false
 var tip_by_name: Dictionary = {}
 var bow_axes_by_animation: Dictionary = {}
 var long_axes_by_animation: Dictionary = {}
@@ -433,8 +434,12 @@ func _process(delta: float) -> void:
 	elif item != null and (last_uid != item.cosmetic_uid or last_seed != item.visual_seed() or last_signature != item.visual_signature() or last_fx_key != _fx_key(item)):
 		refresh()
 	_sync_transform_parent()
-	if item != null:
+	# Redraw once when a visible effect disappears. Off must not keep
+	# rebuilding an empty canvas, and restoring glow takes effect immediately.
+	var visible_fx: bool = item != null and CHOICES_V216.effect_scale(item) > 0.0 and FX_LEVEL.intensity > 0.0
+	if visible_fx or had_visible_fx:
 		queue_redraw()
+	had_visible_fx = visible_fx
 
 func _fx_key(value: GhostItemInstance) -> String:
 	return "%s:%s:%s:%s:%s:%s:%d:%d:%d" % [value.effect_palette_channel(), value.debug_color_mode, value.debug_glow_motif, value.debug_surface_mode, value.debug_forge_guard, value.debug_forge_grip, value.glow_level_override, value.bow_glow_mode_override, value.bow_projectile_style_override]
@@ -452,7 +457,7 @@ func _gradient_at(t: float) -> Color:
 # v1.54 -- soft bloom sampled around the approved weapon silhouette.
 # Round, feathered light replaces the old large square-ended 26px line strips.
 func _draw() -> void:
-	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0:
+	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0 or FX_LEVEL.intensity <= 0.0:
 		return
 	var visible_clip: String = str(body.animation)
 	if item.get_slot() == "wand" and not WAND_ANCHORS_V216.is_wand_pose(visible_clip):

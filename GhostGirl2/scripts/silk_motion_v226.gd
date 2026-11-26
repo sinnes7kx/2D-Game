@@ -10,6 +10,7 @@ var phase: float = 0.0
 var fade: float = 0.0
 var was_active: bool = false
 var last_material_id: int = 0
+var needs_upload: bool = true
 
 static func supports(name: String) -> bool:
 	for face in ["front", "back", "left", "right"]:
@@ -30,6 +31,7 @@ func reset() -> void:
 	energy = 0.0
 	phase = 0.0
 	fade = 0.0
+	needs_upload = true
 
 func update(body: AnimatedSprite2D, velocity: Vector2, delta: float, freeze: bool) -> void:
 	if body == null or not body.material is ShaderMaterial or body.sprite_frames == null:
@@ -45,9 +47,12 @@ func update(body: AnimatedSprite2D, velocity: Vector2, delta: float, freeze: boo
 		material.set_shader_parameter("silk_enabled", 1.0 if active else 0.0)
 		was_active = active
 		last_material_id = material.get_instance_id()
-	if not active:
+	if not enabled:
 		reset()
 		return
+	# Keep inertia through short unsupported clips (blink, attacks, hook).
+	# Their pixels stay untouched; only the hidden response continues.
+	# A teleport or explicit Off still resets the entire motion state.
 	if not freeze:
 		# Hair follows quickly; heavier fabric trails longer. Both axes are
 		# bounded, and a zero target settles naturally after stopping.
@@ -55,9 +60,13 @@ func update(body: AnimatedSprite2D, velocity: Vector2, delta: float, freeze: boo
 		hair_lag = follow_vector(hair_lag, target, delta, 7.5)
 		cloth_lag = follow_vector(cloth_lag, target, delta, 3.7)
 		energy = follow(energy, clampf(velocity.length() / 240.0, 0.0, 1.0), delta, 6.5)
-		fade = follow(fade, 1.0, delta, 10.0)
+		fade = follow(fade, 1.0 if active else 0.0, delta, 10.0)
 		phase = fposmod(phase + delta * (1.7 + energy * 3.0), TAU * 100.0)
-	if not freeze or changed_material:
+	if not active:
+		needs_upload = true
+		return
+	if not freeze or changed_material or needs_upload:
+		needs_upload = false
 		# Pack the response into two vector uniforms instead of independent
 		# scalar uploads. Freeze keeps the last visual pose during hitstop.
 		material.set_shader_parameter("silk_flow", Vector4(hair_lag.x, hair_lag.y, cloth_lag.x, cloth_lag.y))

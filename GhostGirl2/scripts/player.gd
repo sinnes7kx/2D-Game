@@ -204,6 +204,7 @@ func _ready() -> void:
 		set_process_input(false)
 		set_process_unhandled_input(false)
 		set_process_unhandled_key_input(false)
+		GENTLE.prepare_timing(body_art.sprite_frames)
 		body_art.play("idle_front")
 		_update_hand()
 		return
@@ -212,6 +213,7 @@ func _ready() -> void:
 	# After AIR installation: airborne art and frame-indexed charge gates
 	# remain unchanged. Only ordinary ground sword clips gain samples.
 	SWORD_V224.install(body_art)
+	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
