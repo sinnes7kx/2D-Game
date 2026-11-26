@@ -31,9 +31,16 @@ func _item(slot: String) -> GhostItemInstance:
 
 func _body_sprite() -> AnimatedSprite2D:
     var actor: Node = get_parent().get_parent() if get_parent() != null else null
-    return actor.get_node_or_null("Ghost") as AnimatedSprite2D if actor != null else null
+    if actor == null:
+        return null
+    return actor.get_node_or_null("Ghost") as AnimatedSprite2D
 
 func _face() -> String:
+    var sprite: AnimatedSprite2D = _body_sprite()
+    if sprite != null:
+        for suffix in ["front", "left", "right", "back"]:
+            if str(sprite.animation).ends_with("_" + suffix):
+                return suffix
     var actor: Node = get_parent().get_parent() if get_parent() != null else null
     return str(actor.get("facing_name")) if actor != null else "front"
 
