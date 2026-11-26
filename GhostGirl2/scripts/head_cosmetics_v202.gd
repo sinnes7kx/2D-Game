@@ -2,6 +2,7 @@ extends Node2D
 ## v2.04 eye silhouettes and seeded palettes; original body atlases stay untouched.
 ## "wings" remains the SAVED legacy head-accessory key. "helm" is independent.
 ## No new item metadata or underlying Ghost Girl atlas edits.
+const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
 var phase: float = 0.0
 var last_eye_pose_key: String = ""
 
@@ -118,7 +119,8 @@ func _eye_ellipse(center: Vector2, radius: Vector2, tint: Color) -> void:
 
 func _draw_eyes(item: GhostItemInstance, face: String) -> void:
     var sprite: AnimatedSprite2D = _body_sprite()
-    var centers: Array[Vector2] = pose_eye_centers(str(sprite.animation), sprite.frame, face) if sprite != null else eye_centers(face)
+    var index: int = WALK_V223.source_pose_index(sprite.sprite_frames, str(sprite.animation), sprite.frame) if sprite != null else 0
+    var centers: Array[Vector2] = pose_eye_centers(str(sprite.animation), index, face) if sprite != null else eye_centers(face)
     if centers.is_empty():
         return
     var variant: int = item.eye_style_override if item.eye_style_override >= 0 else eye_variant_index(item.visual_seed())

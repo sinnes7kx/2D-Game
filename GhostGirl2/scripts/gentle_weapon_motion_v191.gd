@@ -90,3 +90,37 @@ static func subframe_span(current: PackedVector2Array, upcoming: PackedVector2Ar
 	var angle: float = lerp_angle(a.angle(), b.angle(), t)
 	var span_length: float = lerpf(a.length(), b.length(), t)
 	return PackedVector2Array([current[0], current[0] + Vector2.from_angle(angle) * span_length])
+
+
+# Preserve weighted animation phase when switching directional walk clips.
+static func is_walk_clip(name: String) -> bool:
+	return name.begins_with("walk_") or name.contains("_walk_")
+
+static func same_walk_family(a: String, b: String) -> bool:
+	if not is_walk_clip(a) or not is_walk_clip(b):
+		return false
+	return a.get_slice("_", a.get_slice_count("_") - 1) in ["front", "back", "left", "right"] and b.get_slice("_", b.get_slice_count("_") - 1) in ["front", "back", "left", "right"] and a.left(a.rfind("_")) == b.left(b.rfind("_"))
+
+static func seek_phase(body: AnimatedSprite2D, phase: float) -> void:
+	if body == null or body.sprite_frames == null:
+		return
+	var frames: SpriteFrames = body.sprite_frames
+	var count: int = frames.get_frame_count(body.animation)
+	if count <= 0:
+		return
+	var total: float = 0.0
+	for i in range(count):
+		total += frames.get_frame_duration(body.animation, i)
+	var remaining: float = fposmod(phase, 1.0) * total
+	for i in range(count):
+		var weight: float = frames.get_frame_duration(body.animation, i)
+		if remaining < weight or i == count - 1:
+			body.set_frame_and_progress(i, clampf(remaining / maxf(0.001, weight), 0.0, 1.0))
+			return
+		remaining -= weight
+
+# In-world pixel offset and radians; small enough to preserve the painted
+# silhouette and keep each attached equipment layer in the same transform.
+static func gait_motion(phase: float, speed_ratio: float) -> Vector2:
+	var strength: float = clampf(speed_ratio, 0.0, 1.5)
+	return Vector2(-0.65 * strength * (1.0 - cos(phase * TAU * 2.0)), 0.012 * strength * sin(phase * TAU))

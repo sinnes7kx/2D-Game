@@ -9,6 +9,7 @@ const VISUAL_CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const AIR_V203 = preload("res://scripts/airborne_attacks_v203.gd")
 const HEAVY_V192 = preload("res://scripts/heavy_weapon_art_v192.gd")
@@ -198,6 +199,8 @@ func _ready() -> void:
 		body_art.play("idle_front")
 		_update_hand()
 		return
+	# Preview never walks; avoid allocating its extra locomotion textures.
+	WALK_V223.install(body_art)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
@@ -506,7 +509,7 @@ func _physics_process(delta: float) -> void:
 		set_facing(lock_target.global_position - global_position if is_instance_valid(lock_target) else direction)
 		var travel_prefix: String = _weapon_motion_prefix(true)
 		_play_if_changed(travel_prefix + facing_name)
-		body_art.speed_scale = clampf(velocity.length() / WALK_SPEED, 0.75, 1.3)
+		body_art.speed_scale = clampf(velocity.length() / WALK_SPEED, 0.75, 1.55)
 	else:
 		body_art.speed_scale = 1.0
 		blink_cooldown -= delta
@@ -590,6 +593,12 @@ func _process(delta: float) -> void:
 		body_art.rotation = sin(visual_time * 1.15) * 0.010 if idle else 0.0
 		body_art.position = BASE_ART_POS + Vector2(0.0, float_y)
 		body_art.scale = Vector2(BASE_ART_SCALE, BASE_ART_SCALE)
+		if not idle and GENTLE.is_walk_clip(str(body_art.animation)):
+			# Continuous render-time stride motion shared by body and child FX.
+			# Do not modify movement speed, collider or gameplay hand origin.
+			var gait: Vector2 = GENTLE.gait_motion(GENTLE.phase_of(body_art), velocity.length() / WALK_SPEED)
+			body_art.position.y += gait.x
+			body_art.rotation = gait.y
 		hand.position = _hand_position_for_facing() + Vector2(0.0, float_y)
 	# A restrained landing compression eases the transition into walking.
 	# This scales the existing sprite; it never edits its approved pixels.
@@ -697,7 +706,12 @@ func _attack_action_cost(heavy: bool) -> float:
 
 func _play_if_changed(animation_name: String) -> void:
 	if body_art.animation != animation_name:
+		var phase: float = -1.0
+		if GENTLE.same_walk_family(str(body_art.animation), animation_name):
+			phase = GENTLE.phase_of(body_art)
 		body_art.play(animation_name)
+		if phase >= 0.0:
+			GENTLE.seek_phase(body_art, phase)
 
 # Synchronize non-looping directional frames with the actual combat timing,
 # including attack-speed modifiers. No animation-notify timing drift.

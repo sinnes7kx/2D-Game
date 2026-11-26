@@ -143,6 +143,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.23 — directional stride continuity and locomotion sampling (source implementation; engine review pending)
+
+- Expand each ordinary eight-frame walk cycle to 24 procedural samples at unchanged weighted cycle duration, preserving every original texture at every third frame. Intermediate paint borrows only overlapping opaque interior colors and retains one approved silhouette; these are not newly hand-drawn limb poses. Cache four cycles; equipment preview skips generation.
+- Preserve weighted stride phase when turning within any walk family, and add very small continuous render-time body bob/roll. Sprint animation follows velocity more closely (visual speed clamp 1.55); movement, stamina, collisions, attack timing and saves unchanged.
+- Map expanded ordinary-walk eye guides to the nearest original silhouette. Leave all weapon-specific locomotion, baked combat frame counts and hit indexes untouched pending new approved art.
+- Add opt-in Shift+F2 measured FPS readout (hidden by default) and synthetic quick smoke checks for timing, keyframe preservation, source pose mapping and phase transfer. No FPS gain claimed; source-only verification, Godot/F5 still pending. Runtime generation can add startup cost and about 14 MiB of RGBA texture data if the four clips use 256×220 frames.
+
 ### v2.22 — fluid motion foundation (source implementation; engine review pending)
 
 - Enable Godot 2D physics interpolation for the player root only, retain 60 physics ticks/s, and leave existing process-driven room and equipment-local transforms uninterpolated. Reset player interpolation and camera smoothing after room/shrine/hook teleports. VSync remains unchanged; rendering FPS still depends on hardware and monitor.
