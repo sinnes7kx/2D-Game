@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.13.1 — Godot cosmetic radio parser hotfix (source committed; local F5 pending)
+
+- [x] Fix actual Godot 4.7 parse blocker `Identifier "RadioButton" not declared in the current scope` at `inventory_panel.gd:560`, 571 and 598. Replace each nonexistent `RadioButton` type/constructor with native `CheckBox` and retain independent `ButtonGroup` exclusivity for all eight categorized, unsaved cosmetic preview sections. No inventory/stat/seed/save changes.
+- [x] Update `tests/v210_offline_preflight.py` to forbid `RadioButton` in the live script, and `tests/v210_inventory_cosmetics_visual_smoke.gd` to verify valid grouped `CheckBox` instances for every section. This change is on the combined v2.13 branch; older unmerged v2.10 PR/branch may still contain the bug.
+- [ ] Rerun local Godot 4.7 project import and v2.10 inventory smoke, then F5-open inventory and test Natural/preview selection per category. No GitHub Actions run or live Godot parser result is claimed; the manual-only workflow remains unchanged.
+
 ### v2.13 — world-size twinblade presence and softer physical combat sound (branch-only; F5 pending)
 
 - [x] In-world **Gloamrose paired swords** now extend their authored blade spans visually by 34% in idle/walk and 17% during attacks, with both wrist anchors unchanged and tips still confined to the existing 256×220 atlas-frame budget. Opaque modular blade widths and silhouette-aligned edge strokes are more legible at Ghost Girl's reduced world scale, and their saved-palette glow becomes modestly brighter. Combat range, hitboxes, attack timing, stat seeds and cosmetics remain unchanged.

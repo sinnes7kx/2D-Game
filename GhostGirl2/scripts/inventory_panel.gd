@@ -557,7 +557,7 @@ func _create_cosmetic_radio_panel() -> void:
 		grid.columns = 3
 		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		categories.add_child(grid)
-		var natural: RadioButton = RadioButton.new()
+		var natural: CheckBox = CheckBox.new()
 		natural.text = "Natural"
 		natural.button_group = group
 		natural.add_theme_font_size_override("font_size", 11)
@@ -568,7 +568,7 @@ func _create_cosmetic_radio_panel() -> void:
 		var ids: Array = section["ids"]
 		var labels: Array = section["labels"]
 		for i in range(ids.size()):
-			var radio: RadioButton = RadioButton.new()
+			var radio: CheckBox = CheckBox.new()
 			radio.text = str(labels[i])
 			radio.button_group = group
 			radio.add_theme_font_size_override("font_size", 11)
@@ -595,7 +595,7 @@ func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
 		"Grip style": 80 + item.debug_forge_grip if item.debug_forge_grip >= 0 else -1
 	}
 	for choice in cosmetic_radio_options:
-		var button: RadioButton = choice["button"]
+		var button: CheckBox = choice["button"]
 		var id: int = int(choice["id"])
 		var category: String = str(choice["category"])
 		if id >= 0:

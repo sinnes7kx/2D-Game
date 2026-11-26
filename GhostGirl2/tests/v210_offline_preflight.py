@@ -25,7 +25,8 @@ def main() -> int:
     errors += check(
         "scripts/inventory_panel.gd",
         ("$Layout/DetailsHeader.hide()", "description.hide()", "_create_cosmetic_radio_panel()",
-         "RadioButton.new()", "_radio_preview(", "_radio_natural(", "_refresh_cosmetic_radio_panel("),
+         "CheckBox.new()", "var button: CheckBox = choice[\"button\"]", "_radio_preview(", "_radio_natural(", "_refresh_cosmetic_radio_panel("),
+        ("RadioButton",),
     )
     errors += check(
         "scripts/head_cosmetics_v202.gd",

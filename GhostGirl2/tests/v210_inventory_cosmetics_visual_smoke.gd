@@ -34,6 +34,22 @@ func _verify() -> void:
 	if OS.is_debug_build() and not (panel.get("cosmetic_radio_panel") as ScrollContainer).visible:
 		_fail("Debug cosmetic radio groups are missing")
 		return
+	# Godot has CheckBox + ButtonGroup, not a RadioButton class.
+	var choices: Array[Dictionary] = panel.get("cosmetic_radio_options")
+	var groups: Dictionary = {}
+	for choice in choices:
+		var control: CheckBox = choice["button"] as CheckBox
+		if control == null or control.button_group == null:
+			_fail("Cosmetic option is not a grouped Godot CheckBox")
+			return
+		var category: String = str(choice["category"])
+		if groups.has(category) and groups[category] != control.button_group:
+			_fail("Cosmetic category has inconsistent radio group")
+			return
+		groups[category] = control.button_group
+	if groups.size() != 8:
+		_fail("Expected eight independent cosmetic categories")
+		return
 	var tooltip: String = MARKUP.item_info(item, false)
 	if not tooltip.contains("[url=visual:glow]") or not tooltip.contains("Glow:"):
 		_fail("Regular tooltip lost easy color hover or effect summary")
