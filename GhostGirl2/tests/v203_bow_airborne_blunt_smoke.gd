@@ -7,6 +7,7 @@ const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const AIR = preload("res://scripts/airborne_attacks_v203.gd")
 const BLUNT = preload("res://scripts/blunt_weapon_family_v203.gd")
 const GAME = preload("res://scripts/game.gd")
+const ARROW_V220 = preload("res://scripts/bow_arrow_v126.gd")
 
 class FakeInventory extends Node:
     signal equipment_changed
@@ -24,6 +25,16 @@ func _initialize() -> void:
     call_deferred("_verify")
 
 func _verify() -> void:
+    # v2.20: visual alpha is linear, never used as a damage multiplier.
+    var arrow: Node2D = ARROW_V220.new() as Node2D
+    for scale in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0]:
+        arrow.set("visual_glow_scale", scale)
+        var ink: Color = arrow.call("decoration_color", Color(0.2, 0.4, 0.6, 0.8))
+        if not is_equal_approx(ink.a, 0.8 * float(scale)) or not is_equal_approx(ink.r, 0.2) or float(arrow.get("damage")) != 15.0:
+            arrow.free()
+            _fail("Arrow decoration opacity is not independent of damage and pigment")
+            return
+    arrow.free()
     var actor: CharacterBody2D = PLAYER.instantiate() as CharacterBody2D
     actor.set("equipment_preview_only", true)
     root.add_child(actor)

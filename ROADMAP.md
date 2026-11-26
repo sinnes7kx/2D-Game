@@ -165,6 +165,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [x] Extend the existing `v216_editable_fx_bow_wand_smoke.gd` rather than adding another slow Godot test. Check all five limb/string modes and global Glow Off, persisted opacity, and world-FX suppression; strengthen `v216_offline_preflight.py` for mainline recovery without increasing GitHub Actions load. Existing legacy item fields and item seeds are unchanged.
 - [ ] **Local Godot headless parser, actual F5 visual/auditory checks, save/load on an old backed-up collection and performance remain unverified.** Draft PR [#65](https://github.com/sinnes7kx/2D-Game/pull/65) now targets `main` directly. Actions stays manual-dispatch-only; do not run remote checks merely for each source change. Confirm engine behavior and review before merging/release.
 
+### v2.20 — consistent bow projectile decoration opacity (source implementation; engine pending)
+
+- Fix saved Off/10–50% glow on the physical arrow's decorative head, particles, elemental effects, and painted echo arrows. Keep the actual shaft fully opaque, one physical projectile, unchanged collision, damage, elemental mechanics and range scoring. Natural retains the existing full-strength decoration.
+- Apply the same saved multiplier to release and impact FX; the separate lantern trail uses its existing global intensity factor and now initializes opacity before the first draw. No new seed traits, rarity changes, save schema, artwork or automatic Actions triggers.
+- Extend v2.03 synthetic smoke with linear opacity/pigment/damage checks. Source comparison verifies physics code is unchanged; actual Godot parser, render and F5 checks remain pending. Rebased directly on main after v2.19 merged.
+
 ### v2.16 — saved glow choices, glowing bows, seeded arrow signatures and authored wand alignment (source committed; Godot F5 pending)
 
 - [x] **Glow is a saved visual preference**, not a forced rarity reroll. Add optional `glow_level_override` (-1 Natural, 0 Off, 1–5 = 10–50%), `bow_glow_mode_override` (-1 Natural, 0 Off, 1 limbs, 2 limbs + string, 3 full bow) and `bow_projectile_style_override` (-1 Natural or 0–8 named visual styles). Defaults preserve all earlier saves and original collector snapshots; saved looks can restore the additional choices. All three fields are independent of genuine `item_seed`, `cosmetic_uid`, affixes, birth roll and gameplay damage.

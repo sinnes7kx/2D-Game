@@ -10,14 +10,17 @@ func _ready() -> void:
     var mat: CanvasItemMaterial = CanvasItemMaterial.new()
     mat.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX
     material = mat
-    self_modulate.a = 0.55
+    _refresh_opacity()
     z_index = -1
 
 func _process(delta: float) -> void:
     elapsed += delta
+    _refresh_opacity()
+    queue_redraw()
+
+func _refresh_opacity() -> void:
     if arrow != null:
         self_modulate.a = FX_LEVEL.alpha(0.82 * clampf(float(arrow.get("visual_glow_scale")), 0.0, 1.0))
-    queue_redraw()
 
 func _color_at(t: float) -> Color:
     if arrow == null:
