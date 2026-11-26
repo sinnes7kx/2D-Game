@@ -188,12 +188,7 @@ func _draw_bow_charge_light(grip: Vector2, tip: Vector2, normal: Vector2, intens
 	draw_arc(string_center, 9.0 + 2.0 * progress, -PI * 0.72, PI * 0.72, 20, Color(hue.r, hue.g, hue.b, 0.23 * strength), 1.3, true)
 
 func _facing(name: String) -> String:
-	for suffix in ["front", "back", "left", "right"]:
-		if name.ends_with(suffix):
-			return suffix
-	if player != null:
-		return str(player.get("facing_name"))
-	return "front"
+	return preload("res://scripts/ghost_diagonal_art_v247.gd").cardinal_for_clip(name, str(player.get("facing_name")) if player != null else "front")
 
 func _bow_style_name() -> String:
 	return item.bow_art_style() if item != null else "thornrose"

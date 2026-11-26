@@ -189,7 +189,7 @@ func _process(_delta: float) -> void:
 	if animation_now != last_animation or body.frame != last_frame:
 		last_animation = animation_now
 		last_frame = body.frame
-		z_index = -1 if animation_now.ends_with("back") else 5
+		z_index = -1 if animation_now.ends_with("back") else 5 # Diagonal guides use the visible near wrist.
 		queue_redraw()
 
 func _is_equipped(animation_name: String) -> bool:
@@ -220,6 +220,15 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
+	if _is_equipped(animation_name):
+		var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, frame_index)
+		if wrist != Vector2.INF and not animation_name.begins_with("wand_"):
+			var rear: bool = animation_name.ends_with("back_left") or animation_name.ends_with("back_right")
+			var rightward: bool = animation_name.ends_with("right")
+			var sign_x: float = (1.0 if rightward else -1.0) if rear else (-1.0 if rightward else 1.0)
+			var axis: Vector2 = Vector2(sign_x * 0.56, 0.83).normalized()
+			var length: float = 43.0 if animation_name.begins_with("forge_dagger_") else (76.0 if animation_name.contains("twinblade") else 67.0)
+			return PackedVector2Array([wrist, wrist + axis * length])
 	if animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
 		if not _is_equipped(animation_name):
 			return PackedVector2Array()
