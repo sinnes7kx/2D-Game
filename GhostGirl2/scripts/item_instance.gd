@@ -223,6 +223,10 @@ func restore_cosmetic_look(index: int) -> bool:
 	cosmetic_uid = str(snapshot.get("cosmetic_uid", ""))
 	gradient_version = clampi(int(snapshot.get("gradient_version", 1)), 1, 2)
 	rare_visual_mod = int(snapshot.get("rare_visual_mod", -1))
+	# Old bookmarked looks did not contain separate eye styling: restoring
+	# them must return the natural look rather than retaining a later edit.
+	eye_style_override = clampi(int(snapshot.get("eye_style_override", -1)), -1, 3)
+	eye_palette_override = clampi(int(snapshot.get("eye_palette_override", -1)), -1, 5)
 	for field in _cosmetic_fields():
 		if snapshot.has(field):
 			set(field, int(snapshot[field]))
