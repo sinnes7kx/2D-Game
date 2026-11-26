@@ -18,6 +18,15 @@
 
 [ext_resource type="Script" path="res://scripts/hearth_light_v242.gd" id="v242_light"]
 
+[ext_resource type="Texture2D" path="res://assets/world/lanternhaven_oath_tree_v243.svg" id="v243_tree"]
+[ext_resource type="Texture2D" path="res://assets/world/lanternhaven_bench_v243.svg" id="v243_bench"]
+
+[sub_resource type="CircleShape2D" id="V243TreeRoots"]
+radius = 46.0
+
+[sub_resource type="RectangleShape2D" id="V243BenchShape"]
+size = Vector2(134, 30)
+
 [sub_resource type="CircleShape2D" id="v241_prop_shape"]
 radius = 24.0
 
@@ -487,3 +496,46 @@ position = Vector2(2400, 742)
 script = ExtResource("v242_light")
 kind = "lantern"
 light_seed = 250
+
+; Hand-authored landmark; y-sorted art and small physical root footprint.
+[node name="OathTree" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(2070, 1030)
+collision_layer = 2
+collision_mask = 0
+metadata/arrow_impact_material = "wood"
+
+[node name="Art" type="Sprite2D" parent="Gameplay/OathTree"]
+texture = ExtResource("v243_tree")
+centered = false
+offset = Vector2(-210, -365)
+
+[node name="Roots" type="CollisionShape2D" parent="Gameplay/OathTree"]
+shape = SubResource("V243TreeRoots")
+
+[node name="HearthBenchWest" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(1475, 1320)
+collision_layer = 2
+collision_mask = 0
+metadata/arrow_impact_material = "wood"
+
+[node name="Art" type="Sprite2D" parent="Gameplay/HearthBenchWest"]
+texture = ExtResource("v243_bench")
+centered = false
+offset = Vector2(-78, -46)
+
+[node name="SeatCollision" type="CollisionShape2D" parent="Gameplay/HearthBenchWest"]
+shape = SubResource("V243BenchShape")
+
+[node name="HearthBenchEast" type="StaticBody2D" parent="Gameplay"]
+position = Vector2(2135, 1420)
+collision_layer = 2
+collision_mask = 0
+metadata/arrow_impact_material = "wood"
+
+[node name="Art" type="Sprite2D" parent="Gameplay/HearthBenchEast"]
+texture = ExtResource("v243_bench")
+centered = false
+offset = Vector2(-78, -46)
+
+[node name="SeatCollision" type="CollisionShape2D" parent="Gameplay/HearthBenchEast"]
+shape = SubResource("V243BenchShape")

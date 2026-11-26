@@ -16,6 +16,11 @@ func _verify() -> void:
         push_error("Westwood return route missing")
         quit(1)
         return
+    for path in ["Gameplay/OathTree/Roots", "Gameplay/HearthBenchWest/SeatCollision", "Gameplay/HearthBenchEast/SeatCollision"]:
+        if not town.get_node_or_null(path) is CollisionShape2D:
+            push_error("Plaza landmark collision missing: " + path)
+            quit(1)
+            return
     if road.get_node_or_null("Gameplay/Effects/ForestMotes") == null:
         push_error("Forest ambience missing")
         quit(1)
