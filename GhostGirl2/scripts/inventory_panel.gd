@@ -585,11 +585,19 @@ func _set_eye_choice(pressed: bool, category: String, value: int) -> void:
 	var item: GhostItemInstance = _selected_cosmetic_item()
 	if not _is_eye_item(item):
 		return
+	var previous_shape: int = item.eye_style_override
+	var previous_palette: int = item.eye_palette_override
 	if category == "shape":
 		item.eye_style_override = clampi(value, -1, 3)
 	else:
 		item.eye_palette_override = clampi(value, -1, 5)
-	inventory.save_game()
+	if not inventory.save_game():
+		# A failed save must never silently leave an unsaved visual edit.
+		item.eye_style_override = previous_shape
+		item.eye_palette_override = previous_palette
+		_refresh_eye_editor(item)
+		notice.text = "Could not save eye appearance · unchanged"
+		return
 	inventory.contents_changed.emit()
 	inventory.equipment_changed.emit()
 	notice.text = "Eye style saved · original rarity unchanged"
@@ -603,7 +611,7 @@ func focus_eye_item(item: GhostItemInstance) -> void:
 	# Equipment stays equipped: this is selection only, no item transfer.
 	selected_index = index
 	var grid_position: Vector2i = inventory.grid_positions[index] if index < inventory.grid_positions.size() else Vector2i.ZERO
-	active_page = clampi(grid_position.y / inventory.GRID_ROWS, 0, inventory.GRID_PAGES - 1)
+	active_page = clampi(floori(float(grid_position.y) / 6.0), 0, 7)
 	slots.call("set_page", active_page)
 	page_number.text = "%d / 8" % (active_page + 1)
 	refresh()
