@@ -238,7 +238,7 @@ func _actual_bow_preview() -> bool:
 		{"node": painted_preview, "path": art_path},
 		{"node": bow_painted_mask, "path": mask_path}
 	]:
-		var sprite: Sprite2D = entry["node"]
+		var sprite: Sprite2D = entry["node"] as Sprite2D
 		var frame: AtlasTexture = AtlasTexture.new()
 		frame.atlas = load(str(entry["path"])) as Texture2D
 		frame.filter_clip = true
