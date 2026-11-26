@@ -8,6 +8,7 @@ signal cursor_place_requested(page: int, col: int, row: int)
 signal cursor_cancel_requested
 signal cursor_drop_requested(index: int)
 const ITEM_MARKUP = preload("res://scripts/item_rich_text.gd")
+const LOOK_CHOICES_V219 = preload("res://scripts/visual_choices_v216.gd")
 ## Spatial 10x4 D2-style backpack, 8 pages; all item indices stay save-compatible.
 ## Right-click to equip; drag to move; socketing and destruction use explicit actions.
 var inventory
@@ -609,6 +610,8 @@ func _refresh_glow_editor(item: GhostItemInstance) -> void:
 		var option: CheckBox = choice["button"] as CheckBox
 		var current: int = item.glow_level_override if key == "glow" else (item.bow_glow_mode_override if key == "bow_body" else item.bow_projectile_style_override)
 		option.set_pressed_no_signal(current == int(choice["value"]))
+		if bow and key == "projectile" and int(choice["value"]) == -1:
+			option.tooltip_text = "Current seed: " + LOOK_CHOICES_V219.projectile_label(LOOK_CHOICES_V219.seeded_projectile_style(item))
 
 func _switch_debug_layers(_pressed: bool) -> void:
 	var selected: GhostItemInstance = _selected_cosmetic_item()
@@ -656,8 +659,8 @@ func _create_eye_editor() -> void:
 	intro.add_theme_font_size_override("font_size", 12)
 	content.add_child(intro)
 	for section in [
-		{"key": "shape", "title": "Shape", "labels": ["Original", "Moonveil", "Cathedral", "Starborn", "Hollow"]},
-		{"key": "palette", "title": "Color", "labels": ["Original", "Violet", "Rose", "Moonblue", "Jade", "Gold", "Ash"]}
+		{"key": "shape", "title": "Shape", "labels": ["Natural", "Moonveil", "Cathedral", "Starborn", "Hollow"]},
+		{"key": "palette", "title": "Color", "labels": ["Natural", "Violet", "Rose", "Moonblue", "Jade", "Gold", "Ash"]}
 	]:
 		var heading: Label = Label.new()
 		heading.text = str(section["title"])

@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.19 — honest seeded and personalized appearance identity (source implementation; engine pending)
+
+- Distinguish current seed from original birth seed and separate saved custom glow, bow-body/arrow decoration, and eye preferences in advanced Inspect and offline collector cards. Ordinary tooltip stays compact; no new roll odds or fields.
+- Natural arrow selection exposes the current seed's motif as a tooltip; the same unchanged SHA-256 channel is exposed read-only even if an ornament is manually selected. Rename eye reset to Natural (current seed, not original birth look). GG1 remains the base appearance code; copying it does not reproduce custom overrides.
+- Extend existing v2.16 smoke with synthetic read-only, legacy-default, seed-invariance and presentation assertions. No new test registration, game damage, save schema, authored art or workflow triggers. Godot parser/F5 and real save testing remain pending.
+
 ### v2.18 — local regression coverage (source implementation; engine pending)
 
 - Restore the four omitted Godot smoke scripts (v2.09 share cards, v2.10 cosmetics, v2.11 blunt/scythe aura, v2.14 scythe effects) to the ordered local runner. Quick also includes legacy dropdown, collection recovery and transfer-integrity checks; full runs all 54 existing smoke scripts exactly once.

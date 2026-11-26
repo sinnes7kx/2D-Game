@@ -8,6 +8,8 @@ const PANEL = preload("res://scenes/inventory_panel.tscn")
 const MODEL = preload("res://scripts/collector_lens_model_v179.gd")
 const LENS = preload("res://scripts/collector_lens_v179.gd")
 const PROJECTILE = preload("res://scripts/bow_arrow_v126.gd")
+const CARD = preload("res://scripts/v209_collector_share_card.gd")
+const MARKUP = preload("res://scripts/item_rich_text.gd")
 
 func _initialize() -> void:
 	call_deferred("_verify")
@@ -102,6 +104,18 @@ func _verify() -> void:
 	var old: GhostItemInstance = inv._deserialize_item(legacy)
 	if old == null or old.glow_level_override != -1 or old.bow_glow_mode_override != -1 or old.bow_projectile_style_override != -1:
 		_fail("Legacy save without optional fields failed to retain Natural defaults")
+		return
+	# v2.19: inspection and cards must distinguish saved edits from seed-derived appearance.
+	var before_read: Dictionary = inv._serialize_item(bow, Vector2i(1, 0))
+	var details: Array[String] = CHOICES.appearance_details(bow)
+	if CHOICES.seeded_projectile_style(bow) != seeded_style or not CHOICES.has_personalization(bow) or not details.has("Custom arrow ornament: Wisp Bloom") or not details.has("Custom glow: 30%") or not details.has("Custom bow body: Full bow"):
+		_fail("Collector appearance details lost seed or saved customization")
+		return
+	if not CARD.compose(bow).contains("GG1 identifies the base seed only") or not MARKUP.item_info(bow, true).contains("Personalized appearance") or MARKUP.item_info(bow, false).contains("Custom arrow ornament:"):
+		_fail("Appearance disclosure missing or default tooltip cluttered")
+		return
+	if inv._serialize_item(bow, Vector2i(1, 0)) != before_read or CHOICES.has_personalization(old):
+		_fail("Read-only collector labels changed item or misclassified legacy defaults")
 		return
 	var first_arrow: Node2D = PROJECTILE.new() as Node2D
 	first_arrow.set("projectile_style", CHOICES.projectile_style(bow))
