@@ -163,8 +163,9 @@ func _check_world_elements(start: Vector2, end: Vector2) -> bool:
 		var contact: Vector2 = start + segment * projection
 		var radius: float = float(candidate.get("trigger_radius"))
 		if contact.distance_squared_to(candidate.global_position) <= radius * radius:
+			var material: String = ARROW_AUDIO.material_for(candidate, "magic")
 			if bool(candidate.call("on_elemental_arrow_hit", element_index, formation_index, charged, launched_in_air)):
-				_impact(contact, ARROW_AUDIO.material_for(candidate, "magic"))
+				_impact(contact, material)
 				queue_free()
 				return true
 	return false
