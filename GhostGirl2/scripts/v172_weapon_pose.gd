@@ -1,5 +1,8 @@
 extends Node2D
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
+const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
+const FORGE_FX = preload("res://scripts/fx_intensity_v1924.gd")
+const FORGE_CHOICES = preload("res://scripts/visual_choices_v216.gd")
 const DAGGER_THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 var v180_elapsed: float = 0.0
@@ -184,6 +187,10 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
+	if equipped.uses_forge_bow():
+		return animation_name.begins_with("forge_bow_") or animation_name.begins_with("attack_forge_bow_")
+	if equipped.uses_forge_dagger():
+		return animation_name.begins_with("forge_dagger_") or animation_name.begins_with("attack_forge_dagger_")
 	if equipped.weapon_style() == "crossbow":
 		return animation_name.begins_with("crossbow_") or animation_name.begins_with("attack_crossbow_")
 	if equipped.uses_modular_single_sword():
@@ -195,6 +202,13 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
+	if animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
+		if not _is_equipped(animation_name):
+			return PackedVector2Array()
+		var face: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
+		if animation_name.contains("forge_bow_"):
+			return FORGE_V238.bow_span(body, animation_name, face, frame_index, player.get("bow_firing_direction"))
+		return FORGE_V238.span(animation_name, face, frame_index)
 	if animation_name.contains("crossbow_"):
 		var points: PackedVector2Array = _authored_weapon_span(animation_name, frame_index)
 		if animation_name.contains("_fire_") and player != null:
@@ -300,7 +314,20 @@ func _draw() -> void:
 		return
 	var tangent: Vector2 = axis.normalized()
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
-	if animation_name.contains("crossbow_"):
+	if animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
+		var profile: Dictionary = MODULAR.equipped_profile(self, body)
+		var world: Node = player.get("world") as Node
+		var inventory: Node = world.get("inventory") as Node if world != null else null
+		var held: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
+		if held == null or held.definition == null:
+			return
+		if held.uses_forge_bow():
+			var amount: float = clampf(float(player.get("bow_draw_time")) / 0.46, 0.0, 1.0) if bool(player.get("bow_draw_active")) else 0.0
+			var glow: float = FORGE_CHOICES.effect_scale(held) * FORGE_FX.intensity if FORGE_CHOICES.bow_body_visible(held) else 0.0
+			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, held.bow_limb_gradient_colors(), held.bow_string_gradient_colors(), amount, glow)
+		else:
+			FORGE_V238.draw_dagger(self, span, profile)
+	elif animation_name.contains("crossbow_"):
 		var profile: Dictionary = MODULAR.equipped_profile(self, body)
 		var world: Node = player.get("world") as Node
 		var inventory: Node = world.get("inventory") as Node if world != null else null

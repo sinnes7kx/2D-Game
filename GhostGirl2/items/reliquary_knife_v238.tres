@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/ui/weapons_v238/reliquary_knife_v238.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "reliquary_knife_v238"
+display_name = "Reliquary Knife"
+description = "A slim leaf-shaped ritual knife with an openwork silver guard."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+weapon_style = "dagger"
+stat_id = "attack_speed_pct"
+min_stat = 5.0
+max_stat = 8.1
+max_sockets = 2
+item_level = 7
+min_weapon_damage = 6.7
+max_weapon_damage = 9.5
+inventory_width = 1
+inventory_height = 3

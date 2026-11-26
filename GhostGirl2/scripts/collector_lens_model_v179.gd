@@ -15,6 +15,7 @@ var bow_body_glow: Sprite2D
 var scythe_glow: Node2D
 var glow_preview_override: int = -1
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
+const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 var item: GhostItemInstance
 var look: Dictionary = {}
@@ -88,7 +89,7 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.uses_forge_bow() or item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
@@ -108,6 +109,14 @@ func _draw() -> void:
 		return
 	var style: String = item.weapon_style()
 	match style:
+		"bow":
+			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, 0.0)
+		"dagger":
+			if item.uses_forge_dagger():
+				FORGE_V238.draw_dagger(self, PackedVector2Array([Vector2(0, 14), Vector2(0, -25)]), profiles[0])
+			else:
+				_grip(Vector2(0, 20), Vector2(0, 5), 3.2, 0)
+				_blade(Vector2(0, 5), Vector2(0, -35), 3.2, 0)
 		"crossbow":
 			CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, str(item.definition.item_id))
 		"halberd", "maul":
@@ -226,7 +235,7 @@ func _draw_signature(center: Vector2, radius: float) -> void:
 			3: draw_colored_polygon(PackedVector2Array([p,p + Vector2(2,-4),p + Vector2(4,0)]), ink)
 
 func has_painted_surface() -> bool:
-	return item != null and item.definition != null and item.definition.icon != null and (item.get_slot() == "wand" or item.weapon_style() == "bow")
+	return item != null and item.definition != null and item.definition.icon != null and (item.get_slot() == "wand" or (item.weapon_style() == "bow" and not item.uses_forge_bow()))
 
 # The inspection bow is the actual carried bow-only atlas + its matching
 # v139 mask, not a separate icon with an unrelated color shader.

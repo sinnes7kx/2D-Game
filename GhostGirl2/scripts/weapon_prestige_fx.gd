@@ -296,7 +296,7 @@ func _axial_span() -> PackedVector2Array:
 			var authored: Variant = pose_node.call("get_weapon_span", animation, pose_frame)
 			if authored is PackedVector2Array and authored.size() == 2:
 				return authored
-			if style == "spear" and animation.begins_with("attack_"):
+			if item.uses_forge_dagger() or (style == "spear" and animation.begins_with("attack_")):
 				return empty # Occluded physical grip: no detached fallback light.
 		var fresh: Array = new_weapon_axes_by_animation.get(animation, [])
 		if not fresh.is_empty():
@@ -466,7 +466,7 @@ func _draw() -> void:
 	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0 or FX_LEVEL.intensity <= 0.0:
 		return
 	# Crossbow geometry owns its restrained physical finish; bolt glow is independent.
-	if item.weapon_style() == "crossbow":
+	if item.weapon_style() == "crossbow" or item.uses_forge_bow():
 		return
 	var visible_clip: String = str(body.animation)
 	if item.get_slot() == "wand" and not WAND_ANCHORS_V216.is_wand_pose(visible_clip):

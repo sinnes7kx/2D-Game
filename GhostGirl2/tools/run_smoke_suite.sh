@@ -40,6 +40,7 @@ quick_tests=(
   v235_single_swords_smoke.gd
   v236_crossbow_smoke.gd
   v237_crossbow_forge_smoke.gd
+  v238_bow_dagger_forge_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

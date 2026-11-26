@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.38 — yew bows and gothic dirks (source implementation; engine review pending)
+
+- Four new bases: Mourning Yew Bow, Vesper Recurve Bow, Cinderveil Dirk and Reliquary Knife. New bow silhouettes, independently seeded limbs and string colors, bounded widths, tapered metal nocks and engravings; slim dagger profiles with distinct guards. Shared equipped and collector geometry, four directional clean body references, grounded and aerial clips; no new painted poses or textures.
+- Retain bow damage, material impact audio and puzzle behavior; release position shares visible grip and aim. Suppress old painted mask and prestige overlay for new bows only. Daggers retain existing thrust gameplay and shared wrist spans. Existing loot lanes and debug F7. Previous item resources and save schema unchanged.
+- Source/geometry tests and expanded ranged-pool checks; Godot parser, F5 visual alignment and actual performance remain unverified. No Actions dispatch. Built atop v2.37.
+
 ### v2.37 — crossbow forge and synchronized handling (source implementation; engine review pending)
 
 - Add Vesper Latch Crossbow and Ossuary Arbalest, with distinct compact/broad construction and copied comparable stats. All four bases use bounded seed-driven limb widths, grip wraps, four ornament motifs, muted metal bevels and a progressively cocked string; shared equipped and inspection geometry. Existing ranged loot frequency unchanged.

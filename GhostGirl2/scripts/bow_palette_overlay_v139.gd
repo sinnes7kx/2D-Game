@@ -218,7 +218,7 @@ func refresh() -> void:
 		visible = false
 		return
 	var item: GhostItemInstance = inventory.get_equipped("sword")
-	if item == null or item.weapon_style() != "bow":
+	if item == null or item.weapon_style() != "bow" or item.uses_forge_bow():
 		visible = false
 		return
 	last_bow_cosmetic_key = WEAPON_SURFACE.key(item)
@@ -241,7 +241,7 @@ func _process(_delta: float) -> void:
 		var key: String = WEAPON_SURFACE.key(item)
 		if key != last_bow_cosmetic_key:
 			refresh()
-	if item == null or item.weapon_style() != "bow":
+	if item == null or item.weapon_style() != "bow" or item.uses_forge_bow():
 		visible = false
 		if bow_carry_visual != null:
 			bow_carry_visual.visible = false

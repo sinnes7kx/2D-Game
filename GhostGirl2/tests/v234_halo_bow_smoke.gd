@@ -29,8 +29,8 @@ func _verify() -> void:
         var found: GhostItemData = game.call("_roll_sword_drop", original, i * 23) as GhostItemData
         if found != null and found.weapon_style == "bow":
             seen[str(found.item_id)] = true
-    if seen.size() != 4:
-        _fail("Four bows not obtainable in the existing bow lane")
+    if seen.size() != 6:
+        _fail("Six bows not obtainable in the existing bow lane")
         return
     game.free()
     for face in ["front", "back", "left", "right"]:
