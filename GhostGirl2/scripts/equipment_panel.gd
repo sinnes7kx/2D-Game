@@ -24,6 +24,14 @@ func _display_icon(item: Variant) -> Texture2D:
 
 
 func _ready() -> void:
+	var trim: Control = preload("res://scripts/gothic_frame_v241.gd").new()
+	trim.name = "GothicEngraving"
+	trim.top_level = true
+	add_child(trim)
+	trim.global_position = global_position
+	trim.size = size
+	resized.connect(func() -> void: trim.size = size)
+	item_rect_changed.connect(func() -> void: trim.global_position = global_position)
 	visible = false
 	_install_live_preview()
 	_install_stats_toggle()

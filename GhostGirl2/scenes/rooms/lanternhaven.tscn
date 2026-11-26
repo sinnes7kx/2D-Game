@@ -14,6 +14,11 @@
 [ext_resource type="Resource" path="res://items/v202_moonlit_tiara.tres" id="v202_tiara"]
 [ext_resource type="Texture2D" path="res://assets/ui/headpieces/v202_moonlit_tiara.svg" id="v202_tiara_icon"]
 
+[ext_resource type="Script" path="res://scripts/breakable_container_v241.gd" id="v241_prop"]
+
+[sub_resource type="CircleShape2D" id="v241_prop_shape"]
+radius = 24.0
+
 [sub_resource type="RectangleShape2D" id="WestWallShape"]
 size = Vector2(160, 2400)
 
@@ -357,3 +362,72 @@ script = ExtResource("2_portal")
 destination = "westwood_road"
 interaction_name = "Follow the westward forest road"
 opened = true
+
+[node name="BreakableContainers" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Prop0" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(460, 1070)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "crate"
+prop_seed = 241
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop0"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop1" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(530, 1070)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "barrel"
+prop_seed = 242
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop1"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop2" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(1050, 1560)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "crate"
+prop_seed = 243
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop2"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop3" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(1120, 1560)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "barrel"
+prop_seed = 244
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop3"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop4" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(2520, 1460)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "crate"
+prop_seed = 245
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop4"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop5" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(2585, 1460)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "barrel"
+prop_seed = 246
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop5"]
+shape = SubResource("v241_prop_shape")

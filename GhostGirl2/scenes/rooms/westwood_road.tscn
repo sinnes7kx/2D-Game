@@ -5,6 +5,11 @@
 [ext_resource type="Script" path="res://scripts/fellable_tree_v240.gd" id="tree"]
 [ext_resource type="PackedScene" path="res://scenes/rose_wraith.tscn" id="enemy"]
 [ext_resource type="Resource" path="res://items/briar_wand.tres" id="loot"]
+[ext_resource type="Script" path="res://scripts/breakable_container_v241.gd" id="v241_prop"]
+
+[sub_resource type="CircleShape2D" id="v241_prop_shape"]
+radius = 24.0
+
 [sub_resource type="RectangleShape2D" id="horizontal"]
 size = Vector2(3000, 360)
 [sub_resource type="RectangleShape2D" id="vertical"]
@@ -154,3 +159,72 @@ position = Vector2(680, 820)
 drop_data = ExtResource("loot")
 drop_seed = 240244
 drop_quality = "random"
+
+[node name="BreakableContainers" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Prop0" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(2590, 965)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "barrel"
+prop_seed = 241
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop0"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop1" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(2530, 965)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "crate"
+prop_seed = 242
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop1"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop2" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(1520, 970)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "crate"
+prop_seed = 243
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop2"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop3" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(1450, 970)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "barrel"
+prop_seed = 244
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop3"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop4" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(430, 610)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "crate"
+prop_seed = 245
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop4"]
+shape = SubResource("v241_prop_shape")
+
+[node name="Prop5" type="StaticBody2D" parent="Gameplay/BreakableContainers"]
+position = Vector2(490, 610)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("v241_prop")
+kind = "barrel"
+prop_seed = 246
+
+[node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop5"]
+shape = SubResource("v241_prop_shape")
