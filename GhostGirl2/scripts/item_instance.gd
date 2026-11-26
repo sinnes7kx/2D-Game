@@ -128,7 +128,7 @@ func uses_modular_single_sword() -> bool:
 func physical_damage_kind() -> String:
 	match weapon_style():
 		"maul": return "blunt"
-		"bow": return "pierce"
+		"bow", "crossbow": return "pierce"
 		"dagger", "spear": return "pierce"
 		_: return "slash"
 
@@ -143,6 +143,7 @@ func light_swing_duration() -> float:
 		"maul": return 0.67
 		"twinblade": return 0.36
 		"bow": return 0.38
+		"crossbow": return 0.96
 		"blade": return 0.40
 		_: return 0.40
 
@@ -157,6 +158,7 @@ func light_stamina_cost() -> float:
 		"maul": return 22.50
 		"twinblade": return 16.20
 		"bow": return 14.0
+		"crossbow": return 18.0
 		_: return 18.0
 
 func weapon_reach() -> float:
@@ -170,6 +172,7 @@ func weapon_reach() -> float:
 		"maul": return 173.0
 		"twinblade": return 168.0
 		"bow": return 830.0
+		"crossbow": return 930.0
 		"blade": return 144.0
 		_: return 106.0
 

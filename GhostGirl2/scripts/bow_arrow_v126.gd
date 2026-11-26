@@ -8,6 +8,7 @@ var speed: float = 980.0
 var damage: float = 15.0
 var range_left: float = 830.0
 var charged: bool = false
+var is_crossbow_bolt: bool = false
 var launched_in_air: bool = false
 var caster: Node2D = null
 var caster_rid: RID
@@ -68,13 +69,13 @@ func _physics_process(delta: float) -> void:
 	# even when it strikes a wall or creature. This does not add damage.
 	if element_index == 3:
 		_reveal_hidden_near_sweep(start, end)
-	if _check_world_elements(start, end):
+	if not is_crossbow_bolt and _check_world_elements(start, end):
 		return
 	# Charged jump shots can strike painted moon targets. This is checked
 	# against the SAME swept segment as walls/enemies, without extra arrows.
-	if _check_elemental_targets(start, end):
+	if not is_crossbow_bolt and _check_elemental_targets(start, end):
 		return
-	if _check_moon_targets(start, end):
+	if not is_crossbow_bolt and _check_moon_targets(start, end):
 		return
 	if element_index == 2 and _freeze_water_on_sweep(start, end):
 		_impact(end, "water")
@@ -258,7 +259,11 @@ func _draw() -> void:
 	elif not procedural_look.is_empty():
 		glow_ink = RelicPaletteV139.color_at(procedural_look, time_pulse, 0.33)
 	var mixed: Color = glow_ink.lerp(element_ink, 0.15 + 0.08 * sin(time_pulse))
-	_draw_arrow_shaft(Vector2.ZERO, Color("e4dce5").lerp(element_ink, 0.43), 1.0, 1.0)
+	_draw_arrow_shaft(Vector2.ZERO, Color("e4dce5").lerp(element_ink, 0.43), 1.0, 0.58 if is_crossbow_bolt else 1.0)
+	if is_crossbow_bolt:
+		if visual_glow_scale > 0.0:
+			draw_line(-direction * 19.0, -direction * 5.0, decoration_color(Color(glow_ink.r, glow_ink.g, glow_ink.b, 0.38)), 1.5, true)
+		return
 	# Glow Off removes decorative light; the physical painted arrow and
 	# unchanged single-hit physics are still present.
 	if visual_glow_scale <= 0.0:

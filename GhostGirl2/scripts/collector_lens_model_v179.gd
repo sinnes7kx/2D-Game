@@ -14,6 +14,7 @@ var bow_painted_mask: Sprite2D
 var bow_body_glow: Sprite2D
 var scythe_glow: Node2D
 var glow_preview_override: int = -1
+const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 var item: GhostItemInstance
 var look: Dictionary = {}
@@ -87,7 +88,7 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.uses_modular_single_sword() or item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
@@ -107,6 +108,8 @@ func _draw() -> void:
 		return
 	var style: String = item.weapon_style()
 	match style:
+		"crossbow":
+			CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, str(item.definition.item_id) == "silver_reliquary_crossbow_v236")
 		"halberd", "maul":
 			var p: Dictionary = profiles[0].duplicate()
 			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))

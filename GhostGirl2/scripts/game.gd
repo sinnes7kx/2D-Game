@@ -71,6 +71,10 @@ const BLUNT_LOOT_TABLE = [
 	preload("res://items/v203_rosequartz_morningstar.tres"),
 	preload("res://items/v203_nightchain_flail.tres")
 ]
+const CROSSBOW_LOOT_V236 = [
+	preload("res://items/blackthorn_crossbow_v236.tres"),
+	preload("res://items/silver_reliquary_crossbow_v236.tres")
+]
 const BOW_LOOT_TABLE = [
 	preload("res://items/thornrose_bow.tres"),
 	preload("res://items/moonveil_bow.tres"),
@@ -192,6 +196,8 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# A small independent share of new monster drops can be bows.
 	# Existing saved item instances remain untouched.
 	if posmod(seed_value, 23) == 0:
+		if posmod(int(seed_value / 23), 5) == 0:
+			return CROSSBOW_LOOT_V236[posmod(int(seed_value / 115), CROSSBOW_LOOT_V236.size())] as GhostItemData
 		return BOW_LOOT_TABLE[posmod(int(seed_value / 23), BOW_LOOT_TABLE.size())] as GhostItemData
 	# New v2.03 blunt heads arrive in a small separate new-drop lane.
 	# Preserve the existing 1/7 sword table index mapping for old seeds.
@@ -1006,6 +1012,8 @@ func _give_weapon_test_samples() -> void:
 		for definition in BLADE_VARIANTS_V233:
 			trial_paths.append(definition.resource_path)
 		for definition in SINGLE_SWORDS_V235:
+			trial_paths.append(definition.resource_path)
+		for definition in CROSSBOW_LOOT_V236:
 			trial_paths.append(definition.resource_path)
 		trial_paths.append_array(["res://items/blackthorn_bow_v234.tres", "res://items/reliquary_silver_bow_v234.tres"])
 	for path in trial_paths:

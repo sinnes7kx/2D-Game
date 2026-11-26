@@ -1,4 +1,5 @@
 extends Node2D
+const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
 const DAGGER_THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
 var v180_elapsed: float = 0.0
@@ -183,6 +184,8 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
+	if equipped.weapon_style() == "crossbow":
+		return animation_name.begins_with("crossbow_") or animation_name.begins_with("attack_crossbow_")
 	if equipped.uses_modular_single_sword():
 		return animation_name.begins_with("sword_modular_") or animation_name.begins_with("attack_sword_modular_")
 	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade")  :
@@ -205,6 +208,8 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 	var empty: PackedVector2Array = PackedVector2Array()
 	if not _is_equipped(animation_name):
 		return empty
+	if animation_name.contains("crossbow_"):
+		return CROSSBOW_V236.span(animation_name, animation_name.get_slice("_", animation_name.get_slice_count("_") - 1), frame_index)
 	if animation_name.contains("sword_modular_"):
 		var face: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
 		return single_sword_span(animation_name, face, frame_index)
@@ -290,7 +295,12 @@ func _draw() -> void:
 		return
 	var tangent: Vector2 = axis.normalized()
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
-	if animation_name.contains("sword_modular_"):
+	if animation_name.contains("crossbow_"):
+		var profile: Dictionary = MODULAR.equipped_profile(self, body)
+		var held: GhostItemInstance = player.get("world").inventory.get_equipped("sword")
+		var loaded: bool = int(player.get("crossbow_stage")) == 0 or (int(player.get("crossbow_stage")) == 1 and not bool(player.get("crossbow_fired")))
+		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, str(held.definition.item_id) == "silver_reliquary_crossbow_v236")
+	elif animation_name.contains("sword_modular_"):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
 			var root: Vector2 = grip + tangent * 10.0
