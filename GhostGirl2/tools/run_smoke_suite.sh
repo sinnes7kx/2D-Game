@@ -32,6 +32,7 @@ quick_tests=(
   v227_silk_memory_smoke.gd
   v228_motion_efficiency_smoke.gd
   v229_silk_startup_smoke.gd
+  v230_performance_profiles_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

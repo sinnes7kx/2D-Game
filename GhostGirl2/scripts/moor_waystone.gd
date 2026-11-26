@@ -1,5 +1,8 @@
 @tool
 extends Node2D
+const PERF_V230 = preload("res://scripts/performance_profiles_v230.gd")
+var redraw_clock: float = 0.0
+var last_profile_revision: int = -1
 ## A readable, hand-placed wilderness landmark. Not a teleporter:
 ## the player still explores the moor naturally and follows its paths.
 @export var region_title: String = "Hollow Veil Moor"
@@ -14,7 +17,12 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     elapsed += delta
-    queue_redraw()
+    redraw_clock += delta
+    var hz: float = 0.0 if Engine.is_editor_hint() else PERF_V230.ambient_hz()
+    if last_profile_revision != PERF_V230.revision or PERF_V230.due(redraw_clock, hz):
+        last_profile_revision = PERF_V230.revision
+        redraw_clock = PERF_V230.remainder(redraw_clock, hz)
+        queue_redraw()
 
 func _draw() -> void:
     var cold: Color = Color(0.64, 0.60, 0.70, 0.88)

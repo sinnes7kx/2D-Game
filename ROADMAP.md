@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.30 — independent environment performance profiles (source implementation; engine review pending)
+
+- Shift+F3 cycles High / Balanced / Low session profiles, default Balanced. High retains prior per-render decorative updates; Balanced targets 30 Hz ambient and 45 Hz rain; Low targets 15 Hz ambient and 30 Hz rain with 60% rain streak density. Wall-time phase and rain following remain continuous, editor behavior unchanged. No physics, character, weapon glow, enemy AI, collision, interaction or item changes.
+- Throttle moor water glints, lanterns, story slabs, waystones, ordinary ambient light flicker and rain draw command rebuilds independently of player FPS; cache the rain's player lookup. Existing moor distance culling remains intact. Shift+F2 reports profile, FPS, estimated average interval, observed process-delta peak per refresh, draw calls and engine-reported texture memory (backend support varies).
+- Add synthetic cadence smoke and source guard. GPU/CPU/F5 measurements not available; no measured FPS increase or runtime claim. Profile is session-only and does not change source art, resolution, VSync or save data. No Actions dispatch.
+
 ### v2.29.1 — missing sword animation preload hotfix (source verified; engine review pending)
 
 - Restore the missing SWORD_V224 declaration in player.gd, which caused the reported Godot parser error at line 215 after a merge. The dependency and three call sites are retained.
