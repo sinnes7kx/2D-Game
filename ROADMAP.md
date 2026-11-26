@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.29.1 — missing sword animation preload hotfix (source verified; engine review pending)
+
+- Restore the missing SWORD_V224 declaration in player.gd, which caused the reported Godot parser error at line 215 after a merge. The dependency and three call sites are retained.
+- Extend existing offline preflight to reject missing versioned animation aliases in player, prestige glow and head cosmetics scripts, explicitly require the sword preload and dependency, and self-check the missing-declaration case. This is a narrow source regression guard, not an engine parser.
+- No gameplay, texture, seed or save changes. Godot F5/parser verification still required.
+
 ### v2.29 — independent silk ripples and bounded idle preparation (source implementation; engine review pending)
 
 - Separate left/right hair-tip phases and skirt-fold phases in the existing approximate geometric deformation regions. Keep the same 2.5-pixel maximum per axis, original artwork, supported pose scope and Shift+F4 toggle. Skip oscillation math outside both envelopes.
