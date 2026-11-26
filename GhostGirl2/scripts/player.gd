@@ -79,6 +79,8 @@ var world
 var equipment_preview_only: bool = false
 var facing: Vector2 = Vector2.DOWN
 const DIRECTIONS_V245 = preload("res://scripts/direction_controller_v245.gd")
+const SKIN_V246 = preload("res://scripts/rose_nocturne_skin_v246.gd")
+const DIAGONAL_ART_V247 = preload("res://scripts/ghost_diagonal_art_v247.gd")
 # facing_name stays the existing artwork suffix used by every weapon rig.
 var facing_name: String = "front"
 var facing_octant: int = 2
@@ -225,6 +227,8 @@ func _ready() -> void:
 		set_process_input(false)
 		set_process_unhandled_input(false)
 		set_process_unhandled_key_input(false)
+		SKIN_V246.install(body_art.sprite_frames)
+		DIAGONAL_ART_V247.install(body_art.sprite_frames)
 		GENTLE.prepare_timing(body_art.sprite_frames)
 		body_art.play("idle_front")
 		_update_hand()
@@ -234,6 +238,8 @@ func _ready() -> void:
 	# After AIR installation: airborne art and frame-indexed charge gates
 	# remain unchanged. Only ordinary ground sword clips gain samples.
 	SWORD_V224.install(body_art)
+	SKIN_V246.install(body_art.sprite_frames)
+	DIAGONAL_ART_V247.install(body_art.sprite_frames)
 	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
@@ -776,7 +782,16 @@ func _attack_action_cost(heavy: bool) -> float:
 		return _action_cost(HEAVY_ATTACK_COST if heavy else LIGHT_ATTACK_COST, false)
 	return _melee_cost(heavy)
 
+func _resolve_skin_clip(animation_name: String) -> String:
+	var armed: bool = world == null or world.inventory == null
+	if not armed:
+		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
+	if SKIN_V246.current() == SKIN_V246.NOCTURNE:
+		return SKIN_V246.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
+	return DIAGONAL_ART_V247.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
+
 func _play_if_changed(animation_name: String) -> void:
+	animation_name = _resolve_skin_clip(animation_name)
 	if body_art.animation != animation_name:
 		var phase: float = -1.0
 		if GENTLE.same_walk_family(str(body_art.animation), animation_name):

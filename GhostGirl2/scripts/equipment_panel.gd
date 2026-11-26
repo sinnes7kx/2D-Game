@@ -127,6 +127,8 @@ func _on_slot_hovered(slot: String) -> void:
 func _on_slot_hover_cleared() -> void:
 	item_hover_cleared.emit()
 
+const SKIN_V246 = preload("res://scripts/rose_nocturne_skin_v246.gd")
+
 func _install_live_preview() -> void:
 	var doll: TextureRect = slots.get_node("Doll")
 	live_preview = PREVIEW.new()
@@ -146,9 +148,9 @@ func _install_live_preview() -> void:
 	layout.move_child(row, $Layout/FooterTitle.get_index())
 	var direction: OptionButton = OptionButton.new()
 	direction.name = "Facing"
-	for face in ["Front", "Right", "Back", "Left"]:
+	for face in ["Front", "Right", "Back", "Left", "Front-right", "Back-right", "Back-left", "Front-left"]:
 		direction.add_item(face)
-	direction.tooltip_text = "View the actual equipped character from any direction"
+	direction.tooltip_text = "Eight headings; diagonal original-skin unarmed artwork when installed. Equipped weapons retain their validated cardinal poses."
 	direction.item_selected.connect(func(i: int) -> void: live_preview.call("set_direction", i))
 	row.add_child(direction)
 	var fx_label: Label = Label.new()
@@ -181,6 +183,27 @@ func _install_live_preview() -> void:
 	zoom_reset.tooltip_text = "Reset character preview zoom"
 	zoom_reset.pressed.connect(func() -> void: live_preview.call("reset_preview_zoom"))
 	row.add_child(zoom_reset)
+	var skin_row: HBoxContainer = HBoxContainer.new()
+	skin_row.name = "SkinControls"
+	layout.add_child(skin_row)
+	layout.move_child(skin_row, row.get_index() + 1)
+	var skin_label: Label = Label.new()
+	skin_label.text = "Skin"
+	skin_row.add_child(skin_label)
+	var skin_choice: OptionButton = OptionButton.new()
+	skin_choice.name = "CharacterSkin"
+	skin_choice.add_item("Original", SKIN_V246.ORIGINAL)
+	skin_choice.add_item("Rose Nocturne", SKIN_V246.NOCTURNE)
+	skin_choice.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	skin_choice.set_item_disabled(1, not SKIN_V246.available())
+	skin_choice.tooltip_text = "Rose Nocturne: alternate unarmed locomotion artwork. Original poses for equipped weapons and unsupported actions." if SKIN_V246.available() else "Install the optional Rose Nocturne atlas in assets/ghost/skins/ first."
+	skin_choice.select(SKIN_V246.current())
+	skin_choice.item_selected.connect(func(index: int) -> void:
+		if not SKIN_V246.choose(index):
+			skin_choice.select(SKIN_V246.current())
+		live_preview.call("refresh")
+	)
+	skin_row.add_child(skin_choice)
 	eye_edit_button = Button.new()
 	eye_edit_button.name = "EditEyesV215"
 	eye_edit_button.text = "Edit eyes"
