@@ -788,7 +788,9 @@ func _resolve_skin_clip(animation_name: String) -> String:
 		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
 	if SKIN_V246.current() == SKIN_V246.NOCTURNE:
 		return SKIN_V246.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
-	return DIAGONAL_ART_V247.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
+	if armed:
+		return DIAGONAL_ART_V247.armed_clip(animation_name, facing_eight_name, facing_name, body_art.sprite_frames)
+	return DIAGONAL_ART_V247.resolve(animation_name, facing_eight_name, facing_name, false, body_art.sprite_frames)
 
 func _play_if_changed(animation_name: String) -> void:
 	animation_name = _resolve_skin_clip(animation_name)
@@ -1049,7 +1051,8 @@ func _begin_jump() -> void:
 	jump_direction = jump_direction.normalized()
 	set_facing(jump_direction)
 	body_art.speed_scale = 1.0
-	_play_action_frames(_weapon_motion_prefix(true) + facing_name, jump_duration)
+	var clip: String = _diagonal_action_clip("jump", _weapon_motion_prefix(true) + facing_name)
+	_play_action_frames(clip, jump_duration)
 
 func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	if jump_time_left <= 0.0 or jump_attack_active or carrying != null:
@@ -1186,7 +1189,8 @@ func _begin_dodge() -> void:
 	precision_evade_registered = false
 	# Brief safe window, then vulnerability during the final roll recovery.
 	invulnerable_time = maxf(invulnerable_time, 0.24)
-	_play_action_frames("dodge_" + facing_name, DODGE_DURATION)
+	var clip: String = _diagonal_action_clip("dodge", "dodge_" + facing_name)
+	_play_action_frames(clip, DODGE_DURATION)
 	body_art.set_frame_and_progress(0, 0.0)
 
 
@@ -2046,3 +2050,11 @@ func _play_action_sfx(stream: AudioStream) -> void:
 	action_sfx.volume_db = -18.0 if stream == HIT_SFX else (-16.0 if stream == SWING_SFX else (-12.0 if stream == RIPOSTE_SFX else -10.0))
 	action_sfx.stream = stream
 	action_sfx.play()
+
+# Action atlas is currently unarmed; keep equipped action rigs intact.
+func _diagonal_action_clip(action: String, fallback: String) -> String:
+	if SKIN_V246.current() != SKIN_V246.ORIGINAL or world == null or world.inventory == null:
+		return fallback
+	if world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null:
+		return fallback
+	return DIAGONAL_ART_V247.action_clip(action, facing_eight_name, fallback, body_art.sprite_frames)

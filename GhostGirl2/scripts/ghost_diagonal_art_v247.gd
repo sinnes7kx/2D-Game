@@ -4,6 +4,15 @@ extends RefCounted
 const ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_v247.png"
 const DIRECTIONS: Array[String] = ["front_right", "front_left", "back_left", "back_right"]
 const CELL: Vector2i = Vector2i(256, 220)
+const ACTION_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v248.png"
+# Only visible front-diagonal wrists are enabled for independently rendered weapons.
+# Approximate initial per-frame wrist guides in full atlas-cell pixels.
+const WRISTS: Dictionary = {
+	"idle_front_right": [[107,151],[108,150],[108,151],[109,151],[109,152],[109,151],[108,150],[107,151]],
+	"idle_front_left": [[150,149],[149,149],[149,150],[148,150],[148,151],[149,150],[150,149],[150,149]],
+	"walk_front_right": [[96,151],[100,149],[104,146],[105,148],[98,150],[96,152],[101,150],[104,149]],
+	"walk_front_left": [[151,150],[150,147],[149,146],[151,149],[153,151],[151,151],[150,149],[150,148]]
+}
 
 static func available() -> bool:
 	return ResourceLoader.exists(ATLAS, "Texture2D")
@@ -36,6 +45,8 @@ static func install(frames: SpriteFrames) -> bool:
 			cell.region = Rect2(col * CELL.x, row * CELL.y, CELL.x, CELL.y)
 			cell.filter_clip = true
 			frames.add_frame(clip, cell)
+	_install_actions(frames)
+	_install_armed_aliases(frames)
 	return true
 
 static func resolve(requested: String, eight_facing: String, cardinal: String, armed: bool, frames: SpriteFrames) -> String:
@@ -50,3 +61,60 @@ static func resolve(requested: String, eight_facing: String, cardinal: String, a
 		return requested
 	var clip: String = action + "_" + eight_facing
 	return clip if frames.has_animation(clip) else requested
+
+static func _install_actions(frames: SpriteFrames) -> void:
+	if not ResourceLoader.exists(ACTION_ATLAS, "Texture2D"):
+		return
+	var sheet: Texture2D = load(ACTION_ATLAS) as Texture2D
+	if sheet == null or sheet.get_size() != Vector2(2048,1760):
+		return
+	for row in [0,1,3,4,5,7]:
+		var action: String = "dodge" if row < 4 else "jump"
+		var clip: String = action + "_" + DIRECTIONS[row % 4]
+		if frames.has_animation(clip):
+			continue
+		frames.add_animation(clip)
+		frames.set_animation_loop(clip, false)
+		frames.set_animation_speed(clip, 8.0)
+		for col in range(8):
+			var cell: AtlasTexture = AtlasTexture.new()
+			cell.atlas = sheet
+			cell.region = Rect2(col * CELL.x, row * CELL.y, CELL.x, CELL.y)
+			cell.filter_clip = true
+			frames.add_frame(clip, cell)
+
+static func _install_armed_aliases(frames: SpriteFrames) -> void:
+	for source in WRISTS:
+		if not frames.has_animation(source):
+			continue
+		for prefix in ["sword_modular_", "wand_"]:
+			var clip: String = prefix + str(source)
+			if frames.has_animation(clip):
+				continue
+			frames.add_animation(clip)
+			frames.set_animation_loop(clip,true)
+			frames.set_animation_speed(clip,frames.get_animation_speed(source))
+			for i in range(frames.get_frame_count(source)):
+				frames.add_frame(clip,frames.get_frame_texture(source,i),frames.get_frame_duration(source,i))
+
+static func wrist(clip: String, frame: int) -> Vector2:
+	var key: String = clip.trim_prefix("sword_modular_").trim_prefix("wand_")
+	if not WRISTS.has(key):
+		return Vector2.INF
+	var guides: Array = WRISTS[key]
+	var p: Array = guides[clampi(frame,0,7)]
+	return Vector2(float(p[0])-128.0,float(p[1])-110.0)
+
+static func armed_clip(requested: String, direction: String, cardinal: String, frames: SpriteFrames) -> String:
+	if direction not in ["front_left","front_right"] or frames == null:
+		return requested
+	for prefix in ["sword_modular_idle_", "sword_modular_walk_", "wand_idle_", "wand_walk_"]:
+		if requested == prefix + cardinal:
+			var clip: String = prefix + direction
+			if frames.has_animation(clip):
+				return clip
+	return requested
+
+static func action_clip(action: String, direction: String, fallback: String, frames: SpriteFrames) -> String:
+	var clip: String = action + "_" + direction
+	return clip if frames != null and direction in DIRECTIONS and frames.has_animation(clip) else fallback

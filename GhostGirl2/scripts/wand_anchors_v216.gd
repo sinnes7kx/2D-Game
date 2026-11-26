@@ -68,6 +68,9 @@ static func span(animation_name: String, frame_index: int, face: String = "front
 # Keeping this delta in one place prevents the painted wand, wand light and
 # projectile muzzle from disagreeing across direction/pose changes.
 static func target_grip(face: String, animation_name: String = "", frame_index: int = 0) -> Vector2:
+	var diagonal: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, frame_index)
+	if diagonal != Vector2.INF:
+		return diagonal
 	var index: int = body_frame(animation_name, frame_index)
 	var wrist: Vector2 = HAND.hand_anchor(face, index, 0 if face == "left" else 1)
 	if wrist != Vector2.INF:
@@ -82,6 +85,8 @@ static func visible_frame(body: AnimatedSprite2D) -> int:
 	if body == null:
 		return 0
 	var name: String = str(body.animation)
+	if name.ends_with("front_left") or name.ends_with("front_right"):
+		return clampi(body.frame,0,7)
 	return 0 if name.begins_with("wand_idle_") else SAMPLES.source_pose_index(body.sprite_frames, name, body.frame)
 
 static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2Array:

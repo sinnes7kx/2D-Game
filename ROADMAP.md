@@ -91,6 +91,12 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - New reference-guided original-style diagonal body atlas, cleaned and normalized to 2048×1760, four idle and four walk rows, eight 256×220 cells each. No rotated cardinal art, baked weapons, halo or sparkle layers. Preserve original cardinal art and cycle timing. Actual diagonal art selected for original skin unarmed locomotion; combat and armed poses retain cardinal fallbacks until new hand guides and weapon/action poses are validated. Rose Nocturne remains separate.
 - Equipment preview adds diagonal headings, with safe cardinal fallback when armed. Optional PNG distributed separately at `GhostGirl2/assets/ghost/skins/ghost_diagonal_v247.png`; missing file leaves game functional. Registered regression assertions for eight-frame structure and fallback selection. F5/engine verification remains pending.
 
+### v2.48 diagonal weapon alignment and action art (partial source integration; overlay required)
+
+- Extend original-skin diagonal idle/walk to modular single swords and wands for front-left and front-right. Approximate per-frame visible wrist coordinates share weapon/FX guide paths; existing cardinal art remains for other weapon families and occluded rear hands. No claim of completed all-angle weapons or visual validation.
+- Optional diagonal action atlas `GhostGirl2/assets/ghost/skins/ghost_diagonal_actions_v248.png` contains 48 usable frames: front-right, front-left, back-right dodge/jump. Rear-left generated art was incorrectly oriented, so those two rows are intentionally empty and existing cardinal action clips remain. Unarmed original skin uses new non-looping action clips with existing dodge/jump timing. Armed actions, combat, damage, collision and saves unchanged.
+- Combined asset overlay includes v246/v247/v248 PNGs and installation instructions; local binary asset transfer unavailable in current connector, so PNGs must be extracted after merging. Updated registered smoke assertions; no engine run.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

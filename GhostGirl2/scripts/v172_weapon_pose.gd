@@ -220,6 +220,11 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
+	if animation_name.begins_with("sword_modular_") and _is_equipped(animation_name):
+		var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, frame_index)
+		if wrist != Vector2.INF:
+			var axis: Vector2 = Vector2(-0.56, 0.83) if animation_name.ends_with("front_right") else Vector2(0.56, 0.83)
+			return PackedVector2Array([wrist, wrist + axis * 67.0])
 	if animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
 		if not _is_equipped(animation_name):
 			return PackedVector2Array()
