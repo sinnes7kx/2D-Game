@@ -1,5 +1,6 @@
 extends SceneTree
 const POSE = preload("res://scripts/v172_weapon_pose.gd")
+const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 
 func _initialize() -> void:
 	call_deferred("_verify")
@@ -29,15 +30,16 @@ func _verify() -> void:
 				if frames.get_frame_texture(name, 3) != frames.get_frame_texture("attack_unarmed_light_" + face, 4):
 					push_error("Thrust body timing overwritten: " + name)
 					failures += 1
-				var start: PackedVector2Array = POSE.pierce_span(face, 1, action == "heavy_pierce")
-				var strike: PackedVector2Array = POSE.pierce_span(face, 3, action == "heavy_pierce")
-				var recovered: PackedVector2Array = POSE.pierce_span(face, 7, action == "heavy_pierce")
-				if (strike[1] - start[1]).dot(heading) < 35.0 or (strike[1] - recovered[1]).dot(heading) < 25.0:
-					push_error("Thrust travel or recovery invalid: " + name)
-					failures += 1
-				if not is_equal_approx(strike[0].distance_to(strike[1]), start[0].distance_to(start[1])):
-					push_error("Polearm changes physical length: " + name)
-					failures += 1
+				for i in range(8):
+					var span: PackedVector2Array = POSE.pierce_span(face, i, action == "heavy_pierce")
+					var wrist: Vector2 = HAND.hand_anchor(face, POSE.polearm_sequence()[i], 0 if face == "left" else 1)
+					if wrist == Vector2.INF:
+						if not span.is_empty():
+							failures += 1
+						continue
+					if span.size() != 2 or span[0].distance_to(wrist) > 0.01 or not is_equal_approx(span[0].distance_to(span[1]), 74.0):
+						push_error("Polearm detached from painted hand: " + name)
+						failures += 1
 		for family in ["twinblade", "rosemirror_twinblade"]:
 			for motion in ["idle", "walk"]:
 				var name: String = family + "_" + motion + "_" + face

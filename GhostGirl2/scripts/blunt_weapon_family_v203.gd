@@ -20,82 +20,74 @@ static func _rim(canvas: Node2D, path: PackedVector2Array, gradient: Array[Color
     if closed.size() < 3:
     	return
     closed.append(closed[0])
-    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.09)), 8.0, true)
-    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.19)), 3.2, true)
+    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.06)), 4.0, true)
+    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.14)), 1.6, true)
     FX.draw_edge(canvas, closed, gradient, look, time, strength)
+
+# Forged, compact heads. The same outline drives opaque art and glow.
+static func head_outline(center: Vector2, axis: Vector2, kind: String) -> PackedVector2Array:
+    var n: Vector2 = axis.orthogonal()
+    if kind == "mace":
+        return PackedVector2Array([center-axis*12.0-n*4.0, center-axis*7.0-n*7.0, center+axis*8.0-n*7.0, center+axis*13.0-n*3.0, center+axis*13.0+n*3.0, center+axis*8.0+n*7.0, center-axis*7.0+n*7.0, center-axis*12.0+n*4.0])
+    var result: PackedVector2Array = PackedVector2Array()
+    var teeth: int = 6 if kind == "morningstar" else 5
+    var radius: float = 9.0 if kind == "morningstar" else 7.0
+    for i in range(teeth):
+        var a: float = axis.angle() + TAU * float(i) / float(teeth)
+        var d: Vector2 = Vector2.from_angle(a)
+        result.append(center + Vector2.from_angle(a - 0.22) * radius)
+        result.append(center + d * (15.0 if kind == "morningstar" else 12.0))
+        result.append(center + Vector2.from_angle(a + 0.22) * radius)
+    return result
 
 static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Dictionary, look: Dictionary, gradient: Array[Color], time: float, kind: String, glow: bool) -> void:
     if grip.distance_squared_to(head) < 16.0 or profile.is_empty():
         return
-    var along: Vector2 = (head - grip).normalized()
-    var normal: Vector2 = Vector2(-along.y, along.x)
-    var metal: Color = SURFACE.surface_color(profile, 0.65, 0.62, time)
-    var shade: Color = profile["shade"]
-    var edge: Color = profile["edge"]
-    var accent: Color = profile["ornament_ink"]
-    var shaft_tip: Vector2 = head
+    var axis: Vector2 = (head - grip).normalized()
+    var n: Vector2 = axis.orthogonal()
+    var steel: Color = SURFACE.surface_color(profile, 0.65, 0.62, time).lerp(Color("59606a"), 0.42)
+    var shade: Color = steel.darkened(0.48)
+    var edge: Color = steel.lightened(0.38)
+    var ornament: Color = profile["ornament_ink"]
+    var trim: Color = ornament.lerp(steel, 0.45)
+    var shaft_tip: Vector2 = grip.lerp(head, 0.55) if kind == "flail" else head - axis * 5.0
+    var heel: Vector2 = grip - axis * 18.0
+    canvas.draw_line(heel, shaft_tip, Color("211d27"), 4.4, true)
+    canvas.draw_line(heel, shaft_tip, profile["grip"], 2.9, true)
+    canvas.draw_line(heel + n * 0.9, shaft_tip + n * 0.9, steel.darkened(0.15), 0.65, true)
+    for i in range(4):
+        var at: Vector2 = grip - axis * 7.0 + axis * float(i) * 4.0
+        canvas.draw_line(at-n*1.6, at+n*1.6+axis, trim, 0.65, true)
+    var center: Vector2 = head
     if kind == "flail":
-        shaft_tip = grip.lerp(head, 0.57)
-    var heel: Vector2 = grip - along * 14.0
-    canvas.draw_line(heel, shaft_tip, Color("241d2a"), 6.3, true)
-    canvas.draw_line(heel, shaft_tip, profile["grip"], 3.75, true)
-    canvas.draw_line(grip - along * 8.0, grip + along * 8.0, accent, 1.45, true)
-    if kind == "flail":
-        # A short chain trails in a pendulum on the attack clock; no additional
-        # collision probes, physics bodies, independent strikes or damage.
-        var wiggle: float = sin(time * 7.3) * 6.0
-        var ball: Vector2 = head + normal * wiggle
-        for link in range(5):
-            var v: float = float(link) / 5.0
-            var a: Vector2 = shaft_tip.lerp(ball, v)
-            var b: Vector2 = shaft_tip.lerp(ball, v + 0.16)
-            var lateral: Vector2 = normal * (2.1 if link % 2 == 0 else -2.1)
-            canvas.draw_line(a + lateral, b - lateral, edge.darkened(0.21), 2.6, true)
-            canvas.draw_circle(a, 1.75, accent)
-        canvas.draw_circle(ball, 14.8, shade)
-        canvas.draw_circle(ball - normal * 1.8, 11.2, metal)
-        canvas.draw_arc(ball, 13.0, -PI * 0.7, PI * 0.7, 22, edge, 2.2, true)
-        for i in range(8):
-            var ang: float = float(i) * TAU / 8.0
-            var direction: Vector2 = Vector2(cos(ang), sin(ang))
-            var base: Vector2 = ball + direction * 10.8
-            var tip: Vector2 = ball + direction * 18.2
-            canvas.draw_colored_polygon(PackedVector2Array([base + direction.orthogonal() * 3.7, tip, base - direction.orthogonal() * 3.7]), metal)
-        if glow and FX_LEVEL.intensity > 0.0:
-            var spikes: PackedVector2Array = PackedVector2Array()
-            for i in range(16):
-                var ang: float = TAU * float(i) / 16.0
-                spikes.append(ball + Vector2(cos(ang), sin(ang)) * (18.2 if i % 2 == 0 else 11.2))
-            _rim(canvas, spikes, gradient, look, time, 0.46)
-        return
+        center += n * sin(time * 7.3) * 4.0
+        var chain_axis: Vector2 = (center - shaft_tip).normalized()
+        var chain_n: Vector2 = chain_axis.orthogonal()
+        for i in range(6):
+            var at: Vector2 = shaft_tip.lerp(center, (float(i) + 0.5) / 6.0)
+            var link: PackedVector2Array = PackedVector2Array()
+            for j in range(9):
+                var angle: float = TAU * float(j) / 8.0
+                link.append(at + chain_axis * cos(angle) * 2.8 + chain_n * sin(angle) * (1.4 if i % 2 == 0 else 0.7))
+            canvas.draw_polyline(link, shade, 1.9, true)
+            canvas.draw_polyline(link, edge, 0.7, true)
+    var outline: PackedVector2Array = head_outline(center, axis, kind)
+    canvas.draw_colored_polygon(outline, shade)
+    # Triangular bevel facets provide forged-metal planes rather than a
+    # flat cartoon circle and keep the spikes slim.
+    for i in range(outline.size()):
+        var a: Vector2 = outline[i]
+        var b: Vector2 = outline[(i + 1) % outline.size()]
+        var lit: float = clampf(0.5 + (a-center).normalized().dot(-n) * 0.36, 0.0, 1.0)
+        canvas.draw_colored_polygon(PackedVector2Array([center, a, b]), shade.lerp(steel, lit))
+    var closed: PackedVector2Array = outline.duplicate()
+    closed.append(closed[0])
+    canvas.draw_polyline(closed, edge, 0.75, true)
     if kind == "mace":
-        # Flanged blunt head, not a cutting edge.
-        var mid: Vector2 = head - along * 6.0
-        canvas.draw_line(mid - along * 14.0, head + along * 12.0, shade, 19.0, true)
-        canvas.draw_line(mid - along * 11.0, head + along * 10.0, metal, 12.5, true)
         for side in [-1.0, 1.0]:
-            var spine: Vector2 = head + normal * side * 8.0
-            canvas.draw_line(spine - along * 13.0, spine + along * 10.0, edge, 2.4, true)
-            canvas.draw_circle(spine + along * 10.0, 2.2, accent)
-        canvas.draw_line(head - along * 15.0, head + along * 14.0, accent, 1.0, true)
-        if glow and FX_LEVEL.intensity > 0.0:
-            var flanges: PackedVector2Array = PackedVector2Array([head - along * 16.0 - normal * 9.0, head + along * 12.0 - normal * 9.0, head + along * 12.0 + normal * 9.0, head - along * 16.0 + normal * 9.0])
-            _rim(canvas, flanges, gradient, look, time, 0.38)
-        return
-    # Morningstar: heavy round ball plus eight inward-braced spikes.
-    canvas.draw_circle(head, 17.0, shade)
-    canvas.draw_circle(head - normal * 2.0, 14.0, metal)
-    canvas.draw_circle(head - normal * 4.0 - along * 3.0, 5.4, metal.lightened(0.17))
-    for i in range(8):
-        var angle: float = TAU * float(i) / 8.0
-        var axis: Vector2 = Vector2(cos(angle), sin(angle))
-        var origin: Vector2 = head + axis * 13.8
-        var spike: Vector2 = head + axis * (26.0 if i % 2 == 0 else 21.0)
-        canvas.draw_colored_polygon(PackedVector2Array([origin + axis.orthogonal() * 4.6, spike, origin - axis.orthogonal() * 4.6]), edge)
-    canvas.draw_arc(head, 16.0, 0.18, PI * 1.42, 24, accent, 1.45, true)
+            canvas.draw_line(center-axis*8.0+n*side*4.4, center+axis*8.0+n*side*4.4, edge, 1.0, true)
+        canvas.draw_line(center-axis*10.0, center+axis*11.0, trim, 0.7, true)
+    else:
+        canvas.draw_line(center-axis*4.0, center+axis*4.0, trim, 0.85, true)
     if glow and FX_LEVEL.intensity > 0.0:
-        var star: PackedVector2Array = PackedVector2Array()
-        for j in range(16):
-            var a: float = TAU * float(j) / 16.0
-            star.append(head + Vector2(cos(a), sin(a)) * (26.0 if j % 2 == 0 else 13.8))
-        _rim(canvas, star, gradient, look, time, 0.45)
+        _rim(canvas, outline, gradient, look, time, 0.32)

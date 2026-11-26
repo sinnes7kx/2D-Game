@@ -53,7 +53,7 @@ static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 				frames.add_animation(target)
 				frames.set_animation_speed(target, 12.0)
 				frames.set_animation_loop(target, false)
-				var sequence: Array[int] = [0, 1, 2, 4, 4, 5, 2, 0]
+				var sequence: Array[int] = polearm_sequence()
 				for index in sequence:
 					frames.add_frame(target, frames.get_frame_texture(source, index))
 
@@ -83,26 +83,26 @@ static func install_attack_frames(sprite: AnimatedSprite2D) -> void:
 			for index in sequence:
 				frames.add_frame(name, frames.get_frame_texture(source, index))
 
-# The shaft translates along the facing vector, rather than swinging.
-# Frame 3 contains the existing 43%-elapsed damage event.
+# This exact body sequence and the wrist lookup share one source.
+static func polearm_sequence() -> Array[int]:
+	return [0, 1, 2, 4, 4, 5, 2, 0]
+
+static func polearm_span(face: String, source_index: int, phase_index: int, heavy: bool) -> PackedVector2Array:
+	var hand: int = 0 if face == "left" else 1
+	var grip: Vector2 = DAGGER_THRUST.hand_anchor(face, source_index, hand)
+	# The back-facing wrist is hidden in some neutral frames. Do not invent
+	# a detached hand or a glow where the physical weapon is not visible.
+	if grip == Vector2.INF:
+		return PackedVector2Array()
+	var forward: Vector2 = DAGGER_THRUST.direction(face)
+	var tilt: Array[float] = [-0.34, -0.52, -0.22, 0.0, 0.0, 0.10, -0.20, -0.34]
+	var angle: float = tilt[clampi(phase_index, 0, 7)] * (1.18 if heavy else 1.0)
+	var sign: float = -1.0 if face == "left" else 1.0
+	return PackedVector2Array([grip, grip + forward.rotated(angle * sign) * 74.0])
+
 static func pierce_span(face: String, frame_index: int, heavy: bool) -> PackedVector2Array:
-	var heading: Vector2 = Vector2.DOWN
-	var anchor: Vector2 = Vector2(22, 24)
-	match face:
-		"back":
-			heading = Vector2.UP
-			anchor = Vector2(22, 16)
-		"left":
-			heading = Vector2.LEFT
-			anchor = Vector2(-23, 24)
-		"right":
-			heading = Vector2.RIGHT
-			anchor = Vector2(23, 24)
-	var travel: Array[float] = [-8.0, -19.0, -12.0, 21.0, 20.0, 9.0, -3.0, -8.0]
-	var n: int = clampi(frame_index, 0, 7)
-	var grip: Vector2 = anchor + heading * travel[n] * (1.18 if heavy else 1.0)
-	var tip: Vector2 = grip + heading * 74.0
-	return PackedVector2Array([grip, tip])
+	var index: int = clampi(frame_index, 0, 7)
+	return polearm_span(face, polearm_sequence()[index], index, heavy)
 
 func _ready() -> void:
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(TWIN_AXES_PATH))
@@ -193,6 +193,8 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 			return DAGGER_THRUST.single_span(face, frame_index, heavy)
 		return pierce_span(face, frame_index, heavy)
 	var n: int = clampi(frame_index, 0, 7)
+	if spear:
+		return polearm_span(face, n, n, heavy)
 	var anchor: Vector2 = Vector2(29, 24)
 	match face:
 		"back": anchor = Vector2(25, 16)
@@ -285,8 +287,6 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 			draw_line(head, fork, accent.darkened(0.25), 2.5, true)
 			MODULAR.draw_blade(self, fork, prong, 1.8, look)
 		MODULAR.draw_blade(self, head, tip, 2.6, look)
-		draw_circle(grip - tangent * 9.0, 4.8, Color("d8c7d6"))
-		draw_circle(grip + tangent * 12.0, 4.5, Color("cab9cf"))
 		return
 	# Rosewood haft with a pale winding thread and a second grip.
 	draw_line(shaft_base, head, Color("2d1a2c"), 7.7, true)
@@ -307,9 +307,6 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 	draw_line(head + normal * 0.8, tip, Color("f1d5c7"), 1.5, true)
 	draw_circle(head, 4.5, Color("8f3457"))
 	draw_circle(head, 2.0, Color("d7a0b3"))
-	# Two-hand bracing at the proper shaft distance from the forward hand.
-	draw_circle(grip - tangent * 9.0, 4.8, Color("d8c7d6"))
-	draw_circle(grip + tangent * 12.0, 4.5, Color("cab9cf"))
 
 func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2) -> void:
 	var root: Vector2 = tip - tangent * 24.0
@@ -318,8 +315,6 @@ func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 	if not look.is_empty():
 		MODULAR.draw_grip(self, butt, root, 3.8, look)
 		MODULAR.draw_blade(self, root, tip, 4.5, look)
-		draw_circle(grip - tangent * 7.0, 4.1, Color("d8c7d6"))
-		draw_circle(grip + tangent * 10.0, 4.0, Color("cab9cf"))
 		return
 	draw_line(butt, root, Color("322638"), 6.5, true)
 	draw_line(butt, root, Color("876f84"), 3.2, true)
@@ -327,8 +322,6 @@ func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 	draw_colored_polygon(PackedVector2Array([root - normal * 5.0, tip, root + normal * 5.0, root - tangent * 3.0]), Color("b9b5d5"))
 	draw_colored_polygon(PackedVector2Array([root, tip, root + normal * 5.0]), Color("625f8f"))
 	draw_line(root - normal * 5.0, tip, Color("e6dcf4"), 1.1, true)
-	draw_circle(grip - tangent * 7.0, 4.1, Color("d8c7d6"))
-	draw_circle(grip + tangent * 10.0, 4.0, Color("cab9cf"))
 
 # Opaque metal, not additive glow. The rear blade has its own cutting
 # direction; the wrapped central grip remains visibly separate.

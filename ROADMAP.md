@@ -143,6 +143,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.32 — polearm wrist alignment, forged blunt silhouettes and seeded halo (source implementation; visual review pending)
+
+- All three ground spear/trident light attacks and ground/air heavy attacks select the existing clean thrust family. Shared source-frame sequence drives actual hand anchors; occluded wrists hide the physical span and its attack glow. No synthetic finger circles. Hit timers, stamina, reach, damage and original artwork unchanged. All three light steps reuse the same thrust art, rather than new distinct painted combo clips.
+- Refine mace, morningstar and flail geometry to smaller faceted forged heads, slender shafts and fine articulated links. Physical outline and glow share geometry; inventory icons updated. No new textures/atlases, no collision or stat changes.
+- Replace chest pendant presentation with a compact five-style seeded halo using the existing trinket/charm item identity and cosmetic palette. Pose-relative head offsets are approximate and require in-engine calibration. Existing crescent head accessory takes precedence to avoid double halos. Original item data and saves remain unchanged.
+- Add source/geometry smoke and update polearm regression to check actual wrist anchors, hidden frames and constant length. Godot runtime, appearance, reload and parser remain unverified. More sword/dagger/bow bases and a distinct crossbow fire/reload family remain next content work. No Actions dispatch.
+
 ### v2.30 — independent environment performance profiles (source implementation; engine review pending)
 
 - Shift+F3 cycles High / Balanced / Low session profiles, default Balanced. High retains prior per-render decorative updates; Balanced targets 30 Hz ambient and 45 Hz rain; Low targets 15 Hz ambient and 30 Hz rain with 60% rain streak density. Wall-time phase and rain following remain continuous, editor behavior unchanged. No physics, character, weapon glow, enemy AI, collision, interaction or item changes.
