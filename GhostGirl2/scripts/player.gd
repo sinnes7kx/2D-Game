@@ -5,6 +5,7 @@ extends CharacterBody2D
 
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
+const VISUAL_CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
@@ -1223,6 +1224,9 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	arrow.set("bow_glow_index", int(bow_look["glow"]))
 	arrow.set("bow_trail_index", int(bow_look["trail"]))
 	arrow.set("bow_detail_index", int(bow_look["detail"]))
+	# One physical arrow; cosmetic decoration is stable per saved bow UID.
+	arrow.set("projectile_style", VISUAL_CHOICES_V216.projectile_style(equipped))
+	arrow.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(equipped))
 	arrow.set("procedural_look", bow_look["procedural"])
 	# Match the physical arrow's light to the equipped bow's saved 128-bit look.
 	var shot_gradient: Array[Color] = equipped.glow_gradient_colors()
