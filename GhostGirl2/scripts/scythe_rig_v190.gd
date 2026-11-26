@@ -73,7 +73,7 @@ func _draw() -> void:
 	if points.size() == 2:
 		var side: float = -1.0 if name_now.ends_with("_left") else 1.0
 		if style == "scythe":
-			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, true)
+			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, inv.get_equipped("sword").glow_level_override != 0 if inv != null and inv.get_equipped("sword") != null else true)
 			if is_instance_valid(scythe_glow):
 				var world: Node = player.get("world") as Node
 				var inv: Node = world.get("inventory") as Node if world != null else null
