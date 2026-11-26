@@ -161,6 +161,12 @@ var stamina_recovery_left: float = 0.0
 var combo_step: int = 0
 var combo_grace: float = 0.0
 var previous_light: bool = false
+var finisher_lights: int = 0
+var finisher_weapon: GhostItemInstance = null
+var active_finisher: bool = false
+var active_lunge: bool = false
+var lunge_window: float = 0.0
+const IMPACT_MATERIAL_V239 = preload("res://scripts/arrow_impact_audio_v233.gd")
 var camera_kick: float = 0.0
 var hurt_recoil_left: float = 0.0
 var hurt_direction: Vector2 = Vector2.DOWN
@@ -270,6 +276,7 @@ func _physics_process(delta: float) -> void:
 	roses_cooldown = maxf(0.0, roses_cooldown - delta)
 	queue_time_left = maxf(0.0, queue_time_left - delta)
 	combo_grace = maxf(0.0, combo_grace - delta)
+	lunge_window = maxf(0.0, lunge_window - delta)
 	if queue_time_left <= 0.0:
 		queued_action = ""
 		buffered_attack_valid = false
@@ -376,6 +383,7 @@ func _physics_process(delta: float) -> void:
 				stamina = minf(MAX_STAMINA, stamina + 9.0)
 				_spawn_precision_feedback("ready", global_position + Vector2(0, -27), -dodge_direction)
 				world.ui.set_stamina(stamina, MAX_STAMINA)
+			lunge_window = 0.48
 			backstep_counter_armed = false
 			precision_evade_registered = false
 		return
@@ -400,6 +408,8 @@ func _physics_process(delta: float) -> void:
 		var phase: float = 1.0 - attack_time_left / maxf(attack_duration, 0.01)
 		var thrust: float = sin(clampf(phase / 0.58, 0.0, 1.0) * PI)
 		velocity = attack_direction * (92.0 if active_attack_style == "halberd" else (98.0 if active_attack_style == "scythe" else (105.0 if world.inventory.get_equipped("sword") != null else 65.0))) * thrust
+		if active_lunge and not attack_hit_done and not dagger_charge_active:
+			velocity += attack_direction * 240.0 * thrust
 		move_and_slide()
 		return
 	if spell_time_left <= 0.0 and not is_throwing and hook_gesture_left <= 0.0 and not rose_hook.is_pulling_player():
@@ -890,6 +900,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	_reset_combo_v239()
 	_clear_crossbow()
 	spell_is_moonfall = false
 	special_spell_kind = ""
@@ -934,6 +945,7 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	# I-frame contacts must not cancel a bow charge or punish valid dodges.
 	if invulnerable_time > 0.0:
 		return
+	_reset_combo_v239()
 	# Interrupted reload must not allow instant repeat shots. Keep reload
 	# stage after a fired bolt; cancel an unfired wind-up.
 	if crossbow_stage == 1 and not crossbow_fired:
@@ -989,6 +1001,7 @@ func _action_cost(base_cost: float, dodge: bool = false) -> float:
 func _begin_jump() -> void:
 	if carrying != null or rose_hook.is_pulling_player() or is_throwing or hook_gesture_left > 0.0:
 		return
+	_reset_combo_v239()
 	stamina -= _action_cost(JUMP_COST, false)
 	stamina_recovery_left = maxf(stamina_recovery_left, 0.22)
 	combo_grace = 0.0
@@ -1069,6 +1082,9 @@ func _advance_jump(delta: float) -> void:
 		velocity = jump_direction * (28.0 if jump_attack_active else 18.0)
 		landing_recoil_left = LANDING_RECOIL
 		# A small landing cue makes traversal timing legible without changing damage.
+		if jump_attack_active and _weapon_style() not in ["bow", "crossbow"]:
+			COMBAT_JUICE.play(get_tree().current_scene, global_position, "ground_slam", -13.5)
+			PHYSICAL_FEEL.burst(get_tree().current_scene, global_position, "slam", 1.0, jump_direction, roundi(visual_time * 91.0))
 		if global_position.distance_to(jump_origin) > 28.0:
 			_spawn_jump_landing_cue()
 		collision_mask |= JUMPABLE_BARRIER_MASK
@@ -1117,6 +1133,7 @@ func _strike_jump_attack() -> void:
 	attack_direction = previous_direction
 
 func _begin_dodge() -> void:
+	_reset_combo_v239()
 	stamina -= _action_cost(DODGE_COST, true)
 	stamina_recovery_left = STAMINA_RECOVERY_WAIT
 	combo_grace = 0.0
@@ -1202,6 +1219,8 @@ func _begin_weapon_attack(heavy: bool) -> void:
 		return
 	if stamina < _attack_action_cost(heavy):
 		return
+	if _weapon_style() in ["bow", "crossbow"] or world.inventory.get_equipped("wand") != null:
+		_reset_combo_v239()
 	if _weapon_style() == "crossbow":
 		_begin_crossbow(heavy, false)
 	elif _weapon_style() == "bow":
@@ -1461,9 +1480,26 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	# formation wisps never report extra shots to the optional fletcher trial.
 	get_tree().call_group("v202_archery_range", "on_player_arrow_launched", global_position)
 
+func _reset_combo_v239() -> void:
+	finisher_lights = 0
+	finisher_weapon = null
+	active_finisher = false
+	active_lunge = false
+	lunge_window = 0.0
+	combo_grace = 0.0
+	previous_light = false
+
 func _begin_attack(heavy: bool) -> void:
-	if carrying != null:
+	if carrying != null or stamina < _melee_cost(heavy):
 		return
+	var combo_item: GhostItemInstance = world.inventory.get_equipped("sword")
+	if combo_grace <= 0.0 or combo_item != finisher_weapon:
+		finisher_lights = 0
+	active_finisher = heavy and combo_item != null and finisher_lights == 2
+	active_lunge = heavy and combo_item != null and lunge_window > 0.0
+	lunge_window = 0.0
+	finisher_weapon = combo_item
+	finisher_lights = 0 if heavy else mini(3, finisher_lights + 1)
 	if heavy:
 		combo_step = 0
 		previous_light = false
@@ -1601,8 +1637,10 @@ func _advance_attack(delta: float) -> void:
 			COMBAT_JUICE.play(get_tree().current_scene, global_position, "swing", -24.0)
 			camera_kick = maxf(camera_kick, 1.9)
 			camera_push = attack_direction * 1.4
-		_strike_nearby_enemies()
+		_strike_nearby_enemies(1.25 if active_finisher else 1.0)
 	if attack_time_left <= 0.0:
+		active_finisher = false
+		active_lunge = false
 		combo_grace = 0.48 if not heavy_attack else 0.0
 
 func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
@@ -1674,6 +1712,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 	var fx_tier: int = int(aura.get("tier", 0))
 	var fx_impact: int = int(aura.get("impact", 0))
 	var counter_shown: bool = false
+	var finisher_shown: bool = false
 	var struck_world: bool = false
 	for candidate in get_tree().get_nodes_in_group("enemies"):
 		if not is_instance_valid(candidate) or not candidate is Node2D or not candidate.has_method("hit"):
@@ -1692,7 +1731,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		var blunt_contact: bool = sword != null and sword.physical_damage_kind() == "blunt"
 		if jump_attack_active or blunt_contact:
 			PHYSICAL_FEEL.burst(get_tree().current_scene, candidate.global_position + Vector2(0, -14), "slam", 1.40 if jump_attack_active else 0.92, attack_direction, sword.visual_seed() if sword != null else 1)
-		if not blunt_contact:
+		if not blunt_contact and sword != null and IMPACT_MATERIAL_V239.material_for(candidate, "flesh") == "flesh":
 			_spawn_blade_blood(candidate.global_position + Vector2(0.0, -32.0), fx_color, fx_accent, fx_impact, fx_tier, sword.visual_seed() if sword != null else 0)
 			# Daggers already have a physical blade and dedicated tip glow;
 			# the large crescent slash contradicted the stabbing motion.
@@ -1702,6 +1741,14 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		if counter_hit and not counter_shown:
 			_spawn_precision_feedback("riposte", candidate.global_position + Vector2(0.0, -30.0), attack_direction)
 			counter_shown = true
+		if active_finisher and not jump_attack_active and not finisher_shown:
+			var burst: Node2D = Node2D.new()
+			burst.set_script(IMPACT_PRESTIGE)
+			get_tree().current_scene.add_child(burst)
+			burst.global_position = candidate.global_position + Vector2(0, -28)
+			burst.call("configure", "finisher", fx_color, fx_accent, 3, 2, attack_direction, sword.visual_seed() if sword != null else 0)
+			COMBAT_JUICE.play(get_tree().current_scene, burst.global_position, "combo_finisher", -12.0)
+			finisher_shown = true
 		struck = true
 		camera_kick = maxf(camera_kick, 8.3 if jump_attack_active else (3.9 if heavy_attack else 2.1))
 		camera_push = attack_direction * (6.5 if jump_attack_active else (3.5 if heavy_attack else 1.8))
@@ -1727,10 +1774,20 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 				continue
 			object.call("receive_damage", power * (0.90 if jump_attack_active else 0.80), global_position)
 			PHYSICAL_FEEL.burst(get_tree().current_scene, object.global_position + Vector2(0.0, -10.0), "wood", 0.72, attack_direction, roundi(object.global_position.x))
+			if not struck_world:
+				COMBAT_JUICE.play(get_tree().current_scene, object.global_position, "surface_wood", -15.0)
 			struck_world = true
 			broken_attempts += 1
 			if broken_attempts >= 2:
 				break
+	if not struck and not struck_world and not jump_attack_active:
+		var wall_ray: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position + Vector2(0, -18), global_position + Vector2(0, -18) + attack_direction * reach)
+		wall_ray.collision_mask = 2
+		wall_ray.exclude = [get_rid()]
+		var wall: Dictionary = get_world_2d().direct_space_state.intersect_ray(wall_ray)
+		if not wall.is_empty():
+			var surface: String = IMPACT_MATERIAL_V239.material_for(wall.get("collider"), "stone")
+			COMBAT_JUICE.play(get_tree().current_scene, wall["position"], "surface_" + surface, -14.0 if heavy_attack else -18.0)
 	if struck or struck_world:
 		# Only confirmed creature or world contact holds the active frame;
 		# misses never incur hitstop or resource gain.
