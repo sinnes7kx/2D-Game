@@ -30,7 +30,7 @@ def main() -> int:
     )
     errors += check(
         "scripts/head_cosmetics_v202.gd",
-        ("CanvasItemMaterial.BLEND_MODE_MIX", "Vector2(-17.0, -22.0)", "Vector2(17.0, -22.0)"),
+        ("CanvasItemMaterial.BLEND_MODE_MIX", "Vector2(-17.0, -7.0)", "Vector2(17.0, -7.0)"),
         ("Vector2(-19.0, -72.0)",),
     )
     errors += check(
