@@ -26,6 +26,11 @@ var debug_mythic_variant: int = -1
 # -1 means original deterministic drop look (old saves are unchanged).
 var eye_style_override: int = -1
 var eye_palette_override: int = -1
+# v2.16: optional owner-chosen rendering preferences (-1 = seeded Natural).
+# Never replace cosmetic_uid, birth roll, item_seed or genuine rarity.
+var glow_level_override: int = -1
+var bow_glow_mode_override: int = -1
+var bow_projectile_style_override: int = -1
 var collector_favorite: bool = false
 var collector_locked: bool = false
 const REGIONAL = preload("res://scripts/regional_treasures_v183.gd")
@@ -190,7 +195,8 @@ func _cosmetic_fields() -> Array[String]:
 		"weapon_fx_trail_index", "weapon_impact_style_index", "wand_cast_style_index",
 		"wand_lance_index", "bow_element_index", "bow_formation_index",
 		"bow_glow_index", "bow_trail_index", "bow_detail_index",
-		"eye_style_override", "eye_palette_override"]
+		"eye_style_override", "eye_palette_override",
+		"glow_level_override", "bow_glow_mode_override", "bow_projectile_style_override"]
 
 func cosmetic_snapshot() -> Dictionary:
 	var look: Dictionary = {"seed": cosmetic_seed_number(), "cosmetic_seed": cosmetic_seed,
@@ -227,6 +233,9 @@ func restore_cosmetic_look(index: int) -> bool:
 	# them must return the natural look rather than retaining a later edit.
 	eye_style_override = clampi(int(snapshot.get("eye_style_override", -1)), -1, 3)
 	eye_palette_override = clampi(int(snapshot.get("eye_palette_override", -1)), -1, 5)
+	glow_level_override = clampi(int(snapshot.get("glow_level_override", -1)), -1, 5)
+	bow_glow_mode_override = clampi(int(snapshot.get("bow_glow_mode_override", -1)), -1, 3)
+	bow_projectile_style_override = clampi(int(snapshot.get("bow_projectile_style_override", -1)), -1, 8)
 	for field in _cosmetic_fields():
 		if snapshot.has(field):
 			set(field, int(snapshot[field]))
