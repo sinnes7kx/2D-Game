@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.26 — silk motion and rendering efficiency (source implementation; engine review pending)
+
+- Optional subtle continuous secondary motion in geometric outer-hair and lower-hem zones of supported neutral/ordinary walk poses and selected separate-weapon idles. Velocity-driven lag, quiet idle sway and hitstop freeze. Original source artwork stays intact; this is an approximate shader prototype, not authored per-frame hair/fabric masks. Unsupported baked weapon clips remain unchanged. Shift+F4 toggles the motion off/on for the session.
+- Avoid empty player indicator canvas redraws and repeated head accessory redraws within the same 18 Hz effect bucket; still redraw on pose or equip transitions. Restrict procedural frame blending to the intersection of both source images' nontransparent bounds; identical alpha and blend output, fewer CPU pixel iterations during startup. No extra animation textures, no renderer switch, no physics or enemy AI changes.
+- Add synthetic smoke for byte-exact bounded blending, motion scope/decay and shader wiring. Godot parser/render, visual zone calibration and FPS/startup measurements remain pending; source PNG pixels could not be inspected through GitHub. Keep enemy animation work deferred. No Actions dispatch.
+
 ### v2.25 — fluid dodging, wand casting and landing (source implementation; engine review pending)
 
 - Expand 16-frame directional dodges to 24 samples and eight-frame directional wand casts to 22 samples. Preserve each original texture and weighted clip duration, including the final pose hold. These are procedural opaque-interior transitions, not newly painted limb poses.

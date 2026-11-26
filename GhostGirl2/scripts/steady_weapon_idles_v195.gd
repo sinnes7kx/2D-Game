@@ -101,25 +101,32 @@ static func _create_steps(neutral: Texture2D, alternate: Texture2D, steps: int =
     var other: PackedByteArray = breath.get_data()
     if original.size() != other.size():
         return results
+    var overlap: Rect2i = base.get_used_rect().intersection(breath.get_used_rect())
     results.append(neutral) # Exact approved pixels on the resting beat.
     for i in range(1, steps):
         var amount: float = float(BLEND_STEPS[i]) if steps == STEPS else 0.18 * (0.5 - 0.5 * cos(TAU * float(i) / float(steps)))
-        var blended: PackedByteArray = _mix_rgba(original, other, amount)
+        var blended: PackedByteArray = _mix_rgba(original, other, amount, base.get_width(), overlap)
         var image: Image = Image.create_from_data(base.get_width(), base.get_height(), false, Image.FORMAT_RGBA8, blended)
         results.append(ImageTexture.create_from_image(image))
     return results
 
-static func _mix_rgba(base: PackedByteArray, other: PackedByteArray, mix: float) -> PackedByteArray:
+static func _mix_rgba(base: PackedByteArray, other: PackedByteArray, mix: float, width: int = 0, bounds: Rect2i = Rect2i()) -> PackedByteArray:
     var out: PackedByteArray = base.duplicate()
+    if base.size() != other.size() or base.is_empty():
+        return out
     var weight: float = clampf(mix, 0.0, 0.2)
-    for p in range(0, base.size(), 4):
-        # Lock approved blade/bow/trident contours and all transparency:
-        # never crossfade a silhouette or draw a faint second weapon edge.
-        if base[p + 3] < 232 or other[p + 3] < 232:
-            continue
-        # Only softly interpolate opaque interior paint/breathing details.
-        # The original alpha, outline and weapon alignment are pixel-stable.
-        for channel in range(3):
-            if base[p + channel] != other[p + channel]:
-                out[p + channel] = clampi(roundi(lerpf(float(base[p + channel]), float(other[p + channel]), weight)), 0, 255)
+    # Full-range default preserves existing callers and synthetic tests.
+    # Native Image.get_used_rect() excludes transparent margins; intersecting
+    # both rectangles gives exactly the same eligible opaque pixels.
+    var stride: int = width if width > 0 else (base.size() >> 2)
+    var region: Rect2i = bounds if width > 0 else Rect2i(0, 0, stride, 1)
+    for y in range(region.position.y, region.end.y):
+        var first: int = (y * stride + region.position.x) * 4
+        var last: int = (y * stride + region.end.x) * 4
+        for p in range(first, last, 4):
+            if base[p + 3] < 232 or other[p + 3] < 232:
+                continue
+            for channel in range(3):
+                if base[p + channel] != other[p + channel]:
+                    out[p + channel] = clampi(roundi(lerpf(float(base[p + channel]), float(other[p + channel]), weight)), 0, 255)
     return out

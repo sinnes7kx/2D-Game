@@ -27,6 +27,7 @@ quick_tests=(
   v222_fluid_animation_smoke.gd
   v223_locomotion_smoke.gd
   v225_dodge_wand_motion_smoke.gd
+  v226_silk_performance_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

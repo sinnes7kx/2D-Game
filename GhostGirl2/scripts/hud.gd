@@ -1,6 +1,7 @@
 extends CanvasLayer
 const COLLECTOR_LENS = preload("res://scripts/collector_lens_v179.gd")
 const COMBAT_JUICE = preload("res://scripts/combat_juice_v194.gd")
+const SILK_V226 = preload("res://scripts/silk_motion_v226.gd")
 var collector_lens: Control
 const COLLECTION_VAULT = preload("res://scripts/collection_vault_v181.gd")
 var collection_vault: Control
@@ -287,6 +288,11 @@ func _input(event: InputEvent) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	# Session-only accessibility controls; saves and combat are unaffected.
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_F4 and event.shift_pressed:
+			SILK_V226.enabled = not SILK_V226.enabled
+			show_pickup("HAIR / DRESS MOTION  ·  " + ("ON" if SILK_V226.enabled else "OFF"))
+			get_viewport().set_input_as_handled()
+			return
 		if event.physical_keycode == KEY_F2 and event.shift_pressed:
 			fps_readout.visible = not fps_readout.visible
 			fps_refresh_left = 0.0

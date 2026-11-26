@@ -10,6 +10,9 @@ const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
+const SILK_V226 = preload("res://scripts/silk_motion_v226.gd")
+var silk_motion: RefCounted = SILK_V226.new()
+var had_player_draw: bool = false
 const MOTION_V225 = preload("res://scripts/action_motion_samples_v225.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const AIR_V203 = preload("res://scripts/airborne_attacks_v203.gd")
@@ -218,6 +221,7 @@ func _ready() -> void:
 
 # Reset interpolation AFTER a teleport so rooms and shrines never streak.
 func snap_render_after_teleport() -> void:
+	silk_motion.call("reset")
 	reset_physics_interpolation()
 	var camera: Camera2D = get_node_or_null("Camera2D") as Camera2D
 	if camera != null:
@@ -544,9 +548,15 @@ func _process(delta: float) -> void:
 	if is_instance_valid(get_node_or_null("Camera2D")):
 		var cam: Camera2D = $Camera2D
 		cam.offset = (Vector2(sin(visual_time * 74.0), cos(visual_time * 59.0)) * camera_kick * 0.72 + camera_push) * COMBAT_JUICE.shake_level
-	queue_redraw()
+	# CanvasItem retains draw commands; don't rebuild an empty canvas at
+	# render FPS when no target/charge/dodge/jump indicator is present.
+	var needs_draw: bool = bow_draw_active or is_instance_valid(lock_target) or counter_window > 0.0 or dodge_time_left > 0.0 or jump_time_left > 0.0
+	if needs_draw or had_player_draw:
+		queue_redraw()
+	had_player_draw = needs_draw
 	if not is_instance_valid(body_art):
 		return
+	silk_motion.call("update", body_art, velocity, delta, hitstop_left > 0.0)
 	if hurt_recoil_left > 0.0:
 		var recoil: float = hurt_recoil_left / 0.19
 		body_art.position = BASE_ART_POS - hurt_direction * 3.0 * recoil

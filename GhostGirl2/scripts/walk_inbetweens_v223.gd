@@ -94,6 +94,7 @@ static func _intermediates(keys: Array[Texture2D]) -> Array[Texture2D]:
 static func _paint_step(base: Image, other: Image) -> Texture2D:
 	# Borrow only overlapping opaque interior color. Alpha, silhouette and
 	# exposed edges are taken wholly from one approved pose, never double-exposed.
-	var data: PackedByteArray = STEADY._mix_rgba(base.get_data(), other.get_data(), 0.18)
+	var overlap: Rect2i = base.get_used_rect().intersection(other.get_used_rect())
+	var data: PackedByteArray = STEADY._mix_rgba(base.get_data(), other.get_data(), 0.18, base.get_width(), overlap)
 	var image: Image = Image.create_from_data(base.get_width(), base.get_height(), false, Image.FORMAT_RGBA8, data)
 	return ImageTexture.create_from_image(image)
