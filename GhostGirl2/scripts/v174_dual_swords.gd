@@ -78,7 +78,7 @@ func _equipped() -> bool:
 	if inventory == null:
 		return false
 	var equipped: GhostItemInstance = inventory.get_equipped("sword")
-	return equipped != null and equipped.definition != null and str(equipped.definition.item_id) == ITEM_ID
+	return equipped != null and equipped.definition != null and equipped.weapon_style() == "dual_sword"
 
 func is_active(animation_name: String) -> bool:
 	return _equipped() and (animation_name.begins_with("dual_sword_") or animation_name.begins_with("attack_dual_sword_"))
