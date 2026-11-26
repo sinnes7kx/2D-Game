@@ -56,8 +56,8 @@ func _verify() -> void:
 	root.add_child(lens)
 	lens.open_item(scythe)
 	var selector: OptionButton = lens.get("scythe_glow_choices") as OptionButton
-	if selector == null or selector.item_count != 7 or not selector.get_parent().visible:
-		_fail("Collector's Lens lacks rolled + six preview opacity steps")
+	if selector == null or selector.item_count != 9 or not selector.get_parent().visible:
+		_fail("Collector's Lens lacks Natural + eight opacity steps")
 		return
 	selector.select(6)
 	selector.item_selected.emit(6)

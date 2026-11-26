@@ -6,7 +6,7 @@ const PROJECTILE_STYLES: Array[String] = [
 	"Natural", "Moonthread", "Twin Helix", "Halo Burst", "Petal Drift",
 	"Glass Motes", "Comet Tail", "Starlace", "Wisp Bloom"
 ]
-const GLOW_LEVELS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50]
+const GLOW_LEVELS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70]
 const BOW_GLOW_MODES: Array[String] = ["Natural", "Off", "Limbs", "Limbs + string", "Full bow"]
 
 # A genuinely rare seed-only special can exist without an override. A visual
@@ -27,10 +27,10 @@ static func seeded_projectile_style(item: GhostItemInstance) -> int:
 	return 0 if int(digest[0]) < 184 else 1 + int(digest[1]) % 8
 
 static func chosen_glow_level(item: GhostItemInstance) -> int:
-	return clampi(item.glow_level_override, -1, 5) if item != null else -1
+	return clampi(item.glow_level_override, -1, GLOW_LEVELS.size() - 1) if item != null else -1
 
 # Natural keeps the existing generated light strength. Explicit Off is zero;
-# manual 10–50% map to literal 0.10..0.50 alpha multipliers.
+# manual 10–70% map to literal 0.10..0.70 alpha multipliers.
 static func effect_scale(item: GhostItemInstance) -> float:
 	var level: int = chosen_glow_level(item)
 	return 1.0 if level < 0 else GLOW_LEVELS[level]

@@ -25,7 +25,7 @@ def require(path: str, tokens: tuple[str, ...], banned: tuple[str, ...] = ()) ->
 def main() -> int:
     failures = []
     failures += require("scripts/scythe_glow_layer_v211.gd", (
-        "const STOPS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50]",
+        "const STOPS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70]",
         'ghost-girl-v211-scythe-aura:',
         "if int(digest[0]) < 179:",
         "CanvasItemMaterial.BLEND_MODE_ADD",

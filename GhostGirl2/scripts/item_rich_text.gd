@@ -146,6 +146,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			out.append(_label("Original · " + birth))
 			if ROLL_CODE.debug_active(item):
 				out.append(_label("Test preview · genuine roll unchanged"))
+		if LOOK_CHOICES_V219.has_personalization(item):
+			out.append(_label("Personalized appearance · not a new roll"))
 	var flavor: String = str(item.definition.description).strip_edges()
 	if not flavor.is_empty():
 		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])

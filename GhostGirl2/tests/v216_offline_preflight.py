@@ -88,7 +88,7 @@ def main() -> int:
     ))
     errors += verify("scripts/scythe_glow_layer_v211.gd", (
         "if item.glow_level_override >= 0:",
-        "return clampi(item.glow_level_override, 0, 5)",
+        "return clampi(item.glow_level_override, 0, STOPS.size() - 1)",
     ))
     errors += verify("scripts/weapon_prestige_fx.gd", (
         "CHOICES_V216.effect_scale(item)",
@@ -101,7 +101,7 @@ def main() -> int:
     errors += verify("scripts/collector_lens_v179.gd", (
         "func bind_inventory(value: Node)", "owned_inventory.save_game()",
         "inspected.glow_level_override = previous",
-        "scythe_glow_choices.select(clampi(value.glow_level_override + 1, 0, 6))",
+        "scythe_glow_choices.select(clampi(value.glow_level_override + 1, 0, 8))",
     ))
     errors += verify("scripts/collector_lens_model_v179.gd", (
         '"BowGlowLayerV216"', "CHOICES_V216.bow_body_visible(item)",

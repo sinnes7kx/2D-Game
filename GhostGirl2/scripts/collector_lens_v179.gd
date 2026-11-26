@@ -102,9 +102,9 @@ func _ready() -> void:
 	glow_row.add_child(glow_caption)
 	scythe_glow_choices = OptionButton.new()
 	scythe_glow_choices.name = "ScytheGlowPreviewV211"
-	scythe_glow_choices.tooltip_text = "Choose a saved 0–50% full-scythe aura; Natural retains the original seed roll"
+	scythe_glow_choices.tooltip_text = "Choose a saved 0–70% full-scythe aura; Natural retains the original seed roll"
 	scythe_glow_choices.add_item("Natural (seeded)")
-	for step in range(6):
+	for step in range(8):
 		scythe_glow_choices.add_item("%d%% glow" % (step * 10))
 	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
 	glow_row.add_child(scythe_glow_choices)
@@ -154,7 +154,7 @@ func open_item(value: GhostItemInstance) -> void:
 	glow_button.disabled = false
 	motion_button.disabled = false
 	scythe_glow_choices.get_parent().visible = value.weapon_style() == "scythe"
-	scythe_glow_choices.select(clampi(value.glow_level_override + 1, 0, 6))
+	scythe_glow_choices.select(clampi(value.glow_level_override + 1, 0, 8))
 	scythe_glow_choices.disabled = owned_inventory == null or not (owned_inventory.contents.has(value) or owned_inventory.vault.has(value))
 	glow_button.set_pressed_no_signal(true)
 	motion_button.set_pressed_no_signal(false)
@@ -177,7 +177,7 @@ func _select_scythe_glow(index: int) -> void:
 	# Only an exact owned instance in backpack or vault can be personalized.
 	if not (owned_inventory.contents.has(inspected) or owned_inventory.vault.has(inspected)):
 		return
-	var value: int = clampi(index - 1, -1, 5)
+	var value: int = clampi(index - 1, -1, 7)
 	var previous: int = inspected.glow_level_override
 	inspected.glow_level_override = value
 	if not owned_inventory.save_game():

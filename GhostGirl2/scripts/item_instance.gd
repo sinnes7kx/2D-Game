@@ -239,7 +239,7 @@ func restore_cosmetic_look(index: int) -> bool:
 	# them must return the natural look rather than retaining a later edit.
 	eye_style_override = clampi(int(snapshot.get("eye_style_override", -1)), -1, 3)
 	eye_palette_override = clampi(int(snapshot.get("eye_palette_override", -1)), -1, 5)
-	glow_level_override = clampi(int(snapshot.get("glow_level_override", -1)), -1, 5)
+	glow_level_override = clampi(int(snapshot.get("glow_level_override", -1)), -1, 7)
 	bow_glow_mode_override = clampi(int(snapshot.get("bow_glow_mode_override", -1)), -1, 3)
 	bow_projectile_style_override = clampi(int(snapshot.get("bow_projectile_style_override", -1)), -1, 8)
 	for field in _cosmetic_fields():

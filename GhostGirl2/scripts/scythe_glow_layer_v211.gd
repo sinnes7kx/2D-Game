@@ -4,7 +4,7 @@ extends Node2D
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
 const RNG = preload("res://scripts/cosmetic_rng_v152.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
-const STOPS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50]
+const STOPS: Array[float] = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70]
 
 var grip: Vector2 = Vector2.ZERO
 var head: Vector2 = Vector2.ZERO
@@ -26,7 +26,7 @@ static func rolled_level(item: GhostItemInstance) -> int:
 		return 0
 	# Explicit owner-selected glow overrides the default roll, never its seed.
 	if item.glow_level_override >= 0:
-		return clampi(item.glow_level_override, 0, 5)
+		return clampi(item.glow_level_override, 0, STOPS.size() - 1)
 	# Domain-separated digest: distinct from stats, material, existing FX.
 	var identity: String = item.cosmetic_uid.to_lower() if RNG.is_valid_uid(item.cosmetic_uid) else "legacy-%d" % item.visual_seed()
 	var digest: PackedByteArray = ("ghost-girl-v211-scythe-aura:" + identity).sha256_buffer()
@@ -40,7 +40,7 @@ static func opacity(level_index: int) -> float:
 	return STOPS[clampi(level_index, 0, STOPS.size() - 1)]
 
 func set_pose(item: GhostItemInstance, at_grip: Vector2, at_head: Vector2, shape: Dictionary, direction: float, override_level: int = -1) -> void:
-	var next_level: int = clampi(override_level, 0, 5) if override_level >= 0 else rolled_level(item)
+	var next_level: int = clampi(override_level, 0, STOPS.size() - 1) if override_level >= 0 else rolled_level(item)
 	var enabled: bool = item != null and item.weapon_style() == "scythe" and at_grip.distance_squared_to(at_head) > 16.0 and not shape.is_empty()
 	var new_palette: Array[Color] = []
 	if enabled:
