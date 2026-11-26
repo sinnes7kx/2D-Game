@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.18 — local regression coverage (source implementation; engine pending)
+
+- Restore the four omitted Godot smoke scripts (v2.09 share cards, v2.10 cosmetics, v2.11 blunt/scythe aura, v2.14 scythe effects) to the ordered local runner. Quick also includes legacy dropdown, collection recovery and transfer-integrity checks; full runs all 54 existing smoke scripts exactly once.
+- Add a read-only registration audit and a `preflight` mode that runs source hygiene and the current v2.16/v2.17 offline source checks before requiring Godot. No game scripts, assets, item data, saves, or workflow triggers changed.
+- Source registration compared against the pinned mainline GitHub test directory; real local Python execution, Godot headless, F5 and old-save testing remain pending. No GitHub Actions jobs started. Run `bash GhostGirl2/tools/run_smoke_suite.sh preflight` then `bash GhostGirl2/tools/run_smoke_suite.sh quick` locally. Full is optional on demand.
+
 ### v2.17 — finish v2.16 mainline integration and complete bow-glow mode isolation (source committed; engine F5 pending)
 
 - [x] **Recovery of a real integration gap:** PR #64 merged v2.16 at head `050bed8121b63de9a6bfb4ebc597df4927bd3a4a`, before later corrections on its feature branch. A fresh branch from the current `main`, `fix/v217-mainline-fx-compat`, carries the 12 distinct post-merge corrections. This is **not** cherry-picking over an older stacked feature branch.
