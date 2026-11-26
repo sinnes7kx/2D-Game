@@ -11,6 +11,7 @@ const PAINTED_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 const BOW_POSE = preload("res://scripts/bow_palette_overlay_v139.gd")
 var painted_preview: Sprite2D
 var bow_painted_mask: Sprite2D
+var bow_body_glow: Sprite2D
 var scythe_glow: Node2D
 var glow_preview_override: int = -1
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
@@ -97,7 +98,7 @@ func _draw() -> void:
 			var size: Vector2 = Vector2(item.definition.icon.get_size())
 			var fit: Vector2 = size * (90.0 / maxf(1.0, maxf(size.x, size.y)))
 			draw_texture_rect(item.definition.icon, Rect2(-fit * 0.5, fit), false)
-		if glow_enabled:
+		if glow_enabled and CHOICES_V216.effect_scale(item) > 0.0:
 			_draw_artwork_effects()
 		return
 	var style: String = item.weapon_style()
@@ -106,7 +107,7 @@ func _draw() -> void:
 			var p: Dictionary = profiles[0].duplicate()
 			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
 			p["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
-			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled, str(item.definition.item_id))
+			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0, str(item.definition.item_id))
 		"scythe":
 			var p: Dictionary = profiles[0].duplicate()
 			p["scythe_span"] = float(look.get("scythe_span", 1.0))
@@ -171,13 +172,14 @@ func _draw_artwork_effects() -> void:
 	var radius: float = 39.0
 	if item.get_slot() == "wand":
 		radius = 32.0
+	var strength: float = CHOICES_V216.effect_scale(item)
 	var count: int = 4 + mini(tier, 5)
 	for i in range(count):
 		var u: float = float(i) / float(count)
 		var phase: float = elapsed * (0.48 + 0.045 * float(motif)) + u * TAU
 		var p: Vector2 = Vector2.from_angle(phase) * (radius + 5.0 * sin(phase * 2.0))
 		var ink: Color = ANOMALOUS.color_at(gradients, look, u, elapsed)
-		ink.a = FX_LEVEL.alpha(0.36 + 0.08 * sin(phase * 1.4))
+		ink.a = FX_LEVEL.alpha((0.36 + 0.08 * sin(phase * 1.4)) * strength)
 		match motif:
 			0, 7: draw_circle(p, 1.6, ink)
 			1, 6:
@@ -187,7 +189,7 @@ func _draw_artwork_effects() -> void:
 			3: draw_polyline(PackedVector2Array([p - Vector2(3,3), p + Vector2(1,-1), p + Vector2(-1,1), p + Vector2(3,3)]), ink, 1.0, true)
 			4: draw_arc(p, 3.0, phase, phase + PI, 12, ink, 1.0, true)
 			5: draw_line(p, p - Vector2.from_angle(phase + PI / 2.0) * 7.0, ink, 1.2, true)
-		ink.a = FX_LEVEL.alpha(0.045)
+		ink.a = FX_LEVEL.alpha(0.045 * strength)
 		draw_circle(p, 5.0, ink)
 	_draw_signature(Vector2.ZERO, radius + 10.0)
 
@@ -256,6 +258,26 @@ func _actual_bow_preview() -> bool:
 	painted_preview.material = null
 	painted_preview.z_index = -2
 	bow_painted_mask.z_index = -1
+	# The same bow-only mask also provides a precise additive glow outline.
+	# It remains separate from both the opaque physical sprite and tint mask.
+	if not is_instance_valid(bow_body_glow):
+		bow_body_glow = Sprite2D.new()
+		bow_body_glow.name = "BowGlowLayerV216"
+		add_child(bow_body_glow)
+		var additive: CanvasItemMaterial = CanvasItemMaterial.new()
+		additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		bow_body_glow.material = additive
+	bow_body_glow.texture = bow_painted_mask.texture
+	bow_body_glow.position = bow_painted_mask.position
+	bow_body_glow.rotation = bow_painted_mask.rotation
+	bow_body_glow.scale = bow_painted_mask.scale
+	bow_body_glow.z_index = 0
+	bow_body_glow.show_behind_parent = false
+	var limb_ink: Array[Color] = item.bow_limb_gradient_colors()
+	bow_body_glow.modulate = limb_ink[1]
+	var mode: int = CHOICES_V216.bow_mode(item)
+	bow_body_glow.modulate.a = CHOICES_V216.opacity(item, 0.14) * (1.5 if mode == 3 else 0.8)
+	bow_body_glow.visible = CHOICES_V216.bow_body_visible(item) and glow_enabled
 	var mat: ShaderMaterial = ShaderMaterial.new()
 	PAINTED_SURFACE.configure(mat, look, Vector2(256, 220), true, PAINTED_SURFACE.bow_pigment(item, look))
 	bow_painted_mask.material = mat
@@ -264,6 +286,8 @@ func _actual_bow_preview() -> bool:
 func _update_painted_preview() -> void:
 	if is_instance_valid(bow_painted_mask):
 		bow_painted_mask.hide()
+	if is_instance_valid(bow_body_glow):
+		bow_body_glow.hide()
 	if not has_painted_surface():
 		if is_instance_valid(painted_preview):
 			painted_preview.hide()
