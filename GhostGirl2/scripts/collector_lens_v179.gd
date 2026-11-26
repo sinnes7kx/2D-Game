@@ -235,7 +235,7 @@ func _copy_code() -> void:
 		return
 	var identity: String = inspected.cosmetic_uid if not inspected.cosmetic_uid.is_empty() else "legacy-%d" % inspected.visual_seed()
 	DisplayServer.clipboard_set("GG1:%s:%s" % [inspected.definition.item_id, identity])
-	status.text = "Appearance code copied  ·  no combat stats included"
+	status.text = "Base appearance seed copied · saved custom choices and stats not included"
 
 func _copy_roll() -> void:
 	if inspected == null:

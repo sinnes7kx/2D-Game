@@ -96,6 +96,8 @@ static func _swatch_colors(colors: Array[Color]) -> String:
 		pieces.append("[color=%s]●[/color]" % color_to_tag(color))
 	return "  ".join(pieces)
 
+const LOOK_CHOICES_V219 = preload("res://scripts/visual_choices_v216.gd")
+
 static func item_info(item: Variant, advanced: bool = false) -> String:
 	if item == null or item.definition == null:
 		return ""
@@ -146,7 +148,12 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			out.append(_label("V1 · - means not ranked / not applicable"))
 			out.append(_label(ROLL_CODE.breakdown(code)))
 			if birth != "unknown (legacy)":
-				out.append(_label("Original look" if item.cosmetic_uid == item.birth_roll_uid_v1 else "Current look differs from original"))
+				out.append(_label("Original seed" if item.cosmetic_uid == item.birth_roll_uid_v1 else "Current seed differs from original"))
+	if advanced:
+		if LOOK_CHOICES_V219.has_personalization(item):
+			out.append(_label("Personalized appearance · not a new rarity roll"))
+		for detail in LOOK_CHOICES_V219.appearance_details(item):
+			out.append(_label(detail))
 	var flavor: String = str(item.definition.description).strip_edges()
 	if not flavor.is_empty():
 		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])
