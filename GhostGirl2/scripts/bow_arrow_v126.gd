@@ -213,6 +213,9 @@ func _check_moon_targets(start: Vector2, end: Vector2) -> bool:
 	return false
 
 func _impact(where: Vector2) -> void:
+	# Glow Off hides decorative hit flashes, never the real arrow collision.
+	if visual_glow_scale <= 0.0:
+		return
 	var root: Node = get_tree().current_scene
 	if root == null:
 		return
