@@ -40,9 +40,10 @@ func _process(delta: float) -> void:
 	style = item.weapon_style() if item != null else ""
 	active_item_id = str(item.definition.item_id) if item != null and item.definition != null else ""
 	visible = item != null and ((style == "scythe" and SCYTHE.matches(str(body.animation))) or (style in ["halberd", "maul"] and HEAVY.matches(str(body.animation))))
-	if not visible:
+	if not visible or style != "scythe":
 		if is_instance_valid(scythe_glow):
 			scythe_glow.call("clear_pose")
+	if not visible:
 		return
 	var next: String = SURFACE.key(item) + ":%d:%d:%d:%d" % [item.debug_color_mode, item.debug_glow_motif, item.debug_forge_guard, item.debug_forge_grip]
 	if next != key:
