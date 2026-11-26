@@ -66,7 +66,7 @@ full_tests=(
   v202_headgear_migration_smoke.gd
   v202_fletcher_range_smoke.gd
   v202_living_world_puzzles_smoke.gd
- )
+)
 if [[ "$mode" == full ]]; then
   python3 GhostGirl2/tests/validate_v1722.py
   python3 GhostGirl2/tests/validate_v1723.py
