@@ -54,6 +54,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 ---
 
+### Compact rarity preview buttons (source implementation; engine review pending)
+
+- Replace the cosmetic radio grid with Common, Uncommon, Rare, Exceptional, Legendary, Exalted, Godlike and Natural debug buttons. Map them to existing material tiers 0–6; retain granular Test Effects menu. Presets clear temporary overrides and never modify saved seed, UID, stats or real rarity. Godlike is a label for the existing Anomaly tier, not an authenticated rare drop.
+- F5 review required for selection, layout, preview and reset. Existing natural ticket counts unchanged.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.
