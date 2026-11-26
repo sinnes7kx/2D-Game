@@ -6,6 +6,7 @@ var inventory
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 const HEAD_COSMETICS_V202 = preload("res://scripts/head_cosmetics_v202.gd")
+const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 var wand_surface_key: String = ""
 var wand_surface: ShaderMaterial
 @onready var player_art: AnimatedSprite2D = get_parent().get_node("Ghost") as AnimatedSprite2D
@@ -102,12 +103,9 @@ func _draw_firefly_cluster(anchor: Vector2, radius: Vector2, color: Color, count
 		draw_circle(p, 0.95 + 0.25 * float(i % 2), Color(color.r, color.g, color.b, 0.085 * glow))
 
 func _load_wand_pose_rows() -> void:
-	if not FileAccess.file_exists(WAND_POSE_GUIDES_PATH):
-		push_warning("Ghost Girl: wand pose guide missing; wand art uses idle pose")
-		return
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(WAND_POSE_GUIDES_PATH))
-	if data is Dictionary:
-		wand_pose_rows = data.get("animations", {}) as Dictionary
+	# The same cached authored guide is used for wand art, glimmer and
+	# actual projectile origin. No independent per-facing offset table.
+	wand_pose_rows = WAND_ANCHORS_V216.rows()
 
 func _apply_wand_pose() -> void:
 	if wand_visual == null or player_art == null:
