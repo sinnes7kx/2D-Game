@@ -81,7 +81,7 @@ func _check() -> void:
 	# Intentionally simulate a blocked save; never write test items into user://.
 	inv.save_block_reason = "fixture: prevent save writes"
 	panel.call("_set_eye_choice", true, "shape", 2)
-	if eyes.eye_style_override != -1 or not inv._serialize_item(eyes, Vector2i.ZERO) == item_record:
+	if eyes.eye_style_override != -1 or inv._serialize_item(eyes, Vector2i.ZERO) != item_record:
 		_fail("Eye editor failed to roll back a blocked save")
 		return
 	var model: Node2D = MODEL.new()
