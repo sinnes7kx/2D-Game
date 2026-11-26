@@ -55,7 +55,10 @@ func _check() -> void:
 		_fail("Eye styling altered intrinsic loot or collector identity")
 		return
 	var saved: Variant = JSON.parse_string(JSON.stringify(edited))
-	var restored: GhostItemInstance = inv._deserialize_item(saved)
+	if not saved is Dictionary:
+		_fail("Serialized eye record could not be parsed as a Dictionary")
+		return
+	var restored: GhostItemInstance = inv._deserialize_item(saved as Dictionary)
 	if restored == null or restored.eye_style_override != 2 or restored.eye_palette_override != 3:
 		_fail("New eye options did not survive JSON reload")
 		return
