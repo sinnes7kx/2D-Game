@@ -50,6 +50,9 @@ func _verify() -> void:
 		_fail("Bow projectile appearance is not reproducible from its UID")
 		return
 	bow.glow_level_override = 3
+	if not is_equal_approx(CHOICES.effect_scale(bow), 0.30) or not is_equal_approx(CHOICES.opacity(bow), 0.30):
+		_fail("Manual 30% glow must be literal 0.30 opacity, not 60%")
+		return
 	bow.bow_glow_mode_override = 3
 	bow.bow_projectile_style_override = 8
 	if CHOICES.projectile_style(bow) != 8 or CHOICES.bow_mode(bow) != 3:
