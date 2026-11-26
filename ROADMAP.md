@@ -149,7 +149,7 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - Add Ivory Misericorde, Vesper Athame and Cathedral Twin Longswords using established modular thrust/paired sword rigs, distinct slim blade profiles and SVG icons. Existing comparable base stats; share existing sword variant lane, no increased overall drop probability. Debug F7 grants test copies. No new art atlas or save fields.
 - Add synthetic classification/audio/loot smoke; no Godot runtime/listening/F5 verification. Crossbow family, newly authored bow silhouettes and additional ordinary single-sword art remain deferred. No Actions dispatch.
 
-### v2.32 — polearm wrist alignment, forged blunt silhouettes and seeded halo (source implementation; visual review pending)
+### v2.31 — gothic weapon base variants (source implementation; engine review pending)
 
 - All three ground spear/trident light attacks and ground/air heavy attacks select the existing clean thrust family. Shared source-frame sequence drives actual hand anchors; occluded wrists hide the physical span and its attack glow. No synthetic finger circles. Hit timers, stamina, reach, damage and original artwork unchanged. All three light steps reuse the same thrust art, rather than new distinct painted combo clips.
 - Refine mace, morningstar and flail geometry to smaller faceted forged heads, slender shafts and fine articulated links. Physical outline and glow share geometry; inventory icons updated. No new textures/atlases, no collision or stat changes.
