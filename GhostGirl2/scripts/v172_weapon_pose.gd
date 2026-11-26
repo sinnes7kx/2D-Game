@@ -168,11 +168,14 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 				"left": anchor = Vector2(-35, 25)
 				"right": anchor = Vector2(35, 25)
 				"back": anchor = Vector2(27, 15)
-			return PackedVector2Array([anchor, anchor + Vector2(-40 if facing == "left" else 40, -55)])
+			var original_tip: Vector2 = anchor + Vector2(-40 if facing == "left" else 40, -55)
+			# Match the longer double-ended blade scale, even without authored axes.
+			return PackedVector2Array([anchor, anchor + (original_tip - anchor).normalized() * 76.0])
 		var guide: Array = guides[clampi(frame_index, 0, guides.size() - 1)]
 		var grip: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 		var tip: Vector2 = Vector2(float(guide[2]), float(guide[3]))
-		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 68.0])
+		# Drawing-only extension; all twinblade damage and collision remain fixed.
+		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 76.0])
 	var spear: bool = animation_name.begins_with("attack_briarwake_spear_")
 	var heavy: bool = animation_name.contains("_heavy_")
 	var face: String = "front"

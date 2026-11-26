@@ -1723,5 +1723,8 @@ func _toggle_lock_target() -> void:
 func _play_action_sfx(stream: AudioStream) -> void:
 	if action_sfx == null:
 		return
+	# Older baked attack samples layered too loudly over the new, softer
+	# procedural foley. Keep contact audible without a metallic jump-scare.
+	action_sfx.volume_db = -18.0 if stream == HIT_SFX else (-16.0 if stream == SWING_SFX else (-12.0 if stream == RIPOSTE_SFX else -10.0))
 	action_sfx.stream = stream
 	action_sfx.play()

@@ -3,6 +3,9 @@ extends Node2D
 ## Uses unmodified approved Ghost Girl body frames; two sword layers are
 ## rendered separately and are never part of physics collision/damage logic.
 const ITEM_ID: String = "gloamrose_dual_swords_v174"
+# Visual reach only: retain both wrist anchors and all combat hitboxes.
+const IDLE_BLADE_LENGTH_SCALE: float = 1.34
+const ATTACK_BLADE_LENGTH_SCALE: float = 1.17
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const SWORD_SCRIPT: Script = preload("res://scripts/v174_dual_sword_blade.gd")
@@ -197,6 +200,10 @@ static func authored_blade_spans(face: String, action: String, frame_index: int)
 				grip += forward * (-lead_reach[n] * 0.86)
 				grip += across * (-side * lead_reach[n] * 0.18)
 		var tip: Vector2 = grip + across * lateral + forward * advance
+		# Longer blades read like their Collector's Lens counterparts at
+		# the actual 0.52 world sprite scale; hilts never move off the hand.
+		var extension: float = IDLE_BLADE_LENGTH_SCALE if action in ["idle", "walk"] else ATTACK_BLADE_LENGTH_SCALE
+		tip = grip + (tip - grip) * extension
 		# The authored right wrist can reach the edge of the 256x220 frame.
 		# Confine *drawing only* to the approved atlas bounds; gameplay
 		# reach and attack timing remain unchanged.
