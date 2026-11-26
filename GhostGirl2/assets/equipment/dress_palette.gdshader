@@ -24,7 +24,7 @@ void vertex() {
     silk_ink = COLOR;
 }
 void fragment() {
-    if (silk_enabled > 0.5) {
+    if (silk_enabled > 0.5 && silk_state.z > 0.001) {
         vec2 p = silk_local;
         // Spatial envelopes are deliberately small and zero near the face,
         // wrists, frame borders, and upper torso. No pixel-color inference.
@@ -37,7 +37,11 @@ void fragment() {
         vec2 hair_shift = vec2(0.65 * wave + 1.4 * silk_flow.x, 0.45 * silk_flow.y);
         vec2 hem_shift = vec2(0.75 * sin(phase * 1.13 - p.y * 0.052) + 1.35 * silk_flow.z,
                               0.7 * sin(phase * 1.2 + p.x * 0.06) + 0.65 * silk_flow.w);
-        vec2 shift = (hair * hair_shift + hem * hem_shift) * gain;
+        // A restrained trailing ripple follows the heavier hem rather than
+        // moving the entire garment as one rigid piece.
+        float fold = sin(phase * 0.83 + p.x * 0.09 - p.y * 0.035);
+        hem_shift.y += fold * 0.35 * abs(silk_flow.z);
+        vec2 shift = clamp((hair * hair_shift + hem * hem_shift) * gain, vec2(-2.5), vec2(2.5));
         if (dot(shift, shift) > 0.000001) {
             // UV offset is in actual backing-texture pixels. Local frame
             // borders are never sampled by either deformation envelope.

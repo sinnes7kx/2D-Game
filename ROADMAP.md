@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.28 — continuous silk response and cached animation timing (source implementation; engine review pending)
+
+- Preserve independent hair/dress inertia through unsupported pose transitions while leaving those frames completely unwarped. Off and teleports reset motion; hitstop preserves the response. Add a small bounded hem-fold ripple in supported poses. Geometric deformation remains approximate, not authored masks.
+- Cache weighted cumulative frame durations after gameplay/preview animation setup for constant-time phase lookup, with resource-change invalidation and exact fallback for unprepared or edited resources. Avoid per-render empty prestige glow redraws at zero item/global intensity. No new textures or enemy behavior changes.
+- Restore the missing v2.24 sword smoke registration, lost in the merged runner. Add synthetic phase-cache equivalence/invalidation smoke and source checks; no measured FPS improvement or engine/shader compilation claimed. F5 validate pose transitions, hitstop, toggling glow and Shift+F2 diagnostics.
+
 ### v2.27 — independent silk inertia and idle texture reuse (source implementation; engine review pending)
 
 - Give hair and heavier dress separate, bounded two-axis motion response and settling speeds; fade the deformation in on supported clips and handle material replacement. Extend the approximate geometric zones to wand and paired-weapon walking clips that already use approved hook-free body artwork. Face/weapon protection remains approximate; no combat, baked weapon or enemy animation changes. Shift+F4 remains a session off switch.
