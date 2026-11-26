@@ -364,6 +364,8 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"bow_glow_index": item.bow_glow_index,
 		"bow_trail_index": item.bow_trail_index,
 		"bow_detail_index": item.bow_detail_index,
+		"eye_style_override": item.eye_style_override,
+		"eye_palette_override": item.eye_palette_override,
 		"cosmetic_seed": item.cosmetic_seed,
 		"cosmetic_uid": item.cosmetic_uid,
 		"gradient_version": item.gradient_version,
@@ -529,6 +531,9 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	item.bow_glow_index = clampi(int(saved.get("bow_glow_index", item.bow_glow_index)), -1, 9)
 	item.bow_trail_index = clampi(int(saved.get("bow_trail_index", item.bow_trail_index)), -1, 5)
 	item.bow_detail_index = clampi(int(saved.get("bow_detail_index", item.bow_detail_index)), -1, 4)
+	# New cosmetic-only fields are optional: legacy eye items remain unchanged.
+	item.eye_style_override = clampi(int(saved.get("eye_style_override", -1)), -1, 3)
+	item.eye_palette_override = clampi(int(saved.get("eye_palette_override", -1)), -1, 5)
 	# These keys are optional: old saves preserve their exact appearance.
 	item.cosmetic_seed = int(saved.get("cosmetic_seed", -1))
 	# Old saves without an ID retain their original seed-derived visual look.
