@@ -67,7 +67,13 @@ func _draw() -> void:
 		var near_edge: PackedVector2Array = MODULAR.edge_points(blade_root, blade_tip, steel_width, look, -1.0)
 		var far_edge: PackedVector2Array = MODULAR.edge_points(blade_root, blade_tip, steel_width, look, 1.0)
 		var trim: Color = look["accent"]
-		var aura: float = FX_LEVEL.alpha(0.12 if int(look.get("material", 0)) >= 3 else 0.045)
+		# Explicit Glow Off affects the extra aura, not the steel grind line.
+		var actor: Node = body.get_parent()
+		var level: Node = actor.get("world") as Node if actor != null else null
+		var equipment: Node = level.get("inventory") as Node if level != null else null
+		var owned: GhostItemInstance = equipment.get_equipped("sword") if equipment != null else null
+		var lit: bool = owned == null or owned.glow_level_override != 0
+		var aura: float = FX_LEVEL.alpha(0.12 if int(look.get("material", 0)) >= 3 else 0.045) if lit else 0.0
 		if aura > 0.0:
 			var halo: Color = Color(trim.r, trim.g, trim.b, aura)
 			draw_polyline(near_edge, halo, 3.4, true)
