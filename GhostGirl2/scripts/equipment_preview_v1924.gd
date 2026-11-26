@@ -89,6 +89,7 @@ func refresh() -> void:
 	var clip: String = str(actor.call("_weapon_motion_prefix", false)) + FACES[facing_index]
 	if not body.sprite_frames.has_animation(clip):
 		clip = "idle_" + FACES[facing_index]
+	clip = str(actor.call("_resolve_skin_clip", clip))
 	if body.sprite_frames.has_animation(clip) and (str(body.animation) != clip or not body.is_playing()):
 		body.play(clip)
 	# All visual layers share the live equipped item references, including
