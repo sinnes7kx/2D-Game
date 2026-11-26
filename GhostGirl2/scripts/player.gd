@@ -6,6 +6,7 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const VISUAL_CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
+const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
@@ -747,7 +748,7 @@ func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> vo
 	stamina -= cost
 	stamina_recovery_left = STAMINA_RECOVERY_WAIT
 	spell_aim_point = _select_wand_target(get_global_mouse_position())
-	var muzzle: Vector2 = global_position + Vector2(0, -44.0)
+	var muzzle: Vector2 = WAND_ANCHORS_V216.world_tip(self)
 	spell_direction = spell_aim_point - muzzle
 	if spell_direction.length_squared() < 36.0:
 		spell_direction = facing
