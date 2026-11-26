@@ -40,7 +40,7 @@ static func install(sprite: AnimatedSprite2D) -> void:
                 frames.add_frame(wand_ground, frames.get_frame_texture(source, i), frames.get_frame_duration(source, i))
     for original in frames.get_animation_names():
         var name: String = str(original)
-        if not name.begins_with("attack_") or not (name.contains("_heavy_") or name.begins_with("attack_thornrose_light_") or name.begins_with("attack_moonveil_light_")):
+        if not name.begins_with("attack_") or not (name.contains("_heavy_") or name.begins_with("attack_thornrose_light_") or name.begins_with("attack_moonveil_light_") or name.begins_with("attack_forge_bow_light_")):
             continue
         var target: String = air_name(name)
         if name == target or frames.has_animation(target) or frames.get_frame_count(name) < 8:

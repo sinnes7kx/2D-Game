@@ -59,7 +59,9 @@ const VARIANT_LOOT_V231 = [
 const BLADE_VARIANTS_V233 = [
 	preload("res://items/ivory_misericorde_v233.tres"),
 	preload("res://items/vesper_athame_v233.tres"),
-	preload("res://items/cathedral_dual_swords_v233.tres")
+	preload("res://items/cathedral_dual_swords_v233.tres"),
+	preload("res://items/cinderveil_dirk_v238.tres"),
+	preload("res://items/reliquary_knife_v238.tres")
 ]
 const SINGLE_SWORDS_V235 = [
 	preload("res://items/vesper_arming_sword_v235.tres"),
@@ -81,7 +83,9 @@ const BOW_LOOT_TABLE = [
 	preload("res://items/thornrose_bow.tres"),
 	preload("res://items/moonveil_bow.tres"),
 	preload("res://items/blackthorn_bow_v234.tres"),
-	preload("res://items/reliquary_silver_bow_v234.tres")
+	preload("res://items/reliquary_silver_bow_v234.tres"),
+	preload("res://items/mourning_yew_bow_v238.tres"),
+	preload("res://items/vesper_recurve_bow_v238.tres")
 ]
 const MOON_SPELL_SCENE: PackedScene = preload("res://scenes/moon_spell.tscn")
 const WAND_RELEASE_SCRIPT_V156: Script = preload("res://scripts/wand_release_fx_v156.gd")
@@ -1017,7 +1021,7 @@ func _give_weapon_test_samples() -> void:
 			trial_paths.append(definition.resource_path)
 		for definition in CROSSBOW_LOOT_V236:
 			trial_paths.append(definition.resource_path)
-		trial_paths.append_array(["res://items/blackthorn_bow_v234.tres", "res://items/reliquary_silver_bow_v234.tres"])
+		trial_paths.append_array(["res://items/blackthorn_bow_v234.tres", "res://items/reliquary_silver_bow_v234.tres", "res://items/mourning_yew_bow_v238.tres", "res://items/vesper_recurve_bow_v238.tres"])
 	for path in trial_paths:
 		var template: GhostItemData = load(path) as GhostItemData
 		if template != null and not inventory.has_item(template.item_id):

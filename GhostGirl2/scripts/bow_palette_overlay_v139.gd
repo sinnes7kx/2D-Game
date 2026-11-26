@@ -218,7 +218,7 @@ func refresh() -> void:
 		visible = false
 		return
 	var item: GhostItemInstance = inventory.get_equipped("sword")
-	if item == null or item.weapon_style() != "bow":
+	if item == null or item.weapon_style() != "bow" or item.uses_forge_bow():
 		visible = false
 		return
 	last_bow_cosmetic_key = WEAPON_SURFACE.key(item)
@@ -237,11 +237,11 @@ func _process(_delta: float) -> void:
 	# The new idle body is mostly the authored neutral pose; lock masks and
 	# the left-facing detached bow to that same pose to prevent color jitter.
 	var overlay_frame: int = 0 if STEADY_IDLE.is_bow_idle(source_animation) else body.frame
-	if item != null and item.weapon_style() == "bow":
+	if item != null and item.weapon_style() == "bow" and not item.uses_forge_bow():
 		var key: String = WEAPON_SURFACE.key(item)
 		if key != last_bow_cosmetic_key:
 			refresh()
-	if item == null or item.weapon_style() != "bow":
+	if item == null or item.weapon_style() != "bow" or item.uses_forge_bow():
 		visible = false
 		if bow_carry_visual != null:
 			bow_carry_visual.visible = false

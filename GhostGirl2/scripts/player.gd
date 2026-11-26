@@ -6,6 +6,7 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
+const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
 const VISUAL_CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
@@ -185,6 +186,7 @@ func _ready() -> void:
 	# body action frames; the v172 pose layer supplies the weapon per frame.
 	V172_POSE_SCRIPT.install_attack_frames(body_art)
 	CROSSBOW_V236.install(body_art.sprite_frames)
+	FORGE_V238.install(body_art.sprite_frames)
 	V173_DUAL_DAGGER_SCRIPT.install_animations(body_art)
 	V174_DUAL_SWORD_SCRIPT.install_animations(body_art)
 	V175_CLEAN_WEAPON_BODY.install(body_art)
@@ -697,6 +699,8 @@ func _bow_art_style() -> String:
 	if world == null or world.inventory == null:
 		return "thornrose"
 	var held: GhostItemInstance = world.inventory.get_equipped("sword")
+	if held != null and held.uses_forge_bow():
+		return "forge_bow"
 	return held.bow_art_style() if held != null else "thornrose"
 
 func _uses_modular_sword() -> bool:
@@ -713,6 +717,8 @@ func _weapon_art_style() -> String:
 	var weapon: GhostItemInstance = world.inventory.get_equipped("sword")
 	if weapon == null or weapon.definition == null:
 		return _weapon_style()
+	if weapon.uses_forge_dagger():
+		return "forge_dagger"
 	match str(weapon.definition.item_id):
 		"ashglass_warmaul_v170": return "ashglass_maul"
 		"rosemirror_twinblade_v170": return "rosemirror_twinblade"
@@ -1404,7 +1410,7 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	arrow.set("speed", 1180.0 if charged else 1030.0)
 	arrow.set("caster", self)
 	arrow.set("caster_rid", get_rid())
-	arrow.set("bow_style", _bow_art_style())
+	arrow.set("bow_style", equipped.bow_art_style())
 	var rolls: Dictionary = equipped.effect_rolls()
 	arrow.set("ink", GhostWeaponFXLibrary.color(int(rolls["color"])))
 	arrow.set("accent", GhostWeaponFXLibrary.color(int(rolls["accent"])))
@@ -1433,6 +1439,11 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	arrow.set("glow_a", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
 	arrow.set("glow_b", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.5))
 	arrow.set("glow_c", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
+	var shot_origin: Vector2 = global_position + Vector2(0, -39) + heading.normalized() * 31.0
+	if equipped.uses_forge_bow():
+		var span: PackedVector2Array = FORGE_V238.bow_span(body_art, str(body_art.animation), facing_name, body_art.frame, heading)
+		if span.size() == 2:
+			shot_origin = body_art.to_global(span[0] + (span[1] - span[0]).normalized() * 8.0)
 	if VISUAL_CHOICES_V216.effect_scale(equipped) > 0.0:
 		var release: Node2D = Node2D.new()
 		release.set_script(BOW_RELEASE_FX)
@@ -1443,9 +1454,9 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 		release.set("rare_variant", visual_variant)
 		release.self_modulate.a = VISUAL_CHOICES_V216.effect_scale(equipped)
 		root.add_child(release)
-		release.global_position = global_position + Vector2(0, -39) + heading.normalized() * 26.0
+		release.global_position = shot_origin - heading.normalized() * 5.0
 	root.add_child(arrow)
-	arrow.global_position = global_position + Vector2(0, -39) + heading.normalized() * 31.0
+	arrow.global_position = shot_origin
 	# Exactly one authentic released arrow per scored range shot; cosmetic
 	# formation wisps never report extra shots to the optional fletcher trial.
 	get_tree().call_group("v202_archery_range", "on_player_arrow_launched", global_position)

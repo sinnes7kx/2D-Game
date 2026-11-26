@@ -238,6 +238,14 @@ static func weapon_profile(look: Dictionary, item_id: String, hand: int = 0) -> 
 		p["shape"] = 4
 		p["width_scale"] = float(p["width_scale"]) * 1.03
 		p["guard_style"] = 4
+	elif item_id == "cinderveil_dirk_v238":
+		p["shape"] = 2
+		p["width_scale"] = float(p["width_scale"]) * 0.72
+		p["guard_style"] = 1
+	elif item_id == "reliquary_knife_v238":
+		p["shape"] = 1
+		p["width_scale"] = float(p["width_scale"]) * 0.93
+		p["guard_style"] = 5
 	return p
 
 # Single source for the target double-ended sword silhouette. Both equipped
