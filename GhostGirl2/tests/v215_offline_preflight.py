@@ -61,7 +61,7 @@ def main() -> int:
         'item.weapon_style() == "bow"',
     ))
     errors += check("scripts/scythe_rig_v190.gd", (
-        "equipped.glow_level_override != 0", 'if not visible or style != "scythe":',
+        "var show_light: bool = equipped == null or equipped.glow_level_override != 0", 'if not visible or style != "scythe":',
     ))
     errors += check("scripts/scythe_glow_layer_v211.gd", (
         "last_fx_revision == FX_LEVEL.revision",
