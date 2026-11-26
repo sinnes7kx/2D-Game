@@ -13,7 +13,7 @@ func _initialize() -> void:
 func _verify() -> void:
 	var source_world: String = FileAccess.get_file_as_string("res://scripts/scythe_rig_v190.gd")
 	var source_model: String = FileAccess.get_file_as_string("res://scripts/collector_lens_model_v179.gd")
-	if not source_world.contains("equipped == null or equipped.glow_level_override != 0"):
+	if not source_world.contains("var show_light: bool = equipped == null or equipped.glow_level_override != 0"):
 		_fail("World scythe lost its independent curved-blade effects")
 		return
 	if not source_model.contains("glow_enabled and CHOICES_V216.effect_scale(item) > 0.0)"):
