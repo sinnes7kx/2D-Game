@@ -70,6 +70,8 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 	var blunt_kind: String = BLUNT_V203.kind_from_id(item_id)
 	if style == "maul" and not blunt_kind.is_empty():
 		BLUNT_V203.draw_blunt(canvas, grip, head, p, look, colors, phase, blunt_kind, glow)
+		if glow:
+			BLUNT_V203.draw_seeded_aura(canvas, head, colors, look, phase)
 		return
 	var axis: Vector2 = (head-grip).normalized()
 	var n: Vector2 = Vector2(-axis.y,axis.x)
@@ -112,4 +114,6 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 			canvas.draw_polyline(closed, outer_halo, 9.2, true)
 			canvas.draw_polyline(closed, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.22)), 3.5, true)
 			canvas.draw_line(foot, head, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.085)), 7.0, true)
-			FX.draw_edge(canvas, closed, colors, look, phase, 0.60)
+			FX.draw_edge(canvas, closed, colors, look, phase, 0.90)
+			FX.draw_signature(canvas, closed, colors, look, phase)
+			BLUNT_V203.draw_seeded_aura(canvas, head, colors, look, phase)

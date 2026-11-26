@@ -42,6 +42,10 @@ static func _render_air_sweep(kind: String) -> AudioStreamWAV:
     var air_weight: float = 0.80
     var bass_weight: float = 0.020
     match kind:
+        "scythe_heavy":
+            duration = 0.64
+            air_weight = 1.22
+            bass_weight = 0.11
         "heavy_swing":
             duration = 0.38
             air_weight = 1.05
@@ -243,7 +247,7 @@ static func _render(kind: String) -> AudioStreamWAV:
         return _render_arrow(kind)
     if kind in ["spell", "spell_heavy", "spell_release", "spell_release_heavy", "spell_hit"]:
         return _render_wand(kind)
-    if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing"]:
+    if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing", "scythe_heavy"]:
         return _render_air_sweep(kind)
     if kind in ["hit", "parry"]:
         return _render_soft_contact(kind)

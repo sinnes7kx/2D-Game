@@ -70,7 +70,7 @@ func _draw() -> void:
         var accent: Color = accessory.palette_color().lerp(Color("e1d2ef"), 0.35)
         match id:
             "v202_luminous_eyes":
-                _draw_eyes(accessory, face)
+                pass # Retired eye overlay; original painted eyes remain.
             "v202_bandit_mask":
                 _draw_mask(accent, face)
             "v202_crescent_halo":

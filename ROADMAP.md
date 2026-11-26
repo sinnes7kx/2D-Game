@@ -54,6 +54,10 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 ---
 
+### Weapon and dress appearance refinement (source implementation; engine review pending)
+
+- Retire eye overlay and town pickup, retain existing item definition and saved copies. Scythe heavy duration 0.91→1.12 seconds, longer original air sweep. Cosmetic dress ethereal ticket 5%, 30% body opacity, no durability or stat changes. Blunt and crossbow seed-based edge signatures and orbiting accents. Blackthorn uses two 70%-scale wrist-anchored models where both wrists are visible, single bolt and unchanged damage; primary muzzle follows art. Existing save IDs retained. Four-direction F5 visual, audio and save tests pending.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

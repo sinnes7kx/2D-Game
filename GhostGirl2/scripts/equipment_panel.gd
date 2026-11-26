@@ -63,7 +63,7 @@ func refresh() -> void:
 	live_preview.call("refresh")
 	if is_instance_valid(eye_edit_button):
 		var eyes: GhostItemInstance = inventory.get_equipped("wings")
-		eye_edit_button.visible = eyes != null and eyes.definition != null and str(eyes.definition.item_id) == "v202_luminous_eyes"
+		eye_edit_button.visible = false
 	var active: Array[String] = []
 	for i in range(SLOT_NAMES.size()):
 		var key: String = SLOT_NAMES[i]

@@ -6,8 +6,8 @@
 [resource]
 script = ExtResource("1_data")
 item_id = "blackthorn_crossbow_v236"
-display_name = "Blackthorn Crossbow"
-description = "A narrow darkwood stock with tempered iron limbs."
+display_name = "Blackthorn Twin Crossbows"
+description = "Two compact darkwood crossbows with tempered iron limbs. One bolt per attack."
 icon = ExtResource("2_icon")
 equip_slot = "sword"
 weapon_style = "crossbow"

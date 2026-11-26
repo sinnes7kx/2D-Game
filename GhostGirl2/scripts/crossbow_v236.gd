@@ -1,6 +1,18 @@
 extends RefCounted
 ## Presentation and timing for one physical bolt. No added sprite textures.
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
+
+static func weapon_scale(base: String) -> float:
+	return 0.70 if base == "blackthorn_crossbow_v236" else 1.0
+
+static func offhand_span(name: String, face: String, frame: int, axis: Vector2) -> PackedVector2Array:
+	var hand: int = 1 if face == "left" else 0
+	var grip: Vector2 = HAND.hand_anchor(face, sequence(name, face)[clampi(frame, 0, 7)], hand)
+	if grip == Vector2.INF:
+		return PackedVector2Array()
+	return PackedVector2Array([grip, grip + axis.normalized() * 32.0])
 const FIRE_TIME: float = 0.20
 const RELOAD_TIME: float = 0.76
 const HEAVY_RELOAD: float = 1.02
@@ -68,7 +80,13 @@ static func construction(profile: Dictionary, base: String) -> Dictionary:
 	var stocks: Array[float] = [18.0, 18.0, 15.0, 22.0]
 	return {"style": style, "width": widths[style] * clampf(float(profile.get("width_scale", 1.0)), 0.85, 1.15), "stock": stocks[style], "ornament": posmod(int(profile.get("ornament", 0)), 4), "wraps": clampi(int(profile.get("wrap_count", 4)), 3, 6), "sweep": [5.0, 7.0, 2.0, 4.0][style]}
 
-static func draw_weapon(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Dictionary, loaded: bool, base: String, cocking: float = 0.0) -> void:
+static func draw_weapon(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Dictionary, loaded: bool, base: String, cocking: float = 0.0, look: Dictionary = {}, colors: Array[Color] = [], phase: float = 0.0) -> void:
+	var scale: float = weapon_scale(base)
+	canvas.draw_set_transform(grip, 0.0, Vector2.ONE * scale)
+	_draw_local(canvas, Vector2.ZERO, tip - grip, profile, loaded, base, cocking, look, colors, phase)
+	canvas.draw_set_transform(Vector2.ZERO)
+
+static func _draw_local(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Dictionary, loaded: bool, base: String, cocking: float, look: Dictionary, colors: Array[Color], phase: float) -> void:
 	if profile.is_empty() or grip.distance_squared_to(tip) < 4.0:
 		return
 	var axis: Vector2 = (tip - grip).normalized()
@@ -114,6 +132,15 @@ static func draw_weapon(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Di
 		canvas.draw_line(inset-axis*3.0-n, inset+axis*3.0-n, trim, 0.65, true)
 	var notch: Vector2 = grip + axis * (2.0 if loaded else lerpf(16.0, 2.0, clampf(cocking, 0.0, 1.0)))
 	canvas.draw_polyline(PackedVector2Array([left, notch, right]), Color("bdb2be"), 0.85, true)
+	if not look.is_empty() and not colors.is_empty() and FX_LEVEL.intensity > 0.0:
+		FX.draw_edge(canvas, limbs, colors, look, phase, 0.85)
+		FX.draw_signature(canvas, limbs, colors, look, phase)
+		var ink: Color = FX.color_at(colors, look, 0.6, phase)
+		var tier: int = clampi(int(look.get("particle_tier", 0)), 0, 6)
+		for i in range(2 + tier):
+			var angle: float = phase * 2.8 + TAU * float(i) / float(2 + tier)
+			var p: Vector2 = mount + n * sin(angle) * (width + 4.0) + axis * cos(angle) * 7.0
+			canvas.draw_circle(p, 1.2 + tier * 0.12, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.55)))
 	if loaded:
 		canvas.draw_line(notch, tip+axis*5.0, metal.lightened(0.28), 1.5, true)
 		canvas.draw_line(tip+axis*2.0-n*1.7, tip+axis*5.0, metal, 1.4, true)

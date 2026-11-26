@@ -30,6 +30,8 @@ var last_wand_frame: int = -1
 var last_wand_sprite_index: int = -1
 var last_dress: GhostItemInstance = null
 var last_dress_palette: int = -999
+var dress_ethereal_key: String = ""
+var dress_ethereal_alpha: float = 1.0
 var aura_time: float = 0.0
 var dress_aura_enabled: bool = false
 var dress_signature: int = 0
@@ -223,6 +225,11 @@ func _process(delta: float) -> void:
 	var dress_now: GhostItemInstance = inventory.get_equipped("dress")
 	if dress_now != last_dress or (dress_now != null and dress_now.palette_index != last_dress_palette):
 		refresh()
+	var dress_key: String = "%s:%d" % [dress_now.cosmetic_uid, dress_now.visual_seed()] if dress_now != null else "none"
+	if dress_key != dress_ethereal_key:
+		dress_ethereal_key = dress_key
+		dress_ethereal_alpha = 0.30 if dress_now != null and dress_now.is_ethereal_dress() else 1.0
+	player_art.self_modulate.a = dress_ethereal_alpha
 	var player = get_parent()
 	transform = player_art.transform
 	var facing: String = str(player.get("facing_name"))

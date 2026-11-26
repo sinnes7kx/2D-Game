@@ -1294,7 +1294,7 @@ func _launch_crossbow_bolt() -> void:
 	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(str(body_art.animation), facing_name, body_art.frame), crossbow_heading)
 	var origin: Vector2 = global_position + Vector2(0, -39) + crossbow_heading * 31.0
 	if points.size() == 2:
-		origin = body_art.to_global(points[1])
+		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(str(crossbow_item.definition.item_id))))
 	root.add_child(bolt)
 	bolt.global_position = origin
 	COMBAT_JUICE.play(root, origin, "crossbow_fire", -14.5)
@@ -1484,7 +1484,7 @@ func _begin_attack(heavy: bool) -> void:
 	active_attack_style = _weapon_style()
 	match active_attack_style:
 		"scythe":
-			attack_duration = 0.91 if heavy else [0.49, 0.52, 0.56][combo_step]
+			attack_duration = 1.12 if heavy else [0.49, 0.52, 0.56][combo_step]
 			attack_hit_threshold = 0.54
 		"halberd":
 			attack_duration = 1.02 if heavy else [0.57, 0.60, 0.65][combo_step]
@@ -1519,7 +1519,8 @@ func _begin_attack(heavy: bool) -> void:
 	dagger_charge_active = heavy and active_attack_style == "dagger"
 	dagger_charge_time = 0.0
 	# Actual moving-air sound, without the old bright WAV transient on swords.
-	COMBAT_JUICE.play(get_tree().current_scene, global_position, "heavy_swing" if heavy else "swing", -16.5 if heavy else -18.5)
+	var swing_cue: String = "scythe_heavy" if heavy and active_attack_style == "scythe" else ("heavy_swing" if heavy else "swing")
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, swing_cue, -15.0 if swing_cue == "scythe_heavy" else (-16.5 if heavy else -18.5))
 	attack_hit_done = false
 	heavy_attack = heavy
 	# The empty-hand branch must always play visible unarmed attack frames.
