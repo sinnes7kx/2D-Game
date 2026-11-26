@@ -1292,31 +1292,47 @@ func _advance_crossbow(delta: float) -> void:
 			body_art.play()
 
 func _launch_crossbow_bolt() -> void:
-	if crossbow_item == null:
+	if crossbow_item == null or crossbow_item.definition == null:
 		return
 	var root: Node = get_tree().current_scene
 	if root == null:
 		return
-	var bolt: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
-	if bolt == null:
-		return
-	bolt.set("direction", crossbow_heading)
-	bolt.set("damage", crossbow_item.weapon_damage() * (1.55 if crossbow_heavy else 1.0) * (1.0 + _stat("melee_power_pct") / 100.0))
-	bolt.set("charged", false) # Bolts always stop at the first enemy.
-	bolt.set("is_crossbow_bolt", true)
-	bolt.set("speed", 1380.0 if crossbow_heavy else 1240.0)
-	bolt.set("range_left", 930.0)
-	bolt.set("caster", self)
-	bolt.set("caster_rid", get_rid())
-	bolt.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(crossbow_item))
-	bolt.set("full_palette", crossbow_item.glow_gradient_colors())
-	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(str(body_art.animation), facing_name, body_art.frame), crossbow_heading)
-	var origin: Vector2 = global_position + Vector2(0, -39) + crossbow_heading * 31.0
+	var base: String = str(crossbow_item.definition.item_id)
+	var count: int = CROSSBOW_V236.bolt_count(base)
+	var heading: Vector2 = crossbow_heading.normalized()
+	var clip: String = str(body_art.animation)
+	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(clip, facing_name, body_art.frame), heading)
+	var origin: Vector2 = global_position + Vector2(0, -39) + heading * 31.0
 	if points.size() == 2:
-		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(str(crossbow_item.definition.item_id))))
-	root.add_child(bolt)
-	bolt.global_position = origin
-	COMBAT_JUICE.play(root, origin, "crossbow_fire", -14.5)
+		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(base)))
+	var second_origin: Vector2 = origin
+	if count == 2:
+		# Use the second authored wrist where visible. A hidden wrist fires
+		# from a nearby, occluded muzzle rather than drawing a detached model.
+		var local_axis: Vector2 = (points[1] - points[0]).normalized() if points.size() == 2 else (body_art.to_local(body_art.global_position + heading)).normalized()
+		var off: PackedVector2Array = CROSSBOW_V236.offhand_span(clip, facing_name, body_art.frame, local_axis)
+		if off.size() == 2:
+			second_origin = body_art.to_global(off[0].lerp(off[1], CROSSBOW_V236.weapon_scale(base)))
+		else:
+			second_origin = origin + heading.orthogonal() * 9.0
+	var total_damage: float = crossbow_item.weapon_damage() * (1.55 if crossbow_heavy else 1.0) * (1.0 + _stat("melee_power_pct") / 100.0)
+	for index in range(count):
+		var bolt: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
+		if bolt == null:
+			continue
+		bolt.set("direction", heading.rotated(CROSSBOW_V236.bolt_angle(index, count)))
+		bolt.set("damage", total_damage / float(count))
+		bolt.set("charged", false)
+		bolt.set("is_crossbow_bolt", true)
+		bolt.set("speed", 1380.0 if crossbow_heavy else 1240.0)
+		bolt.set("range_left", 930.0)
+		bolt.set("caster", self)
+		bolt.set("caster_rid", get_rid())
+		bolt.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(crossbow_item))
+		bolt.set("full_palette", crossbow_item.glow_gradient_colors())
+		root.add_child(bolt)
+		bolt.global_position = origin if index == 0 else second_origin
+	COMBAT_JUICE.play(root, origin, "crossbow_fire", -13.0 if count == 2 else -14.5)
 	camera_kick = maxf(camera_kick, 1.6 if crossbow_heavy else 0.8)
 
 func _begin_bow_shot(charged: bool, airborne: bool) -> void:

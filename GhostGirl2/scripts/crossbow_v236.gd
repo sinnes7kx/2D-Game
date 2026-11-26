@@ -13,6 +13,13 @@ static func offhand_span(name: String, face: String, frame: int, axis: Vector2) 
 	if grip == Vector2.INF:
 		return PackedVector2Array()
 	return PackedVector2Array([grip, grip + axis.normalized() * 32.0])
+# One release event per volley. The saved damage roll is shared by the bolts.
+static func bolt_count(base: String) -> int:
+	return 2 if base == "blackthorn_crossbow_v236" else 1
+
+static func bolt_angle(index: int, count: int) -> float:
+	return deg_to_rad(-2.5 if index == 0 else 2.5) if count == 2 else 0.0
+
 const FIRE_TIME: float = 0.20
 const RELOAD_TIME: float = 0.76
 const HEAVY_RELOAD: float = 1.02

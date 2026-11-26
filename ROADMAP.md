@@ -73,6 +73,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Original twisted Oath Tree sprite with carved bark, roots, hanging ribbons and y-sorted placement, two timber benches and individually shaded concentric cobblestones around the hearth. Small root/seat collision footprints; existing portals, stash, shrine, archery, breakables and saves retained. No multiplayer or seating interaction yet. First original vector detailing pass, not the full painterly town overhaul.
 - Extend registered hearth/road smoke test with landmark collision checks. Consolidated main-target PR includes still-unmerged #97; use one integration path, not two overlapping merges. Engine playtest and mainline CI remain release gates.
 
+### Twin crossbow volleys and luminous weapon finish (source implementation; runtime review pending)
+
+- Blackthorn now emits two independent non-piercing bolts at one existing release event, with authored wrist muzzle origins where visible and a small hidden-wrist fallback. Symmetric 2.5-degree spread; split the prior damage budget equally, retain reload and stamina costs. Other crossbows fire one bolt. Update item description and registered smoke assertions.
+- Restore brighter layered weapon edge bloom and white-tinted core, wand gemstone shine, blunt head illumination and glowing particle tails alongside all eight seeded motion patterns. No item rerolls or save schema changes. Actual F5, projectile collision and visual checks pending.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.
