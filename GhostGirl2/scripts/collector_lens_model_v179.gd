@@ -71,7 +71,7 @@ func _process(delta: float) -> void:
 	if is_instance_valid(bow_body_glow) and item != null:
 		bow_body_glow.visible = item.weapon_style() == "bow" and glow_enabled and FX_LEVEL.intensity > 0.0 and CHOICES_V216.bow_body_visible(item)
 		var mode: int = CHOICES_V216.bow_mode(item)
-		bow_body_glow.modulate.a = clampf(CHOICES_V216.opacity(item, 0.14) * (1.5 if mode == 3 else 0.8) * FX_LEVEL.intensity, 0.0, 1.0)
+		bow_body_glow.modulate.a = clampf(CHOICES_V216.opacity(item, 0.14) * (1.0 if mode == 3 else 0.8) * FX_LEVEL.intensity, 0.0, 1.0)
 	if is_visible_in_tree() and item != null and (glow_enabled or (is_modular() and int(look.get("surface_mode", 0)) >= 2)):
 		elapsed += delta
 		queue_redraw()
@@ -280,7 +280,7 @@ func _actual_bow_preview() -> bool:
 	var limb_ink: Array[Color] = item.bow_limb_gradient_colors()
 	bow_body_glow.modulate = limb_ink[1]
 	var mode: int = CHOICES_V216.bow_mode(item)
-	bow_body_glow.modulate.a = CHOICES_V216.opacity(item, 0.14) * (1.5 if mode == 3 else 0.8)
+	bow_body_glow.modulate.a = CHOICES_V216.opacity(item, 0.14) * (1.0 if mode == 3 else 0.8)
 	bow_body_glow.visible = CHOICES_V216.bow_body_visible(item) and glow_enabled
 	var mat: ShaderMaterial = ShaderMaterial.new()
 	PAINTED_SURFACE.configure(mat, look, Vector2(256, 220), true, PAINTED_SURFACE.bow_pigment(item, look))

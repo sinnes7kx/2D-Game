@@ -40,12 +40,14 @@ def main() -> int:
     errors += verify("scripts/inventory_panel.gd", (
         'glow_editor.name = "EditableGlowV216"',
         "CheckBox.new()", "_set_glow_choice(", "_refresh_glow_editor(",
+        "DebugVisualLayersV216", "func _switch_debug_layers(",
         "if not inventory.save_game():",
         "item.set(field, old_value)",
     ), ("RadioButton.new()",))
     errors += verify("scripts/visual_choices_v216.gd", (
         "static func projectile_style(", "ghostgirl-v216-arrow-decoration:",
         "static func effect_scale(", "static func bow_mode(",
+        "return 1.0 if level < 0 else GLOW_LEVELS[level]",
     ))
     errors += verify("scripts/scythe_glow_layer_v211.gd", (
         "if item.glow_level_override >= 0:",
@@ -55,6 +57,8 @@ def main() -> int:
         "CHOICES_V216.effect_scale(item)",
         "_draw_full_bow_aura(", "CHOICES_V216.bow_string_visible(item)",
         "_draw_v216_visible_fallback(",
+        'style == "bow" and not CHOICES_V216.bow_body_visible(item)',
+        "if CHOICES_V216.bow_string_visible(item) else Vector2.ZERO",
         "WAND_ANCHORS_V216.rendered_span(body, face)",
     ))
     errors += verify("scripts/collector_lens_v179.gd", (
@@ -64,11 +68,12 @@ def main() -> int:
     ))
     errors += verify("scripts/collector_lens_model_v179.gd", (
         '"BowGlowLayerV216"', "CHOICES_V216.bow_body_visible(item)",
-        "FX_LEVEL.intensity > 0.0",
+        "FX_LEVEL.intensity > 0.0", "1.0 if mode == 3 else 0.8",
     ))
     errors += verify("scripts/bow_arrow_v126.gd", (
         "var projectile_style: int = 0", "var visual_glow_scale: float = 1.0",
         "if visual_glow_scale <= 0.0:",
+        "func _impact(where: Vector2)",
     ))
     errors += verify("scripts/player.gd", (
         'arrow.set("projectile_style", VISUAL_CHOICES_V216.projectile_style(equipped))',
@@ -81,6 +86,16 @@ def main() -> int:
     ))
     errors += verify("scripts/arrow_glow_v154.gd", (
         "MOTIF_V216.draw_motif(", "FX_LEVEL.intensity <= 0.0",
+    ))
+    errors += verify("scripts/scythe_rig_v190.gd", (
+        "var show_light: bool = equipped == null or equipped.glow_level_override != 0",
+        "style, ashglass, side, show_light, active_item_id",
+    ))
+    errors += verify("scripts/v174_dual_sword_blade.gd", (
+        "var lit: bool = owned == null or owned.glow_level_override != 0",
+    ))
+    errors += verify("scripts/player.gd", (
+        "if VISUAL_CHOICES_V216.effect_scale(equipped) > 0.0:",
     ))
     errors += verify("scripts/wand_anchors_v216.gd", (
         "static func target_grip(", "static func rendered_span(",
@@ -97,7 +112,7 @@ def main() -> int:
     ))
     errors += verify("tests/v216_editable_fx_bow_wand_smoke.gd", (
         "inv.save_block_reason =", "CHOICES.projectile_style(", "WAND.target_grip(",
-        "v2.16 PASS:",
+        "v2.16 PASS:", "Bow body/string visibility does not match selected mode",
     ))
     workflow = (REPO / ".github/workflows/ghostgirl-godot-smoke.yml").read_text(encoding="utf-8")
     if "workflow_dispatch:" not in workflow or "  pull_request:" in workflow or "  push:" in workflow:

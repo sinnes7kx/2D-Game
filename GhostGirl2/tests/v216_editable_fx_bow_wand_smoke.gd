@@ -50,6 +50,9 @@ func _verify() -> void:
 		_fail("Bow projectile appearance is not reproducible from its UID")
 		return
 	bow.glow_level_override = 3
+	if not is_equal_approx(CHOICES.effect_scale(bow), 0.30) or not is_equal_approx(CHOICES.opacity(bow), 0.30):
+		_fail("Manual 30% glow must be literal 0.30 opacity, not 60%")
+		return
 	bow.bow_glow_mode_override = 3
 	bow.bow_projectile_style_override = 8
 	if CHOICES.projectile_style(bow) != 8 or CHOICES.bow_mode(bow) != 3:
@@ -57,6 +60,28 @@ func _verify() -> void:
 		return
 	if not CHOICES.bow_body_visible(bow) or not CHOICES.bow_string_visible(bow):
 		_fail("Full bow must retain both body and string light")
+		return
+	# v2.17: independently selectable limb/string modes must not leak light.
+	for case in [
+		{"mode": -1, "body": true, "string": true},
+		{"mode": 0, "body": false, "string": false},
+		{"mode": 1, "body": true, "string": false},
+		{"mode": 2, "body": true, "string": true},
+		{"mode": 3, "body": true, "string": true}
+	]:
+		bow.bow_glow_mode_override = int(case["mode"])
+		if CHOICES.bow_body_visible(bow) != bool(case["body"]) or CHOICES.bow_string_visible(bow) != bool(case["string"]):
+			_fail("Bow body/string visibility does not match selected mode")
+			return
+	bow.glow_level_override = 0
+	if CHOICES.bow_body_visible(bow) or CHOICES.bow_string_visible(bow):
+		_fail("Glow Off overrides bow body and string glow regardless of mode")
+		return
+	bow.glow_level_override = 3
+	bow.bow_glow_mode_override = 3
+	var fx_source: String = FileAccess.get_file_as_string("res://scripts/weapon_prestige_fx.gd")
+	if not fx_source.contains('style == "bow" and not CHOICES_V216.bow_body_visible(item)') or not fx_source.contains('if CHOICES_V216.bow_string_visible(item) else Vector2.ZERO'):
+		_fail("World bow FX can still draw seeded light with an explicitly disabled bow body/string")
 		return
 	var serialized: Dictionary = inv._serialize_item(bow, Vector2i(1, 0))
 	var restored_data: Variant = JSON.parse_string(JSON.stringify(serialized))

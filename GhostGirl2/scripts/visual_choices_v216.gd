@@ -25,10 +25,10 @@ static func chosen_glow_level(item: GhostItemInstance) -> int:
 	return clampi(item.glow_level_override, -1, 5) if item != null else -1
 
 # Natural keeps the existing generated light strength. Explicit Off is zero;
-# 10–50% are fractions of the original renderer's full baseline.
+# manual 10–50% map to literal 0.10..0.50 alpha multipliers.
 static func effect_scale(item: GhostItemInstance) -> float:
 	var level: int = chosen_glow_level(item)
-	return 1.0 if level < 0 else float(level) / 5.0
+	return 1.0 if level < 0 else GLOW_LEVELS[level]
 
 static func opacity(item: GhostItemInstance, natural_opacity: float = 0.20) -> float:
 	var level: int = chosen_glow_level(item)

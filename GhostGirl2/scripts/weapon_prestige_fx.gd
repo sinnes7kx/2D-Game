@@ -463,6 +463,11 @@ func _draw() -> void:
 	if visual_signature_level >= 4:
 		intensity *= 1.22
 	var style: String = item.weapon_style()
+	# Bow body Off must silence every bow-owned light layer (including
+	# seed-signature filaments), while leaving the physical bow and the
+	# independent arrow-projectile appearance untouched.
+	if style == "bow" and not CHOICES_V216.bow_body_visible(item):
+		return
 	# New independent intensity and rhythm rolls affect light only, never damage.
 	if not collector_look.is_empty():
 		intensity *= float(collector_look.get("glow_strength", 1.0))
@@ -862,8 +867,10 @@ func _draw_v1723_mythic_sheen(grip: Vector2, tip: Vector2, tangent: Vector2, nor
 		# A luminous gemstone crown, not a white streak along the wand handle.
 		segments.append([grip.lerp(tip, 0.84), tip])
 	elif style == "bow":
-		# Keep the independent bowstring gradient and the 5px string offset.
-		segments.append([grip.lerp(tip, 0.14) + normal * 5.0, grip.lerp(tip, 0.91) + normal * 5.0])
+		# When the user wants limb-only light, attach the rare filament to
+		# the limbs instead of secretly illuminating a disabled string.
+		var offset: Vector2 = normal * 5.0 if CHOICES_V216.bow_string_visible(item) else Vector2.ZERO
+		segments.append([grip.lerp(tip, 0.14) + offset, grip.lerp(tip, 0.91) + offset])
 	else:
 		segments = _v1723_blade_segments(grip, tip, style)
 	for segment_i in range(segments.size()):

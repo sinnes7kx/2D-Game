@@ -23,6 +23,7 @@ var eye_editor: ScrollContainer
 var eye_choices: Array[Dictionary] = []
 var glow_editor: ScrollContainer
 var glow_choices: Array[Dictionary] = []
+var debug_layer_switch: CheckButton
 var last_recovery_notice: String = ""
 @onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
@@ -490,6 +491,8 @@ func _clear() -> void:
 		eye_editor.hide()
 	if is_instance_valid(glow_editor):
 		glow_editor.hide()
+	if is_instance_valid(debug_layer_switch):
+		debug_layer_switch.hide()
 	if is_instance_valid(test_mythic):
 		test_mythic.visible = false
 	if is_instance_valid(test_looks):
@@ -537,6 +540,16 @@ static func _is_glow_item(item: GhostItemInstance) -> bool:
 
 func _create_glow_editor() -> void:
 	var host: VBoxContainer = $Layout/DetailsWell/DetailsVBox
+	# The original debug layer laboratory remains reachable on a separate
+	# tab-like toggle, without obscuring the real saved glow controls.
+	debug_layer_switch = CheckButton.new()
+	debug_layer_switch.name = "DebugVisualLayersV216"
+	debug_layer_switch.text = "Preview other layers · TEST ONLY"
+	debug_layer_switch.tooltip_text = "Unsaved, debug-only visual effects · does not mint item rarity"
+	debug_layer_switch.visible = false
+	host.add_child(debug_layer_switch)
+	host.move_child(debug_layer_switch, 0)
+	debug_layer_switch.toggled.connect(_switch_debug_layers)
 	glow_editor = ScrollContainer.new()
 	glow_editor.name = "EditableGlowV216"
 	glow_editor.custom_minimum_size = Vector2(0, 214)
@@ -579,7 +592,10 @@ func _create_glow_editor() -> void:
 func _refresh_glow_editor(item: GhostItemInstance) -> void:
 	if not is_instance_valid(glow_editor):
 		return
-	glow_editor.visible = _is_glow_item(item)
+	var eligible: bool = _is_glow_item(item)
+	if is_instance_valid(debug_layer_switch):
+		debug_layer_switch.visible = eligible and OS.is_debug_build()
+	glow_editor.visible = eligible and not (OS.is_debug_build() and is_instance_valid(debug_layer_switch) and debug_layer_switch.button_pressed)
 	if not glow_editor.visible:
 		return
 	var bow: bool = item.weapon_style() == "bow"
@@ -593,6 +609,11 @@ func _refresh_glow_editor(item: GhostItemInstance) -> void:
 		var option: CheckBox = choice["button"] as CheckBox
 		var current: int = item.glow_level_override if key == "glow" else (item.bow_glow_mode_override if key == "bow_body" else item.bow_projectile_style_override)
 		option.set_pressed_no_signal(current == int(choice["value"]))
+
+func _switch_debug_layers(_pressed: bool) -> void:
+	var selected: GhostItemInstance = _selected_cosmetic_item()
+	_refresh_cosmetic_radio_panel(selected)
+	_refresh_glow_editor(selected)
 
 func _set_glow_choice(pressed: bool, key: String, value: int) -> void:
 	if not pressed:
@@ -770,7 +791,7 @@ func _create_cosmetic_radio_panel() -> void:
 func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
 	if not is_instance_valid(cosmetic_radio_panel):
 		return
-	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null and not _is_eye_item(item) and not _is_glow_item(item)
+	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null and not _is_eye_item(item) and (not _is_glow_item(item) or (is_instance_valid(debug_layer_switch) and debug_layer_switch.button_pressed))
 	if not cosmetic_radio_panel.visible:
 		return
 	var active: Dictionary = {

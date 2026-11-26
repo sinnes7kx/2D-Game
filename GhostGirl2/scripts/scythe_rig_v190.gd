@@ -72,12 +72,13 @@ func _draw() -> void:
 		points = GENTLE.smooth(body, name_now, points)
 	if points.size() == 2:
 		var side: float = -1.0 if name_now.ends_with("_left") else 1.0
+		var world: Node = player.get("world") as Node
+		var inv: Node = world.get("inventory") as Node if world != null else null
+		var equipped: GhostItemInstance = inv.get_equipped("sword") if inv != null else null
+		var show_light: bool = equipped == null or equipped.glow_level_override != 0
 		if style == "scythe":
-			var world: Node = player.get("world") as Node
-			var inv: Node = world.get("inventory") as Node if world != null else null
-			var equipped: GhostItemInstance = inv.get_equipped("sword") if inv != null else null
-			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, equipped == null or equipped.glow_level_override != 0)
+			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, show_light)
 			if is_instance_valid(scythe_glow):
-				scythe_glow.call("set_pose", inv.get_equipped("sword") if inv != null else null, points[0], points[1], profile, side)
+				scythe_glow.call("set_pose", equipped, points[0], points[1], profile, side)
 		else:
-			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, true, active_item_id)
+			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, show_light, active_item_id)
