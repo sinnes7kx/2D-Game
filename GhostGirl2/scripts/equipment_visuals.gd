@@ -195,15 +195,9 @@ func refresh() -> void:
 	accessories_glow = feather != null and (GhostWeaponFXLibrary.tier(feather.quality) >= 2 or feather.visual_signature() in [4, 5])
 	if accessories_glow:
 		accessory_color = feather.glow_gradient_colors()[1]
-	var amulet: GhostItemInstance = inventory.get_equipped("trinket")
-	if amulet == null:
-		amulet = inventory.get_equipped("charm")
-	pendant.visible = amulet != null and str(get_parent().get("facing_name")) != "back"
-	if amulet != null:
-		pendant.modulate = amulet.palette_color()
-		accessories_glow = accessories_glow or (GhostWeaponFXLibrary.tier(amulet.quality) >= 2 or amulet.visual_signature() in [4, 5])
-		if not wings.visible and accessories_glow:
-			accessory_color = amulet.glow_gradient_colors()[1]
+	# Existing charm/trinket stats and identity stay intact; its presentation
+	# now belongs to the seeded head halo, not the floating chest sprite.
+	pendant.hide()
 	var weapon: GhostItemInstance = inventory.get_equipped("sword")
 	if weapon == null:
 		weapon = inventory.get_equipped("wand")
@@ -235,10 +229,7 @@ func _process(delta: float) -> void:
 	wings.scale = Vector2(0.54 if facing in ["left", "right"] else 0.60, 0.36 + 0.01 * sway)
 	wings.modulate.a = 0.90 if facing == "back" else 0.96
 	wings.z_index = 7
-	pendant.visible = (inventory.get_equipped("trinket") != null or inventory.get_equipped("charm") != null) and facing != "back"
-	pendant.position = Vector2(-5 if facing == "left" else (5 if facing == "right" else 0), -15 + sway * 0.6)
-	pendant.rotation = sway * 0.015
-	pendant.scale = Vector2.ONE
+	pendant.hide()
 	sword_visual.hide()
 	wand_visual.hide()
 	var wand_item: GhostItemInstance = inventory.get_equipped("wand")

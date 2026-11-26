@@ -151,9 +151,10 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 
 ### v2.31 — gothic weapon base variants (source implementation; engine review pending)
 
-- Four new collectible bases: Widowglass Twinblade, Cathedral Thorn Twinblade, Vesperthorn Dual Swords, Mourninglace Twin Daggers. Each has its own SVG inventory icon and deterministic base blade shape, width and guard on the shared modular world/inspection art. Seeded colors, surfaces, ornamentation, grips and stats still vary independently.
-- Existing twinblade and paired weapon rigs reused in all directions. Paired weapon activation now checks the weapon class, not one hardcoded base ID. No new animation atlas or combat rules, no old base edits or save schema changes. New base stats copied from comparable existing bases; no new power tier.
-- New variants occupy a deterministic one-fifth subset of the existing ordinary sword selection lane; no increase in total sword-drop or quality probability, no alteration of saved items. Old sword table order retained. Smoke checks definitions, icons, same-class timing/damage and distinct profiles; F5 actual rendering and loot testing still required. No Actions dispatch.
+- All three ground spear/trident light attacks and ground/air heavy attacks select the existing clean thrust family. Shared source-frame sequence drives actual hand anchors; occluded wrists hide the physical span and its attack glow. No synthetic finger circles. Hit timers, stamina, reach, damage and original artwork unchanged. All three light steps reuse the same thrust art, rather than new distinct painted combo clips.
+- Refine mace, morningstar and flail geometry to smaller faceted forged heads, slender shafts and fine articulated links. Physical outline and glow share geometry; inventory icons updated. No new textures/atlases, no collision or stat changes.
+- Replace chest pendant presentation with a compact five-style seeded halo using the existing trinket/charm item identity and cosmetic palette. Pose-relative head offsets are approximate and require in-engine calibration. Existing crescent head accessory takes precedence to avoid double halos. Original item data and saves remain unchanged.
+- Add source/geometry smoke and update polearm regression to check actual wrist anchors, hidden frames and constant length. Godot runtime, appearance, reload and parser remain unverified. More sword/dagger/bow bases and a distinct crossbow fire/reload family remain next content work. No Actions dispatch.
 
 ### v2.30 — independent environment performance profiles (source implementation; engine review pending)
 

@@ -999,7 +999,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
 	if holding_sword:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if active_attack_style in ["dagger", "dual_dagger"] else "_heavy_") + facing_name
+			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if active_attack_style in ["dagger", "dual_dagger", "spear"] else "_heavy_") + facing_name
 		else:
 			attack_animation = "attack_sword_heavy_" + facing_name
 	else:
@@ -1404,7 +1404,7 @@ func _begin_attack(heavy: bool) -> void:
 				attack_animation = "attack_dual_dagger_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
 			elif active_attack_style == "dual_sword" and not heavy:
 				attack_animation = "attack_dual_sword_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
-			elif active_attack_style == "spear" and (heavy or combo_step == 2):
+			elif active_attack_style == "spear":
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
 			else:
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_" if heavy else "_light_") + facing_name

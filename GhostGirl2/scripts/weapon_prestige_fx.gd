@@ -298,6 +298,8 @@ func _axial_span() -> PackedVector2Array:
 			var authored: Variant = pose_node.call("get_weapon_span", animation, pose_frame)
 			if authored is PackedVector2Array and authored.size() == 2:
 				return authored
+			if style == "spear" and animation.begins_with("attack_"):
+				return empty # Occluded physical grip: no detached fallback light.
 		var fresh: Array = new_weapon_axes_by_animation.get(animation, [])
 		if not fresh.is_empty():
 			var pair: Variant = fresh[clampi(pose_frame, 0, fresh.size() - 1)]
