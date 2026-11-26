@@ -469,6 +469,11 @@ func _draw() -> void:
 		intensity *= 0.91 + 0.09 * sin(elapsed * float(collector_look.get("glow_speed", 0.8)) * TAU)
 		if style not in ["dual_sword", "dual_dagger"]:
 			_draw_v177_collector_finish(grip, tip, style, intensity)
+	# Explicit owner-selected glow always produces a small visible metal/glass
+	# highlight even if this weapon lacks an authored prestige animation.
+	# Paired/twin blades and heavy rigs retain their own precise edge paths.
+	if item.glow_level_override > 0 and style not in ["dual_sword", "dual_dagger", "twinblade"]:
+		_draw_v216_visible_fallback(grip, tip, intensity)
 	if style == "dual_sword":
 		# Glow is applied to BOTH physical sword blades, never across the grips.
 		var paired_swords: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
@@ -961,6 +966,14 @@ func _draw_full_bow_aura(grip: Vector2, tip: Vector2, normal: Vector2, power: fl
 		var taper: float = maxf(0.18, sin(u * PI))
 		draw_circle(point, 7.2 * taper, Color(ink.r, ink.g, ink.b, 0.060 * power * taper))
 		draw_circle(point, 3.1 * taper, Color(ink.r, ink.g, ink.b, 0.105 * power * taper))
+
+func _draw_v216_visible_fallback(grip: Vector2, tip: Vector2, intensity: float) -> void:
+	var color: Color = _gradient_at(0.72)
+	var power: float = clampf(intensity, 0.0, 1.6)
+	var root: Vector2 = grip.lerp(tip, 0.35)
+	draw_line(root, tip, Color(color.r, color.g, color.b, 0.14 * power), 4.8, true)
+	draw_line(root, tip, Color(color.r, color.g, color.b, 0.38 * power), 1.35, true)
+	draw_circle(tip, 2.0, Color(color.r, color.g, color.b, 0.31 * power))
 
 func _draw_bow_dual_glow(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2, intensity: float) -> void:
 	# Two independent RNG gradients: preserved painted limbs + luminous string.
