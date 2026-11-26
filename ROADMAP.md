@@ -63,6 +63,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Six destructible crates/barrels each in Lanternhaven and Westwood Road; existing melee, arrow and wand contact plus hook switches. Cosmetic debris and wood audio, no generated loot, no persistent flags. Props return on room reload.
 - Original fine bronze corner engravings for inventory/equipment, warm slot bevels, crimson/green accented HUD meters. Preserve original responsive visibility and controls. Painterly forest and full Lanternhaven artwork still outstanding.
 
+### Lanternhaven hearth and Westwood atmosphere (source implementation; runtime review pending)
+
+- Replace the painted fountain basin with an original stone fire ring at the same plaza coordinates, preserve existing collision and all routes. Animated warm flame, embers, eight town lantern highlights, four roadside lanterns and drifting forest motes. Visual-only, bounded redraws follow existing performance profiles. Existing town and road base artwork retained; full painterly overhaul remains open.
+- Nine source structure checks passed against committed branch; register scene-structure smoke test for hearth, collision, return route, scenery props and forest ambience. Actual headless and F5 runs remain required.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.
