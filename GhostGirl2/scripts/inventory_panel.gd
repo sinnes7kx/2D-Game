@@ -41,6 +41,14 @@ var test_mythic: OptionButton
 @onready var page_number: Label = $Layout/Header/PageNumber
 
 func _ready() -> void:
+	var trim: Control = preload("res://scripts/gothic_frame_v241.gd").new()
+	trim.name = "GothicEngraving"
+	trim.top_level = true
+	add_child(trim)
+	trim.global_position = global_position
+	trim.size = size
+	resized.connect(func() -> void: trim.size = size)
+	item_rect_changed.connect(func() -> void: trim.global_position = global_position)
 	visible = false
 	slots.connect("item_pick_requested", Callable(self, "_on_pick_request"))
 	slots.connect("item_place_requested", Callable(self, "_on_place_request"))

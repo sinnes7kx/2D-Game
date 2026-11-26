@@ -87,6 +87,9 @@ func _draw() -> void:
 			var rect: Rect2 = Rect2(Vector2(c, r) * CELL, Vector2(CELL - 2, CELL - 2))
 			draw_rect(rect, Color(0.07, 0.064, 0.075, 0.96))
 			draw_rect(rect, border, false, 1.0)
+			var p: Vector2 = rect.position + Vector2(2, 2)
+			draw_line(p, p + Vector2(7, 0), Color(0.51, 0.40, 0.33, 0.5), 1.0)
+			draw_line(p, p + Vector2(0, 7), Color(0.51, 0.40, 0.33, 0.5), 1.0)
 	if inventory == null:
 		return
 	for index in range(inventory.contents.size()):

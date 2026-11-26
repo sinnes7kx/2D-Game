@@ -6,12 +6,12 @@
 [sub_resource type="StyleBoxFlat" id="GothicFrame"]
 shadow_color = Color(0.0, 0.0, 0.0, 0.45)
 shadow_size = 12
-bg_color = Color(0.056, 0.047, 0.060, 0.98)
+bg_color = Color(0.068, 0.047, 0.069, 0.98)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.63, 0.45, 0.32, 0.96)
+border_color = Color(0.64, 0.52, 0.38, 0.96)
 corner_radius_top_left = 7
 corner_radius_top_right = 7
 corner_radius_bottom_right = 7

@@ -5,7 +5,9 @@ extends Node2D
 @export_enum("woods", "brook") var style: String = "woods"
 @export_range(1, 96, 1) var mote_count: int = 42
 @export_range(0.0, 1.0, 0.05) var intensity: float = 0.55
+const PERF = preload("res://scripts/performance_profiles_v230.gd")
 var lifetime: float = 0.0
+var pending: float = 0.0
 var seeds: Array[Vector4] = []
 
 func _ready() -> void:
@@ -16,7 +18,11 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	lifetime += delta
-	queue_redraw()
+	pending += delta
+	var hz: float = PERF.ambient_hz()
+	if PERF.due(pending, hz):
+		pending = PERF.remainder(pending, hz)
+		queue_redraw()
 
 func _draw() -> void:
 	if seeds.is_empty():
