@@ -31,17 +31,30 @@ void fragment() {
         float outer = smoothstep(38.0, 55.0, abs(p.x)) * (1.0 - smoothstep(76.0, 94.0, abs(p.x)));
         float hair = outer * smoothstep(-87.0, -65.0, p.y) * (1.0 - smoothstep(-28.0, -14.0, p.y));
         float hem = (1.0 - smoothstep(37.0, 55.0, abs(p.x))) * smoothstep(58.0, 80.0, p.y) * (1.0 - smoothstep(95.0, 106.0, p.y));
-        float phase = silk_state.x;
-        float gain = (0.55 + 0.45 * clamp(silk_state.y, 0.0, 1.0)) * clamp(silk_state.z, 0.0, 1.0);
-        float wave = sin(phase + p.y * 0.075);
-        vec2 hair_shift = vec2(0.65 * wave + 1.4 * silk_flow.x, 0.45 * silk_flow.y);
-        vec2 hem_shift = vec2(0.75 * sin(phase * 1.13 - p.y * 0.052) + 1.35 * silk_flow.z,
-                              0.7 * sin(phase * 1.2 + p.x * 0.06) + 0.65 * silk_flow.w);
-        // A restrained trailing ripple follows the heavier hem rather than
-        // moving the entire garment as one rigid piece.
-        float fold = sin(phase * 0.83 + p.x * 0.09 - p.y * 0.035);
-        hem_shift.y += fold * 0.35 * abs(silk_flow.z);
-        vec2 shift = clamp((hair * hair_shift + hem * hem_shift) * gain, vec2(-2.5), vec2(2.5));
+        // Skip all oscillation work outside the two deformation envelopes.
+        // Face/central torso still use the untouched default texture sample.
+        vec2 shift = vec2(0.0);
+        if (hair > 0.001 || hem > 0.001) {
+            float phase = silk_state.x;
+            float gain = (0.55 + 0.45 * clamp(silk_state.y, 0.0, 1.0)) * clamp(silk_state.z, 0.0, 1.0);
+            if (hair > 0.001) {
+                // Separate left/right tip phases avoid mirrored rigid sway.
+                float side_phase = p.x < 0.0 ? -0.55 : 0.55;
+                float wave = sin(phase + p.y * 0.075 + side_phase);
+                float tip_wave = sin(phase * 1.17 + p.y * 0.105 - side_phase);
+                float tips = smoothstep(-65.0, -30.0, p.y);
+                shift += hair * vec2(0.50 * wave + 0.25 * tips * tip_wave + 1.4 * silk_flow.x,
+                                     0.45 * silk_flow.y + 0.18 * tips * tip_wave);
+            }
+            if (hem > 0.001) {
+                // Soft independent fold phases across the skirt width.
+                float fold = sin(phase * 0.83 + p.x * 0.09 - p.y * 0.035);
+                float hem_wave = sin(phase * 1.13 - p.y * 0.052 + p.x * 0.035);
+                shift += hem * vec2(0.75 * hem_wave + 1.35 * silk_flow.z,
+                    0.7 * sin(phase * 1.2 + p.x * 0.06) + 0.65 * silk_flow.w + fold * 0.35 * abs(silk_flow.z));
+            }
+            shift = clamp(shift * gain, vec2(-2.5), vec2(2.5));
+        }
         if (dot(shift, shift) > 0.000001) {
             // UV offset is in actual backing-texture pixels. Local frame
             // borders are never sampled by either deformation envelope.
