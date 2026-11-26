@@ -42,6 +42,8 @@ var drop_click_guard: int = 0
 var pickup_time: float = 0.0
 var location_time: float = 0.0
 var expression_time: float = 0.0
+var fps_readout: Label
+var fps_refresh_left: float = 0.0
 
 # Both panel scenes attach their own controllers (editor-safe native layouts).
 func _ready() -> void:
@@ -66,6 +68,21 @@ func _ready() -> void:
 	health_meter.visible = false
 	stamina_meter.visible = false
 	portrait.texture = EMOTIONS["neutral"]
+	fps_readout = Label.new()
+	fps_readout.name = "FPSReadoutV223"
+	fps_readout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fps_readout.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	fps_readout.add_theme_font_size_override("font_size", 13)
+	fps_readout.add_theme_color_override("font_color", Color("d8cddd"))
+	fps_readout.add_theme_color_override("font_shadow_color", Color(0.05, 0.03, 0.07, 0.9))
+	fps_readout.z_index = 110
+	$Overlay.add_child(fps_readout)
+	fps_readout.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	fps_readout.offset_left = -140.0
+	fps_readout.offset_right = -12.0
+	fps_readout.offset_top = 10.0
+	fps_readout.offset_bottom = 32.0
+	fps_readout.hide()
 	collector_lens = COLLECTOR_LENS.new()
 	collector_lens.name = "CollectorLensV179"
 	$Overlay.add_child(collector_lens)
@@ -131,6 +148,11 @@ func show_pickup(label_text: String, tint: Color = Color("d9cbd0")) -> void:
 	pickup_time = 2.6
 
 func _process(delta: float) -> void:
+	if is_instance_valid(fps_readout) and fps_readout.visible:
+		fps_refresh_left -= delta
+		if fps_refresh_left <= 0.0:
+			fps_refresh_left = 0.25
+			fps_readout.text = "%d FPS" % Engine.get_frames_per_second()
 	# ALT locks the tooltip at its last position so its star and color
 	# details can be inspected without the panel chasing the pointer.
 	if item_compare_popup != null and item_compare_popup.visible:
@@ -265,6 +287,11 @@ func _input(event: InputEvent) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	# Session-only accessibility controls; saves and combat are unaffected.
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_F2 and event.shift_pressed:
+			fps_readout.visible = not fps_readout.visible
+			fps_refresh_left = 0.0
+			get_viewport().set_input_as_handled()
+			return
 		if event.physical_keycode == KEY_F8:
 			var shake_next: float = 0.5 if COMBAT_JUICE.shake_level > 0.75 else (0.0 if COMBAT_JUICE.shake_level > 0.25 else 1.0)
 			COMBAT_JUICE.set_shake_level(shake_next)
