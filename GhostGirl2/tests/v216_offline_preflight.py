@@ -7,6 +7,7 @@ From the repository root:
 This does not prove GDScript parses or that visuals align in F5.
 """
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,8 +23,37 @@ def verify(name: str, required: tuple[str, ...], forbidden: tuple[str, ...] = ()
             [f"{name}: obsolete source present: {value}" for value in forbidden if value in body])
 
 
+def animation_alias_errors(source: str) -> list[str]:
+    """Narrow merge-regression guard, not a GDScript parser."""
+    # Strip comments; versioned script aliases are top-level constants.
+    code = "\n".join(line.split("#", 1)[0] for line in source.splitlines())
+    declared = set(re.findall(r"^const\s+([A-Z][A-Z0-9_]+)\b", code, re.M))
+    used = set(re.findall(r"\b([A-Z][A-Z0-9_]*_V\d+)\s*\.", code))
+    return sorted(used - declared)
+
+
 def main() -> int:
     errors = []
+    # A merge removed SWORD_V224's preload while leaving its three calls.
+    # Check both the exact dependency and other versioned aliases in the
+    # three active animation consumers, before the engine import step.
+    for name in ("player.gd", "weapon_prestige_fx.gd", "head_cosmetics_v202.gd"):
+        path = ROOT / "scripts" / name
+        if not path.is_file():
+            errors.append(f"{name}: missing animation consumer")
+            continue
+        source = path.read_text(encoding="utf-8")
+        for alias in animation_alias_errors(source):
+            errors.append(f"{name}: undeclared versioned animation alias {alias}")
+        errors += verify("scripts/" + name, (
+            'const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")',
+        ))
+    if not (ROOT / "scripts/sword_attack_frames_v224.gd").is_file():
+        errors.append("Missing sword animation dependency: sword_attack_frames_v224.gd")
+    if animation_alias_errors("SWORD_V224.install(body_art)") != ["SWORD_V224"]:
+        errors.append("Animation alias guard failed its missing-declaration self-check")
+    if animation_alias_errors('const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")\nSWORD_V224.install(body_art)'):
+        errors.append("Animation alias guard rejected a valid declaration")
     errors += verify("scripts/item_instance.gd", (
         "var glow_level_override: int = -1",
         "var bow_glow_mode_override: int = -1",

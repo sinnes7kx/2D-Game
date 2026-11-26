@@ -10,6 +10,7 @@ const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
+const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")
 const SILK_V226 = preload("res://scripts/silk_motion_v226.gd")
 var silk_motion: RefCounted = SILK_V226.new()
 var had_player_draw: bool = false
