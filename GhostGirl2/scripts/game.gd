@@ -56,6 +56,11 @@ const VARIANT_LOOT_V231 = [
 	preload("res://items/vesperthorn_dual_swords_v231.tres"),
 	preload("res://items/mourninglace_dual_daggers_v231.tres")
 ]
+const BLADE_VARIANTS_V233 = [
+	preload("res://items/ivory_misericorde_v233.tres"),
+	preload("res://items/vesper_athame_v233.tres"),
+	preload("res://items/cathedral_dual_swords_v233.tres")
+]
 const BLUNT_LOOT_TABLE = [
 	preload("res://items/v203_mournful_mace.tres"),
 	preload("res://items/v203_rosequartz_morningstar.tres"),
@@ -192,6 +197,9 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# One fifth of ordinary sword selections choose a new base. Existing
 	# saved items load their original resource path, not this selector.
 	if posmod(sword_seed, 5) == 0:
+		# Share the existing variant lane, without increasing sword frequency.
+		if posmod(int(sword_seed / 5), 3) == 0:
+			return BLADE_VARIANTS_V233[posmod(int(sword_seed / 15), BLADE_VARIANTS_V233.size())] as GhostItemData
 		return VARIANT_LOOT_V231[posmod(int(sword_seed / 5), VARIANT_LOOT_V231.size())] as GhostItemData
 	var picked: int = posmod(sword_seed, SWORD_LOOT_TABLE.size())
 	return SWORD_LOOT_TABLE[picked] as GhostItemData
@@ -985,6 +993,9 @@ func _give_weapon_test_samples() -> void:
 	if OS.is_debug_build():
 		# Test the three real blunt silhouettes without changing natural drops.
 		trial_paths.append_array(["res://items/v203_mournful_mace.tres", "res://items/v203_rosequartz_morningstar.tres", "res://items/v203_nightchain_flail.tres"])
+	if OS.is_debug_build():
+		for definition in BLADE_VARIANTS_V233:
+			trial_paths.append(definition.resource_path)
 	for path in trial_paths:
 		var template: GhostItemData = load(path) as GhostItemData
 		if template != null and not inventory.has_item(template.item_id):

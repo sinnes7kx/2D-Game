@@ -8,6 +8,7 @@ extends StaticBody2D
 var pulse: float = 0.0
 
 func _ready() -> void:
+	set_meta("arrow_impact_material", "magic")
 	collision_layer = 2
 	collision_mask = 0
 	set_open(open)

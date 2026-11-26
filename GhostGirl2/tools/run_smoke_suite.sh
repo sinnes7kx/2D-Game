@@ -33,7 +33,8 @@ quick_tests=(
   v228_motion_efficiency_smoke.gd
   v229_silk_startup_smoke.gd
   v230_performance_profiles_smoke.gd
-  v232_gothic_polish_smoke.gd
+  v231_weapon_variants_smoke.gd
+  v233_arrow_foley_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd
