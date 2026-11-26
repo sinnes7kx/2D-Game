@@ -13,6 +13,7 @@ var side: float = 1.0
 var palette: Array[Color] = []
 var level: int = 0
 var active: bool = false
+var last_fx_revision: int = -1
 
 func _ready() -> void:
 	# Additive light is isolated from the opaque painted weapon and body.
@@ -41,8 +42,9 @@ func set_pose(item: GhostItemInstance, at_grip: Vector2, at_head: Vector2, shape
 	var new_palette: Array[Color] = []
 	if enabled:
 		new_palette = item.glow_gradient_colors()
-	if grip == at_grip and head == at_head and side == direction and level == next_level and active == enabled and profile == shape and palette == new_palette:
+	if grip == at_grip and head == at_head and side == direction and level == next_level and active == enabled and profile == shape and palette == new_palette and last_fx_revision == FX_LEVEL.revision:
 		return
+	last_fx_revision = FX_LEVEL.revision
 	grip = at_grip
 	head = at_head
 	profile = shape.duplicate()
@@ -71,8 +73,8 @@ func _draw() -> void:
 	var base: Color = RNG.sample_palette(palette, 0.60).lerp(Color("ddd7fa"), 0.20)
 	# Separate expanded aura drawn over the entire scythe silhouette:
 	# long shaft, outside crescent and inside cutting edge. No damage.
-	var widths: Array[float] = [16.0, 9.0, 4.0]
-	var strengths: Array[float] = [0.11, 0.19, 0.27]
+	var widths: Array[float] = [22.0, 13.0, 5.5]
+	var strengths: Array[float] = [0.22, 0.36, 0.52]
 	for layer_index in range(3):
 		var width: float = widths[layer_index]
 		var strength: float = strengths[layer_index]
@@ -82,7 +84,7 @@ func _draw() -> void:
 		draw_polyline(inner, ink, width * 0.80, true)
 	# A small stronger rim follows the actual authored geometry, not a
 	# screen-space rectangle or a straight line at the scythe head.
-	var rim: Color = Color(base.r, base.g, base.b, alpha * 0.44)
+	var rim: Color = Color(base.r, base.g, base.b, alpha * 0.86)
 	draw_line(foot, head, rim, 1.2, true)
 	draw_polyline(outer, rim, 1.5, true)
 	draw_polyline(inner, rim, 1.5, true)
