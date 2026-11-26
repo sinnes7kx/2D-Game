@@ -2,6 +2,7 @@ extends RefCounted
 ## Offline-only textual item showcase. No save writes or ownership claims.
 ## This is a snapshot of the current, non-debug collectible appearance.
 const ROLL = preload("res://scripts/collector_roll_code_v1931.gd")
+const LOOK_CHOICES = preload("res://scripts/visual_choices_v216.gd")
 
 static func compose(item: GhostItemInstance) -> String:
 	if item == null or item.definition == null:
@@ -22,6 +23,9 @@ static func compose(item: GhostItemInstance) -> String:
 		lines.append("Original appearance roll: " + (item.birth_roll_code_v1 if ROLL.valid_code(item.birth_roll_code_v1) else "unknown (legacy)"))
 	var appearance: String = item.cosmetic_uid if not item.cosmetic_uid.is_empty() else "legacy-%d" % item.visual_seed()
 	lines.append("Appearance: GG1:%s:%s" % [item.definition.item_id, appearance])
+	if LOOK_CHOICES.has_personalization(item):
+		lines.append("Personalized appearance (not a new rarity roll; GG1 identifies the base seed only)")
+	lines.append_array(LOOK_CHOICES.appearance_details(item))
 	if item.sockets > 0:
 		lines.append("Sockets: %d/%d" % [item.socketed.size(), item.sockets])
 	if item.ethereal:
