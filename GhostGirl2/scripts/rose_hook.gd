@@ -244,6 +244,8 @@ func _finish() -> void:
     # If the tether was interrupted inside a traversal gap, return to last safe ground.
     if mode == MODE_ANCHOR and _inside_traversal_gap(girl.global_position):
         girl.global_position = safe_cast_origin
+        if girl.has_method("snap_render_after_teleport"):
+            girl.call("snap_render_after_teleport")
     girl.collision_mask = normal_player_collision_mask
     var finished_mode: int = mode
     mode = MODE_NONE

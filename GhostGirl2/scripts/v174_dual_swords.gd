@@ -110,6 +110,12 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 	if action == "idle":
 		for hand in range(spans.size()):
 			spans[hand] = GENTLE.smooth(body, animation_name, spans[hand], hand)
+	else:
+		var fraction: float = GENTLE.attack_fraction(body, animation_name, frame_index)
+		if fraction > 0.0:
+			var upcoming: Array = authored_blade_spans(face, action, frame_index + 1)
+			for hand in range(mini(spans.size(), upcoming.size())):
+				spans[hand] = GENTLE.subframe_span(spans[hand], upcoming[hand], fraction)
 	return spans
 
 # The actual approved body's screen-space wrist guides are the source of

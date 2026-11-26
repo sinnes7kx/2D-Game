@@ -161,6 +161,10 @@ const LANDING_RECOIL: float = 0.145
 @onready var rose_hook = $RoseHook
 
 func _ready() -> void:
+	# Only the physical player root is interpolated. The frame-driven art,
+	# camera and hand keep their independent render-time local transforms.
+	for child in get_children():
+		child.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	EXTRA_ANIMATIONS.install(body_art)
 	# Replace only two malformed baked-weapon ATTACKS with the untouched, approved
 	# body action frames; the v172 pose layer supplies the weapon per frame.
@@ -183,6 +187,7 @@ func _ready() -> void:
 	blade_tips.name = "WeaponTipExtensionV198"
 	body_art.add_child(blade_tips)
 	if equipment_preview_only:
+		physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 		collision_layer = 0
 		collision_mask = 0
 		set_physics_process(false)
@@ -199,6 +204,13 @@ func _ready() -> void:
 	blink_cooldown = blink_rng.randf_range(4.5, 9.0)
 	body_art.play("idle_front")
 	_update_hand()
+
+# Reset interpolation AFTER a teleport so rooms and shrines never streak.
+func snap_render_after_teleport() -> void:
+	reset_physics_interpolation()
+	var camera: Camera2D = get_node_or_null("Camera2D") as Camera2D
+	if camera != null:
+		camera.reset_smoothing()
 
 func _physics_process(delta: float) -> void:
 	if world == null:
@@ -694,9 +706,7 @@ func _play_action_frames(animation_name: String, duration: float) -> void:
 		push_warning("Missing combat animation: " + animation_name)
 		body_art.play("idle_" + facing_name)
 		return
-	var frames: float = float(body_art.sprite_frames.get_frame_count(animation_name))
-	var fps: float = body_art.sprite_frames.get_animation_speed(animation_name)
-	body_art.play(animation_name, frames / (maxf(0.08, duration) * maxf(1.0, fps)))
+	body_art.play(animation_name, GENTLE.playback_rate(body_art.sprite_frames, animation_name, duration))
 
 func set_facing(direction: Vector2) -> void:
 	if direction.length_squared() < 0.0001:
@@ -763,7 +773,7 @@ func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> vo
 	# must become available as soon as that animation finishes.
 	spell_cooldown = spell_cast_duration
 	body_art.speed_scale = 1.0
-	body_art.play("wand_cast_" + facing_name)
+	_play_action_frames("wand_cast_" + facing_name, spell_cast_duration)
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, "spell_heavy" if heavy or moonfall or not new_kind.is_empty() else "spell", -17.0)
 
 func _advance_spell(delta: float) -> void:

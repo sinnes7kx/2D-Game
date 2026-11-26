@@ -149,6 +149,7 @@ func _ready() -> void:
 	_bind_room()
 	_spawn_saved_ground_records()
 	_update_camera_limits()
+	player.snap_render_after_teleport()
 	ui.set_dew(player.dew_charges, player.MAX_DEW)
 
 
@@ -807,6 +808,7 @@ func _enter_room(next_room: String) -> void:
 	_bind_room()
 	_spawn_saved_ground_records()
 	_update_camera_limits()
+	player.snap_render_after_teleport()
 
 func _update_camera_limits() -> void:
 	var painted: Sprite2D = room_view.get_node("PaintedRoom") as Sprite2D
@@ -1140,6 +1142,7 @@ func _activate_shrine(shrine: Node2D) -> void:
 	# clear, while opened chests and discovered secrets remain saved.
 	_enter_room(room)
 	player.global_position = last_shrine_point + Vector2(0.0, 73.0)
+	player.snap_render_after_teleport()
 	player.health = player.maximum_health()
 	player.stamina = player.MAX_STAMINA
 	player.dew_charges = player.MAX_DEW
@@ -1156,6 +1159,7 @@ func return_after_defeat() -> void:
 	_enter_room(place)
 	if last_shrine_point != Vector2.ZERO:
 		player.global_position = last_shrine_point + Vector2(0.0, 74.0)
+		player.snap_render_after_teleport()
 	player.health = player.maximum_health()
 	player.stamina = player.MAX_STAMINA
 	player.dew_charges = player.MAX_DEW
