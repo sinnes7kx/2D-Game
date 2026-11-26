@@ -252,6 +252,16 @@ static func _render(kind: String) -> AudioStreamWAV:
     var end_hz: float = 100.0
     var noise_mix: float = 0.45
     match kind:
+        "crossbow_fire":
+            duration = 0.10
+            start_hz = 520.0
+            end_hz = 130.0
+            noise_mix = 0.76
+        "crossbow_reload":
+            duration = 0.18
+            start_hz = 930.0
+            end_hz = 390.0
+            noise_mix = 0.56
         "swing":
             duration = 0.12
             start_hz = 450.0

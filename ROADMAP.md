@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.36 — crossbow family (source implementation; engine review pending)
+
+- Blackthorn and Silver Reliquary crossbows: new class, distinct seeded stock/limb models, icons and natural ranged loot lane. Four directional idle/walk/fire/reload clips reuse clean body references. No new painted poses or atlases.
+- Fire once after 0.10 s wind-up; automatic 0.76/1.02 s reload after 0.20 s firing clip. Light/heavy costs 18/26, heavy stronger but never pierces. Ranged attack uses existing swept projectile and material impact sounds; shorter bolt presentation, original firing/reload cues. No bow-only puzzle activations or elemental imprints for bolts.
+- Existing saves and bow gameplay retained. F7 debug samples. Source checks and smoke registration; Godot engine, art alignment, balance and sound listening still pending.
+
 ### v2.35 — modular single swords (source implementation; engine review pending)
 
 - Three new single-sword bases with distinct SVG icons and seeded modular profiles, reusing approved clean unarmed body textures in four directions. Physical sword and glow share the wrist-derived span; hidden wrist hides both. Existing ground, aerial and counter gameplay timers are unchanged. No new painted poses or new atlases; existing single swords retain their original art.

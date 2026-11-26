@@ -5,6 +5,7 @@ extends CharacterBody2D
 
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
+const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
 const VISUAL_CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
@@ -87,6 +88,12 @@ var hook_direction: Vector2 = Vector2.DOWN
 var visual_time: float = 0.0
 var health: float = 100.0
 var stamina: float = MAX_STAMINA
+var crossbow_stage: int = 0
+var crossbow_left: float = 0.0
+var crossbow_heavy: bool = false
+var crossbow_item: GhostItemInstance = null
+var crossbow_heading: Vector2 = Vector2.RIGHT
+var crossbow_fired: bool = false
 var bow_time_left: float = 0.0
 var bow_duration: float = 0.0
 var bow_release_done: bool = false
@@ -177,6 +184,7 @@ func _ready() -> void:
 	# Replace only two malformed baked-weapon ATTACKS with the untouched, approved
 	# body action frames; the v172 pose layer supplies the weapon per frame.
 	V172_POSE_SCRIPT.install_attack_frames(body_art)
+	CROSSBOW_V236.install(body_art.sprite_frames)
 	V173_DUAL_DAGGER_SCRIPT.install_animations(body_art)
 	V174_DUAL_SWORD_SCRIPT.install_animations(body_art)
 	V175_CLEAN_WEAPON_BODY.install(body_art)
@@ -271,7 +279,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("target_lock") and healing_time_left <= 0.0:
 		_toggle_lock_target()
-	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0:
+	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0:
 		_begin_heal()
 	if healing_time_left > 0.0:
 		healing_time_left = maxf(0.0, healing_time_left - delta)
@@ -285,11 +293,19 @@ func _physics_process(delta: float) -> void:
 	rally_time_left = maxf(0.0, rally_time_left - delta)
 	if rally_time_left <= 0.0:
 		rally_pool = 0.0
-	if attack_time_left <= 0.0 and bow_time_left <= 0.0 and not bow_draw_active and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and stamina_recovery_left <= 0.0:
+	if attack_time_left <= 0.0 and crossbow_stage == 0 and bow_time_left <= 0.0 and not bow_draw_active and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and stamina_recovery_left <= 0.0:
 		stamina = minf(MAX_STAMINA, stamina + 39.0 * (1.0 + _stat("stamina_recovery_pct") / 100.0) * delta)
 	world.ui.set_stamina(stamina, MAX_STAMINA)
 	# HOLD is a real state: frame 5 stays visible for as long as RMB is held.
 	# A released button fires exactly one arrow and plays recovery frames 6-7.
+	if crossbow_stage != 0:
+		_advance_crossbow(delta)
+		if jump_time_left > 0.0:
+			_advance_jump(delta)
+		else:
+			velocity = Vector2.ZERO
+		move_and_slide()
+		return
 	if bow_draw_active:
 		# v1.42: a fully drawn bow may be carried into a jump. This makes
 		# aerial charged targets practical instead of demanding the entire
@@ -322,7 +338,7 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("attack_heavy") and stamina >= _attack_action_cost(true):
 				_begin_jump_attack(false)
 				started_air_attack = jump_attack_active
-			elif Input.is_action_just_pressed("attack_light") and stamina >= (_attack_action_cost(false) if _weapon_style() == "bow" else _attack_action_cost(true)):
+			elif Input.is_action_just_pressed("attack_light") and stamina >= (_attack_action_cost(false) if _weapon_style() in ["bow", "crossbow"] else _attack_action_cost(true)):
 				_begin_jump_attack(true)
 				started_air_attack = jump_attack_active
 		# A late button press survives the landing transition. It never cancels
@@ -705,6 +721,8 @@ func _weapon_art_style() -> String:
 	return weapon.weapon_style()
 
 func _weapon_motion_prefix(moving: bool) -> String:
+	if _weapon_style() == "crossbow":
+		return "crossbow_walk_" if moving else "crossbow_idle_"
 	if _weapon_style() == "bow":
 		# v1.68: the generic idle/walk images contain a painted rose hook.
 		# Use the dedicated, hook-free bow locomotion atlases instead.
@@ -733,6 +751,8 @@ func _melee_cost(heavy: bool) -> float:
 		_: return base
 
 func _attack_action_cost(heavy: bool) -> float:
+	if _weapon_style() == "crossbow":
+		return _action_cost(26.0 if heavy else 18.0, false)
 	if _weapon_style() == "bow":
 		return _action_cost(29.0 if heavy else 14.0, false)
 	if world != null and world.inventory != null and world.inventory.get_equipped("wand") != null:
@@ -862,6 +882,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	_clear_crossbow()
 	spell_is_moonfall = false
 	special_spell_kind = ""
 	collision_mask |= JUMPABLE_BARRIER_MASK
@@ -905,6 +926,13 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	# I-frame contacts must not cancel a bow charge or punish valid dodges.
 	if invulnerable_time > 0.0:
 		return
+	# Interrupted reload must not allow instant repeat shots. Keep reload
+	# stage after a fired bolt; cancel an unfired wind-up.
+	if crossbow_stage == 1 and not crossbow_fired:
+		_clear_crossbow()
+	elif crossbow_stage != 0:
+		crossbow_stage = 2
+		crossbow_left = maxf(crossbow_left, CROSSBOW_V236.HEAVY_RELOAD if crossbow_heavy else CROSSBOW_V236.RELOAD_TIME)
 	bow_time_left = 0.0
 	bow_draw_active = false
 	bow_draw_time = 0.0
@@ -981,6 +1009,9 @@ func _begin_jump() -> void:
 func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	if jump_time_left <= 0.0 or jump_attack_active or carrying != null:
 		return
+	if _weapon_style() == "crossbow":
+		_begin_crossbow(_from_heavy_button, true)
+		return
 	if _weapon_style() == "bow":
 		_begin_bow_shot(not _from_heavy_button, true)
 		return
@@ -1023,7 +1054,7 @@ func _advance_jump(delta: float) -> void:
 		jump_attack_triggered = true
 		# An airborne BOW only fires its genuine arrow on release; never
 		# register a second invisible heavy melee hit during the jump.
-		if _weapon_style() != "bow":
+		if _weapon_style() not in ["bow", "crossbow"]:
 			_strike_jump_attack()
 	if jump_time_left <= 0.0:
 		# A tiny carry-through avoids a hard dead stop at the first grounded frame.
@@ -1163,13 +1194,94 @@ func _begin_weapon_attack(heavy: bool) -> void:
 		return
 	if stamina < _attack_action_cost(heavy):
 		return
-	if _weapon_style() == "bow":
+	if _weapon_style() == "crossbow":
+		_begin_crossbow(heavy, false)
+	elif _weapon_style() == "bow":
 		_begin_bow_shot(heavy, false)
 	elif world.inventory.get_equipped("wand") != null:
 		if spell_time_left <= 0.0 and spell_cooldown <= 0.0:
 			_begin_spell_cast(heavy)
 	else:
 		_begin_attack(heavy)
+
+func _clear_crossbow() -> void:
+	crossbow_stage = 0
+	crossbow_left = 0.0
+	crossbow_item = null
+	crossbow_fired = false
+
+func _begin_crossbow(heavy: bool, airborne: bool) -> void:
+	if crossbow_stage != 0 or carrying != null or world == null or world.inventory == null:
+		return
+	var held: GhostItemInstance = world.inventory.get_equipped("sword")
+	var cost: float = _attack_action_cost(heavy)
+	if held == null or held.weapon_style() != "crossbow" or stamina < cost:
+		return
+	stamina -= cost
+	stamina_recovery_left = STAMINA_RECOVERY_WAIT
+	crossbow_item = held
+	crossbow_heavy = heavy
+	crossbow_fired = false
+	crossbow_stage = 1
+	crossbow_left = CROSSBOW_V236.FIRE_TIME
+	crossbow_heading = _combat_aim_direction().normalized()
+	if crossbow_heading == Vector2.ZERO:
+		crossbow_heading = facing
+	set_facing(crossbow_heading)
+	if airborne:
+		jump_attack_active = true
+		jump_attack_triggered = true
+	_play_action_frames("attack_crossbow_fire_" + facing_name, CROSSBOW_V236.FIRE_TIME)
+	body_art.set_frame_and_progress(0, 0.0)
+
+func _advance_crossbow(delta: float) -> void:
+	if world.inventory.get_equipped("sword") != crossbow_item:
+		_clear_crossbow()
+		return
+	crossbow_left = maxf(0.0, crossbow_left - delta)
+	if crossbow_stage == 1:
+		if not crossbow_fired and crossbow_left <= CROSSBOW_V236.FIRE_TIME - CROSSBOW_V236.RELEASE_AT:
+			crossbow_fired = true
+			_launch_crossbow_bolt()
+		if crossbow_left <= 0.0:
+			crossbow_stage = 2
+			crossbow_left = CROSSBOW_V236.HEAVY_RELOAD if crossbow_heavy else CROSSBOW_V236.RELOAD_TIME
+			_play_action_frames("attack_crossbow_reload_" + facing_name, crossbow_left)
+			body_art.set_frame_and_progress(0, 0.0)
+			COMBAT_JUICE.play(get_tree().current_scene, global_position, "crossbow_reload", -17.0)
+	elif crossbow_stage == 2:
+		if not str(body_art.animation).contains("crossbow_reload_"):
+			_play_action_frames("attack_crossbow_reload_" + facing_name, maxf(0.05, crossbow_left))
+		if crossbow_left <= 0.0:
+			_clear_crossbow()
+
+func _launch_crossbow_bolt() -> void:
+	if crossbow_item == null:
+		return
+	var root: Node = get_tree().current_scene
+	if root == null:
+		return
+	var bolt: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
+	if bolt == null:
+		return
+	bolt.set("direction", crossbow_heading)
+	bolt.set("damage", crossbow_item.weapon_damage() * (1.55 if crossbow_heavy else 1.0) * (1.0 + _stat("melee_power_pct") / 100.0))
+	bolt.set("charged", false) # Bolts always stop at the first enemy.
+	bolt.set("is_crossbow_bolt", true)
+	bolt.set("speed", 1380.0 if crossbow_heavy else 1240.0)
+	bolt.set("range_left", 930.0)
+	bolt.set("caster", self)
+	bolt.set("caster_rid", get_rid())
+	bolt.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(crossbow_item))
+	bolt.set("full_palette", crossbow_item.glow_gradient_colors())
+	var points: PackedVector2Array = CROSSBOW_V236.span(str(body_art.animation), facing_name, body_art.frame)
+	var origin: Vector2 = global_position + Vector2(0, -39) + crossbow_heading * 31.0
+	if points.size() == 2:
+		origin = body_art.to_global(points[1])
+	root.add_child(bolt)
+	bolt.global_position = origin
+	COMBAT_JUICE.play(root, origin, "crossbow_fire", -14.5)
+	camera_kick = maxf(camera_kick, 1.6 if crossbow_heavy else 0.8)
 
 func _begin_bow_shot(charged: bool, airborne: bool) -> void:
 	if world == null or world.inventory == null or _weapon_style() != "bow" or carrying != null:
