@@ -8,6 +8,8 @@ var phase: float = 0.0
 var last_eye_pose_key: String = ""
 var last_effect_bucket: int = -1
 var had_head_art: bool = false
+var halo_key: String = ""
+var halo_look: Dictionary = {}
 
 func _ready() -> void:
     z_index = 8
@@ -22,7 +24,7 @@ func _process(delta: float) -> void:
     phase += minf(delta, 0.075)
     var body: AnimatedSprite2D = _body_sprite()
     var key: String = (str(body.animation) + ":" + str(body.frame)) if body != null else ""
-    var has_art: bool = _item("wings") != null or _item("helm") != null
+    var has_art: bool = _item("wings") != null or _item("helm") != null or _item("trinket") != null or _item("charm") != null
     var bucket: int = floori(phase * 18.0)
     if (has_art and (key != last_eye_pose_key or bucket != last_effect_bucket)) or has_art != had_head_art:
         queue_redraw()
@@ -56,6 +58,11 @@ func _draw() -> void:
     var accessory: GhostItemInstance = _item("wings")
     var crown: GhostItemInstance = _item("helm")
     var face: String = _face()
+    var charm: GhostItemInstance = _item("trinket")
+    if charm == null:
+        charm = _item("charm")
+    if charm != null and (accessory == null or accessory.definition == null or str(accessory.definition.item_id) != "v202_crescent_halo"):
+        _draw_seeded_halo(charm, face, crown != null)
     if crown != null and crown.definition != null:
         _draw_crown(str(crown.definition.item_id), crown.palette_color(), face)
     if accessory != null and accessory.definition != null:
@@ -224,3 +231,65 @@ func _draw_crown(id: String, color: Color, face: String) -> void:
         draw_line(left, center + Vector2(0, -11), metal, 1.8, true)
         draw_line(center + Vector2(0, -11), right, metal, 1.8, true)
         draw_circle(center + Vector2(0, -11), 2.7, Color("ecd3df"))
+
+
+# Independent cosmetic channel; never change a saved charm, its affixes,
+# equipment slot, or its collectible identity.
+static func halo_variant(seed: int) -> int:
+    return posmod(seed, 5)
+
+static func halo_center(face: String, animation: String, source_frame: int, crown: bool) -> Vector2:
+    var reference_face: String = "front" if face == "back" else face
+    var neutral: Array[Vector2] = eye_centers(reference_face)
+    var moving: Array[Vector2] = pose_eye_centers(animation, source_frame, reference_face)
+    var drift: Vector2 = moving[0] - neutral[0] if not moving.is_empty() and not neutral.is_empty() else Vector2.ZERO
+    var x: float = 15.0
+    if face == "left":
+        x = 11.0
+    elif face == "right":
+        x = 20.0
+    return Vector2(x, -96.0 - (13.0 if crown else 0.0)) + drift
+
+func _draw_seeded_halo(item: GhostItemInstance, face: String, crown: bool) -> void:
+    var key: String = "%s:%d:%d" % [item.cosmetic_uid, item.visual_seed(), item.gradient_version]
+    if halo_key != key:
+        halo_key = key
+        var palette: Array[Color] = EYE_RNG.gradient_for_channel(item.cosmetic_uid, item.visual_seed(), "accessory-halo-v232", item.gradient_version)
+        halo_look = {"kind": halo_variant(item.visual_seed()), "metal": EYE_RNG.sample_palette(palette, 0.25).lerp(Color("b8a8b9"), 0.52), "edge": EYE_RNG.sample_palette(palette, 0.72).lerp(Color("f4e5df"), 0.48)}
+    var sprite: AnimatedSprite2D = _body_sprite()
+    var animation: String = str(sprite.animation) if sprite != null else "idle_" + face
+    var index: int = WALK_V223.source_pose_index(sprite.sprite_frames, animation, sprite.frame) if sprite != null else 0
+    if sprite != null:
+        index = SWORD_V224.source_pose_index(sprite.sprite_frames, animation, index)
+    var center: Vector2 = halo_center(face, animation, index, crown)
+    var metal: Color = halo_look["metal"]
+    var edge: Color = halo_look["edge"]
+    var kind: int = int(halo_look["kind"])
+    var radius: Vector2 = Vector2(23.0 if face in ["front", "back"] else 19.0, 7.0)
+    var segments: int = 36
+    var points: PackedVector2Array = PackedVector2Array()
+    for i in range(segments + 1):
+        var angle: float = TAU * float(i) / float(segments)
+        var at: Vector2 = center + Vector2(cos(angle) * radius.x, sin(angle) * radius.y)
+        if kind == 1 and i in [5, 6, 7, 8, 23, 24, 25]:
+            if points.size() > 1:
+                draw_polyline(points, metal.darkened(0.35), 2.5, true)
+                draw_polyline(points, edge, 1.0, true)
+            points.clear()
+        else:
+            points.append(at)
+    if points.size() > 1:
+        draw_polyline(points, metal.darkened(0.35), 2.5, true)
+        draw_polyline(points, edge, 1.0, true)
+    if kind == 2 or kind == 4:
+        for i in range(6 if kind == 2 else 4):
+            var angle: float = TAU * float(i) / float(6 if kind == 2 else 4)
+            var at: Vector2 = center + Vector2(cos(angle) * radius.x, sin(angle) * radius.y)
+            var outward: Vector2 = Vector2(cos(angle), sin(angle))
+            draw_line(at, at + outward * (4.0 if kind == 2 else 2.5), edge, 1.0, true)
+    elif kind == 3:
+        var inner: PackedVector2Array = PackedVector2Array()
+        for i in range(19):
+            var angle: float = PI * float(i) / 18.0
+            inner.append(center + Vector2(cos(angle) * (radius.x - 2.0), sin(angle) * (radius.y - 2.0)))
+        draw_polyline(inner, metal.lightened(0.22), 1.2, true)
