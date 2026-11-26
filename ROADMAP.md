@@ -73,6 +73,13 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Original twisted Oath Tree sprite with carved bark, roots, hanging ribbons and y-sorted placement, two timber benches and individually shaded concentric cobblestones around the hearth. Small root/seat collision footprints; existing portals, stash, shrine, archery, breakables and saves retained. No multiplayer or seating interaction yet. First original vector detailing pass, not the full painterly town overhaul.
 - Extend registered hearth/road smoke test with landmark collision checks. Consolidated main-target PR includes still-unmerged #97; use one integration path, not two overlapping merges. Engine playtest and mainline CI remain release gates.
 
+### Eight-direction controller foundation (source implementation; engine review pending)
+
+- Separate eight logical heading sectors from the existing four-direction art and frame guide names. Diagonal fallback aiming, backsteps and jump directions now retain normalized headings; angular hysteresis prevents border flicker. Shared keyboard/touch movement source for locomotion, jump and dead-zone aim. Continuous mouse/lock-on projectile and melee aim preserved. Existing pose art, wrist guides, saves, weapon stats and combat durations unchanged.
+- True four additional diagonal body/action sprite families and matching equipment/hand guides remain an art task. No rotated, mirrored or fake diagonal textures introduced. Existing equipment preview remains four genuine art views.
+- Recover late #98 two-bolt and luminous weapon finish changes omitted from merged main: verified unchanged source blobs before reapplying. Blackthorn fires two independently colliding bolts with split existing damage and unchanged release/reload; restored layered edge bloom and particle shine.
+- Register eight-direction smoke test; Godot import, engine and F5 checks pending.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

@@ -78,7 +78,11 @@ var world
 # Isolated character-screen actor, never registered as a gameplay player.
 var equipment_preview_only: bool = false
 var facing: Vector2 = Vector2.DOWN
+const DIRECTIONS_V245 = preload("res://scripts/direction_controller_v245.gd")
+# facing_name stays the existing artwork suffix used by every weapon rig.
 var facing_name: String = "front"
+var facing_octant: int = 2
+var facing_eight_name: String = "front"
 var carrying: RigidBody2D = null
 var is_throwing: bool = false
 var throw_time: float = 0.0
@@ -520,10 +524,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()  # respects world collisions while being reeled in
 		return
 
-	var direction: Vector2 = Input.get_vector("left", "right", "up", "down")
-	var touch_vector: Vector2 = world.ui.get_joystick_vector()
-	if touch_vector.length_squared() > 0.0064:
-		direction = touch_vector
+	var direction: Vector2 = _movement_input()
 	# Deliberate grounded movement: controlled acceleration, firm braking, and
 	# a slight cost for turning sharply instead of instantly floating sideways.
 	var moving: bool = direction.length_squared() > 0.01
@@ -809,15 +810,23 @@ func _resume_timed_action() -> void:
 	body_art.set_frame_and_progress(frame_index, fraction)
 
 func set_facing(direction: Vector2) -> void:
-	if direction.length_squared() < 0.0001:
+	if direction.length_squared() < DIRECTIONS_V245.DEAD_ZONE_SQUARED:
 		return
-	if absf(direction.x) > absf(direction.y):
-		facing_name = "left" if direction.x < 0.0 else "right"
-		facing = Vector2.LEFT if direction.x < 0.0 else Vector2.RIGHT
-	else:
-		facing_name = "back" if direction.y < 0.0 else "front"
-		facing = Vector2.UP if direction.y < 0.0 else Vector2.DOWN
+	facing_octant = DIRECTIONS_V245.octant(direction, facing_octant)
+	facing_eight_name = DIRECTIONS_V245.NAMES[facing_octant]
+	facing = DIRECTIONS_V245.heading(facing_octant)
+	facing_name = DIRECTIONS_V245.pose_name(facing_octant)
+	# Keep the visual hand marker aligned to the actual cardinal sprite.
 	_update_hand()
+
+func _movement_input() -> Vector2:
+	var keyboard: Vector2 = Input.get_vector("left", "right", "up", "down")
+	var touch: Vector2 = Vector2.ZERO
+	if world != null:
+		var ui: Node = world.get("ui") as Node
+		if ui != null and ui.has_method("get_joystick_vector"):
+			touch = ui.call("get_joystick_vector")
+	return DIRECTIONS_V245.movement(keyboard, touch)
 
 func _hand_position_for_facing() -> Vector2:
 	match facing_name:
@@ -1013,7 +1022,7 @@ func _begin_jump() -> void:
 	collision_mask &= ~JUMPABLE_BARRIER_MASK
 	jump_attack_active = false
 	jump_attack_triggered = false
-	var movement: Vector2 = Input.get_vector("left", "right", "up", "down")
+	var movement: Vector2 = _movement_input()
 	if is_instance_valid(lock_target):
 		jump_direction = (lock_target.global_position - global_position).normalized()
 	elif movement.length_squared() > 0.04:
@@ -1292,31 +1301,47 @@ func _advance_crossbow(delta: float) -> void:
 			body_art.play()
 
 func _launch_crossbow_bolt() -> void:
-	if crossbow_item == null:
+	if crossbow_item == null or crossbow_item.definition == null:
 		return
 	var root: Node = get_tree().current_scene
 	if root == null:
 		return
-	var bolt: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
-	if bolt == null:
-		return
-	bolt.set("direction", crossbow_heading)
-	bolt.set("damage", crossbow_item.weapon_damage() * (1.55 if crossbow_heavy else 1.0) * (1.0 + _stat("melee_power_pct") / 100.0))
-	bolt.set("charged", false) # Bolts always stop at the first enemy.
-	bolt.set("is_crossbow_bolt", true)
-	bolt.set("speed", 1380.0 if crossbow_heavy else 1240.0)
-	bolt.set("range_left", 930.0)
-	bolt.set("caster", self)
-	bolt.set("caster_rid", get_rid())
-	bolt.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(crossbow_item))
-	bolt.set("full_palette", crossbow_item.glow_gradient_colors())
-	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(str(body_art.animation), facing_name, body_art.frame), crossbow_heading)
-	var origin: Vector2 = global_position + Vector2(0, -39) + crossbow_heading * 31.0
+	var base: String = str(crossbow_item.definition.item_id)
+	var count: int = CROSSBOW_V236.bolt_count(base)
+	var heading: Vector2 = crossbow_heading.normalized()
+	var clip: String = str(body_art.animation)
+	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(clip, facing_name, body_art.frame), heading)
+	var origin: Vector2 = global_position + Vector2(0, -39) + heading * 31.0
 	if points.size() == 2:
-		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(str(crossbow_item.definition.item_id))))
-	root.add_child(bolt)
-	bolt.global_position = origin
-	COMBAT_JUICE.play(root, origin, "crossbow_fire", -14.5)
+		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(base)))
+	var second_origin: Vector2 = origin
+	if count == 2:
+		# Use the second authored wrist where visible. A hidden wrist fires
+		# from a nearby, occluded muzzle rather than drawing a detached model.
+		var local_axis: Vector2 = (points[1] - points[0]).normalized() if points.size() == 2 else (body_art.to_local(body_art.global_position + heading)).normalized()
+		var off: PackedVector2Array = CROSSBOW_V236.offhand_span(clip, facing_name, body_art.frame, local_axis)
+		if off.size() == 2:
+			second_origin = body_art.to_global(off[0].lerp(off[1], CROSSBOW_V236.weapon_scale(base)))
+		else:
+			second_origin = origin + heading.orthogonal() * 9.0
+	var total_damage: float = crossbow_item.weapon_damage() * (1.55 if crossbow_heavy else 1.0) * (1.0 + _stat("melee_power_pct") / 100.0)
+	for index in range(count):
+		var bolt: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
+		if bolt == null:
+			continue
+		bolt.set("direction", heading.rotated(CROSSBOW_V236.bolt_angle(index, count)))
+		bolt.set("damage", total_damage / float(count))
+		bolt.set("charged", false)
+		bolt.set("is_crossbow_bolt", true)
+		bolt.set("speed", 1380.0 if crossbow_heavy else 1240.0)
+		bolt.set("range_left", 930.0)
+		bolt.set("caster", self)
+		bolt.set("caster_rid", get_rid())
+		bolt.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(crossbow_item))
+		bolt.set("full_palette", crossbow_item.glow_gradient_colors())
+		root.add_child(bolt)
+		bolt.global_position = origin if index == 0 else second_origin
+	COMBAT_JUICE.play(root, origin, "crossbow_fire", -13.0 if count == 2 else -14.5)
 	camera_kick = maxf(camera_kick, 1.6 if crossbow_heavy else 0.8)
 
 func _begin_bow_shot(charged: bool, airborne: bool) -> void:
@@ -1601,7 +1626,7 @@ func _combat_aim_direction() -> Vector2:
 	var cursor_heading: Vector2 = get_global_mouse_position() - global_position
 	if cursor_heading.length_squared() > 58.0 * 58.0:
 		return cursor_heading.normalized()
-	var movement: Vector2 = Input.get_vector("left", "right", "up", "down")
+	var movement: Vector2 = _movement_input()
 	if movement.length_squared() > 0.04:
 		return movement.normalized()
 	return facing

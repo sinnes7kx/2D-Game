@@ -41,7 +41,9 @@ static func draw_pattern(canvas: Node2D, center: Vector2, axis: Vector2, radius:
             var trail: Color = ink
             trail.a *= 0.42
             canvas.draw_line(center + tangent * previous.x + normal * previous.y, point, trail, 1.0, true)
-        canvas.draw_circle(point, 3.2, Color(ink.r, ink.g, ink.b, ink.a * 0.12))
+        # Glow remains visible underneath all eight motion patterns.
+        canvas.draw_circle(point, 5.0, Color(ink.r, ink.g, ink.b, ink.a * 0.10))
+        canvas.draw_circle(point, 2.8, Color(ink.r, ink.g, ink.b, ink.a * 0.27))
         if motif % 3 == 1:
             canvas.draw_line(point - tangent * 2.0, point + tangent * 2.0, ink, 1.0, true)
             canvas.draw_line(point - normal * 2.0, point + normal * 2.0, ink, 1.0, true)

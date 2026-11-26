@@ -21,6 +21,12 @@ func _initialize() -> void:
 		if definition == null or definition.weapon_style != "crossbow" or definition.icon == null:
 			_fail("Missing crossbow")
 			return
+	if CROSS.bolt_count("blackthorn_crossbow_v236") != 2 or CROSS.bolt_count("silver_reliquary_crossbow_v236") != 1:
+		_fail("Crossbow volley count")
+		return
+	if not is_equal_approx(CROSS.bolt_angle(0, 2), -CROSS.bolt_angle(1, 2)) or not is_zero_approx(CROSS.bolt_angle(0, 1)):
+		_fail("Volley spread symmetry")
+		return
 	if JUICE._render("crossbow_fire").data == JUICE._render("crossbow_reload").data:
 		_fail("Identical audio")
 		return

@@ -95,4 +95,9 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
 
 static func draw_seeded_aura(canvas: Node2D, head: Vector2, gradient: Array[Color], look: Dictionary, time: float) -> void:
     var tier: int = clampi(int(look.get("particle_tier", 0)), 0, 6)
+    if FX_LEVEL.intensity <= 0.0 or gradient.is_empty():
+        return
+    var ink: Color = FX.color_at(gradient, look, 0.5, time)
+    for i in range(3):
+        canvas.draw_circle(head, 19.0 - float(i) * 5.0, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.032 + float(i) * 0.024)))
     preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(canvas, head, Vector2.UP, Vector2.ONE * (17.0 + tier * 1.5), gradient, look, time)
