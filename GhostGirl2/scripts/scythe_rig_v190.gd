@@ -41,7 +41,6 @@ func _process(delta: float) -> void:
 	active_item_id = str(item.definition.item_id) if item != null and item.definition != null else ""
 	visible = item != null and ((style == "scythe" and SCYTHE.matches(str(body.animation))) or (style in ["halberd", "maul"] and HEAVY.matches(str(body.animation))))
 	if not visible or style != "scythe":
-		# The separate scythe aura must not linger when switching weapons.
 		if is_instance_valid(scythe_glow):
 			scythe_glow.call("clear_pose")
 	if not visible:

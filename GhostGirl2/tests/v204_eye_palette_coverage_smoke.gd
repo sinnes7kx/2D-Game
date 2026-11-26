@@ -14,7 +14,7 @@ func _initialize() -> void:
         if (face == "front" and anchors.size() != 2) or (face in ["left", "right"] and anchors.size() != 1) or (face == "back" and not anchors.is_empty()):
             errors.append("Wrong eye visibility in " + face)
         for center in anchors:
-            if absf(center.x) < 11.0 or absf(center.y + 72.0) > 0.1:
+            if center.x < 5.0 or center.x > 40.0 or center.y < -47.0 or center.y > -39.0:
                 errors.append("Eye backing missed facial landmark in " + face)
     var a: Array[Color] = RNG.gradient_for_channel("", 1000, "head-eyes-v204", 1)
     var b: Array[Color] = RNG.gradient_for_channel("", 1000, "head-eyes-v204", 1)

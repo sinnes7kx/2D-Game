@@ -21,7 +21,8 @@ quick_tests=(
   v203_bow_airborne_blunt_smoke.gd
   v212_dagger_stab_smoke.gd
   v213_twinblade_audio_smoke.gd
-  v214_scythe_effects_smoke.gd
+  v204_eye_palette_coverage_smoke.gd
+  v215_eyes_bows_input_fx_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd
@@ -65,7 +66,6 @@ full_tests=(
   v202_headgear_migration_smoke.gd
   v202_fletcher_range_smoke.gd
   v202_living_world_puzzles_smoke.gd
-  v204_eye_palette_coverage_smoke.gd
 )
 if [[ "$mode" == full ]]; then
   python3 GhostGirl2/tests/validate_v1722.py

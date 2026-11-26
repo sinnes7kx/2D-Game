@@ -52,6 +52,7 @@ func _ready() -> void:
 	inventory_panel.connect("item_hover_cleared", Callable(self, "_hide_item_hover"))
 	equipment_panel.connect("item_hovered", Callable(self, "_show_item_hover"))
 	equipment_panel.connect("item_hover_cleared", Callable(self, "_hide_item_hover"))
+	equipment_panel.connect("edit_eyes_requested", Callable(self, "_open_eye_editor"))
 	inventory_panel.connect("cursor_pick_requested", Callable(self, "_take_cursor_item"))
 	inventory_panel.connect("cursor_place_requested", Callable(self, "_place_cursor_item"))
 	inventory_panel.connect("cursor_cancel_requested", Callable(self, "_cancel_cursor_item"))
@@ -281,7 +282,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_TAB or event.physical_keycode == KEY_I:
+		if event.keycode == KEY_TAB or event.physical_keycode in [KEY_I, KEY_B]:
 			# A single Diablo-like view contains equipment and backpack together.
 			var opening: bool = not (inventory_panel.visible and equipment_panel.visible)
 			inventory_panel.visible = opening
@@ -367,6 +368,21 @@ func set_dew(current: int, maximum: int) -> void:
 func set_lock_target(target_name: String) -> void:
 	lock_label.text = "L  TARGET  ·  " + target_name if not target_name.is_empty() else ""
 	lock_label.visible = not target_name.is_empty()
+
+func _open_eye_editor(item: GhostItemInstance) -> void:
+	if item == null or inventory_data == null:
+		return
+	if cursor_item_index >= 0:
+		_cancel_cursor_item()
+	inventory_panel.show()
+	equipment_panel.show()
+	inventory_panel.call("focus_eye_item", item)
+	# The old pinned hover must not cover the newly opened eye controls.
+	tooltip_pinned = false
+	if is_instance_valid(item_compare_popup):
+		item_compare_popup.call("set_pinned", false)
+		item_compare_popup.hide()
+	_hide_item_hover()
 
 func _open_collector_lens(item: GhostItemInstance) -> void:
 	if item == null or item.definition == null or not is_instance_valid(collector_lens):

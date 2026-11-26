@@ -123,7 +123,7 @@ offset_bottom = 240.0
 grow_horizontal = 0
 theme_override_colors/font_color = Color(0.91, 0.85, 0.97, 0.88)
 theme_override_font_sizes/font_size = 14
-text = "WASD / ARROWS  Move\nSHIFT  Run      SPACE  Dodge      C  Jump\nLMB  Quick attack   RMB  Strong attack\nE  Interact / Take loot\nQ  Pull item      F  Rose hook grapple\nG  Drop     R  Throw object\nTAB / I  Inventory & Equipment\nCLICK item  Hold on cursor  CLICK floor  Drop\nX  Wand spell     H  Hide guide\nF8  Bellwether   F9  Court   F10  Reliquary\nF11  Causeway   F12  Vault\nL  Lock on   Wheel  Cycle target   B  Heal\nZ  Moonfall   T  Grasping Roses   V  Astral Rain"
+text = "WASD / ARROWS  Move\nSHIFT  Run      SPACE  Dodge      C  Jump\nLMB  Quick attack   RMB  Strong attack\nE  Interact / Take loot\nQ  Pull item      F  Rose hook grapple\nG  Drop     R  Throw object\nTAB / I / B  Inventory & Equipment\nCLICK item  Hold on cursor  CLICK floor  Drop\nX  Wand spell     H  Hide guide\nF8  Bellwether   F9  Court   F10  Reliquary\nF11  Causeway   F12  Vault\nL  Lock on   Wheel  Cycle target   N  Heal\nZ  Moonfall   T  Grasping Roses   V  Astral Rain"
 mouse_filter = 2
 
 [node name="InventoryPanel" parent="Overlay" instance=ExtResource("3_inventory_ui")]

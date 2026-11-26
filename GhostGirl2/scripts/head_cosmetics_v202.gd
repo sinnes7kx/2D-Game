@@ -3,6 +3,7 @@ extends Node2D
 ## "wings" remains the SAVED legacy head-accessory key. "helm" is independent.
 ## No new item metadata or underlying Ghost Girl atlas edits.
 var phase: float = 0.0
+var last_eye_pose_key: String = ""
 
 func _ready() -> void:
     z_index = 8
@@ -15,7 +16,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     phase += minf(delta, 0.075)
-    if int(phase * 18.0) % 2 == 0:
+    var body: AnimatedSprite2D = _body_sprite()
+    var key: String = (str(body.animation) + ":" + str(body.frame)) if body != null else ""
+    if key != last_eye_pose_key or int(phase * 18.0) % 2 == 0:
+        last_eye_pose_key = key
         queue_redraw()
 
 func _item(slot: String) -> GhostItemInstance:
@@ -25,7 +29,18 @@ func _item(slot: String) -> GhostItemInstance:
     var inv: Node = parent_visual.get("inventory") as Node
     return inv.get_equipped(slot) if inv != null else null
 
+func _body_sprite() -> AnimatedSprite2D:
+    var actor: Node = get_parent().get_parent() if get_parent() != null else null
+    if actor == null:
+        return null
+    return actor.get_node_or_null("Ghost") as AnimatedSprite2D
+
 func _face() -> String:
+    var sprite: AnimatedSprite2D = _body_sprite()
+    if sprite != null:
+        for suffix in ["front", "left", "right", "back"]:
+            if str(sprite.animation).ends_with("_" + suffix):
+                return suffix
     var actor: Node = get_parent().get_parent() if get_parent() != null else null
     return str(actor.get("facing_name")) if actor != null else "front"
 
@@ -57,16 +72,42 @@ static func eye_variant_index(seed: int) -> int:
     return posmod(seed, EYE_VARIANTS.size())
 
 static func eye_centers(face: String) -> Array[Vector2]:
-    # The earlier y=-72 position sat on the hairline above the pupils.
-    # Shared Ghost-local coordinates work in the live character and preview.
+    # Centered 256x220 Ghost-local coordinates calibrated against the
+    # real dark pupils in the supplied equipment screenshot. The old
+    # centers were approx. 18px screen-space left and 17px too low.
     match face:
         "front":
-            return [Vector2(-17.0, -22.0), Vector2(17.0, -22.0)]
+            return [Vector2(9.0, -43.0), Vector2(37.0, -43.0)]
         "left":
-            return [Vector2(-12.0, -21.0)]
+            return [Vector2(8.0, -42.0)]
         "right":
-            return [Vector2(12.0, -21.0)]
+            return [Vector2(32.0, -42.0)]
     return []
+
+static func pose_eye_centers(animation_name: String, frame_index: int, face: String) -> Array[Vector2]:
+    # Track head translation in the approved frame-authored clips. This
+    # changes overlay coordinates only, not the original face pixels.
+    var base: Array[Vector2] = eye_centers(face)
+    if base.is_empty():
+        return base
+    var frame: int = clampi(frame_index, 0, 7)
+    var offset: Vector2 = Vector2.ZERO
+    if animation_name.contains("walk"):
+        var dx: Array[float] = [-1.0, 0.0, 1.0, 2.0, 1.0, 0.0, -1.0, -1.0]
+        var dy: Array[float] = [0.0, 1.0, 1.5, 0.5, 0.0, -1.0, -1.0, 0.0]
+        offset = Vector2(dx[frame], dy[frame])
+    elif animation_name.begins_with("attack_") or animation_name.contains("_heavy_") or animation_name.contains("_light_"):
+        var dx: Array[float] = [0.0, 1.0, 2.0, 2.0, 1.0, 0.0, -1.0, 0.0]
+        var dy: Array[float] = [0.0, -1.0, -2.0, -3.0, -2.0, -1.0, 0.0, 0.0]
+        offset = Vector2(dx[frame] * (-1.0 if face == "left" else 1.0), dy[frame])
+    elif animation_name.contains("dodge") or animation_name.contains("air_") or animation_name.contains("jump"):
+        offset = Vector2(0.0, [-1.0, -2.0, -3.0, -4.0, -3.0, -2.0, -1.0, 0.0][frame])
+    else:
+        offset.y = [0.0, 0.0, 0.5, 0.5, 0.0, -0.5, -0.5, 0.0][frame]
+    var result: Array[Vector2] = []
+    for center in base:
+        result.append(center + offset)
+    return result
 
 func _eye_ellipse(center: Vector2, radius: Vector2, tint: Color) -> void:
     var points: PackedVector2Array = PackedVector2Array()
@@ -76,14 +117,19 @@ func _eye_ellipse(center: Vector2, radius: Vector2, tint: Color) -> void:
     draw_colored_polygon(points, tint)
 
 func _draw_eyes(item: GhostItemInstance, face: String) -> void:
-    var centers: Array[Vector2] = eye_centers(face)
+    var sprite: AnimatedSprite2D = _body_sprite()
+    var centers: Array[Vector2] = pose_eye_centers(str(sprite.animation), sprite.frame, face) if sprite != null else eye_centers(face)
     if centers.is_empty():
         return
-    var variant: int = eye_variant_index(item.visual_seed())
+    var variant: int = item.eye_style_override if item.eye_style_override >= 0 else eye_variant_index(item.visual_seed())
     var colors: Array[Color] = EYE_RNG.gradient_for_channel(
         item.cosmetic_uid, item.visual_seed(), "head-eyes-v204", item.gradient_version)
     var primary: Color = EYE_RNG.sample_palette(colors, 0.23)
     var secondary: Color = EYE_RNG.sample_palette(colors, 0.78)
+    if item.eye_palette_override >= 0:
+        var accents: Array[Color] = [Color("dbb5f7"), Color("ed7cb0"), Color("86aafc"), Color("77d3b5"), Color("e4c578"), Color("a6a1b9")]
+        primary = accents[clampi(item.eye_palette_override, 0, accents.size() - 1)]
+        secondary = primary.lerp(Color.WHITE, 0.48)
     # A readable pale contour even when the seeded palette rolls very dark.
     var rim: Color = primary.lerp(Color("eaf2ff"), 0.58)
     var pupil: Color = secondary.lerp(Color.WHITE, 0.38)

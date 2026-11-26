@@ -19,6 +19,8 @@ var pending_delete_item: Variant = null
 var test_looks: OptionButton
 var cosmetic_radio_panel: ScrollContainer
 var cosmetic_radio_options: Array[Dictionary] = []
+var eye_editor: ScrollContainer
+var eye_choices: Array[Dictionary] = []
 var last_recovery_notice: String = ""
 @onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
@@ -68,6 +70,7 @@ func _ready() -> void:
 	$Layout/DetailsHeader.hide()
 	description.hide()
 	_create_cosmetic_radio_panel()
+	_create_eye_editor()
 	var details_well: PanelContainer = $Layout/DetailsWell
 	if OS.is_debug_build():
 		details_well.custom_minimum_size = Vector2(0, 196)
@@ -239,6 +242,8 @@ func _show_details(index: int) -> void:
 	description.scroll_to_line(0)
 	_refresh_seed_controls(item)
 	_refresh_cosmetic_radio_panel(item)
+	_refresh_eye_editor(item)
+	$Layout/DetailsWell.custom_minimum_size.y = 226.0 if _is_eye_item(item) else (196.0 if OS.is_debug_build() else 42.0)
 	test_mythic.visible = OS.is_debug_build()
 	if test_mythic.visible:
 		_update_effect_compatibility(item)
@@ -477,6 +482,8 @@ func _clear() -> void:
 		seed_row.visible = false
 	if is_instance_valid(cosmetic_radio_panel):
 		cosmetic_radio_panel.hide()
+	if is_instance_valid(eye_editor):
+		eye_editor.hide()
 	if is_instance_valid(test_mythic):
 		test_mythic.visible = false
 	if is_instance_valid(test_looks):
@@ -516,6 +523,98 @@ func _local_stat_label(stat_id: String) -> String:
 		"find_bonus_pct": return "item discovery"
 		_: return stat_id.replace("_", " ")
 
+
+# Real user personalization of owned luminous eyes. These values are
+# separate from the genuine UID, original rarity, loot seed and stats.
+static func _is_eye_item(item: GhostItemInstance) -> bool:
+	return item != null and item.definition != null and str(item.definition.item_id) == "v202_luminous_eyes"
+
+func _create_eye_editor() -> void:
+	var host: VBoxContainer = $Layout/DetailsWell/DetailsVBox
+	eye_editor = ScrollContainer.new()
+	eye_editor.name = "EyeStyleEditorV215"
+	eye_editor.custom_minimum_size = Vector2(0, 142)
+	eye_editor.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	host.add_child(eye_editor)
+	host.move_child(eye_editor, 0)
+	var content: VBoxContainer = VBoxContainer.new()
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	eye_editor.add_child(content)
+	var intro: Label = Label.new()
+	intro.text = "EYES · YOUR STYLE (saved separately from rarity)"
+	intro.add_theme_font_size_override("font_size", 12)
+	content.add_child(intro)
+	for section in [
+		{"key": "shape", "title": "Shape", "labels": ["Original", "Moonveil", "Cathedral", "Starborn", "Hollow"]},
+		{"key": "palette", "title": "Color", "labels": ["Original", "Violet", "Rose", "Moonblue", "Jade", "Gold", "Ash"]}
+	]:
+		var heading: Label = Label.new()
+		heading.text = str(section["title"])
+		heading.add_theme_font_size_override("font_size", 12)
+		content.add_child(heading)
+		var group: ButtonGroup = ButtonGroup.new()
+		var choices_grid: GridContainer = GridContainer.new()
+		choices_grid.columns = 3
+		choices_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		content.add_child(choices_grid)
+		var labels: Array = section["labels"]
+		for n in range(labels.size()):
+			var option: CheckBox = CheckBox.new()
+			option.text = str(labels[n])
+			option.button_group = group
+			option.add_theme_font_size_override("font_size", 11)
+			choices_grid.add_child(option)
+			option.toggled.connect(_set_eye_choice.bind(str(section["key"]), n - 1))
+			eye_choices.append({"button": option, "category": str(section["key"]), "value": n - 1})
+	eye_editor.hide()
+
+func _refresh_eye_editor(item: GhostItemInstance) -> void:
+	if not is_instance_valid(eye_editor):
+		return
+	eye_editor.visible = _is_eye_item(item)
+	if not eye_editor.visible:
+		return
+	for choice in eye_choices:
+		var option: CheckBox = choice["button"]
+		var current: int = item.eye_style_override if str(choice["category"]) == "shape" else item.eye_palette_override
+		option.set_pressed_no_signal(current == int(choice["value"]))
+
+func _set_eye_choice(pressed: bool, category: String, value: int) -> void:
+	if not pressed:
+		return
+	var item: GhostItemInstance = _selected_cosmetic_item()
+	if not _is_eye_item(item):
+		return
+	var previous_shape: int = item.eye_style_override
+	var previous_palette: int = item.eye_palette_override
+	if category == "shape":
+		item.eye_style_override = clampi(value, -1, 3)
+	else:
+		item.eye_palette_override = clampi(value, -1, 5)
+	if not inventory.save_game():
+		# A failed save must never silently leave an unsaved visual edit.
+		item.eye_style_override = previous_shape
+		item.eye_palette_override = previous_palette
+		_refresh_eye_editor(item)
+		notice.text = "Could not save eye appearance · unchanged"
+		return
+	inventory.contents_changed.emit()
+	inventory.equipment_changed.emit()
+	notice.text = "Eye style saved · original rarity unchanged"
+
+func focus_eye_item(item: GhostItemInstance) -> void:
+	if inventory == null or not _is_eye_item(item):
+		return
+	var index: int = inventory.contents.find(item)
+	if index < 0:
+		return
+	# Equipment stays equipped: this is selection only, no item transfer.
+	selected_index = index
+	var grid_position: Vector2i = inventory.grid_positions[index] if index < inventory.grid_positions.size() else Vector2i.ZERO
+	active_page = clampi(floori(float(grid_position.y) / 6.0), 0, 7)
+	slots.call("set_page", active_page)
+	page_number.text = "%d / 8" % (active_page + 1)
+	refresh()
 
 # Preview categories use the existing TEST ONLY IDs and debug overrides.
 # Nothing in these radio controls writes a cosmetic UID or stat roll.
@@ -581,7 +680,7 @@ func _create_cosmetic_radio_panel() -> void:
 func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
 	if not is_instance_valid(cosmetic_radio_panel):
 		return
-	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null
+	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null and not _is_eye_item(item)
 	if not cosmetic_radio_panel.visible:
 		return
 	var active: Dictionary = {

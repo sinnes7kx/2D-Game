@@ -74,8 +74,6 @@ func _draw() -> void:
 	# Separate expanded aura drawn over the entire scythe silhouette:
 	# long shaft, outside crescent and inside cutting edge. No damage.
 	var widths: Array[float] = [22.0, 13.0, 5.5]
-	# Readable at the world sprite's reduced scale, still capped by
-	# the independently rolled 0/10/20/30/40/50% opacity envelope.
 	var strengths: Array[float] = [0.22, 0.36, 0.52]
 	for layer_index in range(3):
 		var width: float = widths[layer_index]

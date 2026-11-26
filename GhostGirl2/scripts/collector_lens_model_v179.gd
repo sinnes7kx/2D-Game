@@ -7,7 +7,9 @@ const HEAVY = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
 const SCYTHE_GLOW = preload("res://scripts/scythe_glow_layer_v211.gd")
 const PAINTED_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
+const BOW_POSE = preload("res://scripts/bow_palette_overlay_v139.gd")
 var painted_preview: Sprite2D
+var bow_painted_mask: Sprite2D
 var scythe_glow: Node2D
 var glow_preview_override: int = -1
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
@@ -61,6 +63,8 @@ func _process(delta: float) -> void:
 		last_fx_revision = FX_LEVEL.revision
 		if is_instance_valid(painted_preview) and painted_preview.material is ShaderMaterial:
 			(painted_preview.material as ShaderMaterial).set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
+		if is_instance_valid(bow_painted_mask) and bow_painted_mask.material is ShaderMaterial:
+			(bow_painted_mask.material as ShaderMaterial).set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
 		queue_redraw()
 	if is_visible_in_tree() and item != null and (glow_enabled or (is_modular() and int(look.get("surface_mode", 0)) >= 2)):
 		elapsed += delta
@@ -211,7 +215,54 @@ func _draw_signature(center: Vector2, radius: float) -> void:
 func has_painted_surface() -> bool:
 	return item != null and item.definition != null and item.definition.icon != null and (item.get_slot() == "wand" or item.weapon_style() == "bow")
 
+# The inspection bow is the actual carried bow-only atlas + its matching
+# v139 mask, not a separate icon with an unrelated color shader.
+func _actual_bow_preview() -> bool:
+	var style: String = "moonveil" if str(item.definition.item_id) == "moonveil_bow" else "thornrose"
+	var art_path: String = "res://assets/equipment/bows_v166/%s_carry_only_2048x1760.png" % style
+	var mask_path: String = "res://assets/ghost/bows_v139/%s_locomotion_mask_2048x1760.png" % style
+	if not ResourceLoader.exists(art_path) or not ResourceLoader.exists(mask_path):
+		return false
+	if not is_instance_valid(bow_painted_mask):
+		bow_painted_mask = Sprite2D.new()
+		bow_painted_mask.name = "ActualBowPaletteMaskV215"
+		add_child(bow_painted_mask)
+	var pose: Dictionary = BOW_POSE.idle_hold_pose("front")
+	var angle: float = float(pose["rotation_deg"])
+	# Center the same hand-grip pivot in Inspect rather than shifting the item
+	# based on a different icon's opaque bounds.
+	var source: Vector2 = pose["source_handle"]
+	var scale_factor: float = 0.82
+	var center_offset: Vector2 = -source.rotated(deg_to_rad(angle)) * scale_factor
+	for entry in [
+		{"node": painted_preview, "path": art_path},
+		{"node": bow_painted_mask, "path": mask_path}
+	]:
+		var sprite: Sprite2D = entry["node"] as Sprite2D
+		var frame: AtlasTexture = AtlasTexture.new()
+		frame.atlas = load(str(entry["path"])) as Texture2D
+		frame.filter_clip = true
+		frame.region = Rect2(0.0, 0.0, 256.0, 220.0)
+		sprite.texture = frame
+		sprite.position = center_offset
+		sprite.scale = Vector2.ONE * scale_factor
+		sprite.rotation_degrees = angle
+		sprite.centered = true
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		sprite.show_behind_parent = true
+		sprite.self_modulate.a = item.weapon_opacity()
+		sprite.show()
+	painted_preview.material = null
+	painted_preview.z_index = -2
+	bow_painted_mask.z_index = -1
+	var mat: ShaderMaterial = ShaderMaterial.new()
+	PAINTED_SURFACE.configure(mat, look, Vector2(256, 220), true, PAINTED_SURFACE.bow_pigment(item, look))
+	bow_painted_mask.material = mat
+	return true
+
 func _update_painted_preview() -> void:
+	if is_instance_valid(bow_painted_mask):
+		bow_painted_mask.hide()
 	if not has_painted_surface():
 		if is_instance_valid(painted_preview):
 			painted_preview.hide()
@@ -221,12 +272,17 @@ func _update_painted_preview() -> void:
 		painted_preview.name = "PaintedMaterialPreviewV190"
 		painted_preview.show_behind_parent = true
 		add_child(painted_preview)
+	if item.weapon_style() == "bow" and _actual_bow_preview():
+		return
+	# Legacy icon remains an explicit fallback for missing optional artwork,
+	# and for wands, whose full directional artwork is a separate workflow.
 	painted_preview.texture = item.definition.icon
+	painted_preview.rotation = 0.0
+	painted_preview.position = Vector2.ZERO
 	var size: Vector2 = Vector2(painted_preview.texture.get_size())
 	painted_preview.scale = Vector2.ONE * (90.0 / maxf(1.0, maxf(size.x, size.y)))
 	var mat: ShaderMaterial = ShaderMaterial.new()
-	var colors: Array = PAINTED_SURFACE.bow_pigment(item, look) if item.weapon_style() == "bow" else look.get("surface_colors", [])
-	PAINTED_SURFACE.configure(mat, look, size, false, colors)
+	PAINTED_SURFACE.configure(mat, look, size, false, look.get("surface_colors", []))
 	painted_preview.material = mat
 	painted_preview.self_modulate.a = item.weapon_opacity()
 	painted_preview.show()
