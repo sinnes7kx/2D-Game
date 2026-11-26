@@ -68,7 +68,9 @@ const BLUNT_LOOT_TABLE = [
 ]
 const BOW_LOOT_TABLE = [
 	preload("res://items/thornrose_bow.tres"),
-	preload("res://items/moonveil_bow.tres")
+	preload("res://items/moonveil_bow.tres"),
+	preload("res://items/blackthorn_bow_v234.tres"),
+	preload("res://items/reliquary_silver_bow_v234.tres")
 ]
 const MOON_SPELL_SCENE: PackedScene = preload("res://scenes/moon_spell.tscn")
 const WAND_RELEASE_SCRIPT_V156: Script = preload("res://scripts/wand_release_fx_v156.gd")
@@ -996,6 +998,7 @@ func _give_weapon_test_samples() -> void:
 	if OS.is_debug_build():
 		for definition in BLADE_VARIANTS_V233:
 			trial_paths.append(definition.resource_path)
+		trial_paths.append_array(["res://items/blackthorn_bow_v234.tres", "res://items/reliquary_silver_bow_v234.tres"])
 	for path in trial_paths:
 		var template: GhostItemData = load(path) as GhostItemData
 		if template != null and not inventory.has_item(template.item_id):

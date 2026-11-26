@@ -681,9 +681,7 @@ func _bow_art_style() -> String:
 	if world == null or world.inventory == null:
 		return "thornrose"
 	var held: GhostItemInstance = world.inventory.get_equipped("sword")
-	if held != null and held.definition != null and held.definition.item_id == "moonveil_bow":
-		return "moonveil"
-	return "thornrose"
+	return held.bow_art_style() if held != null else "thornrose"
 
 func _weapon_art_style() -> String:
 	# Different bases within a combat class use truly different painted frames.

@@ -41,5 +41,11 @@ static func bow_pigment(item: GhostItemInstance, look: Dictionary) -> Array[Colo
 		var u: float = float(i) / float(limbs.size() - 1)
 		# Keep the independently seeded limb ramp dominant. Mixing too much
 		# brighter surface pigment erased onyx/dark bow rolls.
-		blended.append(limbs[i].lerp(GhostCosmeticRNGV152.sample_palette(pigment, u), 0.16))
+		var tone: Color = limbs[i].lerp(GhostCosmeticRNGV152.sample_palette(pigment, u), 0.16)
+		# Material-specific finish, not a replacement of the independently seeded ramp.
+		if item.definition != null:
+			match str(item.definition.item_id):
+				"blackthorn_bow_v234": tone = tone.lerp(Color("342d38"), 0.20)
+				"reliquary_silver_bow_v234": tone = tone.lerp(Color("b0b2bf"), 0.16)
+		blended.append(tone)
 	return blended

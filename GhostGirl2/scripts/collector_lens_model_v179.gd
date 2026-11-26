@@ -225,7 +225,7 @@ func has_painted_surface() -> bool:
 # The inspection bow is the actual carried bow-only atlas + its matching
 # v139 mask, not a separate icon with an unrelated color shader.
 func _actual_bow_preview() -> bool:
-	var style: String = "moonveil" if str(item.definition.item_id) == "moonveil_bow" else "thornrose"
+	var style: String = item.bow_art_style()
 	var art_path: String = "res://assets/equipment/bows_v166/%s_carry_only_2048x1760.png" % style
 	var mask_path: String = "res://assets/ghost/bows_v139/%s_locomotion_mask_2048x1760.png" % style
 	if not ResourceLoader.exists(art_path) or not ResourceLoader.exists(mask_path):

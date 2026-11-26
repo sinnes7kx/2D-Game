@@ -54,6 +54,13 @@ def main() -> int:
         errors.append("Animation alias guard failed its missing-declaration self-check")
     if animation_alias_errors('const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")\nSWORD_V224.install(body_art)'):
         errors.append("Animation alias guard rejected a valid declaration")
+    # The halo conversion used amulet in refresh() after deleting its local.
+    visuals = (ROOT / "scripts/equipment_visuals.gd").read_text(encoding="utf-8")
+    refresh = visuals.split("func refresh() -> void:", 1)[-1].split("\nfunc ", 1)[0]
+    declaration = 'var amulet: GhostItemInstance = inventory.get_equipped("trinket")'
+    use = '_rebuild_ambient_sources(feather, amulet,'
+    if declaration not in refresh or use not in refresh or refresh.index(declaration) > refresh.index(use):
+        errors.append("equipment_visuals.gd: refresh() missing local amulet before ambient rebuild")
     errors += verify("scripts/item_instance.gd", (
         "var glow_level_override: int = -1",
         "var bow_glow_mode_override: int = -1",

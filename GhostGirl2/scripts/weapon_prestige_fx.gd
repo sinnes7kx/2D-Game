@@ -196,9 +196,7 @@ func _facing(name: String) -> String:
 	return "front"
 
 func _bow_style_name() -> String:
-	if item != null and item.definition != null and item.definition.item_id == "moonveil_bow":
-		return "moonveil"
-	return "thornrose"
+	return item.bow_art_style() if item != null else "thornrose"
 
 func _resolved_bow_animation_name(animation_name: String) -> String:
 	if bow_axes_by_animation.has(animation_name):

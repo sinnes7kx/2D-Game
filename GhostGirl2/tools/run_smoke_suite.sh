@@ -36,6 +36,7 @@ quick_tests=(
   v231_weapon_variants_smoke.gd
   v232_gothic_polish_smoke.gd
   v233_arrow_foley_smoke.gd
+  v234_halo_bow_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

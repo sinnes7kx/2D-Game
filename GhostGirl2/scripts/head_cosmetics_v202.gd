@@ -250,18 +250,20 @@ static func halo_center(face: String, animation: String, source_frame: int, crow
         x = 20.0
     return Vector2(x, -96.0 - (13.0 if crown else 0.0)) + drift
 
+static func body_halo_center(sprite: AnimatedSprite2D, face: String, crown: bool) -> Vector2:
+    var animation: String = str(sprite.animation) if sprite != null else "idle_" + face
+    var index: int = WALK_V223.source_pose_index(sprite.sprite_frames, animation, sprite.frame) if sprite != null else 0
+    if sprite != null:
+        index = SWORD_V224.source_pose_index(sprite.sprite_frames, animation, index)
+    return halo_center(face, animation, index, crown)
+
 func _draw_seeded_halo(item: GhostItemInstance, face: String, crown: bool) -> void:
     var key: String = "%s:%d:%d" % [item.cosmetic_uid, item.visual_seed(), item.gradient_version]
     if halo_key != key:
         halo_key = key
         var palette: Array[Color] = EYE_RNG.gradient_for_channel(item.cosmetic_uid, item.visual_seed(), "accessory-halo-v232", item.gradient_version)
         halo_look = {"kind": halo_variant(item.visual_seed()), "metal": EYE_RNG.sample_palette(palette, 0.25).lerp(Color("b8a8b9"), 0.52), "edge": EYE_RNG.sample_palette(palette, 0.72).lerp(Color("f4e5df"), 0.48)}
-    var sprite: AnimatedSprite2D = _body_sprite()
-    var animation: String = str(sprite.animation) if sprite != null else "idle_" + face
-    var index: int = WALK_V223.source_pose_index(sprite.sprite_frames, animation, sprite.frame) if sprite != null else 0
-    if sprite != null:
-        index = SWORD_V224.source_pose_index(sprite.sprite_frames, animation, index)
-    var center: Vector2 = halo_center(face, animation, index, crown)
+    var center: Vector2 = body_halo_center(_body_sprite(), face, crown)
     var metal: Color = halo_look["metal"]
     var edge: Color = halo_look["edge"]
     var kind: int = int(halo_look["kind"])

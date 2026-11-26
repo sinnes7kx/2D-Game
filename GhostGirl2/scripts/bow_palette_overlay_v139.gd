@@ -15,9 +15,7 @@ const CARRY_ATLASES: Dictionary = {
 }
 
 func _bow_style_name(item: GhostItemInstance) -> String:
-	if item != null and item.definition != null and item.definition.item_id == "moonveil_bow":
-		return "moonveil"
-	return "thornrose"
+	return item.bow_art_style() if item != null else "thornrose"
 
 func _resolved_animation_name(item: GhostItemInstance, animation_name: String) -> String:
 	# Aerial strike clips preserve the exact same painted bow and recolor mask.
