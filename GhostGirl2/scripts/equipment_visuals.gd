@@ -268,6 +268,9 @@ func _process(delta: float) -> void:
 		# All poses are painted into Ghost-local coordinates. The actual
 		# animation frame, not a static facing rotation, selects the artwork.
 		_apply_wand_pose()
+		var active_animation: String = str(player_art.animation)
+		var active_frame: int = 0 if GENTLE.modular_idle(active_animation) and active_animation.begins_with("wand_idle_") else player_art.frame
+		wand_visual.position = WAND_ANCHORS_V216.alignment_offset(active_animation, active_frame, facing)
 		if str(player_art.animation).begins_with("wand_idle_"):
 			var guide: Dictionary = wand_pose_rows.get(str(player_art.animation), {})
 			var lines: Array = guide.get("guides", [])
@@ -275,7 +278,7 @@ func _process(delta: float) -> void:
 				var grip: Vector2 = Vector2(float(lines[0][0]), float(lines[0][1]))
 				var angle: float = GENTLE.angle_at(GENTLE.phase_of(player_art))
 				wand_visual.rotation = angle
-				wand_visual.position = grip - grip.rotated(angle)
+				wand_visual.position += grip - grip.rotated(angle)
 		wand_visual.show_behind_parent = facing == "back"
 		wand_visual.z_index = -2 if facing == "back" else 6
 	if dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty():
