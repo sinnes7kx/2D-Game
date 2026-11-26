@@ -55,7 +55,7 @@ func _ready() -> void:
 	layout.add_theme_constant_override("separation", 10)
 	panel.add_child(layout)
 	var eyebrow: Label = Label.new()
-	eyebrow.text = "COLLECTOR'S LENS"
+	eyebrow.text = "❦  COLLECTOR'S LENS"
 	eyebrow.add_theme_color_override("font_color", Color("d5ad8c"))
 	eyebrow.add_theme_font_size_override("font_size", 13)
 	layout.add_child(eyebrow)
@@ -82,6 +82,8 @@ func _ready() -> void:
 	well.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var well_style: StyleBoxFlat = StyleBoxFlat.new()
 	well_style.bg_color = Color("100e19")
+	well_style.border_color = Color("51404b")
+	well_style.set_border_width_all(1)
 	well_style.set_corner_radius_all(6)
 	well.add_theme_stylebox_override("panel", well_style)
 	columns.add_child(well)

@@ -8,12 +8,12 @@ content_margin_left = 18.0
 content_margin_top = 16.0
 content_margin_right = 18.0
 content_margin_bottom = 16.0
-bg_color = Color(0.055, 0.048, 0.061, 0.98)
+bg_color = Color(0.068, 0.047, 0.069, 0.98)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.63, 0.45, 0.32, 0.96)
+border_color = Color(0.64, 0.52, 0.38, 0.96)
 corner_radius_top_left = 7
 corner_radius_top_right = 7
 corner_radius_bottom_right = 7
@@ -70,13 +70,13 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_colors/font_color = Color(0.82, 0.69, 0.53, 1)
 theme_override_font_sizes/font_size = 19
-text = "Character Screen"
+text = "❦  Character  ❦"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="Layout" unique_id=1687462767]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.65, 0.6, 0.71, 1)
-text = "EQUIPMENT"
+text = "EQUIPMENT  ·  RELICS"
 horizontal_alignment = 1
 
 [node name="EquipmentSlots" type="Control" parent="Layout" unique_id=58516516]

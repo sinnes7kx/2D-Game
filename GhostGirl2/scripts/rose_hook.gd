@@ -213,6 +213,8 @@ func _physics_process(delta: float) -> void:
                 hook_tip.global_position = fixed_point
                 if girl.global_position.distance_to(fixed_point) > _effective_range() or bool(target.get("broken")):
                     _start_retract()
+                elif target.has_method("preview_felling_hook"):
+                    target.call("preview_felling_hook", girl.global_position)
             elif mode == MODE_OBJECT:
                 if target.is_in_group("enemies"):
                     _start_retract()
@@ -252,12 +254,16 @@ func _physics_process(delta: float) -> void:
 func _start_retract() -> void:
     if phase == PHASE_IDLE or phase == PHASE_RETRACT:
         return
+    if is_tree_latched() and target.has_method("clear_felling_preview"):
+        target.call("clear_felling_preview")
     end_point = hook_tip.global_position
     phase = PHASE_RETRACT
     clock = 0.0
     hook_tip.play("retract")
 
 func _finish() -> void:
+    if is_tree_latched() and target.has_method("clear_felling_preview"):
+        target.call("clear_felling_preview")
     phase = PHASE_IDLE
     # If the tether was interrupted inside a traversal gap, return to last safe ground.
     if mode == MODE_ANCHOR and _inside_traversal_gap(girl.global_position):

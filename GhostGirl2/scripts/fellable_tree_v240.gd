@@ -12,6 +12,12 @@ var activated: bool = false
 var falling: bool = false
 var elapsed: float = 0.0
 var fall_direction: Vector2 = Vector2.LEFT
+var landing_length: float = 175.0
+var tether_preview: bool = false
+var preview_direction: Vector2 = Vector2.LEFT
+var preview_length: float = 175.0
+const IMPACT_TIME: float = 0.72
+const IMPACT_RADIUS: float = 38.0
 
 func _ready() -> void:
     health = durability
@@ -29,6 +35,18 @@ func hook_prompt() -> String:
 func on_hook_latched() -> void:
     pass # No automatic collapse.
 
+func preview_felling_hook(source: Vector2) -> void:
+    if broken:
+        return
+    tether_preview = true
+    preview_direction = (source - global_position).normalized()
+    preview_length = _clear_fall_length(preview_direction)
+    queue_redraw()
+
+func clear_felling_preview() -> void:
+    tether_preview = false
+    queue_redraw()
+
 func pull_felling_hook(source: Vector2) -> void:
     _start_fall(source - global_position)
 
@@ -44,13 +62,8 @@ func _start_fall(direction: Vector2) -> void:
     if broken or Engine.is_editor_hint():
         return
     fall_direction = direction.normalized() if direction.length_squared() > 0.01 else Vector2.LEFT
-    # Clamp the fall to solid terrain, so it cannot strike through walls.
-    var ray: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position, global_position + fall_direction * fall_length)
-    ray.collision_mask = 2
-    ray.exclude = [get_rid()]
-    var wall: Dictionary = get_world_2d().direct_space_state.intersect_ray(ray)
-    if not wall.is_empty():
-        fall_length = minf(fall_length, global_position.distance_to(wall["position"]))
+    landing_length = _clear_fall_length(fall_direction)
+    tether_preview = false
     broken = true
     activated = true
     falling = true
@@ -60,14 +73,21 @@ func _start_fall(direction: Vector2) -> void:
     remove_from_group("breakable_cover")
     AUDIO.play(get_tree().current_scene, global_position, "arrow_wood", -13.0)
 
+func _clear_fall_length(direction: Vector2) -> float:
+    var ray: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position, global_position + direction * fall_length)
+    ray.collision_mask = 2
+    ray.exclude = [get_rid()]
+    var wall: Dictionary = get_world_2d().direct_space_state.intersect_ray(ray)
+    return fall_length if wall.is_empty() else maxf(0.0, global_position.distance_to(wall["position"]) - 4.0)
+
 func _physics_process(delta: float) -> void:
     if Engine.is_editor_hint() or not falling:
         return
     elapsed += delta
-    if elapsed >= 0.72:
+    if elapsed >= IMPACT_TIME:
         falling = false
         set_deferred("collision_layer", 0)
-        var end: Vector2 = global_position + fall_direction * fall_length
+        var end: Vector2 = global_position + fall_direction * landing_length
         FEEL.burst(get_parent(), end, "wood", 1.65, fall_direction, shape_seed)
         FEEL.rumble(end, 5.5)
         AUDIO.play(get_tree().current_scene, end, "arrow_wood", -9.0)
@@ -76,18 +96,24 @@ func _physics_process(delta: float) -> void:
                 continue
             var point: Vector2 = candidate.global_position
             var closest: Vector2 = Geometry2D.get_closest_point_to_segment(point, global_position, end)
-            if point.distance_to(closest) <= 38.0:
-                candidate.call("hit", 28.0, 0.85)
+            if point.distance_to(closest) <= IMPACT_RADIUS:
+                var probe: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(closest, point)
+                probe.collision_mask = 2
+                probe.exclude = [get_rid()]
+                if closest.is_equal_approx(point) or get_world_2d().direct_space_state.intersect_ray(probe).is_empty():
+                    candidate.call("hit", 28.0, 0.85)
     queue_redraw()
 
 func _draw() -> void:
-    var progress: float = clampf(elapsed / 0.72, 0.0, 1.0) if broken else 0.0
-    var tip: Vector2 = Vector2(0, -fall_length).lerp(fall_direction * fall_length, progress * progress)
+    var progress: float = clampf(elapsed / IMPACT_TIME, 0.0, 1.0) if broken else 0.0
+    var tip: Vector2 = Vector2(0, -fall_length).lerp(fall_direction * landing_length, progress * progress)
     draw_ellipse_shadow()
-    if falling:
-        var end: Vector2 = fall_direction * fall_length
-        draw_line(Vector2.ZERO, end, Color(0.78, 0.48, 0.24, 0.15), 76.0, true)
-        draw_line(Vector2.ZERO, end, Color(0.86, 0.66, 0.38, 0.6), 1.2, true)
+    if falling or tether_preview:
+        var end: Vector2 = fall_direction * landing_length if falling else preview_direction * preview_length
+        var ink: Color = Color("d6a168") if falling else Color("b99bd0")
+        draw_line(Vector2.ZERO, end, Color(ink.r, ink.g, ink.b, 0.16), IMPACT_RADIUS * 2.0, true)
+        draw_line(Vector2.ZERO, end, Color(ink.r, ink.g, ink.b, 0.72), 1.4, true)
+        draw_arc(end, IMPACT_RADIUS, 0, TAU, 40, Color(ink.r, ink.g, ink.b, 0.45), 1.2, true)
     var axis: Vector2 = tip.normalized()
     var n: Vector2 = axis.orthogonal()
     draw_colored_polygon(PackedVector2Array([-n*14, n*14, tip+n*4, tip-n*4]), Color("302a36"))

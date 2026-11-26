@@ -72,13 +72,13 @@ y_sort_enabled = true
 position = Vector2(2800, 800)
 script = ExtResource("portal")
 destination = "lanternhaven"
-interaction_name = "Follow the forest road"
+interaction_name = "Return to Lanternhaven"
 opened = true
 [node name="moonthorn_woods" type="Node2D" parent="Gameplay/Portals"]
 position = Vector2(170, 800)
 script = ExtResource("portal")
 destination = "moonthorn_woods"
-interaction_name = "Follow the forest road"
+interaction_name = "Continue into Moonthorn Woods"
 opened = true
 [node name="Tree0" type="StaticBody2D" parent="Gameplay/FellableTrees"]
 position = Vector2(2350, 650)
