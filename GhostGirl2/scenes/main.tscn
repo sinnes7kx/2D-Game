@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://cyje336o3h6re" path="res://scripts/inventory.gd" id="6_inventory"]
 
 [node name="GhostGirlActI" type="Node2D" unique_id=77407735]
+physics_interpolation_mode = 2
 y_sort_enabled = true
 script = ExtResource("1_game")
 

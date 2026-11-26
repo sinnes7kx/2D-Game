@@ -143,6 +143,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.22 — fluid motion foundation (source implementation; engine review pending)
+
+- Enable Godot 2D physics interpolation for the player root only, retain 60 physics ticks/s, and leave existing process-driven room and equipment-local transforms uninterpolated. Reset player interpolation and camera smoothing after room/shrine/hook teleports. VSync remains unchanged; rendering FPS still depends on hardware and monitor.
+- Increase the existing procedural sword/dagger idle paint in-betweens from 16 to 24 at the same 3.45s cycle. This is not newly hand-painted attack or walking artwork; no approved source PNG or baked attack frame index changed.
+- Interpolate independently drawn sword/dagger/twinblade/spear attack angles between authored poses at render time, preserving current-frame wrist anchors and shared physical/FX span lookup. Keep baked weapon art and its frame-indexed guides unchanged. Synchronize unequal-weight action clips and wand casting to existing combat timers.
+- Add synthetic fluidity smoke to the quick suite. Source inspection only; no measured FPS gain, renderer, F5, parser, or GPU profiling claimed. Extra idle textures may modestly increase startup time and memory. Verify hook pulls, room transitions, combat hitstop, and equipped glow alignment in Godot before further expansion.
+
 ### v2.21 — wand grip, sword attack tracking, magic sound and closer camera (source implementation; visual review pending)
 
 - Replace wand idle/walk/cast body frames with the existing approved hook-free action art, preserving frame durations; align wand atlas frames to the clean-body wrist guides used by physical layer, glimmer and spell origin. Suppress wand artwork outside wand poses and choose FX from the visible pose. Rear grip is estimated when occluded.

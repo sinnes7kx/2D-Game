@@ -5,7 +5,7 @@ extends RefCounted
 ## No animation manifest, source PNG, hitbox, equipment or save data is changed.
 const CYCLE_SECONDS: float = 3.45
 const STEPS: int = 8
-const SWORD_STEPS: int = 16 # Short blades and swords both use 16 soft, steady visual steps.
+const SWORD_STEPS: int = 24 # Procedural interior-paint in-betweens; original silhouette stays fixed.
 const BLEND_STEPS: Array = [0.0, 0.024, 0.055, 0.095, 0.145, 0.112, 0.069, 0.027]
 static var _textures_by_key: Dictionary = {}
 static var _atlas_images: Dictionary = {}

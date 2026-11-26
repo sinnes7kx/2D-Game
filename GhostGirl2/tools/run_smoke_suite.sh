@@ -24,6 +24,7 @@ quick_tests=(
   v204_eye_palette_coverage_smoke.gd
   v215_eyes_bows_input_fx_smoke.gd
   v216_editable_fx_bow_wand_smoke.gd
+  v222_fluid_animation_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

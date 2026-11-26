@@ -120,7 +120,7 @@ func _process(_delta: float) -> void:
 		return
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_now: String = str(body.animation)
-	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and MODULAR.surface_is_animated(self, body)):
+	if animation_now.contains("twinblade") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or MODULAR.surface_is_animated(self, body))):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
@@ -152,7 +152,12 @@ func _is_equipped(animation_name: String) -> bool:
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	var idle: bool = GENTLE.modular_idle(animation_name) or STEADY.is_smooth_blade_idle(animation_name)
 	var span: PackedVector2Array = _authored_weapon_span(animation_name, 0 if idle else frame_index)
-	return GENTLE.smooth(body, animation_name, span) if idle else span
+	if idle:
+		return GENTLE.smooth(body, animation_name, span)
+	var fraction: float = GENTLE.attack_fraction(body, animation_name, frame_index)
+	if fraction > 0.0:
+		return GENTLE.subframe_span(span, _authored_weapon_span(animation_name, frame_index + 1), fraction)
+	return span
 
 func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	var empty: PackedVector2Array = PackedVector2Array()
