@@ -6,6 +6,8 @@ const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
 const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")
 var phase: float = 0.0
 var last_eye_pose_key: String = ""
+var last_effect_bucket: int = -1
+var had_head_art: bool = false
 
 func _ready() -> void:
     z_index = 8
@@ -20,9 +22,13 @@ func _process(delta: float) -> void:
     phase += minf(delta, 0.075)
     var body: AnimatedSprite2D = _body_sprite()
     var key: String = (str(body.animation) + ":" + str(body.frame)) if body != null else ""
-    if key != last_eye_pose_key or int(phase * 18.0) % 2 == 0:
-        last_eye_pose_key = key
+    var has_art: bool = _item("wings") != null or _item("helm") != null
+    var bucket: int = floori(phase * 18.0)
+    if (has_art and (key != last_eye_pose_key or bucket != last_effect_bucket)) or has_art != had_head_art:
         queue_redraw()
+    last_eye_pose_key = key
+    last_effect_bucket = bucket
+    had_head_art = has_art
 
 func _item(slot: String) -> GhostItemInstance:
     var parent_visual: Node = get_parent()
