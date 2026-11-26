@@ -224,8 +224,17 @@ func _impact(where: Vector2) -> void:
 	flash.call("configure", ink, accent, visual_variant, fx_tier, direction, charged, motif)
 	flash.set("element_index", element_index)
 	flash.set("formation_index", formation_index)
+	flash.self_modulate.a = decoration_alpha(1.0)
 	root.add_child(flash)
 	flash.global_position = where
+
+# Scale decoration only; the physical arrow is always drawn at full opacity.
+func decoration_alpha(value: float) -> float:
+	return value * clampf(visual_glow_scale, 0.0, 1.0)
+
+func decoration_color(value: Color) -> Color:
+	value.a = decoration_alpha(value.a)
+	return value
 
 func _draw_arrow_shaft(offset: Vector2, tint: Color, alpha: float, length_scale: float) -> void:
 	var p: Vector2 = Vector2(-direction.y, direction.x)
@@ -250,8 +259,8 @@ func _draw() -> void:
 	if visual_glow_scale <= 0.0:
 		return
 	var pulse: float = 0.5 + 0.5 * sin(time_pulse * 3.2)
-	draw_circle(direction * 18.0, 4.5 + pulse * 2.0, Color(mixed.r, mixed.g, mixed.b, 0.13 + 0.08 * pulse))
-	draw_circle(direction * 18.0, 2.5 + pulse, Color(element_ink.r, element_ink.g, element_ink.b, 0.46))
+	draw_circle(direction * 18.0, 4.5 + pulse * 2.0, decoration_color(Color(mixed.r, mixed.g, mixed.b, 0.13 + 0.08 * pulse)))
+	draw_circle(direction * 18.0, 2.5 + pulse, decoration_color(Color(element_ink.r, element_ink.g, element_ink.b, 0.46)))
 	if not procedural_look.is_empty():
 		var count: int = int(procedural_look.get("spark_count", 5))
 		var motion: int = int(procedural_look.get("motion", 0))
@@ -266,7 +275,7 @@ func _draw() -> void:
 			var orbital: float = radius * 0.31 * sin(phase * (1.0 + float(motion % 3)))
 			point += p * orbital
 			var c: Color = RelicPaletteV139.color_at(procedural_look, time_pulse, f)
-			c.a = (0.15 + 0.22 * (1.0 - f)) * (0.4 if fx_tier < 2 else 1.0)
+			c.a = decoration_alpha((0.15 + 0.22 * (1.0 - f)) * (0.4 if fx_tier < 2 else 1.0))
 			if geometry % 3 == 0:
 				draw_circle(point, size * (1.0 - f * 0.45), c)
 			elif geometry % 3 == 1:
@@ -278,29 +287,29 @@ func _draw() -> void:
 		for side in [-1.0, 1.0]:
 			var drift: float = 10.0 + sin(time_pulse * 3.0 + side) * (1.7 + float(bow_trail_index % 3))
 			var position: Vector2 = p * side * drift - direction * (5.0 + side * 2.0)
-			_draw_arrow_shaft(position, mixed, 0.32, 0.78)
-			draw_circle(direction * 15.0 + position, 3.0, Color(element_ink.r, element_ink.g, element_ink.b, 0.16))
+			_draw_arrow_shaft(position, mixed, decoration_alpha(0.32), 0.78)
+			draw_circle(direction * 15.0 + position, 3.0, decoration_color(Color(element_ink.r, element_ink.g, element_ink.b, 0.16)))
 	if element_index == 1: # Emberfire: soft cinders and a tapered flame
 		for i in range(6):
 			var t: float = float(i) / 6.0
 			var v: Vector2 = -direction * (4.0 + 32.0 * t) + p * sin(time_pulse * 3.0 + float(i)) * (3.0 + 4.0 * t)
-			draw_circle(v, 2.1 + 2.7 * (1.0 - t), Color(1.0, 0.28 + 0.48 * (1.0 - t), 0.20, 0.27 * (1.0 - t)))
+			draw_circle(v, 2.1 + 2.7 * (1.0 - t), decoration_color(Color(1.0, 0.28 + 0.48 * (1.0 - t), 0.20, 0.27 * (1.0 - t))))
 	elif element_index == 2: # Frostglass: glinting geometric needles
 		for i in range(5):
 			var v: Vector2 = -direction * (2.0 + float(i) * 7.0) + p * sin(time_pulse + float(i)) * 4.0
-			draw_line(v - p * 4.0, v + p * 4.0, Color(0.58, 0.89, 1.0, 0.28), 1.3, true)
+			draw_line(v - p * 4.0, v + p * 4.0, decoration_color(Color(0.58, 0.89, 1.0, 0.28)), 1.3, true)
 	elif element_index == 3: # Light: moon rings and pearl-white flashes
-		draw_arc(direction * 12.0, 9.0 + pulse * 3.0, time_pulse, time_pulse + PI * 1.55, 18, Color(1.0, 0.96, 0.76, 0.36), 1.6, true)
+		draw_arc(direction * 12.0, 9.0 + pulse * 3.0, time_pulse, time_pulse + PI * 1.55, 18, decoration_color(Color(1.0, 0.96, 0.76, 0.36)), 1.6, true)
 		for i in range(3):
 			var v: Vector2 = -direction * float(i * 10 + 4) + p * sin(time_pulse * 2.0 + float(i)) * 5.0
-			draw_circle(v, 1.6, Color(1.0, 0.94, 0.81, 0.30))
+			draw_circle(v, 1.6, decoration_color(Color(1.0, 0.94, 0.81, 0.30)))
 	if fx_tier >= 2:
 		for i in range(3 + fx_tier):
 			var theta: float = float(i) * TAU / float(3 + fx_tier) + time_pulse
 			var v: Vector2 = direction * (-8.0 - float(i % 3) * 4.0) + Vector2.from_angle(theta) * (4.0 + float(i % 2) * 3.0)
-			draw_circle(v, 1.2, Color(mixed.r, mixed.g, mixed.b, 0.27))
+			draw_circle(v, 1.2, decoration_color(Color(mixed.r, mixed.g, mixed.b, 0.27)))
 	var step: float = 4.0 + float(bow_trail_index % 3)
 	for j in range(4):
 		var n: float = float(j)
 		var pos: Vector2 = -direction * (10.0 + n * step) + p * sin(time_pulse * (2.0 + float(bow_trail_index) * 0.15) + n * 0.85) * (2.0 + float(bow_detail_index % 3))
-		draw_circle(pos, 1.1 + float(bow_detail_index % 2) * 0.5, Color(glow_ink.r, glow_ink.g, glow_ink.b, 0.30 - n * 0.045))
+		draw_circle(pos, 1.1 + float(bow_detail_index % 2) * 0.5, decoration_color(Color(glow_ink.r, glow_ink.g, glow_ink.b, 0.30 - n * 0.045)))
