@@ -135,12 +135,7 @@ static func _draw_local(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Di
 	if not look.is_empty() and not colors.is_empty() and FX_LEVEL.intensity > 0.0:
 		FX.draw_edge(canvas, limbs, colors, look, phase, 0.85)
 		FX.draw_signature(canvas, limbs, colors, look, phase)
-		var ink: Color = FX.color_at(colors, look, 0.6, phase)
-		var tier: int = clampi(int(look.get("particle_tier", 0)), 0, 6)
-		for i in range(2 + tier):
-			var angle: float = phase * 2.8 + TAU * float(i) / float(2 + tier)
-			var p: Vector2 = mount + n * sin(angle) * (width + 4.0) + axis * cos(angle) * 7.0
-			canvas.draw_circle(p, 1.2 + tier * 0.12, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.55)))
+		preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(canvas, mount, n, Vector2(width + 4.0, 9.0), colors, look, phase)
 	if loaded:
 		canvas.draw_line(notch, tip+axis*5.0, metal.lightened(0.28), 1.5, true)
 		canvas.draw_line(tip+axis*2.0-n*1.7, tip+axis*5.0, metal, 1.4, true)

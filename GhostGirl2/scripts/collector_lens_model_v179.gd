@@ -209,24 +209,8 @@ func _draw_artwork_effects() -> void:
 	if item.get_slot() == "wand":
 		radius = 32.0
 	var strength: float = CHOICES_V216.effect_scale(item)
-	var count: int = 4 + mini(tier, 5)
-	for i in range(count):
-		var u: float = float(i) / float(count)
-		var phase: float = elapsed * (0.48 + 0.045 * float(motif)) + u * TAU
-		var p: Vector2 = Vector2.from_angle(phase) * (radius + 5.0 * sin(phase * 2.0))
-		var ink: Color = ANOMALOUS.color_at(gradients, look, u, elapsed)
-		ink.a = FX_LEVEL.alpha((0.36 + 0.08 * sin(phase * 1.4)) * strength)
-		match motif:
-			0, 7: draw_circle(p, 1.6, ink)
-			1, 6:
-				draw_line(p - Vector2(3,0), p + Vector2(3,0), ink, 0.9, true)
-				draw_line(p - Vector2(0,3), p + Vector2(0,3), ink, 0.9, true)
-			2: draw_colored_polygon(PackedVector2Array([p, p + Vector2(2,-4), p + Vector2(4,1)]), ink)
-			3: draw_polyline(PackedVector2Array([p - Vector2(3,3), p + Vector2(1,-1), p + Vector2(-1,1), p + Vector2(3,3)]), ink, 1.0, true)
-			4: draw_arc(p, 3.0, phase, phase + PI, 12, ink, 1.0, true)
-			5: draw_line(p, p - Vector2.from_angle(phase + PI / 2.0) * 7.0, ink, 1.2, true)
-		ink.a = FX_LEVEL.alpha(0.045 * strength)
-		draw_circle(p, 5.0, ink)
+	var pattern_center: Vector2 = Vector2(0, -20.0) if item.get_slot() == "wand" else Vector2.ZERO
+	preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(self, pattern_center, Vector2.UP, Vector2(radius, radius * 0.72), gradients, look, elapsed, strength)
 	_draw_signature(Vector2.ZERO, radius + 10.0)
 
 func _draw_signature(center: Vector2, radius: float) -> void:

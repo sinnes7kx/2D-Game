@@ -1366,35 +1366,8 @@ func _draw_wand_hold_cosmetics(grip: Vector2, tip: Vector2, tangent: Vector2, no
 	var charm_color: Color = _gradient_at(0.44)
 	draw_circle(charm, 1.8, Color(charm_color.r, charm_color.g, charm_color.b, 0.18 * base_alpha))
 	draw_line(charm, charm + Vector2(0, 4.0), Color(charm_color.r, charm_color.g, charm_color.b, 0.12 * base_alpha), 0.8, true)
-	var variant: int = posmod(form + motif, 4)
-	match variant:
-		0:
-			# Thin moon halo at the wand head.
-			draw_arc(head, 4.6, elapsed * 0.55, elapsed * 0.55 + PI * 1.38, 22, Color(paint_b.r, paint_b.g, paint_b.b, 0.17 * base_alpha), 1.0, true)
-			draw_arc(head + normal * 1.4, 2.9, -elapsed * 0.65, -elapsed * 0.65 + PI * 0.92, 18, Color(paint_c.r, paint_c.g, paint_c.b, 0.13 * base_alpha), 0.8, true)
-		1:
-			# Three lantern motes drifting tightly around the head.
-			for i in range(3):
-				var t: float = elapsed * (0.68 + float(i) * 0.08) + seed_phase * TAU + float(i) * 2.06
-				var p: Vector2 = head + Vector2(cos(t), sin(t) * 0.72) * 5.4 + tangent * sin(t * 0.7) * 1.0
-				var c: Color = _gradient_at(float(i) / 2.0)
-				draw_circle(p, 1.5, Color(c.r, c.g, c.b, 0.27 * base_alpha))
-		2:
-			# Short thread along the shaft with moving glint.
-			var sweep: float = fposmod(elapsed * 0.45 + seed_phase, 1.0)
-			var p1: Vector2 = mid - tangent * 6.0 + normal * 1.0
-			var p2: Vector2 = head - tangent * 2.0 + normal * 2.0
-			draw_line(p1, p2, Color(paint_a.r, paint_a.g, paint_a.b, 0.11 * base_alpha), 1.0, true)
-			var glint: Vector2 = p1.lerp(p2, sweep)
-			_soft_orb(glint, 2.1, _gradient_at(sweep), base_alpha * 0.65)
-		_:
-			# Tiny rose sigil at the head, kept subtle.
-			for k in range(5):
-				var ang: float = TAU * float(k) / 5.0 + elapsed * 0.18
-				var p: Vector2 = head + Vector2(cos(ang), sin(ang)) * 3.0
-				var c: Color = _gradient_at(float(k) / 4.0)
-				draw_circle(p, 1.0, Color(c.r, c.g, c.b, 0.18 * base_alpha))
-			draw_circle(head, 1.35, Color(paint_b.r, paint_b.g, paint_b.b, 0.16 * base_alpha))
+	# The existing cosmetic particle ticket now chooses distinct motion paths.
+	preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(self, head, tangent, Vector2(8.0, 10.0), effect_palette, collector_look, elapsed, minf(base_alpha, 1.35))
 	if rarity_tier >= 2:
 		# Always-visible runic dust for rarer wands.
 		for i in range(4):
