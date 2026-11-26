@@ -6,6 +6,7 @@ extends CharacterBody2D
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
+const WEAPON_MODS_V250 = preload("res://scripts/weapon_mods_v250.gd")
 const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
 const VISUAL_CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
@@ -1326,7 +1327,9 @@ func _launch_crossbow_bolt() -> void:
 	if root == null:
 		return
 	var base: String = str(crossbow_item.definition.item_id)
-	var count: int = CROSSBOW_V236.bolt_count(base)
+	var base_count: int = CROSSBOW_V236.bolt_count(base)
+	var mod: String = crossbow_item.weapon_mod
+	var count: int = WEAPON_MODS_V250.projectile_count(mod, base_count)
 	var heading: Vector2 = crossbow_heading.normalized()
 	var clip: String = str(body_art.animation)
 	var points: PackedVector2Array = CROSSBOW_V236.aimed_span(body_art, CROSSBOW_V236.span(clip, facing_name, body_art.frame), heading)
@@ -1334,7 +1337,7 @@ func _launch_crossbow_bolt() -> void:
 	if points.size() == 2:
 		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(base)))
 	var second_origin: Vector2 = origin
-	if count == 2:
+	if base_count == 2:
 		# Use the second authored wrist where visible. A hidden wrist fires
 		# from a nearby, occluded muzzle rather than drawing a detached model.
 		var local_axis: Vector2 = (points[1] - points[0]).normalized() if points.size() == 2 else (body_art.to_local(body_art.global_position + heading)).normalized()
@@ -1348,8 +1351,10 @@ func _launch_crossbow_bolt() -> void:
 		var bolt: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
 		if bolt == null:
 			continue
-		bolt.set("direction", heading.rotated(CROSSBOW_V236.bolt_angle(index, count)))
-		bolt.set("damage", total_damage / float(count))
+		bolt.set("direction", heading.rotated(WEAPON_MODS_V250.angle(index, count) if count != base_count else CROSSBOW_V236.bolt_angle(index, count)))
+		bolt.set("damage", total_damage * WEAPON_MODS_V250.volley_multiplier(mod) / float(count))
+		bolt.set("can_return", mod == WEAPON_MODS_V250.RETURN)
+		bolt.set("secondary_projectile", index > 0)
 		bolt.set("charged", false)
 		bolt.set("is_crossbow_bolt", true)
 		bolt.set("speed", 1380.0 if crossbow_heavy else 1240.0)
@@ -1359,7 +1364,7 @@ func _launch_crossbow_bolt() -> void:
 		bolt.set("visual_glow_scale", VISUAL_CHOICES_V216.effect_scale(crossbow_item))
 		bolt.set("full_palette", crossbow_item.glow_gradient_colors())
 		root.add_child(bolt)
-		bolt.global_position = origin if index == 0 else second_origin
+		bolt.global_position = second_origin if base_count == 2 and index % 2 == 1 else origin
 	COMBAT_JUICE.play(root, origin, "crossbow_fire", -13.0 if count == 2 else -14.5)
 	camera_kick = maxf(camera_kick, 1.6 if crossbow_heavy else 0.8)
 
@@ -1518,8 +1523,22 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 		release.self_modulate.a = VISUAL_CHOICES_V216.effect_scale(equipped)
 		root.add_child(release)
 		release.global_position = shot_origin - heading.normalized() * 5.0
-	root.add_child(arrow)
-	arrow.global_position = shot_origin
+	var mod: String = equipped.weapon_mod
+	var count: int = WEAPON_MODS_V250.projectile_count(mod, 1)
+	var volley_damage: float = float(arrow.get("damage")) * WEAPON_MODS_V250.volley_multiplier(mod)
+	var shots: Array[Node2D] = [arrow]
+	for i in range(1, count):
+		var extra: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
+		WEAPON_MODS_V250.copy_launch(arrow, extra, ["charged", "launched_in_air", "speed", "caster", "caster_rid", "bow_style", "ink", "accent", "fx_tier", "motif", "trail_style", "visual_variant", "element_index", "formation_index", "bow_glow_index", "bow_trail_index", "bow_detail_index", "projectile_style", "visual_glow_scale", "procedural_look", "full_palette", "glow_a", "glow_b", "glow_c"])
+		shots.append(extra)
+	for i in range(shots.size()):
+		var shot: Node2D = shots[i]
+		shot.set("direction", heading.normalized().rotated(WEAPON_MODS_V250.angle(i, count)))
+		shot.set("damage", volley_damage / float(count))
+		shot.set("can_return", mod == WEAPON_MODS_V250.RETURN)
+		shot.set("secondary_projectile", i != (count - 1) / 2.0)
+		root.add_child(shot)
+		shot.global_position = shot_origin
 	# Exactly one authentic released arrow per scored range shot; cosmetic
 	# formation wisps never report extra shots to the optional fletcher trial.
 	get_tree().call_group("v202_archery_range", "on_player_arrow_launched", global_position)
@@ -1740,6 +1759,15 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 			poise_bonus = 0.85
 	if sword != null:
 		power += sword.weapon_damage()
+		match sword.weapon_mod:
+			"long_reach": reach *= 1.20
+			"crushing": poise_bonus *= 1.35
+			"execution":
+				if heavy_attack: power *= 1.25
+			"finisher":
+				if active_finisher and not jump_attack_active: power *= 1.25
+			"riposte":
+				if counter_window > 0.0: power *= 1.35
 	power *= 1.0 + _stat("melee_power_pct") / 100.0
 	power *= power_multiplier
 	if heavy_attack:
