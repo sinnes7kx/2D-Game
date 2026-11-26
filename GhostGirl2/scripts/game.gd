@@ -61,6 +61,11 @@ const BLADE_VARIANTS_V233 = [
 	preload("res://items/vesper_athame_v233.tres"),
 	preload("res://items/cathedral_dual_swords_v233.tres")
 ]
+const SINGLE_SWORDS_V235 = [
+	preload("res://items/vesper_arming_sword_v235.tres"),
+	preload("res://items/thornveil_sabre_v235.tres"),
+	preload("res://items/ossuary_falchion_v235.tres")
+]
 const BLUNT_LOOT_TABLE = [
 	preload("res://items/v203_mournful_mace.tres"),
 	preload("res://items/v203_rosequartz_morningstar.tres"),
@@ -199,6 +204,8 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# One fifth of ordinary sword selections choose a new base. Existing
 	# saved items load their original resource path, not this selector.
 	if posmod(sword_seed, 5) == 0:
+		if posmod(int(sword_seed / 5), 7) == 0:
+			return SINGLE_SWORDS_V235[posmod(int(sword_seed / 35), SINGLE_SWORDS_V235.size())] as GhostItemData
 		# Share the existing variant lane, without increasing sword frequency.
 		if posmod(int(sword_seed / 5), 3) == 0:
 			return BLADE_VARIANTS_V233[posmod(int(sword_seed / 15), BLADE_VARIANTS_V233.size())] as GhostItemData
@@ -997,6 +1004,8 @@ func _give_weapon_test_samples() -> void:
 		trial_paths.append_array(["res://items/v203_mournful_mace.tres", "res://items/v203_rosequartz_morningstar.tres", "res://items/v203_nightchain_flail.tres"])
 	if OS.is_debug_build():
 		for definition in BLADE_VARIANTS_V233:
+			trial_paths.append(definition.resource_path)
+		for definition in SINGLE_SWORDS_V235:
 			trial_paths.append(definition.resource_path)
 		trial_paths.append_array(["res://items/blackthorn_bow_v234.tres", "res://items/reliquary_silver_bow_v234.tres"])
 	for path in trial_paths:

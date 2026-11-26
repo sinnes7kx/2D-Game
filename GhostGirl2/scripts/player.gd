@@ -683,6 +683,12 @@ func _bow_art_style() -> String:
 	var held: GhostItemInstance = world.inventory.get_equipped("sword")
 	return held.bow_art_style() if held != null else "thornrose"
 
+func _uses_modular_sword() -> bool:
+	if world == null or world.inventory == null:
+		return false
+	var held: GhostItemInstance = world.inventory.get_equipped("sword")
+	return held != null and held.uses_modular_single_sword()
+
 func _weapon_art_style() -> String:
 	# Different bases within a combat class use truly different painted frames.
 	# Animation identity only: no gameplay/stat/save field is changed.
@@ -710,7 +716,7 @@ func _weapon_motion_prefix(moving: bool) -> String:
 	if style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
 		return _weapon_art_style() + ("_walk_" if moving else "_idle_")
 	if style == "blade":
-		return "sword_walk_" if moving else "sword_idle_"
+		return "sword_modular_" + ("walk_" if moving else "idle_") if _uses_modular_sword() else ("sword_walk_" if moving else "sword_idle_")
 	return "walk_" if moving else "idle_"
 
 func _melee_cost(heavy: bool) -> float:
@@ -999,7 +1005,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
 			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if active_attack_style in ["dagger", "dual_dagger", "spear"] else "_heavy_") + facing_name
 		else:
-			attack_animation = "attack_sword_heavy_" + facing_name
+			attack_animation = ("attack_sword_modular_heavy_" if _uses_modular_sword() else "attack_sword_heavy_") + facing_name
 	else:
 		attack_animation = "attack_wand_heavy_" + facing_name if world.inventory != null and world.inventory.get_equipped("wand") != null else "attack_unarmed_heavy_" + facing_name
 	# Every style has a distinct airborne heavy clip with a faster plunge beat.
@@ -1390,7 +1396,7 @@ func _begin_attack(heavy: bool) -> void:
 		# A dedicated crossed-blade riposte on the existing confirmed counter.
 		attack_animation = "attack_dual_sword_riposte_" + facing_name
 	elif counter_window > 0.0 and active_attack_style not in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-		attack_animation = "attack_counter_" + facing_name
+		attack_animation = ("attack_sword_modular_counter_" if _uses_modular_sword() else "attack_counter_") + facing_name
 	elif holding_sword:
 		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
 			if active_attack_style == "dagger":
@@ -1407,7 +1413,7 @@ func _begin_attack(heavy: bool) -> void:
 			else:
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_" if heavy else "_light_") + facing_name
 		else:
-			attack_animation = ("attack_sword_heavy_" if heavy else "attack_sword_light_") + facing_name
+			attack_animation = ("attack_sword_modular_" if _uses_modular_sword() else "attack_sword_") + ("heavy_" if heavy else "light_") + facing_name
 	else:
 		attack_animation = ("attack_unarmed_heavy_" if heavy else "attack_unarmed_light_") + facing_name
 	_play_action_frames(attack_animation, attack_duration)

@@ -5,7 +5,7 @@ const CYCLE_SECONDS: float = 3.2
 const EFFECT_ALPHA: float = 0.48
 
 static func modular_idle(name: String) -> bool:
-	return name.contains("_idle_") and (name.contains("twinblade") or name.begins_with("dual_dagger_") or name.begins_with("dual_sword_") or name.begins_with("scythe_") or name.begins_with("halberd_") or name.begins_with("maul_") or name.begins_with("ashglass_maul_") or name.begins_with("wand_"))
+	return name.contains("_idle_") and (name.contains("twinblade") or name.begins_with("dual_dagger_") or name.begins_with("dual_sword_") or name.begins_with("scythe_") or name.begins_with("halberd_") or name.begins_with("maul_") or name.begins_with("ashglass_maul_") or name.begins_with("wand_") or name.begins_with("sword_modular_"))
 
 static func install(body: AnimatedSprite2D) -> void:
 	var frames: SpriteFrames = body.sprite_frames

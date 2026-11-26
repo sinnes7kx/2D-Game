@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.35 — modular single swords (source implementation; engine review pending)
+
+- Three new single-sword bases with distinct SVG icons and seeded modular profiles, reusing approved clean unarmed body textures in four directions. Physical sword and glow share the wrist-derived span; hidden wrist hides both. Existing ground, aerial and counter gameplay timers are unchanged. No new painted poses or new atlases; existing single swords retain their original art.
+- New bases occupy a deterministic subset of the existing variant lane. Existing saved stats and resources retained. F7 debug grants samples. Crossbows deferred to a dedicated firing/reload patch.
+- Source and synthetic smoke cover source-frame reuse, wrist mapping, fixed span, loot selection and class. Godot runtime, F5 visual alignment and actual drops remain unverified. Built atop v2.34 halo hotfix.
+
 ### v2.34 — accessory parser hotfix and gothic bow material variants (source implementation; engine review pending)
 
 - Restore the local equipped trinket/charm lookup before ambient-source rebuilding in equipment_visuals.refresh(), fixing the reported undeclared amulet parser error. Move remaining accessory and socketed-jewel particles from the chest to the same pose-relative head center as the halo; skip duplicate hidden accessory effects. Normalize the mixed indentation in the blunt rim guard.

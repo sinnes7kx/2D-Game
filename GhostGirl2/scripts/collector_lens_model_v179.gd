@@ -87,7 +87,7 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.uses_modular_single_sword() or item.weapon_style() in ["twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
@@ -142,6 +142,9 @@ func _draw() -> void:
 			else:
 				_grip(Vector2(0, 55), Vector2(0, -29), 3.8, 0)
 				_blade(Vector2(0, -29), Vector2(0, -53), 4.5, 0)
+		"blade":
+			_grip(Vector2(0, 22), Vector2(0, 0), 3.0, 0)
+			_blade(Vector2(0, 0), Vector2(0, -50), 4.2, 0)
 		"trident":
 			_draw_trident()
 		_:
