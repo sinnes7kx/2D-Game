@@ -7,6 +7,9 @@
 [ext_resource type="Resource" path="res://items/briar_wand.tres" id="loot"]
 [ext_resource type="Script" path="res://scripts/breakable_container_v241.gd" id="v241_prop"]
 
+[ext_resource type="Script" path="res://scripts/wilderness_ambience.gd" id="v242_motes"]
+[ext_resource type="Script" path="res://scripts/hearth_light_v242.gd" id="v242_light"]
+
 [sub_resource type="CircleShape2D" id="v241_prop_shape"]
 radius = 24.0
 
@@ -228,3 +231,33 @@ prop_seed = 246
 
 [node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop5"]
 shape = SubResource("v241_prop_shape")
+
+[node name="ForestMotes" type="Node2D" parent="Gameplay/Effects"]
+script = ExtResource("v242_motes")
+mote_count = 28
+intensity = 0.40
+z_index = 10
+
+[node name="RoadLantern0" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(2680, 570)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 251
+
+[node name="RoadLantern1" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1900, 595)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 252
+
+[node name="RoadLantern2" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1280, 875)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 253
+
+[node name="RoadLantern3" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(410, 615)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 254

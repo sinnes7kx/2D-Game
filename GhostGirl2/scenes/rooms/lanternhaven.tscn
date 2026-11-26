@@ -16,6 +16,8 @@
 
 [ext_resource type="Script" path="res://scripts/breakable_container_v241.gd" id="v241_prop"]
 
+[ext_resource type="Script" path="res://scripts/hearth_light_v242.gd" id="v242_light"]
+
 [sub_resource type="CircleShape2D" id="v241_prop_shape"]
 radius = 24.0
 
@@ -431,3 +433,57 @@ prop_seed = 246
 
 [node name="Shape" type="CollisionShape2D" parent="Gameplay/BreakableContainers/Prop5"]
 shape = SubResource("v241_prop_shape")
+
+[node name="GatheringHearth" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1800, 1185)
+script = ExtResource("v242_light")
+kind = "hearth"
+light_seed = 242
+
+[node name="LanternGlow0" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1120, 972)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 243
+
+[node name="LanternGlow1" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(2480, 972)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 244
+
+[node name="LanternGlow2" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1120, 1312)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 245
+
+[node name="LanternGlow3" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(2480, 1312)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 246
+
+[node name="LanternGlow4" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1650, 1962)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 247
+
+[node name="LanternGlow5" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1950, 1962)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 248
+
+[node name="LanternGlow6" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1200, 742)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 249
+
+[node name="LanternGlow7" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(2400, 742)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 250
