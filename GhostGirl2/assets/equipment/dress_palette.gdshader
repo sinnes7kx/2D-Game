@@ -8,6 +8,11 @@ uniform vec4 weapon_accent : source_color = vec4(0.87, 0.65, 0.95, 1.0);
 uniform float weapon_strength : hint_range(0.0, 1.0) = 0.0;
 uniform float cloth_filagree_strength : hint_range(0.0, 1.0) = 0.0;
 uniform float cloth_filagree_phase = 0.0;
+// Spectral dress appearance; body only, never child weapon renderers.
+uniform float ethereal_opacity : hint_range(0.0, 1.0) = 1.0;
+uniform float ethereal_shine : hint_range(0.0, 2.0) = 0.0;
+uniform vec4 ethereal_ink : source_color = vec4(0.78, 0.85, 1.0, 1.0);
+uniform float ethereal_phase = 0.0;
 // v1.92.3: baked body art has no trustworthy per-frame fabric/weapon mask.
 // Never infer hair, skin or equipment from hue or whole-atlas UV coordinates.
 // Preserve the approved original pixels until authored cloth masks exist.
@@ -61,4 +66,12 @@ void fragment() {
             COLOR = texture(TEXTURE, UV - shift * TEXTURE_PIXEL_SIZE) * silk_ink;
         }
     }
+    if (ethereal_shine > 0.001) {
+        // A broad, gentle moving band preserves the painted silhouette.
+        float sweep = 0.5 + 0.5 * sin(silk_local.y * 0.037 - silk_local.x * 0.018 - ethereal_phase);
+        float shimmer = (0.28 + 0.23 * pow(sweep, 3.0)) * ethereal_shine;
+        vec3 moonlight = mix(ethereal_ink.rgb, vec3(1.0), 0.48);
+        COLOR.rgb = mix(COLOR.rgb, moonlight, clamp(shimmer, 0.0, 0.84));
+    }
+    COLOR.a *= ethereal_opacity;
 }
