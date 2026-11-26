@@ -84,6 +84,8 @@ func bind_inventory(value: Node) -> void:
 		inventory_panel.call("bind_inventory", value)
 	if equipment_panel.has_method("bind_inventory"):
 		equipment_panel.call("bind_inventory", value)
+	if collector_lens != null and collector_lens.has_method("bind_inventory"):
+		collector_lens.call("bind_inventory", value)
 
 func set_vigil_status(in_moor: bool, gathered: int, completed: bool) -> void:
 	vigil_label.visible = in_moor
