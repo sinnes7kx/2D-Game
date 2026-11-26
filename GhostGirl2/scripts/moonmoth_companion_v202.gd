@@ -8,6 +8,13 @@ var target_hint: Vector2 = Vector2.ZERO
 var check_time: float = 0.0
 var actor: Node2D = null
 var subdued: bool = false
+const RNG = preload("res://scripts/cosmetic_rng_v152.gd")
+const ROLLS = preload("res://scripts/collector_appearance_v177.gd")
+const FX = preload("res://scripts/fx_intensity_v1924.gd")
+var look_key: String = ""
+var look: Dictionary = {}
+var colors: Array[Color] = []
+var familiar: GhostItemInstance = null
 
 func _ready() -> void:
     actor = get_parent() as Node2D
@@ -15,11 +22,23 @@ func _ready() -> void:
     position = Vector2(-47.0, -121.0)
     subdued = actor == null or bool(actor.get("equipment_preview_only"))
     visible = not subdued
-    set_process(not subdued)
+    set_process(actor != null)
 
 func _process(delta: float) -> void:
     if actor == null:
         return
+    var world: Node = actor.get("world") as Node
+    var inv: Node = world.get("inventory") as Node if world != null else null
+    familiar = inv.get_equipped("companion") if inv != null else null
+    visible = not subdued or familiar != null
+    if not visible:
+        return
+    if familiar != null:
+        var key: String = "%s:%d:%d" % [familiar.cosmetic_uid, familiar.visual_seed(), familiar.gradient_version]
+        if key != look_key:
+            look_key = key
+            look = ROLLS.roll(familiar.cosmetic_uid, familiar.visual_seed(), familiar.gradient_version)
+            colors = RNG.gradient_for_channel(familiar.cosmetic_uid, familiar.visual_seed(), "companion-v239", familiar.gradient_version)
     time_alive += delta
     var facing: String = str(actor.get("facing_name"))
     var side: float = 1.0 if facing == "left" else -1.0
@@ -27,7 +46,8 @@ func _process(delta: float) -> void:
     check_time -= delta
     if check_time <= 0.0:
         check_time = 0.42
-        _find_secret()
+        if not subdued:
+            _find_secret()
     var desired: Vector2 = normal + target_hint * curiosity
     position = position.lerp(desired, minf(1.0, delta * 4.4))
     queue_redraw()
@@ -54,6 +74,9 @@ func _find_secret() -> void:
             return
 
 func _draw() -> void:
+    if familiar != null and not colors.is_empty():
+        _draw_equipped_wisp()
+        return
     var lift: float = sin(time_alive * 2.1) * 2.0
     var bright: float = 0.68 + 0.18 * sin(time_alive * 1.6) + curiosity * 0.14
     var aura: Color = Color("b6d1ef")
@@ -71,3 +94,37 @@ func _draw() -> void:
         var t: float = time_alive * (0.8 + i * 0.12) + i * 2.1
         var mote: Vector2 = body + Vector2(sin(t) * (9.0 + i * 3.0), cos(t * 1.1) * (9.0 + i * 3.0))
         draw_circle(mote, 0.9, Color(0.79, 0.79, 1.0, 0.28 * bright))
+
+func _draw_equipped_wisp() -> void:
+    var tier: int = int(look.get("particle_tier", 0))
+    var motif: int = int(look.get("glow_motif", 0))
+    if OS.is_debug_build() and familiar.debug_collector_tier >= 0:
+        tier = familiar.debug_collector_tier
+    if OS.is_debug_build() and familiar.debug_glow_motif >= 0:
+        motif = familiar.debug_glow_motif
+    var hue: Color = RNG.sample_palette(colors, 0.5 + 0.5 * sin(time_alive * 0.8))
+    var accent: Color = RNG.sample_palette(colors, 0.8)
+    var core: Vector2 = Vector2(0.0, sin(time_alive * 2.1) * 2.0)
+    draw_circle(core, 4.0, hue.lerp(Color.WHITE, 0.28))
+    draw_circle(core + Vector2(-1, -1), 1.6, Color("fff5ff"))
+    if FX.intensity <= 0.0:
+        return
+    draw_circle(core, 13.0 + tier, Color(hue.r, hue.g, hue.b, FX.alpha(0.12)))
+    for i in range(4 + tier):
+        var t: float = float(i) / float(4 + tier)
+        var a: float = time_alive * (2.5 + tier * 0.25) + TAU * t
+        var p: Vector2 = core + Vector2(cos(a) * (10.0 + tier), sin(a) * (6.0 + tier))
+        var ink: Color = Color(accent.r, accent.g, accent.b, FX.alpha(0.62))
+        if motif % 3 == 0:
+            draw_circle(p, 1.5, ink)
+        elif motif % 3 == 1:
+            draw_line(p - Vector2(2, 0), p + Vector2(2, 0), ink, 0.8, true)
+            draw_line(p - Vector2(0, 2), p + Vector2(0, 2), ink, 0.8, true)
+        else:
+            draw_arc(p, 2.5, a, a + PI, 8, ink, 1.1, true)
+    if tier >= 4:
+        for i in range(8):
+            var t: float = float(i) / 8.0
+            var a: float = time_alive * 4.0 - t * 2.8
+            var p: Vector2 = core + Vector2(cos(a) * 19.0, sin(a) * 10.0)
+            draw_circle(p, 2.4 * (1.0 - t), Color(hue.r, hue.g, hue.b, FX.alpha(0.7 * (1.0 - t))))

@@ -41,14 +41,14 @@ func _draw() -> void:
         # then falling beads. Sanguine Cascade (style 4) adds many more beads.
         var base_red: Color = Color("b34a63").lerp(primary, 0.19)
         var edge_red: Color = Color("ef7c91").lerp(secondary, 0.25)
-        var count: int = 10 + style * 4 + tier * 2
+        var count: int = 14 + style * 4 + tier * 2
         if style == 4:
             count += 14
         draw_circle(Vector2(0, 1), 13.0 + 16.0 * t, Color(base_red.r, base_red.g, base_red.b, 0.21 * fade))
         for i in range(count):
             var f: float = float(i) / float(maxi(1, count))
             var a: float = f * 21.991 + phase + float(style) * 0.47
-            var spread: float = 15.0 + float(i % 7) * 4.2 + float(style) * 3.0
+            var spread: float = (15.0 + float(i % 7) * 4.2 + float(style) * 3.0) * 1.22
             var front: Vector2 = heading * spread * (0.40 + t * 1.05)
             var side: Vector2 = horizontal * sin(a) * spread * (0.20 + t * 0.67)
             var fall: Vector2 = Vector2(0, 22.0 * t * t + float(i % 4) * t * 4.0)
@@ -62,6 +62,13 @@ func _draw() -> void:
             for j in range(5):
                 var r: float = 8.0 + float(j) * 8.2 + t * 9.0
                 draw_arc(Vector2.ZERO, r, phase + float(j) * 0.9, phase + float(j) * 0.9 + PI * 0.54, 12, Color(edge_red.r, edge_red.g, edge_red.b, fade * 0.36), 1.1, true)
+    elif kind == "finisher":
+        var radius: float = 16.0 + 65.0 * t
+        draw_arc(Vector2.ZERO, radius, 0.0, TAU, 40, Color(primary.r, primary.g, primary.b, fade * 0.9), 3.0, true)
+        draw_arc(Vector2.ZERO, radius * 0.72, 0.0, TAU, 32, Color(secondary.r, secondary.g, secondary.b, fade * 0.65), 1.5, true)
+        for i in range(8):
+            var axis: Vector2 = Vector2.from_angle(phase + TAU * float(i) / 8.0)
+            draw_line(axis * radius * 0.8, axis * radius * 1.18, Color(secondary.r, secondary.g, secondary.b, fade * 0.8), 2.0, true)
     else:
         # Wand hits: different ring, fractured-prism, petal and star styles.
         var radius: float = 12.0 + 55.0 * t

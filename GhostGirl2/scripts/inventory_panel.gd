@@ -732,11 +732,12 @@ func focus_eye_item(item: GhostItemInstance) -> void:
 
 # Preview categories use the existing TEST ONLY IDs and debug overrides.
 # Nothing in these radio controls writes a cosmetic UID or stat roll.
+# Compact debug rarity presets. The granular Test Effects menu remains available.
 func _create_cosmetic_radio_panel() -> void:
 	var host: VBoxContainer = $Layout/DetailsWell/DetailsVBox
 	cosmetic_radio_panel = ScrollContainer.new()
 	cosmetic_radio_panel.name = "CosmeticLayersV210"
-	cosmetic_radio_panel.custom_minimum_size = Vector2(0, 168)
+	cosmetic_radio_panel.custom_minimum_size = Vector2(0, 112)
 	cosmetic_radio_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	cosmetic_radio_panel.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	host.add_child(cosmetic_radio_panel)
@@ -745,50 +746,30 @@ func _create_cosmetic_radio_panel() -> void:
 	categories.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cosmetic_radio_panel.add_child(categories)
 	var label: Label = Label.new()
-	label.text = "COSMETIC LAYERS · PREVIEW ONLY, NOT SAVED"
+	label.text = "RARITY PRESETS · TEST ONLY"
 	label.add_theme_font_size_override("font_size", 12)
 	label.add_theme_color_override("font_color", Color("d8bcdb"))
 	categories.add_child(label)
-	var sections: Array[Dictionary] = [
-		{"name": "Signature", "ids": [10, 11, 12, 13, 14, 15], "labels": ["None", "Thorns", "Eclipse", "Seraph", "Mythic", "Moonfall"]},
-		{"name": "Mythic detail", "ids": [20, 21, 22, 23], "labels": ["Lightning", "Cinders", "Astral", "Petals"]},
-		{"name": "Material rarity", "ids": [30, 31, 32, 33, 34, 35, 36], "labels": ["Standard", "Unusual", "Enchanted", "Animated", "Celestial", "Ethereal", "Anomaly"]},
-		{"name": "Color motion", "ids": [40, 41, 42, 43, 44, 45, 46], "labels": ["Still", "Pulse", "Drift", "Iridescent", "Phase", "Moonwash", "Prism"]},
-		{"name": "Glow shape", "ids": [50, 51, 52, 53, 54, 55, 56, 57], "labels": ["Motes", "Bars", "Petals", "Zigzag", "Arcs", "Comets", "Stars", "Wisps"]},
-		{"name": "Surface", "ids": [60, 61, 62, 63, 64, 65, 66], "labels": ["Plain", "Ripple", "Living", "Flare", "Flow", "Spark", "Anomaly"]},
-		{"name": "Guard shape", "ids": [70, 71, 72, 73, 74, 75, 76, 77], "labels": ["Straight", "Back", "Forward", "Winged", "Scroll", "Diamond", "Thorn", "Beaded"]},
-		{"name": "Grip style", "ids": [80, 81, 82, 83, 84, 85], "labels": ["Leather", "Metal", "Silk", "Inlaid", "Riveted", "Carved"]}
-	]
-	for section in sections:
-		var heading: Label = Label.new()
-		heading.text = str(section["name"])
-		heading.add_theme_font_size_override("font_size", 12)
-		heading.add_theme_color_override("font_color", Color("d9b899"))
-		categories.add_child(heading)
-		var group: ButtonGroup = ButtonGroup.new()
-		var grid: GridContainer = GridContainer.new()
-		grid.columns = 3
-		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		categories.add_child(grid)
-		var natural: CheckBox = CheckBox.new()
-		natural.text = "Natural"
-		natural.button_group = group
-		natural.add_theme_font_size_override("font_size", 11)
-		grid.add_child(natural)
-		natural.set_pressed_no_signal(true)
-		natural.toggled.connect(_radio_natural.bind(str(section["name"])))
-		cosmetic_radio_options.append({"button": natural, "id": -1, "category": str(section["name"])})
-		var ids: Array = section["ids"]
-		var labels: Array = section["labels"]
-		for i in range(ids.size()):
-			var radio: CheckBox = CheckBox.new()
-			radio.text = str(labels[i])
-			radio.button_group = group
-			radio.add_theme_font_size_override("font_size", 11)
-			grid.add_child(radio)
-			var id: int = int(ids[i])
-			radio.toggled.connect(_radio_preview.bind(id))
-			cosmetic_radio_options.append({"button": radio, "id": id, "category": str(section["name"])})
+	var grid: GridContainer = GridContainer.new()
+	grid.columns = 3
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	categories.add_child(grid)
+	var labels: Array[String] = ["Godlike", "Exalted", "Legendary", "Exceptional", "Rare", "Uncommon", "Common", "Natural"]
+	var tiers: Array[int] = [6, 5, 4, 3, 2, 1, 0, -1]
+	var odds: Array[String] = ["0.01%", "0.09%", "0.9%", "4%", "10%", "25%", "60%", ""]
+	var group: ButtonGroup = ButtonGroup.new()
+	for i in range(labels.size()):
+		var button: Button = Button.new()
+		button.text = labels[i]
+		button.toggle_mode = true
+		button.button_group = group
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.add_theme_font_size_override("font_size", 11)
+		var tier: int = tiers[i]
+		button.tooltip_text = "Restore genuine appearance" if tier < 0 else ("Preview cosmetic material tier · natural ticket share " + odds[i] + " · not a real drop")
+		grid.add_child(button)
+		button.pressed.connect(_apply_rarity_preview.bind(tier))
+		cosmetic_radio_options.append({"button": button, "id": tier})
 	cosmetic_radio_panel.visible = OS.is_debug_build()
 
 func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
@@ -797,53 +778,31 @@ func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
 	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null and not _is_eye_item(item) and (not _is_glow_item(item) or (is_instance_valid(debug_layer_switch) and debug_layer_switch.button_pressed))
 	if not cosmetic_radio_panel.visible:
 		return
-	var active: Dictionary = {
-		"Signature": 10 + item.debug_visual_override if item.debug_visual_override >= 0 else -1,
-		"Mythic detail": 20 + item.debug_mythic_variant if item.debug_mythic_variant >= 0 else -1,
-		"Material rarity": 30 + item.debug_collector_tier if item.debug_collector_tier >= 0 else -1,
-		"Color motion": 40 + item.debug_color_mode if item.debug_color_mode >= 0 else -1,
-		"Glow shape": 50 + item.debug_glow_motif if item.debug_glow_motif >= 0 else -1,
-		"Surface": 60 + item.debug_surface_mode if item.debug_surface_mode >= 0 else -1,
-		"Guard shape": 70 + item.debug_forge_guard if item.debug_forge_guard >= 0 else -1,
-		"Grip style": 80 + item.debug_forge_grip if item.debug_forge_grip >= 0 else -1
-	}
 	for choice in cosmetic_radio_options:
-		var button: CheckBox = choice["button"]
-		var id: int = int(choice["id"])
-		var category: String = str(choice["category"])
-		if id >= 0:
-			var support: Dictionary = _effect_support(item, id)
-			button.disabled = not bool(support["enabled"])
-			button.tooltip_text = "Test effect only · not saved" if not button.disabled else "Not supported on this item"
-		else:
-			button.disabled = false
-		button.set_pressed_no_signal(id == int(active.get(category, -1)))
+		var button: Button = choice["button"]
+		button.set_pressed_no_signal(int(choice["id"]) == item.debug_collector_tier)
 
-func _radio_preview(pressed: bool, id: int) -> void:
-	if not pressed or not OS.is_debug_build() or not is_instance_valid(test_looks):
-		return
-	var index: int = test_looks.get_item_index(id)
-	if index >= 0:
-		_preview_look(index)
-
-func _radio_natural(pressed: bool, category: String) -> void:
-	if not pressed or not OS.is_debug_build():
+func _apply_rarity_preview(tier: int) -> void:
+	if not OS.is_debug_build() or tier < -1 or tier > 6:
 		return
 	var item: GhostItemInstance = _selected_cosmetic_item()
 	if item == null:
 		return
-	match category:
-		"Signature": item.debug_visual_override = -1
-		"Mythic detail": item.debug_mythic_variant = -1
-		"Material rarity": item.debug_collector_tier = -1
-		"Color motion": item.debug_color_mode = -1
-		"Glow shape": item.debug_glow_motif = -1
-		"Surface": item.debug_surface_mode = -1
-		"Guard shape": item.debug_forge_guard = -1
-		"Grip style": item.debug_forge_grip = -1
+	# Clear previous granular overrides so presets show the material tier
+	# with the item's own seeded palette and motifs. No UID or save writes.
+	item.debug_visual_override = -1
+	item.debug_mythic_variant = -1
+	item.debug_color_mode = -1
+	item.debug_glow_motif = -1
+	item.debug_surface_mode = -1
+	item.debug_forge_guard = -1
+	item.debug_forge_grip = -1
+	item.debug_collector_tier = tier
 	inventory.contents_changed.emit()
 	inventory.equipment_changed.emit()
-	notice.text = "Natural " + category.to_lower() + " · preview only"
+	_refresh_cosmetic_radio_panel(item)
+	var names: Array[String] = ["Common", "Uncommon", "Rare", "Exceptional", "Legendary", "Exalted", "Godlike"]
+	notice.text = "Natural appearance restored" if tier < 0 else ("TEST ONLY · " + names[tier] + " · NOT SAVED")
 
 func _setup_effect_menu() -> void:
 	test_looks.clear()

@@ -213,6 +213,9 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 		return BLUNT_LOOT_TABLE[posmod(int(seed_value / 41), BLUNT_LOOT_TABLE.size())] as GhostItemData
 	# One in seven ordinary monster drops becomes a sword, deterministic by seed.
 	if posmod(seed_value, 7) != 0:
+		# A small subset of the existing ordinary-drop lane becomes a familiar.
+		if posmod(seed_value, 97) == 0:
+			return preload("res://items/moonwisp_companion_v239.tres")
 		return original
 	var sword_seed: int = int(seed_value / 7)
 	# One fifth of ordinary sword selections choose a new base. Existing

@@ -243,6 +243,8 @@ static func _render_arrow(kind: String) -> AudioStreamWAV:
     return stream
 
 static func _render(kind: String) -> AudioStreamWAV:
+    if kind.begins_with("surface_"):
+        return _render_arrow("arrow_" + kind.trim_prefix("surface_"))
     if kind in ["arrow_flesh", "arrow_wood", "arrow_stone", "arrow_metal", "arrow_water", "arrow_magic"]:
         return _render_arrow(kind)
     if kind in ["spell", "spell_heavy", "spell_release", "spell_release_heavy", "spell_hit"]:
@@ -256,6 +258,16 @@ static func _render(kind: String) -> AudioStreamWAV:
     var end_hz: float = 100.0
     var noise_mix: float = 0.45
     match kind:
+        "combo_finisher":
+            duration = 0.31
+            start_hz = 420.0
+            end_hz = 72.0
+            noise_mix = 0.42
+        "ground_slam":
+            duration = 0.36
+            start_hz = 105.0
+            end_hz = 34.0
+            noise_mix = 0.68
         "crossbow_fire":
             duration = 0.10
             start_hz = 520.0

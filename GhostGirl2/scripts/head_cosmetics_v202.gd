@@ -8,6 +8,10 @@ var phase: float = 0.0
 var last_eye_pose_key: String = ""
 var last_effect_bucket: int = -1
 var had_head_art: bool = false
+const HALO_FX = preload("res://scripts/fx_intensity_v1924.gd")
+const HALO_ROLL = preload("res://scripts/collector_appearance_v177.gd")
+var halo_fx_key: String = ""
+var halo_fx_look: Dictionary = {}
 var halo_key: String = ""
 var halo_look: Dictionary = {}
 
@@ -75,6 +79,8 @@ func _draw() -> void:
                 _draw_mask(accent, face)
             "v202_crescent_halo":
                 _draw_halo(accent, face)
+                var halo_x: float = 0.0 if face in ["front", "back"] else (4.0 if face == "right" else -4.0)
+                _draw_halo_fx(accessory, Vector2(halo_x, -118.0), Vector2(22.0, 22.0))
             "v202_rose_horns":
                 _draw_horns(accent, face)
 
@@ -268,6 +274,7 @@ func _draw_seeded_halo(item: GhostItemInstance, face: String, crown: bool) -> vo
     var edge: Color = halo_look["edge"]
     var kind: int = int(halo_look["kind"])
     var radius: Vector2 = Vector2(23.0 if face in ["front", "back"] else 19.0, 7.0)
+    _draw_halo_fx(item, center, radius)
     var segments: int = 36
     var points: PackedVector2Array = PackedVector2Array()
     for i in range(segments + 1):
@@ -295,3 +302,39 @@ func _draw_seeded_halo(item: GhostItemInstance, face: String, crown: bool) -> vo
             var angle: float = PI * float(i) / 18.0
             inner.append(center + Vector2(cos(angle) * (radius.x - 2.0), sin(angle) * (radius.y - 2.0)))
         draw_polyline(inner, metal.lightened(0.22), 1.2, true)
+
+# Seeded, bounded decorative halo effects. The ring remains visible at FX Off.
+func _draw_halo_fx(item: GhostItemInstance, center: Vector2, radius: Vector2) -> void:
+    if HALO_FX.intensity <= 0.0:
+        return
+    var key: String = "%s:%d:%d" % [item.cosmetic_uid, item.visual_seed(), item.gradient_version]
+    if halo_fx_key != key:
+        halo_fx_key = key
+        halo_fx_look = HALO_ROLL.roll(item.cosmetic_uid, item.visual_seed(), item.gradient_version)
+    var tier: int = int(halo_fx_look.get("particle_tier", 0))
+    var motif: int = int(halo_fx_look.get("glow_motif", 0))
+    if OS.is_debug_build() and item.debug_collector_tier >= 0:
+        tier = item.debug_collector_tier
+    if OS.is_debug_build() and item.debug_glow_motif >= 0:
+        motif = item.debug_glow_motif
+    var ink: Color = item.palette_color().lerp(Color("f3d9ff"), 0.32)
+    var spread: Vector2 = radius + Vector2(4.0 + tier, 3.0 + tier)
+    for i in range(3 + tier):
+        var a: float = phase * (1.1 + tier * 0.17) + TAU * float(i) / float(3 + tier)
+        var at: Vector2 = center + Vector2(cos(a) * spread.x, sin(a) * spread.y)
+        var alpha: float = HALO_FX.alpha(0.40 + 0.18 * sin(a * 2.0))
+        var light: Color = Color(ink.r, ink.g, ink.b, alpha)
+        draw_circle(at, 3.5 + tier * 0.3, Color(ink.r, ink.g, ink.b, alpha * 0.12))
+        if motif % 3 == 0:
+            draw_line(at - Vector2(2.0, 0), at + Vector2(2.0, 0), light, 0.8, true)
+            draw_line(at - Vector2(0, 2.0), at + Vector2(0, 2.0), light, 0.8, true)
+        elif motif % 3 == 1:
+            draw_arc(at, 2.1, a, a + PI, 8, light, 0.9, true)
+        else:
+            draw_circle(at, 1.1 + tier * 0.12, light)
+    if tier >= 4:
+        var arc: PackedVector2Array = PackedVector2Array()
+        for i in range(25):
+            var a: float = phase * 0.7 + float(i) * PI / 24.0
+            arc.append(center + Vector2(cos(a) * spread.x, sin(a) * spread.y))
+        draw_polyline(arc, Color(ink.r, ink.g, ink.b, HALO_FX.alpha(0.35)), 1.2, true)
