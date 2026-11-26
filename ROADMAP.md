@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.31 — gothic weapon base variants (source implementation; engine review pending)
+
+- Four new collectible bases: Widowglass Twinblade, Cathedral Thorn Twinblade, Vesperthorn Dual Swords, Mourninglace Twin Daggers. Each has its own SVG inventory icon and deterministic base blade shape, width and guard on the shared modular world/inspection art. Seeded colors, surfaces, ornamentation, grips and stats still vary independently.
+- Existing twinblade and paired weapon rigs reused in all directions. Paired weapon activation now checks the weapon class, not one hardcoded base ID. No new animation atlas or combat rules, no old base edits or save schema changes. New base stats copied from comparable existing bases; no new power tier.
+- New variants occupy a deterministic one-fifth subset of the existing ordinary sword selection lane; no increase in total sword-drop or quality probability, no alteration of saved items. Old sword table order retained. Smoke checks definitions, icons, same-class timing/damage and distinct profiles; F5 actual rendering and loot testing still required. No Actions dispatch.
+
 ### v2.30 — independent environment performance profiles (source implementation; engine review pending)
 
 - Shift+F3 cycles High / Balanced / Low session profiles, default Balanced. High retains prior per-render decorative updates; Balanced targets 30 Hz ambient and 45 Hz rain; Low targets 15 Hz ambient and 30 Hz rain with 60% rain streak density. Wall-time phase and rain following remain continuous, editor behavior unchanged. No physics, character, weapon glow, enemy AI, collision, interaction or item changes.

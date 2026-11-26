@@ -198,6 +198,22 @@ static func weapon_profile(look: Dictionary, item_id: String, hand: int = 0) -> 
 		p["shape"] = 1
 		p["width_scale"] = float(p["width_scale"]) * 1.02
 		p["ornament"] = 6 + int(p["ornament"]) % 3
+	elif item_id == "widowglass_twinblade_v231":
+		p["shape"] = 2
+		p["width_scale"] = float(p["width_scale"]) * 0.82
+		p["guard_style"] = 4
+	elif item_id == "cathedral_thorn_twinblade_v231":
+		p["shape"] = 4
+		p["width_scale"] = float(p["width_scale"]) * 1.17
+		p["guard_style"] = 2
+	elif item_id == "vesperthorn_dual_swords_v231":
+		p["shape"] = 1
+		p["width_scale"] = float(p["width_scale"]) * 0.92
+		p["guard_style"] = 1
+	elif item_id == "mourninglace_dual_daggers_v231":
+		p["shape"] = 4
+		p["width_scale"] = float(p["width_scale"]) * 1.10
+		p["guard_style"] = 5
 	return p
 
 # Single source for the target double-ended sword silhouette. Both equipped
