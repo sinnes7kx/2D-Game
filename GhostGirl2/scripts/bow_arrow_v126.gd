@@ -23,6 +23,9 @@ var formation_index: int = 0
 var bow_glow_index: int = 0
 var bow_trail_index: int = 0
 var bow_detail_index: int = 0
+# Presentation-only seed signature: never influences damage or raycasts.
+var projectile_style: int = 0
+var visual_glow_scale: float = 1.0
 var procedural_look: Dictionary = {}
 var distance_travelled: float = 0.0
 var hit_ids: Dictionary = {}
