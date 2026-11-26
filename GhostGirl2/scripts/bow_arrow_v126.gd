@@ -42,6 +42,10 @@ var glow_c: Color = Color("a6dbfa")
 func _ready() -> void:
 	z_index = 30
 	direction = direction.normalized() if direction.length_squared() > 0.0 else Vector2.RIGHT
+	# Bolts own a short seeded trail and do not allocate the long arrow lantern.
+	if is_crossbow_bolt:
+		queue_redraw()
+		return
 	# A separate additive layer preserves the readable painted arrow shaft.
 	var lantern: Node2D = Node2D.new()
 	lantern.name = "ArrowLanternGlowV154"
@@ -67,7 +71,7 @@ func _physics_process(delta: float) -> void:
 	# echo arrows never create multiple activations or hitboxes.
 	# Light reveals nearby world secrets as its one physical arrow passes,
 	# even when it strikes a wall or creature. This does not add damage.
-	if element_index == 3:
+	if not is_crossbow_bolt and element_index == 3:
 		_reveal_hidden_near_sweep(start, end)
 	if not is_crossbow_bolt and _check_world_elements(start, end):
 		return
@@ -77,7 +81,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if not is_crossbow_bolt and _check_moon_targets(start, end):
 		return
-	if element_index == 2 and _freeze_water_on_sweep(start, end):
+	if not is_crossbow_bolt and element_index == 2 and _freeze_water_on_sweep(start, end):
 		_impact(end, "water")
 		queue_free()
 		return

@@ -2,6 +2,7 @@ extends SceneTree
 const CROSS = preload("res://scripts/crossbow_v236.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const JUICE = preload("res://scripts/combat_juice_v194.gd")
+const GAME = preload("res://scripts/game.gd")
 func _initialize() -> void:
 	for face in ["front", "back", "left", "right"]:
 		for name in ["crossbow_idle_" + face, "crossbow_walk_" + face, "attack_crossbow_fire_" + face, "attack_crossbow_reload_" + face]:
@@ -26,7 +27,21 @@ func _initialize() -> void:
 	if CROSS.RELEASE_AT >= CROSS.FIRE_TIME or CROSS.HEAVY_RELOAD <= CROSS.RELOAD_TIME:
 		_fail("Invalid firing timing")
 		return
-	print("v2.36 PASS: crossbow spans, bases and foley")
+	var game: Node = GAME.new()
+	var original: GhostItemData = load("res://items/dusk_needle.tres") as GhostItemData
+	var bows: Dictionary = {}
+	var crossbows: Dictionary = {}
+	for i in range(1, 61):
+		var result: GhostItemData = game.call("_roll_sword_drop", original, i * 23) as GhostItemData
+		if result.weapon_style == "crossbow":
+			crossbows[result.item_id] = true
+		elif result.weapon_style == "bow":
+			bows[result.item_id] = true
+	game.free()
+	if bows.size() != 4 or crossbows.size() != 2:
+		_fail("Ranged loot coverage changed")
+		return
+	print("v2.36 PASS: crossbow spans, bases, ranged loot and foley")
 	quit(0)
 func _fail(reason: String) -> void:
 	push_error(reason)

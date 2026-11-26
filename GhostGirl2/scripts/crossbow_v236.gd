@@ -1,7 +1,6 @@
 extends RefCounted
 ## Presentation and timing for one physical bolt. No added sprite textures.
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
-const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 const FIRE_TIME: float = 0.20
 const RELOAD_TIME: float = 0.76
 const HEAVY_RELOAD: float = 1.02

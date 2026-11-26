@@ -297,7 +297,11 @@ func _draw() -> void:
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
 	if animation_name.contains("crossbow_"):
 		var profile: Dictionary = MODULAR.equipped_profile(self, body)
-		var held: GhostItemInstance = player.get("world").inventory.get_equipped("sword")
+		var world: Node = player.get("world") as Node
+		var inventory: Node = world.get("inventory") as Node if world != null else null
+		var held: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
+		if held == null or held.definition == null:
+			return
 		var loaded: bool = int(player.get("crossbow_stage")) == 0 or (int(player.get("crossbow_stage")) == 1 and not bool(player.get("crossbow_fired")))
 		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, str(held.definition.item_id) == "silver_reliquary_crossbow_v236")
 	elif animation_name.contains("sword_modular_"):

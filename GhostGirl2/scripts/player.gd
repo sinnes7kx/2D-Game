@@ -279,7 +279,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("target_lock") and healing_time_left <= 0.0:
 		_toggle_lock_target()
-	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0:
+	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0:
 		_begin_heal()
 	if healing_time_left > 0.0:
 		healing_time_left = maxf(0.0, healing_time_left - delta)
@@ -338,7 +338,7 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("attack_heavy") and stamina >= _attack_action_cost(true):
 				_begin_jump_attack(false)
 				started_air_attack = jump_attack_active
-			elif Input.is_action_just_pressed("attack_light") and stamina >= (_attack_action_cost(false) if _weapon_style() == "bow" else _attack_action_cost(true)):
+			elif Input.is_action_just_pressed("attack_light") and stamina >= (_attack_action_cost(false) if _weapon_style() in ["bow", "crossbow"] else _attack_action_cost(true)):
 				_begin_jump_attack(true)
 				started_air_attack = jump_attack_active
 		# A late button press survives the landing transition. It never cancels
@@ -932,7 +932,7 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 		_clear_crossbow()
 	elif crossbow_stage != 0:
 		crossbow_stage = 2
-		crossbow_left = maxf(crossbow_left, CROSSBOW_V236.RELOAD_TIME)
+		crossbow_left = maxf(crossbow_left, CROSSBOW_V236.HEAVY_RELOAD if crossbow_heavy else CROSSBOW_V236.RELOAD_TIME)
 	bow_time_left = 0.0
 	bow_draw_active = false
 	bow_draw_time = 0.0
@@ -1010,7 +1010,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	if jump_time_left <= 0.0 or jump_attack_active or carrying != null:
 		return
 	if _weapon_style() == "crossbow":
-		_begin_crossbow(not _from_heavy_button, true)
+		_begin_crossbow(_from_heavy_button, true)
 		return
 	if _weapon_style() == "bow":
 		_begin_bow_shot(not _from_heavy_button, true)
