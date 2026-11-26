@@ -48,6 +48,14 @@ const SWORD_LOOT_TABLE = [
 	preload("res://items/moonlace_dual_daggers_v173.tres"),
 	preload("res://items/gloamrose_dual_swords_v174.tres")
 ]
+# New bases share the established ordinary sword-drop lane. Keep the legacy
+# table order and saved resource identities intact.
+const VARIANT_LOOT_V231 = [
+	preload("res://items/widowglass_twinblade_v231.tres"),
+	preload("res://items/cathedral_thorn_twinblade_v231.tres"),
+	preload("res://items/vesperthorn_dual_swords_v231.tres"),
+	preload("res://items/mourninglace_dual_daggers_v231.tres")
+]
 const BLUNT_LOOT_TABLE = [
 	preload("res://items/v203_mournful_mace.tres"),
 	preload("res://items/v203_rosequartz_morningstar.tres"),
@@ -180,7 +188,12 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# One in seven ordinary monster drops becomes a sword, deterministic by seed.
 	if posmod(seed_value, 7) != 0:
 		return original
-	var picked: int = posmod(int(seed_value / 7), SWORD_LOOT_TABLE.size())
+	var sword_seed: int = int(seed_value / 7)
+	# One fifth of ordinary sword selections choose a new base. Existing
+	# saved items load their original resource path, not this selector.
+	if posmod(sword_seed, 5) == 0:
+		return VARIANT_LOOT_V231[posmod(int(sword_seed / 5), VARIANT_LOOT_V231.size())] as GhostItemData
+	var picked: int = posmod(sword_seed, SWORD_LOOT_TABLE.size())
 	return SWORD_LOOT_TABLE[picked] as GhostItemData
 
 func _on_equipment_changed() -> void:
