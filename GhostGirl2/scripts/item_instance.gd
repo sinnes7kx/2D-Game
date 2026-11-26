@@ -286,6 +286,13 @@ func glow_gradient_colors() -> Array[Color]:
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
 # Saving/restoring the cosmetic UID reproduces both without new schema fields.
+# A single base-to-art mapping for player, physical bow, FX and inspection.
+# New material variants reuse the exact calibrated painted bow geometry.
+func bow_art_style() -> String:
+	if definition != null and str(definition.item_id) in ["moonveil_bow", "reliquary_silver_bow_v234"]:
+		return "moonveil"
+	return "thornrose"
+
 func bow_limb_gradient_colors() -> Array[Color]:
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel(), gradient_version)
 

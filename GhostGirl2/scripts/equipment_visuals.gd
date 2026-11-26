@@ -63,7 +63,7 @@ func _rebuild_ambient_sources(feather: GhostItemInstance, amulet: GhostItemInsta
 	if _item_has_ambient_particles(feather):
 		ambient_particle_sources.append({"anchor": Vector2(0, -76), "radius": Vector2(16, 10), "color": _item_ambient_color(feather), "count": 3})
 	if _item_has_ambient_particles(amulet):
-		ambient_particle_sources.append({"anchor": Vector2(0, -16), "radius": Vector2(10, 8), "color": _item_ambient_color(amulet), "count": 2})
+		ambient_particle_sources.append({"anchor": Vector2.ZERO, "halo": true, "radius": Vector2(20, 7), "color": _item_ambient_color(amulet), "count": 2})
 	if _item_has_ambient_particles(wand_item):
 		ambient_particle_sources.append({"anchor": Vector2(8, -8), "radius": Vector2(12, 10), "color": _item_ambient_color(wand_item), "count": 3})
 	var sword_item: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
@@ -78,8 +78,9 @@ func _rebuild_ambient_sources(feather: GhostItemInstance, amulet: GhostItemInsta
 		var anchor: Vector2 = Vector2(0, 7)
 		if slot in ["wings", "helm"]:
 			anchor = Vector2(0, -76)
-		elif slot in ["trinket", "charm"]:
-			anchor = Vector2(0, -16)
+		var halo_particle: bool = slot in ["trinket", "charm"]
+		if halo_particle and gear != amulet:
+			continue # Only the visible accessory supplies halo particles.
 		for jewel in gear.socketed:
 			if not (jewel is Dictionary):
 				continue
@@ -90,7 +91,7 @@ func _rebuild_ambient_sources(feather: GhostItemInstance, amulet: GhostItemInsta
 				"delirium_jewel": ink = Color("98c5f4")
 				"exile_jewel": ink = Color("efd5a1")
 				_: continue
-			ambient_particle_sources.append({"anchor": anchor, "radius": Vector2(8, 11), "color": ink, "count": 2})
+			ambient_particle_sources.append({"anchor": anchor, "halo": halo_particle, "radius": Vector2(8, 11), "color": ink, "count": 2})
 
 func _draw_firefly_cluster(anchor: Vector2, radius: Vector2, color: Color, count: int) -> void:
 	for i in range(count):
@@ -195,6 +196,9 @@ func refresh() -> void:
 	accessories_glow = feather != null and (GhostWeaponFXLibrary.tier(feather.quality) >= 2 or feather.visual_signature() in [4, 5])
 	if accessories_glow:
 		accessory_color = feather.glow_gradient_colors()[1]
+	var amulet: GhostItemInstance = inventory.get_equipped("trinket")
+	if amulet == null:
+		amulet = inventory.get_equipped("charm")
 	# Existing charm/trinket stats and identity stay intact; its presentation
 	# now belongs to the seeded head halo, not the floating chest sprite.
 	pendant.hide()
@@ -277,7 +281,15 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	# Node transform is already copied from Ghost. Draw in Ghost-local coords.
 	for src in ambient_particle_sources:
-		_draw_firefly_cluster(src.get("anchor", Vector2.ZERO), src.get("radius", Vector2(10, 10)), src.get("color", Color(0.85, 0.8, 0.95, 1.0)), int(src.get("count", 2)))
+		var anchor: Vector2 = src.get("anchor", Vector2.ZERO)
+		if bool(src.get("halo", false)):
+			var face: String = str(get_parent().get("facing_name"))
+			var crown: bool = inventory.get_equipped("helm") != null
+			var accessory: GhostItemInstance = inventory.get_equipped("wings")
+			if accessory != null and accessory.definition != null and str(accessory.definition.item_id) == "v202_crescent_halo":
+				continue # The dedicated crescent already has its own light.
+			anchor = HEAD_COSMETICS_V202.body_halo_center(player_art, face, crown)
+		_draw_firefly_cluster(anchor, src.get("radius", Vector2(10, 10)), src.get("color", Color(0.85, 0.8, 0.95, 1.0)), int(src.get("count", 2)))
 	if accessories_glow:
 		var flicker: float = 0.85 + 0.15 * sin(aura_time * 1.9)
 		draw_circle(Vector2(0, -34), 16.0, Color(accessory_color.r, accessory_color.g, accessory_color.b, 0.023 * flicker))

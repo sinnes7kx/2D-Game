@@ -18,7 +18,7 @@ static func _rim(canvas: Node2D, path: PackedVector2Array, gradient: Array[Color
     var ink: Color = FX.color_at(gradient, look, 0.56, time)
     var closed: PackedVector2Array = path.duplicate()
     if closed.size() < 3:
-    	return
+        return
     closed.append(closed[0])
     canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.06)), 4.0, true)
     canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.14)), 1.6, true)
