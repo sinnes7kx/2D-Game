@@ -5,6 +5,7 @@ const SINGLE_WIDTH: float = 328.0
 const DOUBLE_WIDTH: float = 664.0
 var pinned: bool = false
 var impact_label: Label
+var anomaly_label: Label
 var _current_item: Variant = null
 var _equipped_item: Variant = null
 
@@ -30,6 +31,13 @@ func _ready() -> void:
     current_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     current_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
     current_title.get_parent().add_child(impact_label)
+    anomaly_label = Label.new()
+    anomaly_label.add_theme_font_size_override("font_size", 15)
+    anomaly_label.add_theme_color_override("font_color", Color("e8d0ac"))
+    anomaly_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    current_panel.get_node("Layout").add_child(anomaly_label)
+    current_panel.get_node("Layout").move_child(anomaly_label, current_body.get_index())
+    anomaly_label.hide()
     current_body.meta_hover_started.connect(_on_current_dot_hover)
     current_body.meta_hover_ended.connect(_on_current_dot_exit)
     equipped_body.meta_hover_started.connect(_on_equipped_dot_hover)
@@ -48,6 +56,9 @@ func display_item(item: Variant, equipped: Variant = null, _advanced: bool = fal
     current_title.text = item.display_name()
     _quality_border(current_panel, item)
     rare_star.hide()
+    var look: Dictionary = item.collector_appearance()
+    anomaly_label.visible = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0))) == 6
+    anomaly_label.text = "Anomalous · Test" if preload("res://scripts/collector_roll_code_v1931.gd").debug_active(item) else "Anomalous"
     impact_label.text = ITEM_MARKUP.impact_text(item)
     impact_label.visible = not impact_label.text.is_empty()
     impact_label.add_theme_color_override("font_color", ITEM_MARKUP.impact_color(item))
@@ -128,6 +139,8 @@ func _rare_details(item: Variant) -> String:
     return "\n".join(lines)
 
 func _process(_delta: float) -> void:
+    if visible and is_instance_valid(anomaly_label) and anomaly_label.visible:
+        anomaly_label.modulate.a = 0.78 + 0.22 * (0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.0014))
     if visible and not pinned:
         _place_popup()
 

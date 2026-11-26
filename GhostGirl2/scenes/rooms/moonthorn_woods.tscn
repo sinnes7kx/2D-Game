@@ -418,3 +418,13 @@ chest_id = "v202_moonthorn_root_knot_reward_claimed"
 loot_data = ExtResource("v140_loot")
 loot_seed = 202140
 guaranteed_quality = "normal"
+
+[node name="From_westwood_road" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(360, 1450)
+
+[node name="westwood_road" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(220, 1450)
+script = ExtResource("portal")
+interaction_name = "Follow the road to Lanternhaven"
+destination = "westwood_road"
+opened = true

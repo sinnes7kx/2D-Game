@@ -1,0 +1,156 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/westwood_road_v240.svg" id="bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" path="res://scripts/fellable_tree_v240.gd" id="tree"]
+[ext_resource type="PackedScene" path="res://scenes/rose_wraith.tscn" id="enemy"]
+[ext_resource type="Resource" path="res://items/briar_wand.tres" id="loot"]
+[sub_resource type="RectangleShape2D" id="horizontal"]
+size = Vector2(3000, 360)
+[sub_resource type="RectangleShape2D" id="vertical"]
+size = Vector2(100, 1600)
+[sub_resource type="CircleShape2D" id="trunk"]
+radius = 21.0
+
+[node name="WestwoodRoad" type="Node2D"]
+y_sort_enabled = true
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("bg")
+centered = false
+z_index = -50
+[node name="SpawnPoints" type="Node2D" parent="."]
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(2700, 800)
+[node name="From_lanternhaven" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(2700, 800)
+[node name="From_moonthorn_woods" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(300, 800)
+[node name="Collision" type="Node2D" parent="."]
+[node name="North" type="StaticBody2D" parent="Collision"]
+position = Vector2(1500, 180)
+collision_layer = 2
+collision_mask = 0
+[node name="Shape" type="CollisionShape2D" parent="Collision/North"]
+shape = SubResource("horizontal")
+[node name="South" type="StaticBody2D" parent="Collision"]
+position = Vector2(1500, 1420)
+collision_layer = 2
+collision_mask = 0
+[node name="Shape" type="CollisionShape2D" parent="Collision/South"]
+shape = SubResource("horizontal")
+[node name="West" type="StaticBody2D" parent="Collision"]
+position = Vector2(50, 800)
+collision_layer = 2
+collision_mask = 0
+[node name="Shape" type="CollisionShape2D" parent="Collision/West"]
+shape = SubResource("vertical")
+[node name="East" type="StaticBody2D" parent="Collision"]
+position = Vector2(2950, 800)
+collision_layer = 2
+collision_mask = 0
+[node name="Shape" type="CollisionShape2D" parent="Collision/East"]
+shape = SubResource("vertical")
+[node name="Gameplay" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="Portals" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="Plates" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="Memories" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="Effects" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="Enemies" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="FellableTrees" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+[node name="lanternhaven" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(2800, 800)
+script = ExtResource("portal")
+destination = "lanternhaven"
+interaction_name = "Follow the forest road"
+opened = true
+[node name="moonthorn_woods" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(170, 800)
+script = ExtResource("portal")
+destination = "moonthorn_woods"
+interaction_name = "Follow the forest road"
+opened = true
+[node name="Tree0" type="StaticBody2D" parent="Gameplay/FellableTrees"]
+position = Vector2(2350, 650)
+script = ExtResource("tree")
+shape_seed = 0
+fall_length = 175.0
+collision_layer = 2
+collision_mask = 0
+[node name="Trunk" type="CollisionShape2D" parent="Gameplay/FellableTrees/Tree0"]
+shape = SubResource("trunk")
+[node name="Tree1" type="StaticBody2D" parent="Gameplay/FellableTrees"]
+position = Vector2(2000, 980)
+script = ExtResource("tree")
+shape_seed = 1
+fall_length = 191.0
+collision_layer = 2
+collision_mask = 0
+[node name="Trunk" type="CollisionShape2D" parent="Gameplay/FellableTrees/Tree1"]
+shape = SubResource("trunk")
+[node name="Tree2" type="StaticBody2D" parent="Gameplay/FellableTrees"]
+position = Vector2(1630, 670)
+script = ExtResource("tree")
+shape_seed = 2
+fall_length = 207.0
+collision_layer = 2
+collision_mask = 0
+[node name="Trunk" type="CollisionShape2D" parent="Gameplay/FellableTrees/Tree2"]
+shape = SubResource("trunk")
+[node name="Tree3" type="StaticBody2D" parent="Gameplay/FellableTrees"]
+position = Vector2(1220, 1010)
+script = ExtResource("tree")
+shape_seed = 3
+fall_length = 175.0
+collision_layer = 2
+collision_mask = 0
+[node name="Trunk" type="CollisionShape2D" parent="Gameplay/FellableTrees/Tree3"]
+shape = SubResource("trunk")
+[node name="Tree4" type="StaticBody2D" parent="Gameplay/FellableTrees"]
+position = Vector2(860, 630)
+script = ExtResource("tree")
+shape_seed = 4
+fall_length = 191.0
+collision_layer = 2
+collision_mask = 0
+[node name="Trunk" type="CollisionShape2D" parent="Gameplay/FellableTrees/Tree4"]
+shape = SubResource("trunk")
+[node name="Tree5" type="StaticBody2D" parent="Gameplay/FellableTrees"]
+position = Vector2(540, 990)
+script = ExtResource("tree")
+shape_seed = 5
+fall_length = 207.0
+collision_layer = 2
+collision_mask = 0
+[node name="Trunk" type="CollisionShape2D" parent="Gameplay/FellableTrees/Tree5"]
+shape = SubResource("trunk")
+[node name="Wraith0" parent="Gameplay/Enemies" instance=ExtResource("enemy")]
+position = Vector2(2210, 800)
+drop_data = ExtResource("loot")
+drop_seed = 240193
+drop_quality = "random"
+[node name="Wraith1" parent="Gameplay/Enemies" instance=ExtResource("enemy")]
+position = Vector2(1760, 810)
+drop_data = ExtResource("loot")
+drop_seed = 240210
+drop_quality = "random"
+[node name="Wraith2" parent="Gameplay/Enemies" instance=ExtResource("enemy")]
+position = Vector2(1050, 850)
+drop_data = ExtResource("loot")
+drop_seed = 240227
+drop_quality = "random"
+[node name="Wraith3" parent="Gameplay/Enemies" instance=ExtResource("enemy")]
+position = Vector2(680, 820)
+drop_data = ExtResource("loot")
+drop_seed = 240244
+drop_quality = "random"

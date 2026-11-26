@@ -6,6 +6,7 @@ const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 
 const ROOMS = {
 	"lanternhaven": preload("res://scenes/rooms/lanternhaven.tscn"),
+	"westwood_road": preload("res://scenes/rooms/westwood_road.tscn"),
 	"moonwake_crypt": preload("res://scenes/rooms/moonwake_crypt.tscn"),
 	"hollow_veil_moor": preload("res://scenes/rooms/hollow_veil_moor.tscn"),
 	"garden": preload("res://scenes/rooms/garden.tscn"),
@@ -97,6 +98,7 @@ const WORLD_SAVE_FILE: String = "user://ghost_girl_world_v1.json"
 const GROUND_SAVE_FILE: String = "user://ghost_girl_ground_loot_v1.json"
 const ROOM_TITLES = {
 	"lanternhaven": "LANTERNHAVEN · SAFE HAVEN",
+	"westwood_road": "WESTWOOD ROAD · THE HOLLOW PINES",
 	"moonwake_crypt": "MOONWAKE CRYPT",
 	"hollow_veil_moor": "HOLLOW VEIL MOOR",
 	"garden": "THE WAKING GARDEN",
@@ -451,7 +453,7 @@ func refresh_vigil_hud() -> void:
 
 func _portal_unlocked(destination: String) -> bool:
 	match room:
-		"lanternhaven": return cloister_solved if destination == "sanctum" else destination == "moonwake_crypt"
+		"lanternhaven": return cloister_solved if destination == "sanctum" else destination in ["moonwake_crypt", "westwood_road"]
 		"moonwake_crypt": return true
 		"garden": return garden_key_used if destination == "chapel" else true
 		"chapel": return bells_solved if destination == "cloister" else true
@@ -555,6 +557,8 @@ func _process(_delta: float) -> void:
 func _rose_switch_hint() -> String:
 	if player == null or player.rose_hook == null or ui.is_menu_open():
 		return ""
+	if player.rose_hook.is_tree_latched():
+		return "Q  FELL TREE · F  RELEASE HOOK"
 	var origin: Vector2 = player.hand.global_position
 	var pointer: Vector2 = player.get_global_mouse_position() - origin
 	if pointer.length_squared() < 40.0:

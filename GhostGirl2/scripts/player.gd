@@ -1708,10 +1708,12 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		camera_push = attack_direction * (6.5 if jump_attack_active else (3.5 if heavy_attack else 1.8))
 	# Heavy and plunging attacks physically interact with ordinary wooden
 	# barricades, not progression locks. Each prop is hit once per strike.
-	if heavy_attack:
+	if heavy_attack or (sword != null and sword.physical_damage_kind() != "blunt"):
 		var broken_attempts: int = 0
 		for object in get_tree().get_nodes_in_group("breakable_cover"):
 			if not is_instance_valid(object) or not object is Node2D or not object.has_method("receive_damage") or bool(object.get("broken")):
+				continue
+			if not heavy_attack and not object.is_in_group("fellable_tree"):
 				continue
 			var toward: Vector2 = object.global_position - global_position
 			if toward.length_squared() > pow(minf(reach, 167.0), 2.0) or toward.length_squared() < 100.0:

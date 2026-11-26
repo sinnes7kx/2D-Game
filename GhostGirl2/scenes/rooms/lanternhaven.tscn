@@ -347,3 +347,13 @@ item_seed = 202102
 [node name="Icon" type="Sprite2D" parent="Gameplay/V202HeadFinds/MoonlitTiaraFind"]
 texture = ExtResource("v202_tiara_icon")
 scale = Vector2(0.57, 0.57)
+
+[node name="From_westwood_road" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(430, 1180)
+
+[node name="westwood_road" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(245, 1180)
+script = ExtResource("2_portal")
+destination = "westwood_road"
+interaction_name = "Follow the westward forest road"
+opened = true

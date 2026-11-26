@@ -9,6 +9,7 @@ const SHARE_CARD = preload("res://scripts/v209_collector_share_card.gd")
 var model: Node2D
 var stage: Control
 var heading: Label
+var anomaly_title: Label
 var info: RichTextLabel
 var status: Label
 var glow_button: CheckButton
@@ -40,9 +41,11 @@ func _ready() -> void:
 	center.add_child(panel)
 	var frame: StyleBoxFlat = StyleBoxFlat.new()
 	frame.bg_color = Color("211b29")
-	frame.border_color = Color("746077")
+	frame.border_color = Color("a08567")
 	frame.set_border_width_all(1)
-	frame.set_corner_radius_all(8)
+	frame.set_corner_radius_all(4)
+	frame.shadow_color = Color(0.0, 0.0, 0.0, 0.65)
+	frame.shadow_size = 12
 	frame.content_margin_left = 18
 	frame.content_margin_right = 18
 	frame.content_margin_top = 16
@@ -58,7 +61,19 @@ func _ready() -> void:
 	layout.add_child(eyebrow)
 	heading = Label.new()
 	heading.add_theme_font_size_override("font_size", 24)
-	layout.add_child(heading)
+	var header: HBoxContainer = HBoxContainer.new()
+	layout.add_child(header)
+	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	heading.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	header.add_child(heading)
+	anomaly_title = Label.new()
+	anomaly_title.text = "Anomalous"
+	anomaly_title.add_theme_font_size_override("font_size", 22)
+	anomaly_title.add_theme_color_override("font_color", Color("e8d0ac"))
+	anomaly_title.add_theme_color_override("font_shadow_color", Color("63477d"))
+	anomaly_title.add_theme_constant_override("shadow_outline_size", 2)
+	header.add_child(anomaly_title)
+	anomaly_title.hide()
 	var columns: HBoxContainer = HBoxContainer.new()
 	columns.add_theme_constant_override("separation", 16)
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -142,6 +157,10 @@ func open_item(value: GhostItemInstance) -> void:
 	inspected = value
 	model.call("set_item", value)
 	heading.text = value.display_name()
+	var appearance: Dictionary = value.collector_appearance()
+	var is_anomaly: bool = maxi(int(appearance.get("material", 0)), int(appearance.get("particle_tier", 0))) == 6
+	anomaly_title.visible = is_anomaly
+	anomaly_title.text = "Anomalous · Test" if ROLL_CODE.debug_active(value) else "Anomalous"
 	heading.add_theme_color_override("font_color", value.quality_color())
 	advanced_info = Input.is_key_pressed(KEY_ALT)
 	_refresh_info()
@@ -219,6 +238,9 @@ func _stage_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not visible:
 		return
+	if anomaly_title.visible:
+		var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.0014)
+		anomaly_title.modulate = Color(1.0, 0.90 + pulse * 0.10, 0.82 + pulse * 0.18, 0.78 + pulse * 0.22)
 	var alt: bool = Input.is_key_pressed(KEY_ALT)
 	if alt != advanced_info:
 		advanced_info = alt
