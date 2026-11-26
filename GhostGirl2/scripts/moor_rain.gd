@@ -1,5 +1,9 @@
 @tool
 extends Node2D
+const PERF_V230 = preload("res://scripts/performance_profiles_v230.gd")
+var redraw_clock: float = 0.0
+var last_profile_revision: int = -1
+var followed_player: Node2D = null
 ## Local, camera-adjacent drizzle. Keeping only nearby streaks alive avoids
 ## expensive whole-map particles in the 10,368 x 6,912 wilderness.
 @export_range(0.0, 1.0, 0.05) var intensity: float = 0.38
@@ -27,19 +31,26 @@ func _process(delta: float) -> void:
             elapsed += delta
             queue_redraw()
         return
-    var girl: Node2D = get_tree().get_first_node_in_group("ghost_girl_player") as Node2D
-    if girl == null:
+    if not is_instance_valid(followed_player) or not followed_player.is_inside_tree() or followed_player.is_queued_for_deletion():
+        followed_player = get_tree().get_first_node_in_group("ghost_girl_player") as Node2D
+    if not is_instance_valid(followed_player):
         return
-    global_position = girl.global_position
+    global_position = followed_player.global_position
     elapsed += delta
-    queue_redraw()
+    redraw_clock += delta
+    var hz: float = PERF_V230.rain_hz()
+    if last_profile_revision != PERF_V230.revision or PERF_V230.due(redraw_clock, hz):
+        last_profile_revision = PERF_V230.revision
+        redraw_clock = PERF_V230.remainder(redraw_clock, hz)
+        queue_redraw()
 
 func _draw() -> void:
     if intensity <= 0.01 or (Engine.is_editor_hint() and not editor_preview):
         return
     if drops.size() != streak_count:
         _populate_drops()
-    var count: int = maxi(0, roundi(float(drops.size()) * intensity))
+    var density: float = 1.0 if Engine.is_editor_hint() else PERF_V230.rain_density()
+    var count: int = clampi(roundi(float(drops.size()) * intensity * density), 0, drops.size())
     for i in range(count):
         var d: Vector4 = drops[i]
         var x: float = fposmod(d.x * VIEW_SIZE.x + elapsed * wind * d.w, VIEW_SIZE.x) - VIEW_SIZE.x * 0.5

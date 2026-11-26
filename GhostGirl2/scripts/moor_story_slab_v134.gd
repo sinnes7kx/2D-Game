@@ -1,5 +1,8 @@
 @tool
 extends Node2D
+const PERF_V230 = preload("res://scripts/performance_profiles_v230.gd")
+var redraw_clock: float = 0.0
+var last_profile_revision: int = -1
 ## Quiet environmental storytelling. Readable but not a new mandatory quest.
 @export var slab_title: String = "THE LAST BELL"
 @export_multiline var inscription: String = "Even after the Warden fell, one vigil remained."
@@ -12,7 +15,12 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     elapsed += delta
-    queue_redraw()
+    redraw_clock += delta
+    var hz: float = 0.0 if Engine.is_editor_hint() else PERF_V230.ambient_hz()
+    if last_profile_revision != PERF_V230.revision or PERF_V230.due(redraw_clock, hz):
+        last_profile_revision = PERF_V230.revision
+        redraw_clock = PERF_V230.remainder(redraw_clock, hz)
+        queue_redraw()
 
 func _draw() -> void:
     var glow: float = 0.5 + 0.5 * sin(elapsed * 1.6)

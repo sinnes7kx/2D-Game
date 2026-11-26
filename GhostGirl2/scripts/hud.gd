@@ -2,6 +2,7 @@ extends CanvasLayer
 const COLLECTOR_LENS = preload("res://scripts/collector_lens_v179.gd")
 const COMBAT_JUICE = preload("res://scripts/combat_juice_v194.gd")
 const SILK_V226 = preload("res://scripts/silk_motion_v226.gd")
+const PERF_V230 = preload("res://scripts/performance_profiles_v230.gd")
 var collector_lens: Control
 const COLLECTION_VAULT = preload("res://scripts/collection_vault_v181.gd")
 var collection_vault: Control
@@ -45,6 +46,7 @@ var location_time: float = 0.0
 var expression_time: float = 0.0
 var fps_readout: Label
 var fps_refresh_left: float = 0.0
+var fps_peak_ms: float = 0.0
 
 # Both panel scenes attach their own controllers (editor-safe native layouts).
 func _ready() -> void:
@@ -82,7 +84,7 @@ func _ready() -> void:
 	fps_readout.offset_left = -250.0
 	fps_readout.offset_right = -12.0
 	fps_readout.offset_top = 10.0
-	fps_readout.offset_bottom = 52.0
+	fps_readout.offset_bottom = 80.0
 	fps_readout.hide()
 	collector_lens = COLLECTOR_LENS.new()
 	collector_lens.name = "CollectorLensV179"
@@ -150,12 +152,15 @@ func show_pickup(label_text: String, tint: Color = Color("d9cbd0")) -> void:
 
 func _process(delta: float) -> void:
 	if is_instance_valid(fps_readout) and fps_readout.visible:
+		fps_peak_ms = maxf(fps_peak_ms, delta * 1000.0)
 		fps_refresh_left -= delta
 		if fps_refresh_left <= 0.0:
 			fps_refresh_left = 0.25
 			var fps: float = float(Engine.get_frames_per_second())
 			var texture_mib: float = float(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)) / 1048576.0
-			fps_readout.text = "%d FPS  ·  %.1f ms\nTextures: %.0f MiB" % [roundi(fps), 1000.0 / maxf(1.0, fps), texture_mib]
+			var draw_calls: int = int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+			fps_readout.text = "%s  ·  %d FPS\nAvg %.1f ms  ·  Peak %.1f ms\nDraws: %d  ·  Tex: %.0f MiB" % [PERF_V230.label(), roundi(fps), 1000.0 / maxf(1.0, fps), fps_peak_ms, draw_calls, texture_mib]
+			fps_peak_ms = 0.0
 	# ALT locks the tooltip at its last position so its star and color
 	# details can be inspected without the panel chasing the pointer.
 	if item_compare_popup != null and item_compare_popup.visible:
@@ -290,6 +295,11 @@ func _input(event: InputEvent) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	# Session-only accessibility controls; saves and combat are unaffected.
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_F3 and event.shift_pressed:
+			PERF_V230.cycle()
+			show_pickup("GRAPHICS PROFILE  ·  " + PERF_V230.label().to_upper())
+			get_viewport().set_input_as_handled()
+			return
 		if event.physical_keycode == KEY_F4 and event.shift_pressed:
 			SILK_V226.enabled = not SILK_V226.enabled
 			show_pickup("HAIR / DRESS MOTION  ·  " + ("ON" if SILK_V226.enabled else "OFF"))
@@ -298,6 +308,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F2 and event.shift_pressed:
 			fps_readout.visible = not fps_readout.visible
 			fps_refresh_left = 0.0
+			fps_peak_ms = 0.0
 			get_viewport().set_input_as_handled()
 			return
 		if event.physical_keycode == KEY_F8:

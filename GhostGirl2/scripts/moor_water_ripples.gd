@@ -1,5 +1,8 @@
 @tool
 extends Node2D
+const PERF_V230 = preload("res://scripts/performance_profiles_v230.gd")
+var redraw_clock: float = 0.0
+var last_profile_revision: int = -1
 ## Draws restrained glints on top of the existing painted pond, without
 ## replacing the user's background art or obscuring Ghost Girl.
 @export_range(3, 24, 1) var glint_count: int = 11
@@ -39,7 +42,12 @@ func _create_glints() -> void:
 
 func _process(delta: float) -> void:
     phase += delta
-    queue_redraw()
+    redraw_clock += delta
+    var hz: float = 0.0 if Engine.is_editor_hint() else PERF_V230.ambient_hz()
+    if last_profile_revision != PERF_V230.revision or PERF_V230.due(redraw_clock, hz):
+        last_profile_revision = PERF_V230.revision
+        redraw_clock = PERF_V230.remainder(redraw_clock, hz)
+        queue_redraw()
 
 func _draw() -> void:
     if glint_strength <= 0.0:
