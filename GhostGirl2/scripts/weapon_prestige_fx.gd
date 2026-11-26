@@ -247,19 +247,12 @@ func _axial_span() -> PackedVector2Array:
 	var style: String = item.weapon_style()
 	var pose_frame: int = 0 if STEADY_IDLE.matches(animation) else body.frame
 	if item.get_slot() == "wand":
-		# v1.63: exact frame-authored wand points. Shared Ghost-local geometry
-		# with the 12-row pose atlases, so bloom follows the ornamented head.
-		var guide_data: Dictionary = wand_pose_by_animation.get(animation, {})
-		if guide_data.is_empty():
-			guide_data = wand_pose_by_animation.get("wand_idle_" + face, {})
-		var guides: Array = guide_data.get("guides", [])
-		if not guides.is_empty():
-			var idle: bool = animation.begins_with("wand_idle_") and GENTLE.modular_idle(str(body.animation))
-			var line: Variant = guides[0 if idle else clampi(body.frame, 0, guides.size() - 1)]
-			if line is Array and line.size() == 4:
-				var wand_span: PackedVector2Array = PackedVector2Array([Vector2(float(line[0]), float(line[1])), Vector2(float(line[2]), float(line[3]))])
-				return GENTLE.smooth(body, str(body.animation), wand_span) if idle else wand_span
-		# Explicit fallback only if the new guides have not imported yet.
+		# Shared with actual wand art and the spell release origin. Do not
+		# approximate a separate hand offset for the prestige layer.
+		var idle: bool = animation.begins_with("wand_idle_") and GENTLE.modular_idle(str(body.animation))
+		var wand_span: PackedVector2Array = WAND_ANCHORS_V216.span(animation, 0 if idle else body.frame, face)
+		if wand_span.size() == 2:
+			return GENTLE.smooth(body, str(body.animation), wand_span) if idle else wand_span
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
 	if style == "dual_sword":
 		var crossed: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
