@@ -554,7 +554,7 @@ func _draw() -> void:
 		return
 	ANOMALOUS.draw_edge(self, PackedVector2Array([grip.lerp(tip, 0.25), tip]), effect_palette, collector_look, elapsed, 1.0)
 	# Bow string and body remain recognizable; its glow must not become a solid bar.
-	var radius: float = 6.0 if narrow else (8.0 if wand else 10.5)
+	var radius: float = (6.0 if narrow else (8.0 if wand else 10.5)) * 1.15
 	var opaque_factor: float = 0.71 if narrow else 1.0
 	for i in range(15):
 		var t: float = 0.20 + 0.72 * float(i) / 14.0
@@ -1110,7 +1110,7 @@ func _draw_mythic_signature(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 	var style: String = item.weapon_style()
 	if item.get_slot() == "wand":
 		# Wand: an identifiable floating crystal crown, not a sword beam.
-		var radius: float = 11.8 + 0.8 * sin(phase * 0.5)
+		var radius: float = (11.8 + 0.8 * sin(phase * 0.5)) * 1.20
 		_soft_orb(focus, 11.0, rim, strength * 1.5)
 		draw_arc(focus, radius, phase * 0.34, phase * 0.34 + PI * 1.47, 36, Color(rim.r, rim.g, rim.b, 0.66 * strength), 2.25, true)
 		draw_arc(focus, radius - 3.0, -phase * 0.25, -phase * 0.25 + PI * 1.11, 32, Color(bright.r, bright.g, bright.b, 0.36 * strength), 1.4, true)

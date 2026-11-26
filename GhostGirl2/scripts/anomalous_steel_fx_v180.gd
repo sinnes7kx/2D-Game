@@ -62,8 +62,8 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 			var a: Vector2 = path[i].lerp(path[i + 1], float(j) / 5.0)
 			var b: Vector2 = path[i].lerp(path[i + 1], float(j + 1) / 5.0)
 			var ink: Color = color_at(colors, look, u, time)
-			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.075 * power)), 2.7, true)
-			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, minf(0.38, 0.30 * power))), 0.95, true)
+			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.075 * power)), 3.1, true)
+			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, minf(0.38, 0.30 * power))), 1.1, true)
 	if not details:
 		return
 	var root: Vector2 = path[0]

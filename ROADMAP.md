@@ -149,6 +149,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - Retain bow damage, material impact audio and puzzle behavior; release position shares visible grip and aim. Suppress old painted mask and prestige overlay for new bows only. Daggers retain existing thrust gameplay and shared wrist spans. Existing loot lanes and debug F7. Previous item resources and save schema unchanged.
 - Source/geometry tests and expanded ranged-pool checks; Godot parser, F5 visual alignment and actual performance remain unverified. No Actions dispatch. Built atop v2.37.
 
+### v2.38 — weapon visual polish (source implementation; engine review pending)
+
+- Enlarge held wand overlays uniformly by 20% around their authored wrist, with matching tip geometry. Extend heavy maul-family forward shaft span from 54 to 70 and rear grip tail from 20 to 26, retaining head dimensions. This also extends the shared mace/morningstar/flail forward rig.
+- Increase selected equipped glow radii, ambient weapon particle spread, edge widths and swing wakes without increasing particle counts. No changes to damage formulas, item seeds or save schema; wand muzzle position follows the larger art and requires collision/near-wall review.
+- Verify all four facings, preview and casts, maul variants, FX Off and F5 visual quality; engine validation pending.
+
 ### v2.37 — crossbow forge and synchronized handling (source implementation; engine review pending)
 
 - Add Vesper Latch Crossbow and Ossuary Arbalest, with distinct compact/broad construction and copied comparable stats. All four bases use bounded seed-driven limb widths, grip wraps, four ornament motifs, muted metal bevels and a progressively cocked string; shared equipped and inspection geometry. Existing ranged loot frequency unchanged.

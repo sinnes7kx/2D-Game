@@ -25,8 +25,8 @@ func _draw() -> void:
     var heading: Vector2 = direction.normalized() if direction.length_squared() > 0.001 else Vector2.RIGHT
     var angle: float = heading.angle()
     var distance: float = (10.0 if kind == "charged" else 14.0) + 10.0 * t
-    var span: float = 0.38 if kind == "charged" else 0.60
-    var radius: float = (18.0 if kind == "charged" else 23.0) + 15.0 * t
+    var span: float = 0.46 if kind == "charged" else 0.72
+    var radius: float = ((18.0 if kind == "charged" else 23.0) + 15.0 * t) * 1.20
     var rim: Color = Color(color.r, color.g, color.b, 0.25 * fade)
     var feather: Color = Color(color.r, color.g, color.b, 0.08 * fade)
     var center: Vector2 = heading * distance
