@@ -59,7 +59,7 @@ func _draw() -> void:
     var body: AnimatedSprite2D = girl.get_node_or_null("Ghost") as AnimatedSprite2D
     if body == null:
         return
-    var points: PackedVector2Array = WAND_ANCHORS_V216.span(str(body.animation), body.frame, str(girl.get("facing_name")))
+    var points: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(body, str(girl.get("facing_name")))
     if points.size() != 2:
         return
     # From Ghost-local sprite coordinates to this fallback Hand-local canvas.
