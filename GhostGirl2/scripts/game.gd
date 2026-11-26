@@ -1,4 +1,5 @@
 extends Node2D
+const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 ## Act 1 scene orchestrator. All doors, carryables, plates, puzzle pieces,
 ## visual clues, collision bodies and effects are EDITABLE ROOM NODES.
 ## No dialogue, lore pop-ups, or runtime construction of puzzle props.
@@ -843,7 +844,7 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 	add_child(bolt)
 	removed_room_items.append(bolt)
 	var aim: Vector2 = direction.normalized() if direction.length_squared() > 0.001 else player.facing
-	bolt.global_position = player.global_position + Vector2(0, -44) + aim * 29.0
+	bolt.global_position = WAND_ANCHORS_V216.world_tip(player)
 	var intended: Vector2 = player.spell_aim_point
 	bolt.direction = (intended - bolt.global_position).normalized() if intended.distance_squared_to(bolt.global_position) > 25.0 else aim
 	bolt.owner_rid = player.get_rid()

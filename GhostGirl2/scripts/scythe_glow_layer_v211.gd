@@ -24,6 +24,9 @@ func _ready() -> void:
 static func rolled_level(item: GhostItemInstance) -> int:
 	if item == null or item.definition == null or item.weapon_style() != "scythe":
 		return 0
+	# Explicit owner-selected glow overrides the default roll, never its seed.
+	if item.glow_level_override >= 0:
+		return clampi(item.glow_level_override, 0, 5)
 	# Domain-separated digest: distinct from stats, material, existing FX.
 	var identity: String = item.cosmetic_uid.to_lower() if RNG.is_valid_uid(item.cosmetic_uid) else "legacy-%d" % item.visual_seed()
 	var digest: PackedByteArray = ("ghost-girl-v211-scythe-aura:" + identity).sha256_buffer()

@@ -13,10 +13,10 @@ func _initialize() -> void:
 func _verify() -> void:
 	var source_world: String = FileAccess.get_file_as_string("res://scripts/scythe_rig_v190.gd")
 	var source_model: String = FileAccess.get_file_as_string("res://scripts/collector_lens_model_v179.gd")
-	if not source_world.contains("SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, true)"):
+	if not source_world.contains("equipped == null or equipped.glow_level_override != 0"):
 		_fail("World scythe lost its independent curved-blade effects")
 		return
-	if not source_model.contains("elapsed, 1.0, glow_enabled)"):
+	if not source_model.contains("glow_enabled and CHOICES_V216.effect_scale(item) > 0.0)"):
 		_fail("Inspect scythe no longer follows Illumination setting")
 		return
 	var base: GhostItemData = load("res://items/rose_reaper_scythe.tres") as GhostItemData
@@ -53,7 +53,7 @@ func _verify() -> void:
 	var lens: Control = LENS.new()
 	root.add_child(lens)
 	lens.call("open_item", scythe)
-	if not (lens.get("status") as Label).text.contains("Blade highlights"):
+	if not (lens.get("status") as Label).text.to_lower().contains("blade highlights"):
 		_fail("Collector Lens must explain the two independent FX layers")
 		return
 	lens.call("close_lens")

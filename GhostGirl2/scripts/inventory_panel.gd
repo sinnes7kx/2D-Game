@@ -21,6 +21,8 @@ var cosmetic_radio_panel: ScrollContainer
 var cosmetic_radio_options: Array[Dictionary] = []
 var eye_editor: ScrollContainer
 var eye_choices: Array[Dictionary] = []
+var glow_editor: ScrollContainer
+var glow_choices: Array[Dictionary] = []
 var last_recovery_notice: String = ""
 @onready var inspect_button: Button = $Layout/Actions/InspectSelected
 @onready var slots: Control = $Layout/SlotsWell/Slots
@@ -71,6 +73,7 @@ func _ready() -> void:
 	description.hide()
 	_create_cosmetic_radio_panel()
 	_create_eye_editor()
+	_create_glow_editor()
 	var details_well: PanelContainer = $Layout/DetailsWell
 	if OS.is_debug_build():
 		details_well.custom_minimum_size = Vector2(0, 196)
@@ -243,7 +246,8 @@ func _show_details(index: int) -> void:
 	_refresh_seed_controls(item)
 	_refresh_cosmetic_radio_panel(item)
 	_refresh_eye_editor(item)
-	$Layout/DetailsWell.custom_minimum_size.y = 226.0 if _is_eye_item(item) else (196.0 if OS.is_debug_build() else 42.0)
+	_refresh_glow_editor(item)
+	$Layout/DetailsWell.custom_minimum_size.y = 226.0 if _is_eye_item(item) else (226.0 if _is_glow_item(item) else (196.0 if OS.is_debug_build() else 42.0))
 	test_mythic.visible = OS.is_debug_build()
 	if test_mythic.visible:
 		_update_effect_compatibility(item)
@@ -484,6 +488,8 @@ func _clear() -> void:
 		cosmetic_radio_panel.hide()
 	if is_instance_valid(eye_editor):
 		eye_editor.hide()
+	if is_instance_valid(glow_editor):
+		glow_editor.hide()
 	if is_instance_valid(test_mythic):
 		test_mythic.visible = false
 	if is_instance_valid(test_looks):
@@ -523,6 +529,90 @@ func _local_stat_label(stat_id: String) -> String:
 		"find_bonus_pct": return "item discovery"
 		_: return stat_id.replace("_", " ")
 
+
+# Cosmetic glow controls are available in regular play, without rolling
+# a new seed. Radio groups are native CheckBox + ButtonGroup (Godot 4.7).
+static func _is_glow_item(item: GhostItemInstance) -> bool:
+	return item != null and item.definition != null and item.get_slot() in ["sword", "wand"]
+
+func _create_glow_editor() -> void:
+	var host: VBoxContainer = $Layout/DetailsWell/DetailsVBox
+	glow_editor = ScrollContainer.new()
+	glow_editor.name = "EditableGlowV216"
+	glow_editor.custom_minimum_size = Vector2(0, 214)
+	glow_editor.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	host.add_child(glow_editor)
+	host.move_child(glow_editor, 0)
+	var content: VBoxContainer = VBoxContainer.new()
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	glow_editor.add_child(content)
+	var title: Label = Label.new()
+	title.text = "GLOW · YOUR COSMETIC STYLE (saved separately from roll)"
+	title.add_theme_font_size_override("font_size", 11)
+	content.add_child(title)
+	var sections: Array[Dictionary] = [
+		{"key": "glow", "title": "Light strength", "labels": ["Natural", "Off", "10%", "20%", "30%", "40%", "50%"]},
+		{"key": "bow_body", "title": "Bow body", "labels": ["Natural", "Off", "Limbs", "Limbs + string", "Full bow"]},
+		{"key": "projectile", "title": "Arrow appearance", "labels": ["Natural", "Plain", "Moonthread", "Twin Helix", "Halo Burst", "Petal Drift", "Glass Motes", "Comet Tail", "Starlace", "Wisp Bloom"]}
+	]
+	for section in sections:
+		var heading: Label = Label.new()
+		heading.text = str(section["title"])
+		heading.add_theme_font_size_override("font_size", 12)
+		content.add_child(heading)
+		var group: ButtonGroup = ButtonGroup.new()
+		var grid: GridContainer = GridContainer.new()
+		grid.columns = 3
+		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		content.add_child(grid)
+		var labels: Array = section["labels"]
+		for i in range(labels.size()):
+			var button: CheckBox = CheckBox.new()
+			button.text = str(labels[i])
+			button.button_group = group
+			button.add_theme_font_size_override("font_size", 11)
+			grid.add_child(button)
+			button.toggled.connect(_set_glow_choice.bind(str(section["key"]), i - 1))
+			glow_choices.append({"button": button, "key": str(section["key"]), "value": i - 1, "heading": heading, "grid": grid})
+	glow_editor.hide()
+
+func _refresh_glow_editor(item: GhostItemInstance) -> void:
+	if not is_instance_valid(glow_editor):
+		return
+	glow_editor.visible = _is_glow_item(item)
+	if not glow_editor.visible:
+		return
+	var bow: bool = item.weapon_style() == "bow"
+	for choice in glow_choices:
+		var key: String = str(choice["key"])
+		var shown: bool = key == "glow" or bow
+		var title: Label = choice["heading"] as Label
+		var grid: GridContainer = choice["grid"] as GridContainer
+		title.visible = shown
+		grid.visible = shown
+		var option: CheckBox = choice["button"] as CheckBox
+		var current: int = item.glow_level_override if key == "glow" else (item.bow_glow_mode_override if key == "bow_body" else item.bow_projectile_style_override)
+		option.set_pressed_no_signal(current == int(choice["value"]))
+
+func _set_glow_choice(pressed: bool, key: String, value: int) -> void:
+	if not pressed:
+		return
+	var item: GhostItemInstance = _selected_cosmetic_item()
+	if not _is_glow_item(item):
+		return
+	if key != "glow" and item.weapon_style() != "bow":
+		return
+	var field: String = "glow_level_override" if key == "glow" else ("bow_glow_mode_override" if key == "bow_body" else "bow_projectile_style_override")
+	var old_value: int = int(item.get(field))
+	item.set(field, clampi(value, -1, 5 if key == "glow" else (3 if key == "bow_body" else 8)))
+	if not inventory.save_game():
+		item.set(field, old_value)
+		_refresh_glow_editor(item)
+		notice.text = "Could not save cosmetic style · unchanged"
+		return
+	inventory.contents_changed.emit()
+	inventory.equipment_changed.emit()
+	notice.text = "Cosmetic glow saved · item roll and stats unchanged"
 
 # Real user personalization of owned luminous eyes. These values are
 # separate from the genuine UID, original rarity, loot seed and stats.
@@ -680,7 +770,7 @@ func _create_cosmetic_radio_panel() -> void:
 func _refresh_cosmetic_radio_panel(item: GhostItemInstance) -> void:
 	if not is_instance_valid(cosmetic_radio_panel):
 		return
-	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null and not _is_eye_item(item)
+	cosmetic_radio_panel.visible = OS.is_debug_build() and item != null and not _is_eye_item(item) and not _is_glow_item(item)
 	if not cosmetic_radio_panel.visible:
 		return
 	var active: Dictionary = {

@@ -23,6 +23,7 @@ quick_tests=(
   v213_twinblade_audio_smoke.gd
   v204_eye_palette_coverage_smoke.gd
   v215_eyes_bows_input_fx_smoke.gd
+  v216_editable_fx_bow_wand_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

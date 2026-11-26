@@ -1,5 +1,7 @@
 extends Node2D
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
+const CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
+const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
@@ -245,19 +247,11 @@ func _axial_span() -> PackedVector2Array:
 	var style: String = item.weapon_style()
 	var pose_frame: int = 0 if STEADY_IDLE.matches(animation) else body.frame
 	if item.get_slot() == "wand":
-		# v1.63: exact frame-authored wand points. Shared Ghost-local geometry
-		# with the 12-row pose atlases, so bloom follows the ornamented head.
-		var guide_data: Dictionary = wand_pose_by_animation.get(animation, {})
-		if guide_data.is_empty():
-			guide_data = wand_pose_by_animation.get("wand_idle_" + face, {})
-		var guides: Array = guide_data.get("guides", [])
-		if not guides.is_empty():
-			var idle: bool = animation.begins_with("wand_idle_") and GENTLE.modular_idle(str(body.animation))
-			var line: Variant = guides[0 if idle else clampi(body.frame, 0, guides.size() - 1)]
-			if line is Array and line.size() == 4:
-				var wand_span: PackedVector2Array = PackedVector2Array([Vector2(float(line[0]), float(line[1])), Vector2(float(line[2]), float(line[3]))])
-				return GENTLE.smooth(body, str(body.animation), wand_span) if idle else wand_span
-		# Explicit fallback only if the new guides have not imported yet.
+		# Shared with actual wand art and the spell release origin. Do not
+		# approximate a separate hand offset for the prestige layer.
+		var wand_span: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(body, face)
+		if wand_span.size() == 2:
+			return wand_span
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
 	if style == "dual_sword":
 		var crossed: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
@@ -406,7 +400,7 @@ func _fallback_tip(grip: Vector2, face: String, distance: float) -> Vector2:
 
 func _process(delta: float) -> void:
 	# A little more edge presence on the small world-scale paired swords only.
-	self_modulate.a = FX_LEVEL.alpha(0.80 if item != null and item.weapon_style() == "bow" else (0.72 if item != null and item.weapon_style() == "dual_sword" else GENTLE.EFFECT_ALPHA))
+	self_modulate.a = FX_LEVEL.alpha((0.80 if item != null and item.weapon_style() == "bow" else (0.72 if item != null and item.weapon_style() == "dual_sword" else GENTLE.EFFECT_ALPHA)) * CHOICES_V216.effect_scale(item))
 	elapsed += delta
 	if inventory == null and player != null:
 		# Self-heal when an older game.gd forgot to call bind_inventory().
@@ -429,7 +423,7 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 func _fx_key(value: GhostItemInstance) -> String:
-	return "%s:%s:%s:%s:%s:%s" % [value.effect_palette_channel(), value.debug_color_mode, value.debug_glow_motif, value.debug_surface_mode, value.debug_forge_guard, value.debug_forge_grip]
+	return "%s:%s:%s:%s:%s:%s:%d:%d:%d" % [value.effect_palette_channel(), value.debug_color_mode, value.debug_glow_motif, value.debug_surface_mode, value.debug_forge_guard, value.debug_forge_grip, value.glow_level_override, value.bow_glow_mode_override, value.bow_projectile_style_override]
 
 func _ink(progress: float, opacity: float) -> Color:
 	var tint: Color = paint_a.lerp(paint_b, clampf(progress, 0.0, 1.0))
@@ -444,7 +438,7 @@ func _gradient_at(t: float) -> Color:
 # v1.54 -- soft bloom sampled around the approved weapon silhouette.
 # Round, feathered light replaces the old large square-ended 26px line strips.
 func _draw() -> void:
-	if item == null or body == null:
+	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0:
 		return
 	# Modular heavy weapons own their actual edge/rim glow; do not double it.
 	if item.weapon_style() in ["halberd", "maul"] and player != null and player.has_node("Ghost/ScytheRigV190") and preload("res://scripts/heavy_weapon_art_v192.gd").matches(str(body.animation)):
@@ -475,6 +469,12 @@ func _draw() -> void:
 		intensity *= 0.91 + 0.09 * sin(elapsed * float(collector_look.get("glow_speed", 0.8)) * TAU)
 		if style not in ["dual_sword", "dual_dagger"]:
 			_draw_v177_collector_finish(grip, tip, style, intensity)
+	# Explicit owner-selected glow always produces a small visible metal/glass
+	# highlight even if this weapon lacks an authored prestige animation.
+	# Paired/twin blades and heavy rigs retain their own precise edge paths.
+	var seeded_special: bool = GhostWeaponFXLibrary.tier(item.quality) >= 2 or item.visual_signature() > 0
+	if (item.glow_level_override > 0 or (item.glow_level_override < 0 and seeded_special)) and style not in ["dual_sword", "dual_dagger", "twinblade"]:
+		_draw_v216_visible_fallback(grip, tip, intensity)
 	if style == "dual_sword":
 		# Glow is applied to BOTH physical sword blades, never across the grips.
 		var paired_swords: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
@@ -491,9 +491,13 @@ func _draw() -> void:
 	var narrow: bool = style == "bow"
 	var wand: bool = item.get_slot() == "wand"
 	if narrow:
-		ANOMALOUS.draw_edge(self, PackedVector2Array([grip, tip]), effect_palette, collector_look, elapsed, 1.1)
-		_draw_bow_dual_glow(grip, tip, tangent, normal, minf(intensity, 1.15))
-		_draw_bow_charge_light(grip, tip, normal, intensity)
+		if CHOICES_V216.bow_body_visible(item):
+			ANOMALOUS.draw_edge(self, PackedVector2Array([grip, tip]), effect_palette, collector_look, elapsed, 1.1)
+			_draw_bow_dual_glow(grip, tip, tangent, normal, minf(intensity, 1.15))
+			if CHOICES_V216.bow_mode(item) == 3:
+				_draw_full_bow_aura(grip, tip, normal, minf(intensity, 1.35))
+		if CHOICES_V216.bow_string_visible(item):
+			_draw_bow_charge_light(grip, tip, normal, intensity)
 		_draw_ambient_fireflies(grip, tip, tangent, normal, minf(intensity, 1.35))
 		_draw_socketed_jewel_echo(grip, tip, normal)
 		if visual_signature_level > 0:
@@ -953,10 +957,30 @@ func _bow_string_at(t: float) -> Color:
 	var u: float = clampf(t, 0.0, 1.0)
 	return GhostCosmeticRNGV152.sample_palette(bow_string_colors, u)
 
+# Expanded light is a separate decoration riding the same carried-bow
+# coordinates. No collision, attack or extra magic-projectile behavior.
+func _draw_full_bow_aura(grip: Vector2, tip: Vector2, normal: Vector2, power: float) -> void:
+	for i in range(19):
+		var u: float = 0.08 + 0.86 * float(i) / 18.0
+		var point: Vector2 = grip.lerp(tip, u) + normal * sin(u * TAU) * 4.1
+		var ink: Color = _gradient_at(u)
+		var taper: float = maxf(0.18, sin(u * PI))
+		draw_circle(point, 7.2 * taper, Color(ink.r, ink.g, ink.b, 0.060 * power * taper))
+		draw_circle(point, 3.1 * taper, Color(ink.r, ink.g, ink.b, 0.105 * power * taper))
+
+func _draw_v216_visible_fallback(grip: Vector2, tip: Vector2, intensity: float) -> void:
+	var color: Color = _gradient_at(0.72)
+	var power: float = clampf(intensity, 0.0, 1.6)
+	var root: Vector2 = grip.lerp(tip, 0.35)
+	draw_line(root, tip, Color(color.r, color.g, color.b, 0.20 * power), 5.6, true)
+	draw_line(root, tip, Color(color.r, color.g, color.b, 0.48 * power), 1.5, true)
+	draw_circle(tip, 2.0, Color(color.r, color.g, color.b, 0.31 * power))
+
 func _draw_bow_dual_glow(grip: Vector2, tip: Vector2, tangent: Vector2, normal: Vector2, intensity: float) -> void:
 	# Two independent RNG gradients: preserved painted limbs + luminous string.
 	# Limbs use soft S-shaped enamel highlights; avoid a thick one-line shard.
 	var power: float = minf(intensity, 1.65)
+	var string_visible: bool = CHOICES_V216.bow_string_visible(item)
 	for i in range(18):
 		var u: float = 0.12 + 0.82 * float(i) / 17.0
 		var taper: float = maxf(0.16, sin(u * PI))
@@ -966,11 +990,15 @@ func _draw_bow_dual_glow(grip: Vector2, tip: Vector2, tangent: Vector2, normal: 
 		var limb: Vector2 = center + normal * limb_curve
 		draw_circle(limb, (3.2 + 1.5 * taper), Color(colored.r, colored.g, colored.b, 0.038 * power))
 		draw_circle(limb, (1.35 + 0.6 * taper), Color(colored.r, colored.g, colored.b, 0.11 * power))
+		if not string_visible:
+			continue
 		var filament_color: Color = _bow_string_at(u)
 		# Move the string light behind the limbs, following the real string.
 		var string_at: Vector2 = center + normal * 5.0
 		draw_circle(string_at, 2.3 * taper, Color(filament_color.r, filament_color.g, filament_color.b, 0.025 * power))
 		draw_circle(string_at, maxf(0.65, 1.05 * taper), Color(filament_color.r, filament_color.g, filament_color.b, 0.13 * power))
+	if not string_visible:
+		return
 	# Fine uninterrupted string filament; no thick colored shard.
 	var string_a: Vector2 = grip.lerp(tip, 0.13) + normal * 5.0
 	var string_b: Vector2 = grip.lerp(tip, 0.91) + normal * 5.0

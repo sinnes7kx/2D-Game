@@ -23,6 +23,9 @@ var formation_index: int = 0
 var bow_glow_index: int = 0
 var bow_trail_index: int = 0
 var bow_detail_index: int = 0
+# Presentation-only seed signature: never influences damage or raycasts.
+var projectile_style: int = 0
+var visual_glow_scale: float = 1.0
 var procedural_look: Dictionary = {}
 var distance_travelled: float = 0.0
 var hit_ids: Dictionary = {}
@@ -239,6 +242,10 @@ func _draw() -> void:
 		glow_ink = RelicPaletteV139.color_at(procedural_look, time_pulse, 0.33)
 	var mixed: Color = glow_ink.lerp(element_ink, 0.15 + 0.08 * sin(time_pulse))
 	_draw_arrow_shaft(Vector2.ZERO, Color("e4dce5").lerp(element_ink, 0.43), 1.0, 1.0)
+	# Glow Off removes decorative light; the physical painted arrow and
+	# unchanged single-hit physics are still present.
+	if visual_glow_scale <= 0.0:
+		return
 	var pulse: float = 0.5 + 0.5 * sin(time_pulse * 3.2)
 	draw_circle(direction * 18.0, 4.5 + pulse * 2.0, Color(mixed.r, mixed.g, mixed.b, 0.13 + 0.08 * pulse))
 	draw_circle(direction * 18.0, 2.5 + pulse, Color(element_ink.r, element_ink.g, element_ink.b, 0.46))

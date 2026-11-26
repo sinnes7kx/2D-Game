@@ -1,4 +1,6 @@
 extends Node2D
+const MOTIF_V216 = preload("res://scripts/bow_projectile_art_v216.gd")
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 ## Lantern-like afterglow for one physical arrow. Cosmetic only; no raycasts.
 var arrow: Node2D = null
 var elapsed: float = 0.0
@@ -13,6 +15,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     elapsed += delta
+    if arrow != null:
+        self_modulate.a = FX_LEVEL.alpha(0.82 * clampf(float(arrow.get("visual_glow_scale")), 0.0, 1.0))
     queue_redraw()
 
 func _color_at(t: float) -> Color:
@@ -30,6 +34,8 @@ func _draw() -> void:
     if dir.length_squared() < 0.01:
         return
     dir = dir.normalized()
+    if FX_LEVEL.intensity <= 0.0 or float(arrow.get("visual_glow_scale")) <= 0.0:
+        return
     var head: Vector2 = dir * 18.0
     var color: Color = _color_at(0.75)
     var power: float = 1.18 if bool(arrow.get("charged")) else 0.82
@@ -49,3 +55,4 @@ func _draw() -> void:
         var c: Color = _color_at(clampf(float(i) / float(maxi(1, history.size() - 1)), 0.0, 1.0))
         draw_line(at, next_at, Color(c.r, c.g, c.b, 0.17 * f * power), 4.0 * f + 0.5, true)
         draw_line(at, next_at, Color(c.r, c.g, c.b, 0.24 * f * power), 1.2, true)
+    MOTIF_V216.draw_motif(self, int(arrow.get("projectile_style")), dir, elapsed, color)

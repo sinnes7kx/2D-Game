@@ -1,4 +1,7 @@
 extends Node2D
+const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
+const CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
+const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 ## v1.41 — wand-sized elongated glimmer, never a floating magic circle.
 ## A quiet material highlight runs along the wand shaft. Cosmetic only.
 var inventory: Node = null
@@ -31,7 +34,7 @@ func refresh() -> void:
     accent_color = GhostWeaponFXLibrary.color(int(rolls["accent"]))
     motif = int(rolls["motif"])
     trail_style = int(rolls["trail"])
-    enabled = rarity >= 2 and GhostWeaponFXLibrary.prestige_variant(wand.visual_seed(), wand.quality) >= 0
+    enabled = (rarity >= 2 and GhostWeaponFXLibrary.prestige_variant(wand.visual_seed(), wand.quality) >= 0 or wand.glow_level_override > 0) and CHOICES_V216.effect_scale(wand) > 0.0
     queue_redraw()
 
 func _process(delta: float) -> void:
@@ -53,20 +56,22 @@ func _draw() -> void:
     var prestige: Node = girl.get_node_or_null("Ghost/EquippedPrestigeFX")
     if prestige != null and prestige.get("item") == inventory.get_equipped("wand"):
         return
-    var face: String = str(girl.get("facing_name"))
-    var direction: Vector2 = Vector2(0.18, -1.0)
-    match face:
-        "left": direction = Vector2(-0.72, -0.70)
-        "right": direction = Vector2(0.72, -0.70)
-        "back": direction = Vector2(0.25, -0.97)
-    direction = direction.normalized()
-    var base: Vector2 = Vector2(1, -3)
-    var tip: Vector2 = base + direction * 22.0
+    var body: AnimatedSprite2D = girl.get_node_or_null("Ghost") as AnimatedSprite2D
+    if body == null:
+        return
+    var points: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(body, str(girl.get("facing_name")))
+    if points.size() != 2:
+        return
+    # From Ghost-local sprite coordinates to this fallback Hand-local canvas.
+    var base: Vector2 = to_local(body.to_global(points[0]))
+    var tip: Vector2 = to_local(body.to_global(points[1]))
+    var direction: Vector2 = (tip - base).normalized()
     var pulse: float = 0.5 + 0.5 * sin(visual_time * (1.2 + float(trail_style) * 0.12))
     var color: Color = effect_color.lerp(accent_color, pulse)
-    color.a = 0.09 + 0.05 * pulse
+    var scale: float = CHOICES_V216.effect_scale(inventory.get_equipped("wand")) * FX_LEVEL.intensity
+    color.a = (0.09 + 0.05 * pulse) * scale
     draw_line(base, tip, color, 3.0, true)
-    color.a = 0.20 + 0.04 * pulse
+    color.a = (0.20 + 0.04 * pulse) * scale
     draw_line(base.lerp(tip, 0.25), tip, color, 1.0, true)
     var glint: Vector2 = base.lerp(tip, 0.18 + 0.66 * fposmod(visual_time * 0.16 + float(motif) * 0.13, 1.0))
     var across: Vector2 = Vector2(-direction.y, direction.x) * 1.4
