@@ -118,7 +118,45 @@ static func _render_soft_contact(kind: String) -> AudioStreamWAV:
     stream.data = pcm
     return stream
 
+# Original filtered-air and glass-resonance magic, not a rising beep.
+static func _render_wand(kind: String) -> AudioStreamWAV:
+    var heavy: bool = kind in ["spell_heavy", "spell_release_heavy"]
+    var hit: bool = kind == "spell_hit"
+    var release: bool = kind.begins_with("spell_release")
+    var duration: float = 0.40 if heavy else (0.23 if hit else (0.25 if release else 0.32))
+    var count: int = roundi(duration * RATE)
+    var pcm: PackedByteArray = PackedByteArray()
+    pcm.resize(count * 2)
+    var state: int = posmod(kind.hash() + 92813, 2147483646) + 1
+    var low: float = 0.0
+    var mid: float = 0.0
+    var phase: float = 0.0
+    for i in range(count):
+        var t: float = float(i) / float(count)
+        state = (state * 16807) % 2147483647
+        var white: float = float(state % 65535) / 32767.5 - 1.0
+        mid = lerpf(mid, white, 0.13)
+        low = lerpf(low, white, 0.018)
+        var air: float = (mid - low) * pow(maxf(0.0, sin(PI * t)), 1.5)
+        phase += TAU * lerpf(340.0 if heavy else 460.0, 260.0 if hit else 520.0, t) / RATE
+        var attack: float = minf(1.0, t / 0.035)
+        var decay: float = pow(1.0 - t, 2.2) * attack
+        var glass: float = (sin(phase) * 0.16 + sin(phase * 2.37) * 0.055 + sin(phase * 3.11) * 0.022) * decay
+        var sound: float = air * (1.20 if heavy or release else 0.85) + glass + low * decay * (0.5 if hit else 0.12)
+        var sample: int = clampi(roundi(sound * 14500.0), -32768, 32767)
+        var packed: int = sample & 0xffff
+        pcm[i * 2] = packed & 255
+        pcm[i * 2 + 1] = (packed >> 8) & 255
+    var stream: AudioStreamWAV = AudioStreamWAV.new()
+    stream.format = AudioStreamWAV.FORMAT_16_BITS
+    stream.mix_rate = RATE
+    stream.stereo = false
+    stream.data = pcm
+    return stream
+
 static func _render(kind: String) -> AudioStreamWAV:
+    if kind in ["spell", "spell_heavy", "spell_release", "spell_release_heavy", "spell_hit"]:
+        return _render_wand(kind)
     if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing"]:
         return _render_air_sweep(kind)
     if kind in ["hit", "parry"]:

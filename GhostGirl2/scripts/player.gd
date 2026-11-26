@@ -172,6 +172,7 @@ func _ready() -> void:
 	FRAME_GUARD_V186.install(body_art)
 	SCYTHE_V190.install(body_art)
 	HEAVY_V192.install(body_art)
+	WAND_ANCHORS_V216.install(body_art)
 	GENTLE.install(body_art)
 	STEADY_IDLE.install(body_art)
 	AIR_V203.install(body_art)
@@ -728,8 +729,7 @@ func _select_wand_target(pointer: Vector2) -> Vector2:
 func on_wand_projectile_hit(_charged: bool) -> void:
 	# Confirmed-contact feedback only; a missed spell never kicks the camera.
 	camera_kick = maxf(camera_kick, 2.2)
-	_play_action_sfx(HIT_SFX)
-	COMBAT_JUICE.play(get_tree().current_scene, global_position, "hit", -17.0)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "spell_hit", -15.0)
 
 func _begin_spell_cast(heavy: bool = false, moonfall: bool = false) -> void:
 	_begin_spell_cast_v127(heavy, moonfall, "")
@@ -764,15 +764,16 @@ func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> vo
 	spell_cooldown = spell_cast_duration
 	body_art.speed_scale = 1.0
 	body_art.play("wand_cast_" + facing_name)
-	COMBAT_JUICE.play(get_tree().current_scene, global_position, "spell", -18.0)
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "spell_heavy" if heavy or moonfall or not new_kind.is_empty() else "spell", -17.0)
 
 func _advance_spell(delta: float) -> void:
 	spell_time_left = maxf(0.0, spell_time_left - delta)
 	if not spell_shot and spell_time_left <= spell_cast_duration - spell_shot_time:
 		spell_shot = true
-		if wand_heavy_attack or spell_is_moonfall or not special_spell_kind.is_empty():
+		var powerful: bool = wand_heavy_attack or spell_is_moonfall or not special_spell_kind.is_empty()
+		COMBAT_JUICE.play(get_tree().current_scene, WAND_ANCHORS_V216.world_tip(self), "spell_release_heavy" if powerful else "spell_release", -16.0)
+		if powerful:
 			_emit_air_wake("charged", spell_direction)
-			COMBAT_JUICE.play(get_tree().current_scene, global_position, "charged_swing", -19.0)
 			camera_kick = maxf(camera_kick, 1.6)
 		if is_instance_valid(lock_target) and lock_target.has_method("spell_aim_point"):
 			spell_aim_point = lock_target.call("spell_aim_point")

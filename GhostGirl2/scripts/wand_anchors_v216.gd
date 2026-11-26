@@ -3,6 +3,7 @@ extends RefCounted
 ## Coordinates are Ghost-local; scene transforms are respected via to_global.
 const PATH: String = "res://resources/wand_pose_guides_v163.json"
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 static var _rows: Dictionary = {}
 
 static func rows() -> Dictionary:
@@ -12,8 +13,40 @@ static func rows() -> Dictionary:
 			_rows = parsed.get("animations", {}) as Dictionary
 	return _rows
 
+static func is_wand_pose(animation_name: String) -> bool:
+	return animation_name.begins_with("wand_") or animation_name.begins_with("attack_wand_")
+
+static func pose_name(animation_name: String, face: String) -> String:
+	if animation_name.begins_with("attack_wand_"):
+		return "wand_cast_" + face
+	return animation_name if rows().has(animation_name) else "wand_idle_" + face
+
+static func body_frame(animation_name: String, frame: int) -> int:
+	if animation_name.begins_with("wand_idle_"):
+		return 0
+	if animation_name.begins_with("wand_walk_"):
+		var steps: Array[int] = [0, 1, 2, 1, 0, 1, 2, 1]
+		return steps[posmod(frame, steps.size())]
+	return clampi(frame, 0, 7)
+
+static func install(body: AnimatedSprite2D) -> void:
+	if body == null or body.sprite_frames == null:
+		return
+	var frames: SpriteFrames = body.sprite_frames
+	for face in ["front", "back", "left", "right"]:
+		var source: String = "attack_unarmed_light_" + face
+		if not frames.has_animation(source) or frames.get_frame_count(source) < 8:
+			continue
+		for prefix in ["wand_idle_", "wand_walk_", "wand_cast_", "attack_wand_heavy_"]:
+			var name: String = prefix + face
+			if not frames.has_animation(name):
+				continue
+			for i in range(frames.get_frame_count(name)):
+				var index: int = body_frame(name, i)
+				frames.set_frame(name, i, frames.get_frame_texture(source, index), frames.get_frame_duration(name, i))
+
 static func span(animation_name: String, frame_index: int, face: String = "front") -> PackedVector2Array:
-	var record: Dictionary = rows().get(animation_name, {})
+	var record: Dictionary = rows().get(pose_name(animation_name, face), {})
 	if record.is_empty():
 		record = rows().get("wand_idle_" + face, {})
 	var guides: Array = record.get("guides", [])
@@ -32,31 +65,30 @@ static func span(animation_name: String, frame_index: int, face: String = "front
 # Ghost-local wrist targets match the independent equipped-weapon guides.
 # Keeping this delta in one place prevents the painted wand, wand light and
 # projectile muzzle from disagreeing across direction/pose changes.
-static func target_grip(face: String) -> Vector2:
-	match face:
-		"left": return Vector2(-17.0, 12.0)
-		"right": return Vector2(17.0, 12.0)
-		"back": return Vector2(13.0, 0.0)
-		_: return Vector2(15.0, 14.0)
+static func target_grip(face: String, animation_name: String = "", frame_index: int = 0) -> Vector2:
+	var index: int = body_frame(animation_name, frame_index)
+	var wrist: Vector2 = HAND.hand_anchor(face, index, 0 if face == "left" else 1)
+	if wrist != Vector2.INF:
+		return wrist
+	return Vector2(42.0, 28.0) if face == "back" else Vector2(0.0, 25.0)
 
 static func alignment_offset(animation_name: String, frame_index: int, face: String) -> Vector2:
 	var points: PackedVector2Array = span(animation_name, frame_index, face)
-	return target_grip(face) - points[0] if points.size() == 2 else Vector2.ZERO
+	return target_grip(face, animation_name, frame_index) - points[0] if points.size() == 2 else Vector2.ZERO
 
 static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2Array:
 	if body == null:
 		return PackedVector2Array()
 	var animation_name: String = str(body.animation)
-	var frame: int = 0 if GENTLE.modular_idle(animation_name) and animation_name.begins_with("wand_idle_") else body.frame
+	var frame: int = 0 if animation_name.begins_with("wand_idle_") else body.frame
 	var points: PackedVector2Array = span(animation_name, frame, face)
 	if points.size() != 2:
 		return points
 	var grip: Vector2 = points[0]
 	var tip: Vector2 = points[1]
-	if animation_name.begins_with("wand_idle_") and GENTLE.modular_idle(animation_name):
-		var angle: float = GENTLE.angle_at(GENTLE.phase_of(body))
-		tip = grip + (tip - grip).rotated(angle)
-	var delta: Vector2 = target_grip(face) - grip
+	if animation_name.begins_with("wand_idle_"):
+		tip = grip + (tip - grip).rotated(GENTLE.angle_at(GENTLE.phase_of(body)))
+	var delta: Vector2 = alignment_offset(animation_name, frame, face)
 	return PackedVector2Array([grip + delta, tip + delta])
 
 static func world_tip(actor: Node2D) -> Vector2:

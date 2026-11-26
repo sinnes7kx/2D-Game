@@ -143,6 +143,13 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.21 — wand grip, sword attack tracking, magic sound and closer camera (source implementation; visual review pending)
+
+- Replace wand idle/walk/cast body frames with the existing approved hook-free action art, preserving frame durations; align wand atlas frames to the clean-body wrist guides used by physical layer, glimmer and spell origin. Suppress wand artwork outside wand poses and choose FX from the visible pose. Rear grip is estimated when occluded.
+- Normal sword attack FX respect the actual animation frame count, sprite mirroring and offset, and are suppressed during non-blade clips. Existing hand-authored blade axes remain the fallback; further per-pixel calibration requires art inspection.
+- Original filtered-air/glass-resonance sounds for wand windup, release, charged release and confirmed impact; preserve sound settings, voice cap and combat timing. Gameplay camera zoom 1.12.
+- Existing seeds, save schema, character source images, damage and hitboxes unchanged. Extend existing wand and audio smoke checks. Godot parser, F5 four-direction grip/attack/zoom checks and listening remain required; no Actions dispatch.
+
 ### v2.19 — honest seeded and personalized appearance identity (source implementation; engine pending)
 
 - Distinguish current seed from original birth seed and separate saved custom glow, bow-body/arrow decoration, and eye preferences in advanced Inspect and offline collector cards. Ordinary tooltip stays compact; no new roll odds or fields.

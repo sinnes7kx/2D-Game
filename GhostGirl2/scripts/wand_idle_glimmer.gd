@@ -57,7 +57,7 @@ func _draw() -> void:
     if prestige != null and prestige.get("item") == inventory.get_equipped("wand"):
         return
     var body: AnimatedSprite2D = girl.get_node_or_null("Ghost") as AnimatedSprite2D
-    if body == null:
+    if body == null or not WAND_ANCHORS_V216.is_wand_pose(str(body.animation)):
         return
     var points: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(body, str(girl.get("facing_name")))
     if points.size() != 2:
