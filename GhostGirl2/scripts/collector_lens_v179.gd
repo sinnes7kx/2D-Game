@@ -175,12 +175,25 @@ func close_lens() -> void:
 	model.call("set_item", null)
 
 func _select_scythe_glow(index: int) -> void:
-	if inspected == null or inspected.weapon_style() != "scythe":
+	if inspected == null or inspected.weapon_style() != "scythe" or owned_inventory == null:
 		return
-	var value: int = index - 1
-	model.call("set_glow_preview_override", value)
-	var actual: int = SCYTHE_GLOW.rolled_level(inspected)
-	status.text = ("Blade highlights + rolled aura %d%%" % (actual * 10)) if value < 0 else ("Blade highlights + preview aura %d%% · not saved" % (value * 10))
+	# Only an exact owned instance in backpack or vault can be personalized.
+	if not (owned_inventory.contents.has(inspected) or owned_inventory.vault.has(inspected)):
+		return
+	var value: int = clampi(index - 1, -1, 5)
+	var previous: int = inspected.glow_level_override
+	inspected.glow_level_override = value
+	if not owned_inventory.save_game():
+		inspected.glow_level_override = previous
+		scythe_glow_choices.select(previous + 1)
+		status.text = "Could not save glow · original appearance restored"
+		return
+	model.call("set_glow_preview_override", -1)
+	model.queue_redraw()
+	owned_inventory.contents_changed.emit()
+	owned_inventory.equipment_changed.emit()
+	var current: int = SCYTHE_GLOW.rolled_level(inspected)
+	status.text = "Saved scythe aura · %d%% · original seed unchanged" % (current * 10)
 
 func _toggle_glow(active: bool) -> void:
 	model.set("glow_enabled", active)
