@@ -249,10 +249,9 @@ func _axial_span() -> PackedVector2Array:
 	if item.get_slot() == "wand":
 		# Shared with actual wand art and the spell release origin. Do not
 		# approximate a separate hand offset for the prestige layer.
-		var idle: bool = animation.begins_with("wand_idle_") and GENTLE.modular_idle(str(body.animation))
-		var wand_span: PackedVector2Array = WAND_ANCHORS_V216.span(animation, 0 if idle else body.frame, face)
+		var wand_span: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(body, face)
 		if wand_span.size() == 2:
-			return GENTLE.smooth(body, str(body.animation), wand_span) if idle else wand_span
+			return wand_span
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
 	if style == "dual_sword":
 		var crossed: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
