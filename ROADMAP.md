@@ -143,6 +143,12 @@ A newly installed project imports, launches, accepts inputs, opens the inventory
 - [ ] Verify real eye location and coverage in all four facings, in equipment preview and in world animations (idle, walk, dodge, attack, jump); compare against the user's screenshot, including the very small-scale UI preview. Head cosmetics and original body atlases are not otherwise changed.
 - [ ] Run the new `tests/v204_eye_palette_coverage_smoke.gd` through Godot CI and perform F5 visual testing. This static anchor test cannot prove that the opaque eye backing perfectly masks all original pupil pixels in every authored animation frame.
 
+### v2.33 — material arrow impacts and gothic blade variants (source implementation; engine review pending)
+
+- Six original cached positional arrow-impact sounds: soft creature contact, wood, stone, metal, water and magic. Known wood cover and water/puzzle paths use appropriate cues; Ashglass iron shutter and spectral seal get explicit material metadata. Unclassified enemy/solid geometry falls back to flesh/stone; additional materials can be tagged via arrow_impact_material. Sound remains audible with decorative glow Off, follows existing mute/voice cap and plays only on existing confirmed contact branches. Charged arrows use a slightly stronger volume. No new collision queries, damage or projectile logic.
+- Add Ivory Misericorde, Vesper Athame and Cathedral Twin Longswords using established modular thrust/paired sword rigs, distinct slim blade profiles and SVG icons. Existing comparable base stats; share existing sword variant lane, no increased overall drop probability. Debug F7 grants test copies. No new art atlas or save fields.
+- Add synthetic classification/audio/loot smoke; no Godot runtime/listening/F5 verification. Crossbow family, newly authored bow silhouettes and additional ordinary single-sword art remain deferred. No Actions dispatch.
+
 ### v2.32 — polearm wrist alignment, forged blunt silhouettes and seeded halo (source implementation; visual review pending)
 
 - All three ground spear/trident light attacks and ground/air heavy attacks select the existing clean thrust family. Shared source-frame sequence drives actual hand anchors; occluded wrists hide the physical span and its attack glow. No synthetic finger circles. Hit timers, stamina, reach, damage and original artwork unchanged. All three light steps reuse the same thrust art, rather than new distinct painted combo clips.

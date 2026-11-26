@@ -1,5 +1,6 @@
 extends Node2D
 const RelicPaletteV139 = preload("res://scripts/procedural_relic_palette_v139.gd")
+const ARROW_AUDIO = preload("res://scripts/arrow_impact_audio_v233.gd")
 ## One physical arrow. Rare decorations add visual wisps but never extra hits.
 ## Charged arrows may pierce TWO distinct enemies, once each; world/cover stops them.
 var direction: Vector2 = Vector2.RIGHT
@@ -76,7 +77,7 @@ func _physics_process(delta: float) -> void:
 	if _check_moon_targets(start, end):
 		return
 	if element_index == 2 and _freeze_water_on_sweep(start, end):
-		_impact(end)
+		_impact(end, "water")
 		queue_free()
 		return
 	var length: float = start.distance_to(end)
@@ -102,20 +103,22 @@ func _physics_process(delta: float) -> void:
 			if hit_ids.has(target_id):
 				continue
 			hit_ids[target_id] = true
+			var material: String = ARROW_AUDIO.material_for(target, "flesh")
 			target.call("hit", damage, 1.3 if charged else 0.85)
 			if element_index == 2 and target.has_method("apply_frost_slow") and is_instance_valid(target) and not target.is_queued_for_deletion():
 				target.call("apply_frost_slow", 1.35, 0.78)
-			_impact(point)
+			_impact(point, material)
 			if not charged or hit_ids.size() >= 2:
 				queue_free()
 				return
 	if not wall.is_empty():
 		var cover: Object = wall.get("collider")
+		var material: String = ARROW_AUDIO.material_for(cover, "stone")
 		if cover != null and element_index == 1 and cover.has_method("ignite_from_environment"):
 			cover.call("ignite_from_environment")
 		if cover != null and cover.has_method("receive_damage"):
 			cover.call("receive_damage", damage, end)
-		_impact(end)
+		_impact(end, material)
 		queue_free()
 		return
 	global_position = destination
@@ -160,8 +163,9 @@ func _check_world_elements(start: Vector2, end: Vector2) -> bool:
 		var contact: Vector2 = start + segment * projection
 		var radius: float = float(candidate.get("trigger_radius"))
 		if contact.distance_squared_to(candidate.global_position) <= radius * radius:
+			var material: String = ARROW_AUDIO.material_for(candidate, "magic")
 			if bool(candidate.call("on_elemental_arrow_hit", element_index, formation_index, charged, launched_in_air)):
-				_impact(contact)
+				_impact(contact, material)
 				queue_free()
 				return true
 	return false
@@ -184,7 +188,7 @@ func _check_elemental_targets(start: Vector2, end: Vector2) -> bool:
 		var radius: float = float(target.get("trigger_radius"))
 		if hit_point.distance_squared_to(target.global_position) <= radius * radius:
 			if bool(target.call("on_elemental_arrow_hit", element_index, formation_index, charged, launched_in_air)):
-				_impact(hit_point)
+				_impact(hit_point, "magic")
 				queue_free()
 				return true
 	return false
@@ -207,17 +211,18 @@ func _check_moon_targets(start: Vector2, end: Vector2) -> bool:
 		var range: float = float(target.get("trigger_radius"))
 		if point.distance_squared_to(target.global_position) <= range * range:
 			if target.call("on_bow_hit", charged, launched_in_air):
-				_impact(point)
+				_impact(point, "magic")
 				queue_free()
 				return true
 	return false
 
-func _impact(where: Vector2) -> void:
-	# Glow Off hides decorative hit flashes, never the real arrow collision.
-	if visual_glow_scale <= 0.0:
-		return
+func _impact(where: Vector2, surface: String = "stone") -> void:
 	var root: Node = get_tree().current_scene
 	if root == null:
+		return
+	# One positional sound per existing confirmed collision, even with glow Off.
+	ARROW_AUDIO.play(root, where, surface, charged)
+	if visual_glow_scale <= 0.0:
 		return
 	var flash: Node2D = Node2D.new()
 	flash.set_script(BOW_IMPACT_V129)

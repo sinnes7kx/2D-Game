@@ -154,7 +154,93 @@ static func _render_wand(kind: String) -> AudioStreamWAV:
     stream.data = pcm
     return stream
 
+# Six compact, original material-specific impact transients. These are
+# synthesized once per cue by the existing capped positional audio cache.
+static func _render_arrow(kind: String) -> AudioStreamWAV:
+    var duration: float = 0.16
+    var frequency: float = 260.0
+    var resonance: float = 0.12
+    var noise_weight: float = 0.55
+    var decay: float = 9.0
+    var filter_rate: float = 0.20
+    match kind:
+        "arrow_flesh":
+            duration = 0.13
+            frequency = 105.0
+            resonance = 0.32
+            noise_weight = 0.48
+            filter_rate = 0.08
+        "arrow_wood":
+            duration = 0.17
+            frequency = 315.0
+            resonance = 0.30
+            noise_weight = 0.68
+            decay = 12.0
+        "arrow_stone":
+            duration = 0.19
+            frequency = 720.0
+            resonance = 0.20
+            noise_weight = 0.85
+            filter_rate = 0.48
+        "arrow_metal":
+            duration = 0.29
+            frequency = 1260.0
+            resonance = 0.47
+            noise_weight = 0.30
+            decay = 5.0
+            filter_rate = 0.52
+        "arrow_water":
+            duration = 0.24
+            frequency = 180.0
+            resonance = 0.18
+            noise_weight = 0.77
+            decay = 6.0
+            filter_rate = 0.11
+        "arrow_magic":
+            duration = 0.33
+            frequency = 680.0
+            resonance = 0.39
+            noise_weight = 0.22
+            decay = 5.0
+    var count: int = roundi(duration * RATE)
+    var pcm: PackedByteArray = PackedByteArray()
+    pcm.resize(count * 2)
+    var state: int = posmod(kind.hash() + 53177, 2147483646) + 1
+    var low: float = 0.0
+    var band: float = 0.0
+    var phase: float = 0.0
+    for i in range(count):
+        var t: float = float(i) / float(count)
+        state = (state * 16807) % 2147483647
+        var white: float = float(state % 65535) / 32767.5 - 1.0
+        band = lerpf(band, white, filter_rate)
+        low = lerpf(low, white, 0.035)
+        var transient: float = (band - low * 0.65) * noise_weight * exp(-13.0 * t)
+        var pitch: float = frequency
+        if kind == "arrow_water":
+            pitch *= 1.0 + 0.36 * sin(t * TAU * 3.0)
+            transient += band * 0.21 * sin(PI * t) * exp(-4.0 * t)
+        elif kind == "arrow_flesh":
+            pitch *= 1.0 - t * 0.48
+        phase += TAU * pitch / RATE
+        var ring: float = (sin(phase) + 0.30 * sin(phase * (1.48 if kind == "arrow_metal" else 2.01))) * resonance * exp(-decay * t)
+        if kind == "arrow_magic":
+            ring += sin(phase * 2.73) * 0.09 * exp(-4.0 * t)
+        var envelope: float = minf(1.0, t / 0.012) * pow(1.0 - t, 1.3)
+        var sample: int = clampi(roundi((transient + ring) * envelope * 19500.0), -32768, 32767)
+        var packed: int = sample & 0xffff
+        pcm[i * 2] = packed & 255
+        pcm[i * 2 + 1] = (packed >> 8) & 255
+    var stream: AudioStreamWAV = AudioStreamWAV.new()
+    stream.format = AudioStreamWAV.FORMAT_16_BITS
+    stream.mix_rate = RATE
+    stream.stereo = false
+    stream.data = pcm
+    return stream
+
 static func _render(kind: String) -> AudioStreamWAV:
+    if kind in ["arrow_flesh", "arrow_wood", "arrow_stone", "arrow_metal", "arrow_water", "arrow_magic"]:
+        return _render_arrow(kind)
     if kind in ["spell", "spell_heavy", "spell_release", "spell_release_heavy", "spell_hit"]:
         return _render_wand(kind)
     if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing"]:

@@ -19,6 +19,7 @@ func _ensure_blocker() -> void:
         blocker = StaticBody2D.new()
         blocker.name = "Barrier"
         add_child(blocker)
+    blocker.set_meta("arrow_impact_material", "metal")
     blocker.collision_layer = 2
     blocker.collision_mask = 0
     collider = blocker.get_node_or_null("CollisionShape2D") as CollisionShape2D
