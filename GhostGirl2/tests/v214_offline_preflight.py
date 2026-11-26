@@ -24,11 +24,11 @@ def check(name: str, needed: tuple[str, ...], forbidden: tuple[str, ...] = ()) -
 def main() -> int:
     issues = []
     issues += check("scripts/scythe_rig_v190.gd", (
-        "SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, true)",
+        "SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, equipped == null or equipped.glow_level_override != 0)",
         'scythe_glow.call("clear_pose")',
     ), ("phase, side, false)",))
     issues += check("scripts/collector_lens_model_v179.gd", (
-        "SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled)",
+        "glow_enabled and CHOICES_V216.effect_scale(item) > 0.0)",
         '"set_pose", item,',
     ), ("elapsed, 1.0, false)",))
     issues += check("scripts/scythe_glow_layer_v211.gd", (
@@ -40,7 +40,7 @@ def main() -> int:
         "if int(digest[0]) < 179:",
     ))
     issues += check("scripts/collector_lens_v179.gd", (
-        'scythe_glow_choices.add_item("Rolled aura")',
+        'scythe_glow_choices.add_item("Natural (seeded)")',
         "Blade highlights + rolled aura",
         "Blade highlights + preview aura",
     ))
