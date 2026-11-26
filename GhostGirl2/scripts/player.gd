@@ -10,6 +10,7 @@ const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 const EXTRA_ANIMATIONS = preload("res://scripts/ghost_animation_library.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
+const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const AIR_V203 = preload("res://scripts/airborne_attacks_v203.gd")
 const HEAVY_V192 = preload("res://scripts/heavy_weapon_art_v192.gd")
@@ -94,6 +95,8 @@ var bow_draw_time: float = 0.0
 var bow_draw_airborne: bool = false
 var attack_time_left: float = 0.0
 var attack_duration: float = 0.0
+# Retain the timed clip rate when resuming confirmed-contact hitstop.
+var action_animation_rate: float = 1.0
 var attack_hit_done: bool = false
 var heavy_attack: bool = false
 # v2.12 single dagger only: hold heavy for a bounded, single-hit stab.
@@ -201,6 +204,9 @@ func _ready() -> void:
 		return
 	# Preview never walks; avoid allocating its extra locomotion textures.
 	WALK_V223.install(body_art)
+	# After AIR installation: airborne art and frame-indexed charge gates
+	# remain unchanged. Only ordinary ground sword clips gain samples.
+	SWORD_V224.install(body_art)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
 	blink_rng.randomize()
@@ -233,7 +239,7 @@ func _physics_process(delta: float) -> void:
 		hitstop_left = maxf(0.0, hitstop_left - delta)
 		velocity = Vector2.ZERO
 		if hitstop_left <= 0.0:
-			body_art.play()  # Continue the active attack at its preserved frame.
+			_resume_timed_action()  # Preserve both the active frame and its rate.
 		move_and_slide()
 		return
 	invulnerable_time = maxf(0.0, invulnerable_time - delta)
@@ -547,8 +553,16 @@ func _process(delta: float) -> void:
 	elif attack_time_left > 0.0:
 		var t: float = 1.0 - attack_time_left / maxf(0.01, attack_duration)
 		var motion: float = sin(t * PI)
-		body_art.position = BASE_ART_POS + Vector2(0.0, -3.0 * motion)
-		body_art.rotation = (0.045 if heavy_attack else 0.075) * motion * (1.0 if facing_name != "left" else -1.0)
+		var turn: float = -1.0 if facing_name == "left" else 1.0
+		if SWORD_V224.matches_ground(str(body_art.animation)):
+			# Frame progress is render-time and stays frozen during hitstop.
+			# The body, baked sword and child glow move as one transform.
+			var flow: Vector3 = SWORD_V224.motion_at(GENTLE.phase_of(body_art), heavy_attack)
+			body_art.position = BASE_ART_POS + attack_direction * flow.x + Vector2(0.0, -flow.y)
+			body_art.rotation = flow.z * turn
+		else:
+			body_art.position = BASE_ART_POS + Vector2(0.0, -3.0 * motion)
+			body_art.rotation = (0.045 if heavy_attack else 0.075) * motion * turn
 		body_art.scale = Vector2.ONE * BASE_ART_SCALE
 	elif dodge_time_left > 0.0:
 		body_art.position = BASE_ART_POS - dodge_direction * 8.0
@@ -716,11 +730,24 @@ func _play_if_changed(animation_name: String) -> void:
 # Synchronize non-looping directional frames with the actual combat timing,
 # including attack-speed modifiers. No animation-notify timing drift.
 func _play_action_frames(animation_name: String, duration: float) -> void:
+	# Walk/sprint/idle speed_scale otherwise multiplies the computed action
+	# rate and can shorten or stretch the visual clip without changing damage.
+	body_art.speed_scale = 1.0
+	action_animation_rate = 1.0
 	if body_art.sprite_frames == null or not body_art.sprite_frames.has_animation(animation_name):
 		push_warning("Missing combat animation: " + animation_name)
 		body_art.play("idle_" + facing_name)
 		return
-	body_art.play(animation_name, GENTLE.playback_rate(body_art.sprite_frames, animation_name, duration))
+	action_animation_rate = GENTLE.playback_rate(body_art.sprite_frames, animation_name, duration)
+	body_art.play(animation_name, action_animation_rate)
+
+func _resume_timed_action() -> void:
+	# AnimatedSprite2D.play() defaults to rate 1.0. Preserve the original
+	# rate and exact frame/progress instead of speeding up or slowing down.
+	var frame_index: int = body_art.frame
+	var fraction: float = body_art.frame_progress
+	body_art.play(body_art.animation, action_animation_rate)
+	body_art.set_frame_and_progress(frame_index, fraction)
 
 func set_facing(direction: Vector2) -> void:
 	if direction.length_squared() < 0.0001:
@@ -1367,6 +1394,8 @@ func _begin_attack(heavy: bool) -> void:
 	else:
 		attack_animation = ("attack_unarmed_heavy_" if heavy else "attack_unarmed_light_") + facing_name
 	_play_action_frames(attack_animation, attack_duration)
+	# Repeated same-direction combo attacks are new actions, not resumes.
+	body_art.set_frame_and_progress(0, 0.0)
 
 func _combat_aim_direction() -> Vector2:
 	if is_instance_valid(lock_target):
@@ -1402,7 +1431,7 @@ func _advance_attack(delta: float) -> void:
 				body_art.pause()
 			return
 		dagger_charge_active = false
-		body_art.play()
+		_resume_timed_action()
 		# Continue from the authored stab/recovery section after wind-up;
 		# damage, stamina cost and hit count remain the existing heavy values.
 		attack_time_left = attack_duration * 0.65

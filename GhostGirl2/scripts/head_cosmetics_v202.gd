@@ -3,6 +3,7 @@ extends Node2D
 ## "wings" remains the SAVED legacy head-accessory key. "helm" is independent.
 ## No new item metadata or underlying Ghost Girl atlas edits.
 const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
+const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")
 var phase: float = 0.0
 var last_eye_pose_key: String = ""
 
@@ -120,6 +121,8 @@ func _eye_ellipse(center: Vector2, radius: Vector2, tint: Color) -> void:
 func _draw_eyes(item: GhostItemInstance, face: String) -> void:
     var sprite: AnimatedSprite2D = _body_sprite()
     var index: int = WALK_V223.source_pose_index(sprite.sprite_frames, str(sprite.animation), sprite.frame) if sprite != null else 0
+    if sprite != null:
+        index = SWORD_V224.source_pose_index(sprite.sprite_frames, str(sprite.animation), index)
     var centers: Array[Vector2] = pose_eye_centers(str(sprite.animation), index, face) if sprite != null else eye_centers(face)
     if centers.is_empty():
         return

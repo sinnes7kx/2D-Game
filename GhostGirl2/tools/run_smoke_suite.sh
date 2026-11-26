@@ -26,6 +26,7 @@ quick_tests=(
   v216_editable_fx_bow_wand_smoke.gd
   v222_fluid_animation_smoke.gd
   v223_locomotion_smoke.gd
+  v224_sword_fluidity_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd
