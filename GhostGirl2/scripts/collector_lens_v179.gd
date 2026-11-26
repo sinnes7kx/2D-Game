@@ -15,6 +15,10 @@ var glow_button: CheckButton
 var motion_button: CheckButton
 var scythe_glow_choices: OptionButton
 var inspected: GhostItemInstance
+var owned_inventory: Node = null
+
+func bind_inventory(value: Node) -> void:
+	owned_inventory = value
 var angle: float = -0.35
 var zoom: float = 1.0
 var motion_time: float = 0.0
@@ -93,13 +97,13 @@ func _ready() -> void:
 	glow_row.name = "ScytheGlowRowV211"
 	layout.add_child(glow_row)
 	var glow_caption: Label = Label.new()
-	glow_caption.text = "SCYTHE AURA · VISUAL ONLY"
+	glow_caption.text = "SCYTHE AURA · SAVED STYLE"
 	glow_caption.add_theme_font_size_override("font_size", 12)
 	glow_row.add_child(glow_caption)
 	scythe_glow_choices = OptionButton.new()
 	scythe_glow_choices.name = "ScytheGlowPreviewV211"
-	scythe_glow_choices.tooltip_text = "Full-scythe aura is separate from the always-available curved blade highlights · previews are not saved"
-	scythe_glow_choices.add_item("Rolled aura")
+	scythe_glow_choices.tooltip_text = "Choose a saved 0–50% full-scythe aura; Natural retains the original seed roll"
+	scythe_glow_choices.add_item("Natural (seeded)")
 	for step in range(6):
 		scythe_glow_choices.add_item("%d%% glow" % (step * 10))
 	scythe_glow_choices.item_selected.connect(_select_scythe_glow)
@@ -153,7 +157,8 @@ func open_item(value: GhostItemInstance) -> void:
 	glow_button.disabled = false
 	motion_button.disabled = false
 	scythe_glow_choices.get_parent().visible = value.weapon_style() == "scythe"
-	scythe_glow_choices.select(0)
+	scythe_glow_choices.select(clampi(value.glow_level_override + 1, 0, 6))
+	scythe_glow_choices.disabled = owned_inventory == null or not (owned_inventory.contents.has(value) or owned_inventory.vault.has(value))
 	glow_button.set_pressed_no_signal(true)
 	motion_button.set_pressed_no_signal(false)
 	model.set("glow_enabled", true)
@@ -162,7 +167,7 @@ func open_item(value: GhostItemInstance) -> void:
 	_position_model()
 	status.text = "Drag to rotate  ·  Wheel to zoom  ·  Display-only motion" if bool(model.call("is_modular")) else "Original artwork + animated effects  ·  Drag to rotate  ·  Wheel to zoom"
 	if value.weapon_style() == "scythe":
-		status.text = "Curved blade highlights + rolled full-scythe aura %d%% · preview 0–50%% (not saved)" % (SCYTHE_GLOW.rolled_level(value) * 10)
+		status.text = "Curved blade highlights · full-scythe glow %d%% · Natural keeps the original seed" % (SCYTHE_GLOW.rolled_level(value) * 10)
 
 func close_lens() -> void:
 	hide()
