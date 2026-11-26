@@ -1536,7 +1536,7 @@ func _begin_attack(heavy: bool) -> void:
 			attack_hit_threshold = 0.56
 		"dual_sword":
 			# Broader alternating slashes, followed by a committed X strike.
-			attack_duration = 0.96 if heavy else [0.47, 0.50, 0.54][combo_step]
+			attack_duration = 0.60 if heavy else [0.47, 0.50, 0.54][combo_step]
 			attack_hit_threshold = 0.58
 		"spear":
 			attack_duration = 0.96 if heavy else [0.53, 0.56, 0.60][combo_step]

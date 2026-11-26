@@ -54,10 +54,10 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 ---
 
-### Melee chains and impact feedback (source implementation; engine review pending)
+### Halo effects and collectible familiar (source implementation; engine review pending)
 
-- Two consecutive light melee attacks followed by heavy within the existing chain grace grant 25% damage, one confirmed-hit double ring and a unique impact cue. Dodge recovery opens a 0.48-second heavy lunge window; movement uses normal collision-aware sliding. Existing stamina costs, weapon stats and hit counts retained. Ranged and wand combos deferred.
-- Grounded plunge landing produces a slam cue; wall rays produce material contact audio without damaging walls or wearing weapons. Existing wood contact gets foley. Sharp confirmed flesh hits have moderately larger stylized blood bursts. F5 test combo timing, interruption, walls, audio and old saves before release.
+- Halo effects use stable cosmetic UID channels, orbiting motifs and rare arcs; respect session FX intensity. Dual-sword heavy duration 0.96 to 0.60 seconds (same base damage and cost).
+- Add optional companion equipment key and Moonwisp item, cosmetic-only with seeded palette/motifs. Existing saves without companion key retain default Moonmoth. Natural familiar drops use a subset of the previously unchanged ordinary drop lane (seed divisible by 97); existing items unchanged. Verify vault, inventory, F5 visuals, save reload and equipment preview. No engine validation yet.
 
 ## 1. Current project baseline — verify before planning implementation
 

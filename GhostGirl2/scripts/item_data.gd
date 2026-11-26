@@ -6,7 +6,7 @@ class_name GhostItemData
 @export_multiline var description: String = ""
 @export var icon: Texture2D
 @export var unique: bool = false
-@export_enum("none", "dress", "wings", "trinket", "charm", "wand", "sword", "helm") var equip_slot: String = "none"
+@export_enum("none", "dress", "wings", "trinket", "charm", "wand", "sword", "helm", "companion") var equip_slot: String = "none"
 @export_enum("equipment", "gem", "rune", "quest", "material") var item_class: String = "equipment"
 @export var stat_id: String = ""
 @export_range(0.0, 30.0, 0.1) var min_stat: float = 0.0

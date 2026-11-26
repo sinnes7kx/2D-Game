@@ -89,6 +89,8 @@ static func create(template: GhostItemData, seed_value: int, forced_quality: Str
         "rare": count = rng.randi_range(2, 4)
         "set": count = 2
         "unique": count = 3
+    if template.equip_slot == "companion":
+        count = 0 # Companions are collectible cosmetic equipment, not extra power.
     var available_affixes: Array = AFFIX_POOL.duplicate(true)
     if template.item_level >= 7:
         available_affixes.append_array(HUNTER_AFFIXES)
