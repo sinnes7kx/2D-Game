@@ -407,7 +407,7 @@ static func missing_combat_clips_v293(frames: SpriteFrames) -> PackedStringArray
 	if frames==null:
 		return missing
 	for clip in frames.get_animation_names():
-		if not clip.begins_with("attack_"):
+		if not clip.begins_with("attack_") and not clip.begins_with("wand_cast_"):
 			continue
 		if not diagonal_name(clip).is_empty():
 			continue
@@ -428,7 +428,8 @@ const MODULAR_COMBAT_V294: Array[String] = [
 	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
 	"attack_forge_bow_light_", "attack_forge_bow_heavy_",
 	"attack_crossbow_fire_", "attack_crossbow_reload_",
-	"attack_forge_dagger_pierce_", "attack_forge_dagger_heavy_pierce_"
+	"attack_forge_dagger_pierce_", "attack_forge_dagger_heavy_pierce_",
+	"wand_cast_", "attack_wand_heavy_"
 ]
 
 static func is_modular_combat_v294(clip: String) -> bool:
@@ -468,7 +469,7 @@ static func _install_modular_combat_v294(frames: SpriteFrames) -> void:
 				frames.set_meta("v294_reused_"+target,true)
 
 static func combat_clip_v294(requested: String,direction: String,frames: SpriteFrames) -> String:
-	if frames==null or direction not in DIRECTIONS or not requested.begins_with("attack_"):
+	if frames==null or direction not in DIRECTIONS or (not requested.begins_with("attack_") and not requested.begins_with("wand_cast_")):
 		return requested
 	if not diagonal_name(requested).is_empty():
 		return requested
