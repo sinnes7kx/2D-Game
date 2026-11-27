@@ -35,6 +35,16 @@ static func install(frames: SpriteFrames) -> void:
 					frames.add_frame(name, frames.get_frame_texture(source, index))
 
 static func span(name: String, face: String, frame: int) -> PackedVector2Array:
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if diagonal.is_modular_combat_v294(name):
+		var anchor: Vector2 = diagonal.wrist(name,frame)
+		var heading: Vector2 = diagonal.heading_v294(diagonal.diagonal_name(name))
+		if anchor==Vector2.INF or heading.is_zero_approx():
+			return PackedVector2Array()
+		if name.contains("forge_dagger_"):
+			var reach: float = 39.0+sin(PI*float(clampi(frame,0,7))/7.0)*10.0
+			return PackedVector2Array([anchor,anchor+heading*reach])
+		return PackedVector2Array([anchor,anchor+heading*32.0])
 	var index: int = clampi(frame, 0, 7)
 	var hand: int = 0 if face == "left" else 1
 	if name.begins_with("attack_forge_dagger_"):
