@@ -50,6 +50,21 @@ func _verify() -> void:
 	if seen.size() != 3:
 		_fail("New swords missing from loot")
 		return
+	var penitent: GhostItemData = preload("res://items/penitent_longsword.tres")
+	var ordinary: GhostItemInstance = GhostItemGenerator.create(penitent, 1234, "rare")
+	var relic: GhostItemInstance = GhostItemGenerator.create(penitent, 1234, "unique")
+	var skills = preload("res://scripts/unique_specials_v261.gd")
+	if not relic.uses_modular_single_sword() or relic.display_name() != "Penitent’s Descent" or skills.kind(relic) != "penitent_plunge" or not skills.kind(ordinary).is_empty():
+		_fail("Penitent unique identity or skill gating")
+		return
+	var found_penitent: bool = false
+	for seed in range(1, 12000):
+		if game.call("_roll_sword_drop", original, seed) == penitent:
+			found_penitent = true
+			break
+	if not found_penitent:
+		_fail("Penitent missing from loot lane")
+		return
 	game.free()
 	print("v2.35 PASS: shared source frames and wrist spans, three single sword bases")
 	quit(0)
