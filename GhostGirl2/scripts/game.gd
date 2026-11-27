@@ -5,6 +5,9 @@ const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 ## No dialogue, lore pop-ups, or runtime construction of puzzle props.
 
 const ROOMS = {
+	"sepulchre_ossuary": preload("res://scenes/rooms/sepulchre_ossuary.tscn"),
+	"sepulchre_thorn": preload("res://scenes/rooms/sepulchre_thorn.tscn"),
+	"sepulchre_crownless": preload("res://scenes/rooms/sepulchre_crownless.tscn"),
 	"lanternhaven": preload("res://scenes/rooms/lanternhaven.tscn"),
 	"westwood_road": preload("res://scenes/rooms/westwood_road.tscn"),
 	"moonwake_crypt": preload("res://scenes/rooms/moonwake_crypt.tscn"),
@@ -97,6 +100,9 @@ const WORLD_DROP_SCENE: PackedScene = preload("res://scenes/world_drop.tscn")
 const WORLD_SAVE_FILE: String = "user://ghost_girl_world_v1.json"
 const GROUND_SAVE_FILE: String = "user://ghost_girl_ground_loot_v1.json"
 const ROOM_TITLES = {
+	"sepulchre_ossuary": "DEPTH 1 · THE OSSUARY",
+	"sepulchre_thorn": "DEPTH 2 · THE THORN RELIQUARY",
+	"sepulchre_crownless": "DEPTH 3 · THE CROWNLESS SEPULCHRE",
 	"lanternhaven": "LANTERNHAVEN · SAFE HAVEN",
 	"westwood_road": "WESTWOOD ROAD · THE HOLLOW PINES",
 	"moonwake_crypt": "MOONWAKE CRYPT",
@@ -457,7 +463,8 @@ func refresh_vigil_hud() -> void:
 
 func _portal_unlocked(destination: String) -> bool:
 	match room:
-		"lanternhaven": return cloister_solved if destination == "sanctum" else destination in ["moonwake_crypt", "westwood_road"]
+		"lanternhaven": return cloister_solved if destination == "sanctum" else destination in ["moonwake_crypt", "westwood_road", "sepulchre_ossuary"]
+		"sepulchre_ossuary", "sepulchre_thorn", "sepulchre_crownless": return destination == "lanternhaven"
 		"moonwake_crypt": return true
 		"garden": return garden_key_used if destination == "chapel" else true
 		"chapel": return bells_solved if destination == "cloister" else true
@@ -499,6 +506,8 @@ func _process(_delta: float) -> void:
 		if switch_hint.is_empty() and player.carrying == null:
 			switch_hint = _rose_weight_hint()
 		ui.set_prompt("G  DROP    R  THROW" if player.carrying != null else switch_hint)
+	elif current_target.is_in_group("sepulchre_v266"):
+		ui.set_prompt(str(current_target.call("prompt_text")))
 	elif current_target.is_in_group("v202_world_puzzle"):
 		ui.set_prompt("E  EXAMINE THE MYSTERIOUS OBJECT")
 	elif current_target.is_in_group("v202_archery_range"):
@@ -611,6 +620,11 @@ func _choose_target():
 func interact() -> void:
 	var target = _choose_target()
 	if target == null:
+		return
+	if target.is_in_group("sepulchre_v266"):
+		var reply: String = str(target.call("interact"))
+		if not reply.is_empty():
+			ui.show_pickup(reply,Color("d8c1d9"))
 		return
 	if target.is_in_group("v202_world_puzzle"):
 		ui.show_pickup(str(target.call("inspect_text")), Color("cfc0df"))
