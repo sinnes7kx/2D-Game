@@ -231,7 +231,7 @@ func _axial_span() -> PackedVector2Array:
 		return empty
 	var animation: String = str(body.animation)
 	# Aerial clips change pose tempo, not physical weapon guide identity.
-	if animation.contains("_air_"):
+	if animation.contains("_air_") and not preload("res://scripts/ghost_diagonal_art_v247.gd").is_modular_combat_v294(animation):
 		animation = animation.replace("_air_", "_")
 	if body.sprite_frames != null:
 		var repaired: Dictionary = body.sprite_frames.get_meta("v186_heavy_fallbacks", {})
