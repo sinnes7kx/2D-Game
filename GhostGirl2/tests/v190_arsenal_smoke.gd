@@ -73,6 +73,9 @@ func _verify() -> void:
 		if mat == null or mat.shader != PAINT.SHADER or (OS.is_debug_build() and int(mat.get_shader_parameter("surface_mode")) != 6):
 			_fail("Painted surface not bound")
 			return
+		if not bool(mat.get_shader_parameter("refined_finish")):
+			_fail("Painted bow/wand refined finish not bound")
+			return
 		var ramp: GradientTexture1D = mat.get_shader_parameter("pigment_ramp")
 		if ramp == null or ramp.gradient.colors.size() < 3 or painted.all_stats() != stats:
 			_fail("Painted pigment or stat preservation failed")

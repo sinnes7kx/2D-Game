@@ -111,17 +111,34 @@ static func _draw_local(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Di
 	var trim: Color = profile.get("ornament_ink", metal)
 	trim = trim.lerp(metal, 0.52)
 	canvas.draw_colored_polygon(PackedVector2Array([butt-n*4.0, grip-n*3.0, tip-n*2.0, tip+n*2.0, grip+n*3.0, butt+n*4.0]), wood.darkened(0.3))
-	canvas.draw_line(butt, tip, wood, 3.0, true)
-	canvas.draw_line(grip-n*1.0, tip-n*1.0, metal.darkened(0.3), 1.0, true)
+	canvas.draw_line(butt,tip,wood,3.8,true)
+	canvas.draw_line(butt-n*2.15,grip-n*1.7,wood.lightened(0.28),0.75,true)
+	canvas.draw_line(butt+n*2.2,grip+n*1.6,wood.darkened(0.34),0.85,true)
+	for i in range(5):
+		var a: float = float(i)/5.0
+		canvas.draw_line(butt.lerp(grip,a)-n*0.8,butt.lerp(grip,a+0.12)-n*0.8,wood.darkened(0.24),0.45,true)
+	# Recessed bolt rail and steel lock housing, retaining muzzle/notch.
+	canvas.draw_line(grip+axis*5.0,tip,metal.darkened(0.52),3.0,true)
+	canvas.draw_line(grip+axis*5.0-n*1.05,tip-n*1.05,metal.lightened(0.22),0.62,true)
+	canvas.draw_line(grip+axis*5.0+n*1.05,tip+n*1.05,metal,0.62,true)
+	canvas.draw_line(butt-n*3.5,butt+n*3.5,metal.darkened(0.38),2.6,true)
+	canvas.draw_line(butt-n*2.8-axis*0.45,butt+n*2.8-axis*0.45,metal.lightened(0.20),0.65,true)
 	var sweep: float = float(build["sweep"])
 	var left: Vector2 = mount - n * width - axis * sweep
 	var right: Vector2 = mount + n * width - axis * sweep
 	var limbs: PackedVector2Array = PackedVector2Array([left, mount-n*9.0+axis*4.0, mount, mount+n*9.0+axis*4.0, right])
-	canvas.draw_polyline(limbs, metal.darkened(0.40), 4.1, true)
-	canvas.draw_polyline(limbs, metal, 2.0, true)
-	# Fine forged bevels and stock furniture; fixed small draw budget.
-	canvas.draw_polyline(limbs, metal.lightened(0.35), 0.65, true)
-	canvas.draw_line(mount - n * 3.0, mount + n * 3.0, trim, 2.0, true)
+	canvas.draw_polyline(limbs,metal.darkened(0.55),4.8,true)
+	canvas.draw_polyline(limbs,metal.darkened(0.10),2.9,true)
+	# Off-center polished bevel, rather than a uniformly bright wire.
+	for i in range(limbs.size()-1):
+		canvas.draw_line(limbs[i]-axis*0.75,limbs[i+1]-axis*0.75,metal.lightened(0.24),0.72,true)
+		canvas.draw_line(limbs[i]+axis*0.85,limbs[i+1]+axis*0.85,metal.darkened(0.32),0.62,true)
+	canvas.draw_line(mount-n*3.6,mount+n*3.6,metal.darkened(0.48),4.0,true)
+	canvas.draw_line(mount-n*3.0-axis*0.9,mount+n*3.0-axis*0.9,trim,0.85,true)
+	for sign_value in [-1.0,1.0]:
+		var rivet: Vector2 = mount+n*sign_value*2.1
+		canvas.draw_circle(rivet,1.05,metal.darkened(0.50))
+		canvas.draw_circle(rivet-axis*0.3,0.48,metal.lightened(0.35))
 	for i in range(int(build["wraps"])):
 		var at: Vector2 = grip - axis * (2.0 + float(i) * 1.8)
 		canvas.draw_line(at - n * 2.1, at + n * 2.1 - axis * 1.0, trim.darkened(0.18), 0.65, true)
@@ -138,7 +155,9 @@ static func _draw_local(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Di
 		canvas.draw_line(inset-axis*3.0+n, inset+axis*3.0+n, trim, 0.65, true)
 		canvas.draw_line(inset-axis*3.0-n, inset+axis*3.0-n, trim, 0.65, true)
 	var notch: Vector2 = grip + axis * (2.0 if loaded else lerpf(16.0, 2.0, clampf(cocking, 0.0, 1.0)))
-	canvas.draw_polyline(PackedVector2Array([left, notch, right]), Color("bdb2be"), 0.85, true)
+	var cord: PackedVector2Array = PackedVector2Array([left,notch,right])
+	canvas.draw_polyline(cord,Color("282329"),1.4,true)
+	canvas.draw_polyline(cord,Color("bdb2be"),0.72,true)
 	if not look.is_empty() and not colors.is_empty() and FX_LEVEL.intensity > 0.0:
 		FX.draw_edge(canvas, limbs, colors, look, phase, 0.85)
 		FX.draw_signature(canvas, limbs, colors, look, phase)
