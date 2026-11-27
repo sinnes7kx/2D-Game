@@ -8,8 +8,8 @@ func _initialize() -> void:
 		var altar: Node = chamber.get_node("Gameplay/SepulchreAltar")
 		assert(int(altar.get("depth"))==d)
 		assert(bool(altar.call("can_awaken_seal")))
-		var seal1: Node = chamber.get_node("Gameplay/RitualSeal1")
-		var seal2: Node = chamber.get_node("Gameplay/RitualSeal2")
+		var seal1: Node2D = chamber.get_node("Gameplay/RitualSeal1") as Node2D
+		var seal2: Node2D = chamber.get_node("Gameplay/RitualSeal2") as Node2D
 		assert(seal1.position.distance_to(seal2.position)>500.0)
 		assert(not bool(seal1.get("awakened")) and not bool(seal2.get("awakened")))
 		assert(not str(seal1.call("interact")).is_empty())
