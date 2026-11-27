@@ -98,6 +98,44 @@ func _initialize() -> void:
 							assert(span.is_empty())
 						else:
 							assert(span.size()==2 and span[0]==wrist and is_equal_approx(span[0].distance_to(span[1]),50.0))
+	if ART._load_sheet(ART.REVISED_ACTIONS)!=null and ART.available():
+		# Synthetic timing fixtures exercise the installer without requiring
+		# every weapon resource to load in this targeted regression.
+		var heavy_art = preload("res://scripts/heavy_weapon_art_v192.gd")
+		var scythe_art = preload("res://scripts/scythe_art_v190.gd")
+		var stems: Array[String] = ["attack_sword_light_","attack_dual_sword_light_a_","attack_dual_sword_riposte_","attack_scythe_heavy_","attack_halberd_light_","attack_maul_heavy_","attack_ashglass_maul_heavy_"]
+		for stem in stems:
+			for cardinal in ["front","back"]:
+				var timing: String = stem+cardinal
+				frames.add_animation(timing)
+				frames.set_animation_speed(timing,16.0)
+				for i in range(16):
+					frames.add_frame(timing,GradientTexture2D.new(),0.5+float(i)/16.0)
+		ART.install(frames)
+		for stem in stems:
+			for face in ART.DIRECTIONS:
+				var clip: String = stem+face
+				assert(frames.has_animation(clip) and frames.get_frame_count(clip)==8)
+				var duration: float = 0.0
+				for i in range(8):
+					duration+=frames.get_frame_duration(clip,i)
+				assert(is_equal_approx(duration,15.5))
+				assert(ART.combat_clip_v294(stem+"front",face,frames)==clip)
+				assert(ART.missing_combat_clips_v293(frames).has(clip))
+				for i in range(8):
+					if stem.contains("dual_sword"):
+						var pair: Array = ART.paired_attack_spans(clip,i,66.0)
+						assert(pair.size()==2)
+						for hand in range(2):
+							var wrist: Vector2 = ART.hand_wrist(clip,i,hand)
+							var span: PackedVector2Array = pair[hand]
+							assert(span.is_empty() if wrist==Vector2.INF else span.size()==2 and span[0]==wrist and is_equal_approx(span[0].distance_to(span[1]),66.0))
+					elif stem.contains("scythe") or stem.contains("halberd") or stem.contains("maul"):
+						var span: PackedVector2Array = scythe_art.span(clip,i,{}) if stem.contains("scythe") else heavy_art.span(clip,i,{})
+						var length: float = 86.0 if stem.contains("scythe") else (82.0 if stem.contains("halberd") else 70.0)
+						assert(span.size()==2 and span[0]==ART.wrist(clip,i) and is_equal_approx(span[0].distance_to(span[1]),length))
+						if i==(4 if stem.contains("heavy") else 3):
+							assert((span[1]-span[0]).normalized().dot(ART.heading_v294(face))>0.999)
 	assert(ART.is_painted_bow_carry("moonveil_walk_back_left"))
 	if frames.has_animation("sword_modular_idle_front_right"):
 		assert(ART.armed_clip("sword_modular_idle_front", "front_right", "front", frames) == "sword_modular_idle_front_right")
