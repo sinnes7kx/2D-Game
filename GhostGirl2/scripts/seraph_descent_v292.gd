@@ -1,8 +1,10 @@
 extends RefCounted
 const GROUND = preload("res://scripts/relic_ground_v288.gd")
-const DURATION: float = 0.96
-const RISE_HIT: float = 0.22
-const FALL_HIT: float = 0.73
+const TIME_SCALE: float = 1.50
+const DURATION: float = 0.96*TIME_SCALE
+const RISE_HIT: float = 0.22*TIME_SCALE
+const FALL_HIT: float = 0.73*TIME_SCALE
+const TURN: float = 0.40*TIME_SCALE
 const COST: float = 32.0
 
 static func height_at(age: float) -> float:
@@ -10,13 +12,16 @@ static func height_at(age: float) -> float:
 	return 66.0*sin(PI*t)
 
 static func speed_at(age: float) -> float:
+	return _original_speed(age/TIME_SCALE)/TIME_SCALE
+
+static func _original_speed(age: float) -> float:
 	if age<0.24:
 		return 95.0
 	if age<0.46:
 		return 36.0
 	if age<0.75:
 		return 310.0
-	return 42.0*(1.0-clampf((age-0.75)/(DURATION-0.75),0.0,1.0))
+	return 42.0*(1.0-clampf((age-0.75)/(0.96-0.75),0.0,1.0))
 
 static func contact(offset: Vector2,axis: Vector2,descending: bool) -> bool:
 	var reach: float = 192.0 if descending else 142.0
