@@ -284,14 +284,14 @@ func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedV
 			if animation_name.contains("forge_dagger_"):
 				return FORGE_V238.span(animation_name,diagonal.cardinal_for_clip(animation_name),frame_index)
 			if animation_name.contains("sword_modular_") or animation_name.contains("twinblade") or animation_name.contains("_spear_") or animation_name.contains("_dagger_"):
-				var length: float = 76.0 if animation_name.contains("twinblade") else (74.0 if animation_name.contains("_spear_") else (39.0 if animation_name.contains("_dagger_") else 60.0))
+				var length: float = 76.0 if animation_name.contains("twinblade") else (74.0 if animation_name.contains("_spear_") else (DAGGER_THRUST.SINGLE_LENGTH if animation_name.contains("_dagger_") else 60.0))
 				return diagonal.melee_span(animation_name,frame_index,length)
 		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
 			return diagonal.crossbow_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and (animation_name.begins_with("spear_") or animation_name.begins_with("briarwake_spear_")):
 			return diagonal.spear_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and not animation_name.begins_with("wand_"):
-			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (39.0 if (animation_name.begins_with("forge_dagger_") or animation_name.begins_with("nocturne_dagger_") or animation_name.begins_with("dagger_")) else (76.0 if animation_name.contains("twinblade") else 67.0))
+			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (DAGGER_THRUST.SINGLE_LENGTH if (animation_name.begins_with("forge_dagger_") or animation_name.begins_with("nocturne_dagger_") or animation_name.begins_with("dagger_")) else (76.0 if animation_name.contains("twinblade") else 67.0))
 			var carried: PackedVector2Array = diagonal.carried_span(animation_name,frame_index,length)
 			if carried.size() == 2:
 				return GENTLE.smooth(body,animation_name,carried) if GENTLE.modular_idle(animation_name) else carried
@@ -389,7 +389,7 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 	# A slender dagger/stiletto gets a slightly longer visible blade. The
 	# weapon remains anchored to the same hand; the attack collider is unchanged.
 	if animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_"):
-		tips[n] = anchor + (tips[n] - anchor) * 1.13
+		tips[n] = anchor + (tips[n] - anchor) * 1.38
 	# A heavy blow has a longer forearm extension, not a spinning flat weapon.
 	var reach: Vector2 = tips[n] - anchor
 	if heavy and n in [3, 4, 5]:
