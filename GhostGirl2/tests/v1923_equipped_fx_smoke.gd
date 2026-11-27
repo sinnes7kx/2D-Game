@@ -70,6 +70,11 @@ func _verify() -> void:
 		if float(cloth.get_shader_parameter("weapon_strength")) != 0.0 or float(cloth.get_shader_parameter("tint_strength")) != 0.0:
 			_fail("Unsafe body recolor still enabled")
 			return
+	# Both views use one shared intensity calculation, including explicit Off.
+	var light_look: Dictionary = {"glow_strength": 1.2}
+	if not is_equal_approx(FX.blade_light_strength(light_look, 1.0), 1.2) or not is_equal_approx(FX.blade_light_strength(light_look, 0.5), 0.6) or FX.blade_light_strength(light_look, 0.0) != 0.0:
+		_fail("Shared blade light intensity mismatch")
+		return
 	var arc: PackedVector2Array = PackedVector2Array([Vector2.ZERO, Vector2(10, 10), Vector2(20, 0)])
 	if FX.point_on_path(arc, 0.5) != Vector2(10, 10) or HAND.hand_anchor("front", 0, 1) != Vector2(51,27):
 		_fail("Weapon contour or corrected hand anchor regressed")

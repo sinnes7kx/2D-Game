@@ -1104,3 +1104,7 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 - No broad rewrite, broken save compatibility, or “feature complete” announcement without real tests.
 
 **North star check before every change:** *Does this make a cherished rare item more exciting to find, safer to own, easier to admire, or more meaningful to show and eventually trade—without making ordinary collecting frustrating?* If not, explain why it deserves priority now.
+
+
+### Twinblade equipped / Collector's Lens illumination parity (source implementation; runtime review pending)
+- Share edge bloom, soft light core, seeded detail and palette motion between the Collector's Lens and the equipped twinblade (including The Rose's Reflection). Both cutting heads use their actual edge contours; central grip remains unlit. Respect saved Off/manual glow and session FX intensity. No item or save changes. Extend the existing equipped FX smoke test with shared intensity checks. Godot runtime and screenshot parity are not yet verified; other weapon-family live renderers still require individual parity review.

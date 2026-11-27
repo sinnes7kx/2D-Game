@@ -184,18 +184,7 @@ func _draw_trident() -> void:
 	_blade(Vector2(0, -36), Vector2(0, -53), 2.6, 0)
 
 func _draw_light() -> void:
-	for i in range(segments.size()):
-		var path: PackedVector2Array = segments[i]
-		ANOMALOUS.draw_edge(self, path, gradients, look, elapsed, float(look.get("glow_strength", 1.0)), i % 2 == 0)
-		# The held weapon uses a soft light core in addition to material edges.
-		for j in range(10):
-			var u: float = 0.12 + 0.8 * float(j) / 9.0
-			var at: Vector2 = ANOMALOUS.point_on_path(path, u)
-			var ink: Color = ANOMALOUS.color_at(gradients, look, u, elapsed).lerp(Color.WHITE, 0.25)
-			var strength: float = CHOICES_V216.effect_scale(item)
-			draw_circle(at, 6.0, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.055 * strength)))
-			draw_circle(at, 2.5, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.19 * strength)))
-			draw_circle(at, 0.9, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.48 * strength)))
+	ANOMALOUS.draw_blade_light(self, segments, gradients, look, elapsed, CHOICES_V216.effect_scale(item))
 
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.
