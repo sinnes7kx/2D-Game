@@ -254,6 +254,12 @@ func _on_equipment_changed() -> void:
 	ui.set_health(player.health, player.maximum_health())
 
 func _bind_room() -> void:
+	# Room ownership guarantees all pooled lights and mist are freed on exit.
+	if not room_view.has_node("AtmosphereV278"):
+		var ambience: Node2D = preload("res://scripts/room_atmosphere_v278.gd").new()
+		ambience.name="AtmosphereV278"
+		ambience.call("setup",room_view,player,room)
+		room_view.add_child(ambience)
 	# Clear temporary challenge statuses when reloading, changing or resting in a room.
 	ui.set_echo_trial_progress(false)
 	ui.set_rose_run_progress(false)
