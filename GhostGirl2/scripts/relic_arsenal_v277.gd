@@ -7,14 +7,14 @@ const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const IMPACT = preload("res://scripts/impact_spawner_v149.gd")
 const PROFILES: Dictionary = {
 	"ivory_duelist_rapier_v286": {"name":"Ivory Riposte","description":"Timed frontal parry opens a counterattack window; strike after blocking","pattern":"single","count":1,"spread":0,"power":1.95,"speed":1350,"range":390,"stagger":1.05,"effect":"heal","ink":"f0d9b0"},
-	"rosehook_bearded_axe_v286": {"name":"Briar Funeral","description":"Summons Grasping Roses at the aimed location; 7.1s recharge","pattern":"blade","count":3,"spread":24,"power":2.05,"speed":640,"range":300,"stagger":1.5,"effect":"frost","ink":"d1a3c4"},
+	"rosehook_bearded_axe_v286": {"name":"Briar Funeral","description":"Wide hook-axe cleave staggers enemies in front; 3.2s recharge","pattern":"blade","count":3,"spread":24,"power":2.05,"speed":640,"range":300,"stagger":1.5,"effect":"frost","ink":"d1a3c4"},
 	"ossuary_poleaxe_v286": {"name":"Ossuary Verdict","description":"Four timed ground fissures erupt in a line; 2.4s recharge","pattern":"wave","count":1,"spread":0,"power":2.3,"speed":510,"range":400,"stagger":2.8,"effect":"burst","ink":"dfc7a2"},
 	"cathedral_rapier_v283": {"name":"The Gilded Verdict","description":"Piercing golden thrust with high stagger","pattern":"single","count":1,"spread":0,"power":2.1,"speed":1250,"range":440,"stagger":2.2,"effect":"pierce","ink":"e9c694"},
 	"gravecleaver_axe_v283": {"name":"Gravecleaver's Toll","description":"A crushing explosive cleave","pattern":"blade","count":1,"spread":0,"power":2.25,"speed":560,"range":310,"stagger":2.4,"effect":"burst","ink":"c6bdd7"},
 	"gallows_greataxe_v283": {"name":"Gallows Requiem","description":"A physical expanding shock ring strikes each enemy once; 2.4s recharge","pattern":"radial","count":6,"spread":60,"power":2.3,"speed":480,"range":245,"stagger":2.1,"effect":"none","ink":"e0bc89"},
 	"moonveil_grandblade": {"name":"Hollow Moon","description":"A broad crescent bursts on contact","pattern":"blade","count":1,"spread":0,"power":2.25,"speed":490,"range":320,"stagger":1.8,"effect":"burst","ink":"c4c6f7"},
 	"vesper_rapier": {"name":"Heart's Silence","description":"A precise piercing thrust","pattern":"single","count":1,"spread":0,"power":2,"speed":1260,"range":410,"stagger":1,"effect":"pierce","ink":"e7c2d5"},
-	"lunar_vigil_halberd": {"name":"Endless Vigil","description":"Calls Astral Rain onto an aimed area; 7.8s recharge","pattern":"blade","count":1,"spread":0,"power":2.2,"speed":680,"range":440,"stagger":2.7,"effect":"none","ink":"dad2ab"},
+	"lunar_vigil_halberd": {"name":"Endless Vigil","description":"Long-reaching halberd thrust with strong stagger; 3.8s recharge","pattern":"blade","count":1,"spread":0,"power":2.2,"speed":680,"range":440,"stagger":2.7,"effect":"none","ink":"dad2ab"},
 	"rosemirror_twinblade_v170": {"name":"Rose Reflection","description":"Hold to spin both blades while walking; a growing cyclone strikes beyond the blade reach","pattern":"radial","count":4,"spread":90,"power":2,"speed":520,"range":230,"stagger":1.15,"effect":"none","ink":"e7b5ca"},
 	"cathedral_thorn_twinblade_v231": {"name":"Martyr Crown","description":"Hold to become a mobile cyclone; radius and spin speed build over time","pattern":"radial","count":6,"spread":60,"power":2.25,"speed":480,"range":215,"stagger":2,"effect":"none","ink":"d2b58c"},
 	"blackthorn_bow_v234": {"name":"Widow's Volley","description":"Five narrow arrows fan outward","pattern":"fan","count":5,"spread":8.0,"power":1.65,"speed":1030.0,"range":660.0,"stagger":0.9,"effect":"none","ink":"b989c5"},
@@ -32,7 +32,7 @@ const PROFILES: Dictionary = {
 	"ashglass_warmaul_v170": {"name":"Cathedral Ruin","description":"A radial eight-wave ground shock","pattern":"radial","count":8,"spread":45.0,"power":2.3,"speed":440.0,"range":165.0,"stagger":1.5,"effect":"none","ink":"d9a6a4"},
 	"v203_mournful_mace": {"name":"Mercy Denied","description":"A focused crushing ground wave","pattern":"wave","count":1,"spread":0.0,"power":2.25,"speed":490.0,"range":300.0,"stagger":3.2,"effect":"none","ink":"d6b7a4"},
 	"v203_rosequartz_morningstar": {"name":"Dawn Sorrow","description":"Six radial waves restore stamina on contact","pattern":"radial","count":6,"spread":60.0,"power":1.8,"speed":465.0,"range":190.0,"stagger":1.2,"effect":"stamina","ink":"e5a4be"},
-	"frostveil_bow_v277": {"name":"Winter's Choir","description":"Full draw summons Moonfall Blizzard at the aimed location; 6.2s recharge","pattern":"fan","count":5,"spread":11.0,"power":1.85,"speed":1040.0,"range":680.0,"stagger":0.95,"effect":"frost","ink":"9adfe9"},
+	"frostveil_bow_v277": {"name":"Winter's Choir","description":"Full draw releases five narrow piercing arrows; 4s recharge","pattern":"fan","count":5,"spread":11.0,"power":1.85,"speed":1040.0,"range":680.0,"stagger":0.95,"effect":"pierce","ink":"9adfe9"},
 	"mourning_star_crossbow_v277": {"name":"Astral Sentence","description":"A long-range returning piercing bolt","pattern":"single","count":1,"spread":0.0,"power":2.1,"speed":1540.0,"range":960.0,"stagger":1.35,"effect":"return_pierce","ink":"c7a8ff"},
 	"hollowbell_maul_v277": {"name":"Hollow Cathedral","description":"Three giant bells descend onto marked ground and crush enemies; 5s recharge","pattern":"wave","count":3,"spread":18.0,"power":2.1,"speed":420.0,"range":290.0,"stagger":2,"effect":"burst","ink":"e0bb83"}
 }
@@ -65,9 +65,11 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 	if MECHANICS_V288.is_channel(id) or id=="ivory_duelist_rapier_v286":
 		# Channels run exclusively in the player's held-input state.
 		return false
-	if MECHANICS_V288.AREAS.has(id) or MECHANICS_V288.GROUND_SKILLS.has(id):
+	if MECHANICS_V288.PHYSICAL.has(id) or MECHANICS_V288.GROUND_SKILLS.has(id):
 		# Never fall through to a projectile if a bespoke skill is on cooldown.
 		return MECHANICS_V288.launch(actor,item,heading,id)
+	if MECHANICS_V288.VOLLEY.has(id) and not actor.call("relic_ready_v288",id):
+		return false
 	var p: Dictionary = PROFILES[id]
 	var count: int = int(p["count"])
 	var axis: Vector2 = heading.normalized()
@@ -102,4 +104,6 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 	IMPACT.burst(root,origin,"slam",0.85 if wave else 0.42,axis,item.visual_seed())
 	actor.set("camera_kick",maxf(float(actor.get("camera_kick")),5.0 if wave else 2.8))
 	actor.set("camera_push",-axis*(3.4 if wave else 1.8))
+	if MECHANICS_V288.VOLLEY.has(id):
+		actor.call("relic_commit_v288",id,MECHANICS_V288.cooldown(id))
 	return true
