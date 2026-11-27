@@ -23,6 +23,12 @@ func _verify() -> void:
 		if not art.sprite_frames.has_animation("idle_" + DIR.pose_name(i)):
 			_fail("Missing original idle art")
 			return
+	# Changing the visual heading cannot alter a committed jump travel vector.
+	actor.set("jump_direction", Vector2.LEFT)
+	actor.set("jump_strike_direction", Vector2.RIGHT)
+	actor.call("set_facing", Vector2.RIGHT)
+	assert(actor.get("jump_direction") == Vector2.LEFT)
+	assert(actor.get("jump_strike_direction") == Vector2.RIGHT)
 	var before: Vector2 = actor.get("facing")
 	actor.call("set_facing", Vector2.ZERO)
 	if not (actor.get("facing") as Vector2).is_equal_approx(before):
@@ -42,6 +48,16 @@ func _verify() -> void:
 		assert(DIR.movement(Vector2.ZERO,Vector2.ZERO,raw).is_equal_approx(DIR.heading(i)*0.63))
 	assert(DIR.movement(Vector2.LEFT,Vector2.ZERO,Vector2.RIGHT)==Vector2.LEFT)
 	assert(DIR.movement(Vector2.ZERO,Vector2.ZERO,Vector2.ZERO)==Vector2.ZERO)
+	# Mouse aim is independent of movement, with a stable near-cursor zone.
+	for i in range(8):
+		var aim: Vector2 = DIR.heading(i)
+		assert(DIR.cursor_heading(aim * 120.0, -aim).is_equal_approx(aim))
+		assert(DIR.cursor_heading(aim * 8.0, -aim).is_equal_approx(-aim))
+		assert(DIR.octant(DIR.cursor_heading(aim * 120.0, Vector2.DOWN)) == i)
+	var precise: Vector2 = Vector2(100.0, 29.0)
+	assert(DIR.cursor_heading(precise, Vector2.DOWN).is_equal_approx(precise.normalized()))
+	assert(DIR.cursor_heading(Vector2.ZERO, Vector2.LEFT) == Vector2.LEFT)
+	assert(DIR.movement(Vector2.LEFT, Vector2.ZERO) == Vector2.LEFT)
 	DIR.install_controller()
 	var event_count: int = InputMap.action_get_events("attack_light").size()
 	DIR.install_controller()

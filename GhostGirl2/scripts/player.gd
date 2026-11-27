@@ -208,6 +208,7 @@ var dodge_direction: Vector2 = Vector2.DOWN
 var jump_time_left: float = 0.0
 var jump_duration: float = 0.0
 var jump_direction: Vector2 = Vector2.DOWN
+var jump_strike_direction: Vector2 = Vector2.DOWN
 var jump_origin: Vector2 = Vector2.ZERO
 var jump_attack_active: bool = false
 var jump_attack_triggered: bool = false
@@ -627,9 +628,11 @@ func _physics_process(delta: float) -> void:
 	if sprinting and velocity.length() > WALK_SPEED * 1.05 and sprint_dust_time <= 0.0:
 		sprint_dust_time = 0.28
 		PHYSICAL_FEEL.burst(get_tree().current_scene, global_position + Vector2(0, -6), "landing", 0.35, -direction, roundi(visual_time * 51.0))
+	# Face the aim even when standing still, backpedalling or strafing.
+	# Committed actions return above this block and retain their own facing.
+	set_facing(_free_facing_direction(direction))
 	if moving:
 		blink_active = 0.0
-		set_facing(lock_target.global_position - global_position if is_instance_valid(lock_target) else direction)
 		var travel_prefix: String = _weapon_motion_prefix(true)
 		_play_if_changed(travel_prefix + facing_name)
 		body_art.speed_scale = clampf(velocity.length() / WALK_SPEED, 0.75, 1.55)
@@ -969,16 +972,23 @@ func set_facing(direction: Vector2) -> void:
 	_update_hand()
 
 var controller_active_v260: bool = false
+var touch_aim_active: bool = false
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and event.pressed:
 		special_mouse_frame_v272=Engine.get_physics_frames() if event.shift_pressed else -100
-	if event is InputEventJoypadButton and event.pressed:
+	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+		touch_aim_active = true
+		controller_active_v260 = false
+	elif event is InputEventJoypadButton and event.pressed:
 		controller_active_v260 = true
+		touch_aim_active = false
 	elif event is InputEventJoypadMotion and absf(event.axis_value) > 0.30:
 		controller_active_v260 = true
-	elif event is InputEventKey and event.pressed or event is InputEventMouseButton and event.pressed or event is InputEventMouseMotion and event.relative.length_squared() > 4.0:
+		touch_aim_active = false
+	elif (event is InputEventKey and event.pressed) or (event is InputEventMouseButton and event.pressed and event.device != -1) or (event is InputEventMouseMotion and event.device != -1 and event.relative.length_squared() > 4.0):
 		controller_active_v260 = false
+		touch_aim_active = false
 
 func _special_modifier_v272() -> bool:
 	return Input.is_key_pressed(KEY_SHIFT) or Input.is_physical_key_pressed(KEY_SHIFT) or Engine.get_physics_frames()-special_mouse_frame_v272<=2
@@ -1217,16 +1227,14 @@ func _begin_jump() -> void:
 	jump_attack_active = false
 	jump_attack_triggered = false
 	var movement: Vector2 = _movement_input()
-	if is_instance_valid(lock_target):
-		jump_direction = (lock_target.global_position - global_position).normalized()
-	elif movement.length_squared() > 0.04:
+	if movement.length_squared() > 0.04:
 		jump_direction = movement.normalized()
 	else:
-		jump_direction = facing
+		jump_direction = _free_facing_direction(Vector2.ZERO)
 	if jump_direction.length_squared() < 0.001:
 		jump_direction = Vector2.DOWN
 	jump_direction = jump_direction.normalized()
-	set_facing(jump_direction)
+	set_facing(_free_facing_direction(movement))
 	body_art.speed_scale = 1.0
 	var clip: String = _diagonal_action_clip("jump", _weapon_motion_prefix(true) + facing_name)
 	_play_action_frames(clip, jump_duration)
@@ -1253,7 +1261,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	if attack_direction.length_squared() < 0.001:
 		attack_direction = jump_direction
 	set_facing(attack_direction)
-	jump_direction = attack_direction
+	jump_strike_direction = attack_direction
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, "jump_swing", -14.0)
 	var attack_animation: String = ""
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
@@ -1268,7 +1276,24 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	# The physical hit remains the existing single jump-hit event.
 	_play_action_frames(AIR_V203.air_name(attack_animation), maxf(0.26, jump_time_left))
 
+func _refresh_air_facing() -> void:
+	# Ranged draws, casts and committed strikes own their own animation.
+	if jump_attack_active or bow_draw_active or bow_time_left > 0.0 or crossbow_stage != 0:
+		return
+	var before: String = facing_eight_name
+	set_facing(_free_facing_direction(_movement_input()))
+	if before == facing_eight_name:
+		return
+	var clip: String = _diagonal_action_clip("jump", _weapon_motion_prefix(true) + facing_name)
+	if clip == str(body_art.animation) or not body_art.sprite_frames.has_animation(clip):
+		return
+	# Match the current point in the jump instead of restarting it.
+	var phase: float = clampf(1.0 - jump_time_left / maxf(0.01, jump_duration), 0.0, 0.999)
+	_play_action_frames(clip, jump_duration)
+	GENTLE.seek_phase(body_art, phase)
+
 func _advance_jump(delta: float) -> void:
+	_refresh_air_facing()
 	jump_time_left = maxf(0.0, jump_time_left - delta)
 	var progress: float = 1.0 - jump_time_left / maxf(0.01, jump_duration)
 	var speed_scale: float = 0.88 + 0.20 * sin(progress * PI)
@@ -1324,7 +1349,7 @@ func _strike_jump_attack() -> void:
 	var previous_direction: Vector2 = attack_direction
 	heavy_attack = true
 	active_attack_style = _weapon_style()
-	attack_direction = jump_direction if jump_direction.length_squared() > 0.0 else facing
+	attack_direction = jump_strike_direction
 	# Air movement and light camera response happen on commitment, NOT on hit.
 	_emit_air_wake("jump", attack_direction)
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, "jump_swing", -23.0)
@@ -1349,7 +1374,11 @@ func _begin_dodge() -> void:
 		set_facing(lock_target.global_position - global_position)
 		dodge_direction = (global_position - lock_target.global_position).normalized()
 	else:
-		dodge_direction = -facing
+		# Sample the cursor at the start of the backstep, not one tick earlier.
+		# Controller/touch retain their previous facing-based retreat.
+		var retreat_aim: Vector2 = facing if controller_active_v260 or touch_aim_active else _free_facing_direction(Vector2.ZERO)
+		set_facing(retreat_aim)
+		dodge_direction = -retreat_aim
 	if dodge_direction.length_squared() < 0.05:
 		dodge_direction = Vector2.UP
 	dodge_direction = dodge_direction.normalized()
@@ -2188,6 +2217,19 @@ func _begin_attack(heavy: bool) -> void:
 	# Repeated same-direction combo attacks are new actions, not resumes.
 	body_art.set_frame_and_progress(0, 0.0)
 
+func _free_facing_direction(travel: Vector2) -> Vector2:
+	if is_instance_valid(lock_target):
+		var locked: Vector2 = lock_target.global_position - global_position
+		if locked.length_squared() > 4.0:
+			return locked.normalized()
+	if controller_active_v260:
+		var stick_aim: Vector2 = DIRECTIONS_V245.stick(JOY_AXIS_RIGHT_X, JOY_AXIS_RIGHT_Y)
+		if stick_aim.length_squared() > 0.01:
+			return stick_aim.normalized()
+	if controller_active_v260 or touch_aim_active:
+		return travel.normalized() if travel.length_squared() > 0.01 else facing
+	return DIRECTIONS_V245.cursor_heading(get_global_mouse_position() - global_position, facing)
+
 func _combat_aim_direction() -> Vector2:
 	if is_instance_valid(lock_target):
 		var locked_heading: Vector2 = lock_target.global_position - global_position
@@ -2199,15 +2241,9 @@ func _combat_aim_direction() -> Vector2:
 			return DIRECTIONS_V245.heading(DIRECTIONS_V245.octant(aim))
 		var movement: Vector2 = _movement_input()
 		return DIRECTIONS_V245.heading(DIRECTIONS_V245.octant(movement)) if movement.length_squared() > 0.01 else facing
-	# Mouse dead zone covers the character's full illustrated body. When the
-	# pointer is inside it, use held movement or the last intentional facing.
-	var cursor_heading: Vector2 = get_global_mouse_position() - global_position
-	if cursor_heading.length_squared() > 58.0 * 58.0:
-		return cursor_heading.normalized()
-	var movement: Vector2 = _movement_input()
-	if movement.length_squared() > 0.04:
-		return movement.normalized()
-	return facing
+	# Use the same aim as free locomotion so a close cursor does not make
+	# an attack unexpectedly turn toward the held movement key.
+	return _free_facing_direction(_movement_input())
 
 func _queue_combat(action: String) -> void:
 	if action in ["light","heavy"] and thrown_weapon_busy_v273():
