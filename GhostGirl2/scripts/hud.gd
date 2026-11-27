@@ -295,6 +295,11 @@ func _input(event: InputEvent) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	# Session-only accessibility controls; saves and combat are unaffected.
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_F5 and event.shift_pressed:
+			var mode: String = preload("res://scripts/atmosphere_settings_v278.gd").cycle()
+			show_pickup("WORLD ATMOSPHERE  ·  "+mode)
+			get_viewport().set_input_as_handled()
+			return
 		if event.physical_keycode == KEY_F6 and event.shift_pressed:
 			var grade: Node = get_parent().get_node_or_null("GothicGradeV277")
 			if grade!=null and grade.has_method("cycle"):

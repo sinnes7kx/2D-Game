@@ -1,5 +1,7 @@
 @tool
 extends Node2D
+const ATMOSPHERE = preload("res://scripts/atmosphere_settings_v278.gd")
+const SOFT_TEXTURES = preload("res://scripts/atmosphere_textures_v278.gd")
 const PERF_V230 = preload("res://scripts/performance_profiles_v230.gd")
 var redraw_clock: float = 0.0
 var last_profile_revision: int = -1
@@ -19,7 +21,10 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
     var flicker: float = 0.88 + 0.12 * sin(age * 3.8)
-    draw_circle(Vector2.ZERO, 23, Color(0.03, 0.03, 0.04, 0.25))
+    if Engine.is_editor_hint() or ATMOSPHERE.strength()<=0.0:
+        draw_circle(Vector2.ZERO, 23, Color(0.03, 0.03, 0.04, 0.25))
+    else:
+        draw_texture_rect(SOFT_TEXTURES.shadow(),Rect2(-33,-12,66,24),false,Color(0.035,0.025,0.055,0.42))
     draw_line(Vector2(0, 2), Vector2(0, -69), Color("484047"), 4.5, true)
     draw_line(Vector2(0, -69), Vector2(19, -69), Color("65545b"), 3.0, true)
     draw_line(Vector2(19, -69), Vector2(19, -58), Color("65545b"), 1.6, true)
