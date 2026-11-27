@@ -597,6 +597,11 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 # Explicit developer-requested test delivery. The vault is preferred, and
 # the item and its claim flag are committed together through the atomic save.
 const RELIC_DELIVERY_V282: Array[String] = [
+	"cathedral_rapier_v283",
+	"moonneedle_rapier_v283",
+	"briar_hatchet_v283",
+	"gravecleaver_axe_v283",
+	"gallows_greataxe_v283",
 	"silkglass_dirk_v276",
 	"bellthorn_lance_v276",
 	"frostveil_bow_v277",

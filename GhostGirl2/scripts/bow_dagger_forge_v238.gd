@@ -53,8 +53,8 @@ static func bow_span(body: AnimatedSprite2D, name: String, face: String, frame: 
 
 static func limbs(grip: Vector2, axis: Vector2, base: String, width_scale: float) -> Array[PackedVector2Array]:
 	var n: Vector2 = axis.orthogonal()
-	var recurve: bool = base == "vesper_recurve_bow_v238"
-	var half: float = (33.0 if recurve else 43.0) * clampf(width_scale, 0.9, 1.1)
+	var recurve: bool = base in ["vesper_recurve_bow_v238","frostveil_bow_v277"]
+	var half: float = (38.0 if base=="frostveil_bow_v277" else (33.0 if recurve else 43.0)) * clampf(width_scale, 0.9, 1.1)
 	var result: Array[PackedVector2Array] = []
 	for side in [-1.0, 1.0]:
 		var a: Vector2 = n * side
@@ -62,7 +62,7 @@ static func limbs(grip: Vector2, axis: Vector2, base: String, width_scale: float
 		result.append(points)
 	return result
 
-static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, profile: Dictionary, limb_colors: Array[Color], string_colors: Array[Color], draw_amount: float, glow: float) -> void:
+static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, profile: Dictionary, limb_colors: Array[Color], string_colors: Array[Color], draw_amount: float, glow: float, string_glow: float = 0.0, full_glow: bool = false) -> void:
 	if points.size() != 2 or profile.is_empty() or limb_colors.size() < 2 or string_colors.size() < 2:
 		return
 	var grip: Vector2 = points[0]
@@ -83,10 +83,14 @@ static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, p
 			var thickness: float = lerpf(3.9,1.65,u)
 			var grain: Vector2 = axis * thickness * 0.26
 			if glow > 0.0:
-				canvas.draw_line(limb[i], limb[i+1], Color(tone.r, tone.g, tone.b, glow * 0.22), 5.2, true)
+				canvas.draw_line(limb[i], limb[i+1], Color(pigment.r, pigment.g, pigment.b, glow * 0.17), 10.0 if full_glow else 7.5, true)
+				canvas.draw_line(limb[i], limb[i+1], Color(pigment.r, pigment.g, pigment.b, glow * 0.36), 5.8, true)
 			canvas.draw_line(limb[i], limb[i + 1], tone.darkened(0.18), thickness, true)
 			canvas.draw_line(limb[i]-grain,limb[i+1]-grain,tone.lightened(0.18),0.72,true)
 			canvas.draw_line(limb[i]+grain,limb[i+1]+grain,tone.darkened(0.42),0.62,true)
+			if glow>0.0:
+				var lit: Color = pigment.lightened(0.35)
+				canvas.draw_line(limb[i]-grain,limb[i+1]-grain,Color(lit.r,lit.g,lit.b,glow*0.72),1.1,true)
 			if i < 3:
 				canvas.draw_line(limb[i].lerp(limb[i+1],0.16),limb[i].lerp(limb[i+1],0.78),tone.lightened(0.10),0.42,true)
 		var tip: Vector2 = limb[limb.size()-1]
@@ -101,8 +105,13 @@ static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, p
 	var notch: Vector2 = grip - axis * lerpf(12.0, 34.0, clampf(draw_amount, 0.0, 1.0))
 	var string: Color = GhostCosmeticRNGV152.sample_palette(string_colors, 0.5)
 	var cord: PackedVector2Array = PackedVector2Array([build[0][4],notch,build[1][4]])
+	if string_glow>0.0:
+		canvas.draw_polyline(cord,Color(string.r,string.g,string.b,string_glow*0.20),5.0,true)
 	canvas.draw_polyline(cord,Color("28232b"),1.35,true)
 	canvas.draw_polyline(cord,string.lerp(Color("d3cbd4"),0.38),0.72,true)
+	if string_glow>0.0:
+		var lit_string: Color = string.lightened(0.45)
+		canvas.draw_polyline(cord,Color(lit_string.r,lit_string.g,lit_string.b,string_glow*0.86),1.15,true)
 	ART.draw_grip(canvas, grip-n*5.0, grip+n*5.0, 2.0, profile)
 
 static func draw_dagger(canvas: Node2D, points: PackedVector2Array, profile: Dictionary) -> void:

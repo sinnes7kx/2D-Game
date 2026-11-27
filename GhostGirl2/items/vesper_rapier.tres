@@ -10,6 +10,7 @@ display_name = "Vesper Rapier"
 description = "A narrow blade carrying the hush of cathedral bells."
 icon = ExtResource("2_icon")
 equip_slot = "sword"
+weapon_style = "rapier"
 stat_id = "melee_power_pct"
 min_stat = 3.0
 max_stat = 7.0

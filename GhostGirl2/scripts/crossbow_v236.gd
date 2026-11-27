@@ -94,7 +94,11 @@ static func construction(profile: Dictionary, base: String) -> Dictionary:
 	var stocks: Array[float] = [18.0, 18.0, 15.0, 22.0]
 	return {"style": style, "width": widths[style] * clampf(float(profile.get("width_scale", 1.0)), 0.85, 1.15), "stock": stocks[style], "ornament": posmod(int(profile.get("ornament", 0)), 4), "wraps": clampi(int(profile.get("wrap_count", 4)), 3, 6), "sweep": [5.0, 7.0, 2.0, 4.0][style]}
 
-static func draw_weapon(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Dictionary, loaded: bool, base: String, cocking: float = 0.0, look: Dictionary = {}, colors: Array[Color] = [], phase: float = 0.0) -> void:
+static func draw_weapon(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Dictionary, loaded: bool, base: String, cocking: float = 0.0, look: Dictionary = {}, colors: Array[Color] = [], phase: float = 0.0, glow_scale: float = 1.0) -> void:
+	var pigment: Color = profile.get("metal",Color.WHITE)
+	var glow: float = FX_LEVEL.intensity*0.55*glow_scale if not look.is_empty() else 0.0
+	if preload("res://scripts/weapon_models_v283.gd").draw_crossbow(canvas,base,grip,tip,loaded,cocking,pigment,glow):
+		return
 	var scale: float = weapon_scale(base)
 	canvas.draw_set_transform(grip, 0.0, Vector2.ONE * scale)
 	_draw_local(canvas, Vector2.ZERO, tip - grip, profile, loaded, base, cocking, look, colors, phase)

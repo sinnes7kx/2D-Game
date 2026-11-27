@@ -13,6 +13,11 @@ const LABELS: Dictionary = {
 	"cleaving": "25% Wider Melee Attack Arc"
 }
 const NAMES: Dictionary = {
+	"cathedral_rapier_v283": "The Gilded Verdict",
+	"moonneedle_rapier_v283": "Lunar Oath",
+	"briar_hatchet_v283": "Briar's Severance",
+	"gravecleaver_axe_v283": "Gravecleaver's Toll",
+	"gallows_greataxe_v283": "Gallows Requiem",
 	"frostveil_bow_v277": "Winter's Choir", "mourning_star_crossbow_v277": "Astral Sentence", "hollowbell_maul_v277": "Hollow Cathedral",
 	"silkglass_dirk_v276": "Winterglass Tear", "bellthorn_lance_v276": "The Bell of Judgment",
 	"ashbound_wand": "Ashes of Eternity", "briar_wand": "The Pale Thorn", "hunter_censer_wand": "Saint's Last Breath",

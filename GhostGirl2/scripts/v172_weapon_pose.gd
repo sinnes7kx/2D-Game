@@ -1,4 +1,5 @@
 extends Node2D
+const MODELS_V283 = preload("res://scripts/weapon_models_v283.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
 const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
 const FORGE_FX = preload("res://scripts/fx_intensity_v1924.gd")
@@ -182,14 +183,14 @@ func _process(_delta: float) -> void:
 			if forge_fx_revision != FORGE_FX.revision:
 				forge_fx_revision = FORGE_FX.revision
 				queue_redraw()
-	if animation_now.contains("twinblade") or animation_now.contains("crossbow_") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
+	if animation_now.contains("rapier_") or animation_now.contains("axe_") or animation_now.contains("forge_bow_") or animation_now.contains("twinblade") or animation_now.contains("crossbow_") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
 	if animation_now != last_animation or body.frame != last_frame:
 		last_animation = animation_now
 		last_frame = body.frame
-		var rear_bow: bool = animation_now.begins_with("forge_bow_") and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
+		var rear_bow: bool = (animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
 		z_index = -1 if animation_now.ends_with("back") or rear_bow else 5 # Keep rear bow behind the body.
 		queue_redraw()
 
@@ -206,6 +207,8 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
+	if equipped.weapon_style() in ["rapier","axe"]:
+		return animation_name.begins_with(equipped.weapon_style()+"_") or animation_name.begins_with("attack_"+equipped.weapon_style()+"_")
 	if equipped.uses_forge_bow():
 		return animation_name.begins_with("forge_bow_") or animation_name.begins_with("attack_forge_bow_")
 	if equipped.uses_forge_dagger():
@@ -231,6 +234,11 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident in ["moonwarden_spear_v169","bellthorn_lance_v276"] and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
+	if _is_equipped(animation_name) and (animation_name.contains("rapier_") or animation_name.contains("axe_")):
+		var diagonal_v283 = preload("res://scripts/ghost_diagonal_art_v247.gd")
+		if not diagonal_v283.diagonal_name(animation_name).is_empty():
+			return diagonal_v283.carried_span(animation_name,frame_index,84.0 if animation_name.contains("rapier_") else 68.0,true)
+		return MODELS_V283.span(animation_name,animation_name.get_slice("_",animation_name.get_slice_count("_")-1),frame_index)
 	if _is_equipped(animation_name):
 		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
 		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
@@ -357,7 +365,13 @@ func _draw() -> void:
 		return
 	var tangent: Vector2 = axis.normalized()
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
-	if animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
+	if animation_name.contains("rapier_") or animation_name.contains("axe_"):
+		var world_v283: Node = player.get("world") as Node
+		var inventory_v283: Node = world_v283.get("inventory") as Node if world_v283!=null else null
+		var item_v283: GhostItemInstance = inventory_v283.get_equipped("sword") if inventory_v283!=null else null
+		if item_v283!=null:
+			MODELS_V283.draw_melee(self,str(item_v283.definition.item_id),grip,tip,item_v283.weapon_base_color(),FORGE_CHOICES.effect_scale(item_v283)*FORGE_FX.intensity*0.65)
+	elif animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
 		var profile: Dictionary = MODULAR.equipped_profile(self, body)
 		var world: Node = player.get("world") as Node
 		var inventory: Node = world.get("inventory") as Node if world != null else null
@@ -367,7 +381,8 @@ func _draw() -> void:
 		if held.uses_forge_bow():
 			var amount: float = clampf(float(player.get("bow_draw_time")) / 0.46, 0.0, 1.0) if bool(player.get("bow_draw_active")) else 0.0
 			var glow: float = FORGE_CHOICES.effect_scale(held) * FORGE_FX.intensity if FORGE_CHOICES.bow_body_visible(held) else 0.0
-			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, glow)
+			var string_glow: float = FORGE_CHOICES.effect_scale(held)*FORGE_FX.intensity if FORGE_CHOICES.bow_string_visible(held) else 0.0
+			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, glow, string_glow, FORGE_CHOICES.bow_mode(held)==3)
 		else:
 			FORGE_V238.draw_dagger(self, span, profile)
 	elif animation_name.contains("crossbow_"):
@@ -387,8 +402,8 @@ func _draw() -> void:
 			var face: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
 			var off: PackedVector2Array = CROSSBOW_V236.offhand_span(animation_name, face, body.frame, tangent)
 			if off.size() == 2:
-				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed)
-		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed)
+				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
+		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
 	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():

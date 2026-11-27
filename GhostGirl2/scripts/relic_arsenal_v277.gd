@@ -5,6 +5,11 @@ const SHOT = preload("res://scripts/relic_skill_projectile_v277.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const IMPACT = preload("res://scripts/impact_spawner_v149.gd")
 const PROFILES: Dictionary = {
+	"cathedral_rapier_v283": {"name":"The Gilded Verdict","description":"Piercing golden thrust with high stagger","pattern":"single","count":1,"spread":0,"power":2.1,"speed":1250,"range":440,"stagger":2.2,"effect":"pierce","ink":"e9c694"},
+	"moonneedle_rapier_v283": {"name":"Lunar Oath","description":"Twin piercing frost needles","pattern":"fan","count":2,"spread":6,"power":2,"speed":1320,"range":480,"stagger":0.9,"effect":"frost_pierce","ink":"a6d9f3"},
+	"briar_hatchet_v283": {"name":"Briar's Severance","description":"Two returning spectral axe crescents","pattern":"blade","count":2,"spread":16,"power":1.9,"speed":720,"range":310,"stagger":1.25,"effect":"return","ink":"d89aa6"},
+	"gravecleaver_axe_v283": {"name":"Gravecleaver's Toll","description":"A crushing explosive cleave","pattern":"blade","count":1,"spread":0,"power":2.25,"speed":560,"range":310,"stagger":2.4,"effect":"burst","ink":"c6bdd7"},
+	"gallows_greataxe_v283": {"name":"Gallows Requiem","description":"Six radial staggering shockwaves","pattern":"radial","count":6,"spread":60,"power":2.3,"speed":480,"range":245,"stagger":2.1,"effect":"none","ink":"e0bc89"},
 	"mourning_longsword": {"name":"Grief's Edge","description":"Two sweeping spectral crescents","pattern":"blade","count":2,"spread":22,"power":1.9,"speed":610,"range":285,"stagger":1.2,"effect":"none","ink":"c39cc3"},
 	"moonveil_grandblade": {"name":"Hollow Moon","description":"A broad crescent bursts on contact","pattern":"blade","count":1,"spread":0,"power":2.25,"speed":490,"range":320,"stagger":1.8,"effect":"burst","ink":"c4c6f7"},
 	"vesper_rapier": {"name":"Heart's Silence","description":"A precise piercing thrust","pattern":"single","count":1,"spread":0,"power":2,"speed":1260,"range":410,"stagger":1,"effect":"pierce","ink":"e7c2d5"},

@@ -9,7 +9,7 @@ func _initialize() -> void:
 	call_deferred("_verify")
 
 func _verify() -> void:
-	assert(ARSENAL.PROFILES.size()==35)
+	assert(ARSENAL.PROFILES.size()==40)
 	assert(SPECIAL.SPECIALS.size()==12)
 	assert(INNATE.POWERS.size()==38)
 	var names: Dictionary = {}

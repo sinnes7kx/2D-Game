@@ -141,7 +141,7 @@ func physical_damage_kind() -> String:
 	match weapon_style():
 		"maul": return "blunt"
 		"bow", "crossbow": return "pierce"
-		"dagger", "spear": return "pierce"
+		"dagger", "spear", "rapier": return "pierce"
 		_: return "slash"
 
 func light_swing_duration() -> float:
@@ -153,6 +153,8 @@ func light_swing_duration() -> float:
 		"dual_sword": return 0.47
 		"spear": return 0.53
 		"maul": return 0.67
+		"rapier": return 0.36
+		"axe": return 0.59
 		"twinblade": return 0.36
 		"bow": return 0.38
 		"crossbow": return 0.96
@@ -168,6 +170,8 @@ func light_stamina_cost() -> float:
 		"dual_sword": return 20.52
 		"spear": return 19.62
 		"maul": return 22.50
+		"rapier": return 16.2
+		"axe": return 21.6
 		"twinblade": return 16.20
 		"bow": return 14.0
 		"crossbow": return 18.0
@@ -182,6 +186,8 @@ func weapon_reach() -> float:
 		"dual_sword": return 165.0
 		"spear": return 213.0
 		"maul": return 173.0
+		"rapier": return 176.0
+		"axe": return 172.0
 		"twinblade": return 168.0
 		"bow": return 830.0
 		"crossbow": return 930.0
