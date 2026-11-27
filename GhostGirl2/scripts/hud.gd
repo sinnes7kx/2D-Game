@@ -415,6 +415,9 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if is_instance_valid(controls_window) and controls_window.visible:
+		get_viewport().set_input_as_handled()
+		return
 	if is_instance_valid(codex_panel) and codex_panel.visible:
 		get_viewport().set_input_as_handled()
 		return
