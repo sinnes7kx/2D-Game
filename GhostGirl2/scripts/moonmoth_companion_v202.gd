@@ -141,7 +141,7 @@ func _draw_equipped_wisp() -> void:
         # Tapered curved petals, not solid polygonal triangles.
         for j in range(1,17):
             var t: float = float(j)/16.0
-            var bulge: float = pow(sin(t*PI),0.84)
+            var bulge: float = pow(maxf(0.0,sin(t*PI)),0.84)
             upper.append(root+Vector2(side*reach*bulge,-upper_height*sin(t*PI)*sin(t*PI*0.5)-3.0*sin(t*TAU)))
             lower.append(root+Vector2(side*reach*0.64*bulge,tail_height*bulge+3.0*sin(t*TAU)))
         draw_colored_polygon(upper,Color(wing_ink.r,wing_ink.g,wing_ink.b,0.40))

@@ -60,6 +60,8 @@ func _verify() -> void:
 					source_frame = 0 if preload("res://scripts/gentle_weapon_motion_v191.gd").modular_idle(target) else IDLE_SEQUENCE[frame]
 				elif walk:
 					source_frame = WALK_SEQUENCE[frame]
+				elif target.begins_with("attack_dual_sword_heavy_"):
+					source_frame = preload("res://scripts/dagger_thrust_v186.gd").sequence(false)[frame]
 				var image: Texture2D = frames.get_frame_texture(target, frame)
 				var approved: Texture2D = frames.get_frame_texture(clean, source_frame)
 				if idle and target in ["thornrose_idle_left", "moonveil_idle_left"]:

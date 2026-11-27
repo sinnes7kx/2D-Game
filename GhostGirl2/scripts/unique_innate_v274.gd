@@ -1,24 +1,23 @@
 extends RefCounted
 ## Fixed base-specific powers, not randomized affixes. No persisted fields.
 ## Existing active special weapons retain their active ability instead.
-const SPECIALS = preload("res://scripts/unique_specials_v261.gd")
 # [name, first stat, value, second stat, value]. Explicit authoring rather
 # than hashing a generic bonus onto unrelated items.
 const POWERS: Dictionary = {
-	"ashbound_wand":["Ashen Invocation","spell_power_pct",12,"charged_spell_pct",7],
+	"ashbound_wand":["Ashen Invocation","spell_power_pct",12,"cast_speed_pct",7],
 	"briar_wand":["Thorn Communion","cast_speed_pct",10,"hook_range_pct",8],
 	"hunter_censer_wand":["Incense of Mercy","rally_power_pct",14,"spell_power_pct",7],
-	"blackthorn_bow_v234":["Widow's Volley","attack_speed_pct",8,"heavy_power_pct",8],
-	"blackthorn_crossbow_v236":["Requiem Bolt","poise_power_pct",14,"attack_speed_pct",5],
-	"moonveil_bow":["Moonlit Aim","stamina_efficiency_pct",9,"counter_damage_pct",8],
-	"thornrose_bow":["Briar's Flight","attack_speed_pct",7,"stamina_recovery_pct",11],
-	"mourning_yew_bow_v238":["Grief Drawn","heavy_power_pct",12,"stamina_efficiency_pct",5],
-	"reliquary_silver_bow_v234":["Silver Promise","poise_power_pct",11,"stamina_efficiency_pct",7],
-	"v202_fletcher_moonflight_bow":["Falling Star","attack_speed_pct",10,"move_speed_pct",3],
-	"vesper_recurve_bow_v238":["Evenfall Aim","backstep_efficiency_pct",12,"attack_speed_pct",6],
-	"silver_reliquary_crossbow_v236":["Saint's Verdict","heavy_power_pct",14,"poise_power_pct",6],
-	"vesper_latch_crossbow_v237":["Final Word","attack_speed_pct",11,"stamina_efficiency_pct",6],
-	"ossuary_arbalest_v237":["Bone Covenant","poise_power_pct",19,"move_speed_pct",2],
+	"blackthorn_bow_v234":["Widow's Volley","melee_power_pct",8,"charged_spell_pct",8],
+	"blackthorn_crossbow_v236":["Requiem Bolt","melee_power_pct",11,"stamina_recovery_pct",7],
+	"moonveil_bow":["Moonlit Aim","stamina_efficiency_pct",9,"charged_spell_pct",12],
+	"thornrose_bow":["Briar's Flight","melee_power_pct",7,"stamina_recovery_pct",11],
+	"mourning_yew_bow_v238":["Grief Drawn","charged_spell_pct",15,"stamina_efficiency_pct",5],
+	"reliquary_silver_bow_v234":["Silver Promise","melee_power_pct",11,"stamina_efficiency_pct",7],
+	"v202_fletcher_moonflight_bow":["Falling Star","melee_power_pct",10,"move_speed_pct",3],
+	"vesper_recurve_bow_v238":["Evenfall Aim","backstep_efficiency_pct",12,"melee_power_pct",6],
+	"silver_reliquary_crossbow_v236":["Saint's Verdict","melee_power_pct",14,"stamina_efficiency_pct",6],
+	"vesper_latch_crossbow_v237":["Final Word","stamina_efficiency_pct",11,"stamina_recovery_pct",6],
+	"ossuary_arbalest_v237":["Bone Covenant","melee_power_pct",15,"move_speed_pct",2],
 	"bloodrose_falchion":["Blood Remembers","rally_power_pct",18,"melee_power_pct",5],
 	"mourning_longsword":["Edge of Grief","counter_damage_pct",15,"attack_speed_pct",5],
 	"moonveil_grandblade":["Hollow Moon","heavy_power_pct",15,"stamina_recovery_pct",6],
@@ -47,44 +46,42 @@ const POWERS: Dictionary = {
 	"moonwoven_dress":["Moon Bride","vitality_pct",9,"move_speed_pct",3],
 	"thornlace_dress":["Thorned Veil","backstep_efficiency_pct",13,"rally_power_pct",7],
 	"hunter_sable_dress":["Night Mourning","stamina_efficiency_pct",8,"vitality_pct",7],
-	"moonwisp_companion_v239":["Last Lantern","find_bonus_pct",8,"move_speed_pct",2],
+	"moonwisp_companion_v239":["Last Lantern","stamina_recovery_pct",8,"move_speed_pct",2],
 	"v202_crescent_halo":["Saint Eclipse","spell_power_pct",8,"stamina_recovery_pct",8],
 	"v202_moonlit_tiara":["Pale Coronation","vitality_pct",8,"cast_speed_pct",6],
-	"v202_starfall_diadem":["Heaven's Tears","charged_spell_pct",13,"cast_speed_pct",5],
+	"v202_starfall_diadem":["Heaven's Tears","spell_power_pct",13,"cast_speed_pct",5],
 	"v202_rose_horns":["Briar Crown","poise_power_pct",10,"heavy_power_pct",6],
 	"rosewing_mantle":["Fallen Choir","move_speed_pct",4,"backstep_efficiency_pct",9],
 	"mourning_locket":["Mother's Grief","rally_power_pct",16,"vitality_pct",5],
 	"gloamglass_locket":["Fading Heart","stamina_recovery_pct",12,"vitality_pct",4],
 	"velvet_reliquary":["Velvet Prison","stamina_efficiency_pct",9,"hook_pull_pct",8],
 	"blackbrick_reliquary":["Black Testament","poise_power_pct",12,"vitality_pct",5],
-	"ash_vigil_charm":["Ashen Covenant","charged_spell_pct",11,"heavy_power_pct",5],
-	"silver_thread_charm":["Fate's Thread","hook_range_pct",13,"find_bonus_pct",5],
-	"sylvan_charm":["Woods Remember","find_bonus_pct",11,"hook_pull_pct",5],
+	"ash_vigil_charm":["Ashen Covenant","spell_power_pct",11,"heavy_power_pct",5],
+	"silver_thread_charm":["Fate's Thread","hook_range_pct",13,"move_speed_pct",3],
+	"sylvan_charm":["Woods Remember","hook_range_pct",8,"hook_pull_pct",11],
 	"hunter_duelist_rosary":["Penitent Prayer","counter_damage_pct",16,"backstep_efficiency_pct",6],
 	"hunter_thorn_sigil":["Thorned Pact","melee_power_pct",6,"poise_power_pct",11],
-	"v202_bandit_mask":["Nameless Face","move_speed_pct",4,"find_bonus_pct",6],
-	"v202_luminous_eyes":["Unseeing","find_bonus_pct",9,"cast_speed_pct",4],
-	"censer_of_the_fourth_bell":["Fourth Chime","charged_spell_pct",14,"stamina_recovery_pct",7],
-	"lament_moonbow":["Four Laments","attack_speed_pct",9,"counter_damage_pct",11],
+	"v202_bandit_mask":["Nameless Face","move_speed_pct",4,"backstep_efficiency_pct",6],
+	"v202_luminous_eyes":["Unseeing","spell_power_pct",9,"cast_speed_pct",4],
+	"censer_of_the_fourth_bell":["Fourth Chime","spell_power_pct",14,"stamina_recovery_pct",7],
+	"lament_moonbow":["Four Laments","melee_power_pct",9,"charged_spell_pct",11],
 	"veilkeeper_reaper":["Veilkeeper's Vigil","counter_damage_pct",17,"rally_power_pct",9],
 	"bellglass_reliquary":["Bellglass Echo","stamina_recovery_pct",15,"hook_range_pct",5],
 	"vesperglass_wand":["Vesperglass Light","spell_power_pct",10,"cast_speed_pct",9],
-	"rafterfall_moonbow":["Rafterfall","throw_force_pct",10,"attack_speed_pct",8],
+	"rafterfall_moonbow":["Rafterfall","throw_force_pct",10,"melee_power_pct",8],
 	"widows_knot":["Widow's Knot","hook_pull_pct",15,"backstep_efficiency_pct",7],
 	"chainwake_amulet":["Chainwake","hook_range_pct",15,"stamina_efficiency_pct",6],
-	"mourning_girder_bow":["Girder's Resolve","stamina_recovery_pct",14,"heavy_power_pct",7],
+	"mourning_girder_bow":["Girder's Resolve","stamina_recovery_pct",14,"melee_power_pct",7],
 	"chimekeeper_rosary":["Chimekeeper","stamina_recovery_pct",13,"cast_speed_pct",7],
-	"choral_moonbow":["Moon Choir","attack_speed_pct",10,"stamina_efficiency_pct",8],
-	"emberfrost_stave":["Emberfrost","heavy_power_pct",9,"stamina_recovery_pct",9],
-	"sunlace_longbow":["Sunlace","attack_speed_pct",11,"find_bonus_pct",5]
+	"choral_moonbow":["Moon Choir","melee_power_pct",10,"stamina_efficiency_pct",8],
+	"emberfrost_stave":["Emberfrost","charged_spell_pct",9,"stamina_recovery_pct",9],
+	"sunlace_longbow":["Sunlace","melee_power_pct",11,"move_speed_pct",3]
 }
 
 static func profile(item: Variant) -> Array:
 	if item==null or item.definition==null or item.is_broken() or item.get_slot()=="none":
 		return []
 	if item.quality!="unique" and not item.definition.unique:
-		return []
-	if not SPECIALS.kind(item).is_empty():
 		return []
 	return POWERS.get(item.definition.resource_path.get_file().get_basename(),[])
 

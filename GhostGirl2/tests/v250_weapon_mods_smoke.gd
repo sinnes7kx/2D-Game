@@ -24,6 +24,23 @@ func _initialize() -> void:
 	if OS.is_debug_build():
 		assert(item.active_weapon_mod(true) == item.debug_weapon_mod)
 	assert(item.weapon_mod == genuine)
+	var innate = preload("res://scripts/unique_innate_v274.gd")
+	assert(innate.POWERS.size()==72)
+	var fixed_bonus: Dictionary = innate.bonuses(item)
+	assert(fixed_bonus.size()==2)
+	assert(float(item.all_stats()["melee_power_pct"])>=float(fixed_bonus["melee_power_pct"]))
+	assert(innate.bonuses(GhostItemGenerator.create(BOW,123456,"normal")).is_empty())
+	assert(innate.bonuses(GhostItemGenerator.create(preload("res://items/nocturne_stiletto_v171.tres"),123456,"unique")).is_empty())
+	var names: Dictionary = {}
+	for key in innate.POWERS:
+		var profile: Array = innate.POWERS[key]
+		assert(profile.size()==5 and profile[1]!=profile[3])
+		assert(not names.has(profile[0]))
+		names[profile[0]]=true
+	var material = preload("res://scripts/gothic_material_v274.gd")
+	var plate: StyleBoxTexture = material.plate(Color("17111b"),Color("947650"),18,true)
+	assert(plate.texture.get_size()==Vector2(128,96))
+	assert(plate.texture==material.plate(Color("17111b"),Color("947650"),18,true).texture)
 	var guard = preload("res://scripts/thrown_weapon_lock_v273.gd").new()
 	assert(not guard.busy())
 	var stale: Node = Node.new()
