@@ -131,7 +131,7 @@ static func install(frames: SpriteFrames) -> bool:
 		for i in range(frames.get_frame_count(source)):
 			total_seconds += frames.get_frame_duration(source, i) / maxf(0.01, frames.get_animation_speed(source))
 		frames.add_animation(clip)
-		frames.set_animation_loop(clip, true)
+		_set_loop_v293(frames,clip,true)
 		frames.set_animation_speed(clip, 8.0 / maxf(0.2, total_seconds))
 		for col in range(8):
 			var cell: AtlasTexture = AtlasTexture.new()
@@ -170,7 +170,7 @@ static func _install_actions(frames: SpriteFrames) -> void:
 		if frames.has_animation(clip):
 			continue
 		frames.add_animation(clip)
-		frames.set_animation_loop(clip, false)
+		_set_loop_v293(frames,clip,false)
 		frames.set_animation_speed(clip, 8.0)
 		for col in range(8):
 			var cell: AtlasTexture = AtlasTexture.new()
@@ -197,7 +197,7 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 			if frames.has_animation(clip):
 				frames.remove_animation(clip)
 			frames.add_animation(clip)
-			frames.set_animation_loop(clip,frames.get_animation_loop(source))
+			_set_loop_v293(frames,clip,_loops_v293(frames,source))
 			frames.set_animation_speed(clip,frames.get_animation_speed(source))
 			for i in range(frames.get_frame_count(source)):
 				frames.add_frame(clip,frames.get_frame_texture(source,i),frames.get_frame_duration(source,i))
@@ -369,3 +369,33 @@ static func armed_action_clip(action: String, carry_prefix: String, direction: S
 			if frames.has_animation(clip):
 				return clip
 	return fallback
+
+# Godot 4.7 and previous releases use different loop APIs.
+static func _set_loop_v293(frames: SpriteFrames,clip: String,loops: bool) -> void:
+	if frames.has_method("set_animation_loop_mode"):
+		frames.call("set_animation_loop_mode",clip,1 if loops else 0)
+	else:
+		frames.call("set_animation_loop",clip,loops)
+
+static func _loops_v293(frames: SpriteFrames,clip: String) -> bool:
+	if frames.has_method("get_animation_loop_mode"):
+		return int(frames.call("get_animation_loop_mode",clip))!=0
+	return bool(frames.call("get_animation_loop",clip))
+
+# Report missing authored combat artwork rather than passing aliases as complete.
+static func missing_combat_clips_v293(frames: SpriteFrames) -> PackedStringArray:
+	var missing: PackedStringArray = PackedStringArray()
+	if frames==null:
+		return missing
+	for clip in frames.get_animation_names():
+		if not clip.begins_with("attack_"):
+			continue
+		if not diagonal_name(clip).is_empty():
+			continue
+		if not clip.ends_with("_front"):
+			continue
+		var stem: String = clip.trim_suffix("front")
+		for face in DIRECTIONS:
+			if not frames.has_animation(stem+face):
+				missing.append(stem+face)
+	return missing
