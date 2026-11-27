@@ -143,3 +143,7 @@ static func halo_lift(crown: bool,horns: bool) -> float:
 static func accessory_transform(sprite: AnimatedSprite2D,layer: Node2D) -> Transform2D:
 	var unscale: Transform2D = Transform2D(Vector2(1.0/ART_SCALE,0),Vector2(0,1.0/ART_SCALE),Vector2.ZERO)
 	return layer.global_transform.affine_inverse()*sprite.global_transform*unscale
+
+static func horn_index(step: int,far: int) -> int:
+	# Draw the far horn first without allocating or coercing typed arrays.
+	return 1-step if far==1 else step

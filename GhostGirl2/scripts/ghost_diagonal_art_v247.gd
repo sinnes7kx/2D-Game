@@ -47,16 +47,55 @@ const FAR_WRISTS: Dictionary = {
 	"walk_front_left": [[],[],[],[],[],[],[],[]]
 }
 
+# Editor imports can lag behind a manually extracted PNG. Use the actual
+# source image when the import is unavailable, and cache validated sheets.
+static var _validated_sheets: Dictionary = {}
+
+static func _valid_dimensions(texture: Texture2D) -> bool:
+	return texture != null and texture.get_size()==Vector2(2048,1760)
+
+static func _load_sheet(path: String) -> Texture2D:
+	var cached: Texture2D = _validated_sheets.get(path) as Texture2D
+	if _valid_dimensions(cached):
+		return cached
+	var texture: Texture2D
+	if ResourceLoader.exists(path,"Texture2D"):
+		texture=ResourceLoader.load(path,"Texture2D") as Texture2D
+	if not _valid_dimensions(texture) and FileAccess.file_exists(path):
+		var raw: Image = Image.new()
+		if raw.load(path)==OK and raw.get_size()==Vector2i(2048,1760):
+			texture=ImageTexture.create_from_image(raw)
+	if not _valid_dimensions(texture):
+		return null
+	_validated_sheets[path]=texture
+	return texture
+
+static func _revised_available() -> bool:
+	return _load_sheet(REVISED_ATLAS)!=null
+
 static func available() -> bool:
-	return ResourceLoader.exists(REVISED_ATLAS, "Texture2D") or ResourceLoader.exists(ATLAS, "Texture2D")
+	return _revised_available() or _load_sheet(ATLAS)!=null
+
+static func diagnostic() -> String:
+	if available():
+		return "Diagonal locomotion atlas available."
+	var absolute: String = ProjectSettings.globalize_path(REVISED_ATLAS)
+	if not FileAccess.file_exists(REVISED_ATLAS) and not ResourceLoader.exists(REVISED_ATLAS,"Texture2D"):
+		return "Diagonal PNG missing at "+absolute+" (extract the repair ZIP into the repository root)."
+	var raw: Image = Image.new()
+	if FileAccess.file_exists(REVISED_ATLAS) and raw.load(REVISED_ATLAS)==OK:
+		return "Diagonal PNG at "+absolute+" has size "+str(raw.get_size())+"; required (2048,1760)."
+	return "Diagonal PNG cannot be decoded/imported at "+absolute+". Re-extract the original repair ZIP."
 
 static func install(frames: SpriteFrames) -> bool:
 	if frames == null or not available():
 		return false
 	if bool(frames.get_meta("v270_diagonal_loaded",false)):
 		return true
-	var sheet: Texture2D = load(REVISED_ATLAS if ResourceLoader.exists(REVISED_ATLAS, "Texture2D") else ATLAS) as Texture2D
-	if sheet == null or sheet.get_size() != Vector2(2048, 1760):
+	var sheet: Texture2D = _load_sheet(REVISED_ATLAS)
+	if sheet==null:
+		sheet=_load_sheet(ATLAS)
+	if not _valid_dimensions(sheet):
 		return false
 	for row in range(8):
 		var action: String = "idle" if row < 4 else "walk"
@@ -99,12 +138,11 @@ static func resolve(requested: String, eight_facing: String, cardinal: String, a
 	return clip if frames.has_animation(clip) else requested
 
 static func _install_actions(frames: SpriteFrames) -> void:
-	var revised: bool = ResourceLoader.exists(REVISED_ACTIONS, "Texture2D")
-	var path: String = REVISED_ACTIONS if revised else ACTION_ATLAS
-	if not ResourceLoader.exists(path, "Texture2D"):
-		return
-	var sheet: Texture2D = load(path) as Texture2D
-	if sheet == null or sheet.get_size() != Vector2(2048,1760):
+	var sheet: Texture2D = _load_sheet(REVISED_ACTIONS)
+	var revised: bool = sheet!=null
+	if sheet==null:
+		sheet=_load_sheet(ACTION_ATLAS)
+	if not _valid_dimensions(sheet):
 		return
 	for row in ([0,1,2,3,4,5,6,7] if revised else [0,1,3,4,5,7]):
 		var action: String = "dodge" if row < 4 else "jump"
@@ -125,10 +163,10 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 	for source in WRISTS:
 		if not frames.has_animation(source):
 			continue
-		if str(source).contains("back_") and not ResourceLoader.exists(REVISED_ATLAS, "Texture2D"):
+		if str(source).contains("back_") and not _revised_available():
 			continue
 		for prefix in WEAPON_PREFIXES:
-			if prefix in ["dual_dagger_", "dual_sword_", "crossbow_"] and not ResourceLoader.exists(REVISED_ATLAS, "Texture2D"):
+			if prefix in ["dual_dagger_", "dual_sword_", "crossbow_"] and not _revised_available():
 				continue
 			var clip: String = prefix + str(source)
 			if frames.has_animation(clip):
@@ -145,9 +183,9 @@ static func wrist(clip: String, frame: int) -> Vector2:
 		if key.begins_with(prefix):
 			key = key.trim_prefix(prefix)
 			break
-	if key.contains("back_") and not ResourceLoader.exists(REVISED_ATLAS, "Texture2D"):
+	if key.contains("back_") and not _revised_available():
 		return Vector2.INF
-	var table: Dictionary = WRISTS if ResourceLoader.exists(REVISED_ATLAS,"Texture2D") else LEGACY_WRISTS
+	var table: Dictionary = WRISTS if _revised_available() else LEGACY_WRISTS
 	if not table.has(key):
 		return Vector2.INF
 	var guides: Array = table[key]
@@ -203,7 +241,7 @@ static func near_hand(clip: String) -> int:
 	return 0 if diagonal_name(clip).ends_with("left") else 1
 
 static func far_wrist(clip: String, frame: int) -> Vector2:
-	if not ResourceLoader.exists(REVISED_ATLAS,"Texture2D"):
+	if not _revised_available():
 		return Vector2.INF
 	var direction: String = diagonal_name(clip)
 	if direction.is_empty() or direction.begins_with("back"):

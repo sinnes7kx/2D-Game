@@ -65,6 +65,10 @@ func _verify() -> void:
     var profile: PackedVector2Array = horns.measure(img,"left")
     assert(profile[0].distance_to(profile[1])<front[0].distance_to(front[1]))
     assert(horns.far_side("back_right")==1 and horns.far_side("front_left")==0)
+    for far in [-1,0,1]:
+        assert(horns.horn_index(0,far)!=horns.horn_index(1,far))
+        assert(horns.horn_index(0,far)==(1 if far==1 else 0))
+        assert(horns.horn_index(1,far)==(0 if far==1 else 1))
     assert(horns.direction("wand_walk_back_left","back")=="back_left")
     var sprite: AnimatedSprite2D = actor.get_node("Ghost") as AnimatedSprite2D
     assert(horns.pixel_to_local(Vector2(128,110),sprite).is_equal_approx(sprite.offset))

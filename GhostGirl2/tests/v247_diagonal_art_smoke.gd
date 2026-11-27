@@ -10,6 +10,8 @@ func _initialize() -> void:
 			frames.set_animation_speed(name, 6.0)
 			for i in range(8):
 				frames.add_frame(name, GradientTexture2D.new())
+	assert(ART._load_sheet("res://missing_diagonal_test_v271.png")==null)
+	assert(not ART._valid_dimensions(GradientTexture2D.new()))
 	if ART.available():
 		assert(ART.install(frames))
 		for direction in ART.DIRECTIONS:

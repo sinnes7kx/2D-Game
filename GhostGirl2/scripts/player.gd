@@ -253,7 +253,7 @@ func _ready() -> void:
 	SWORD_V224.install(body_art)
 	SKIN_V246.install(body_art.sprite_frames)
 	if not DIAGONAL_ART_V247.install(body_art.sprite_frames):
-		push_warning("Original eight-direction artwork missing or invalid: install GhostGirl2/assets/ghost/skins/ghost_diagonal_v249.png (2048x1760). Cardinal fallback remains active.")
+		push_warning(DIAGONAL_ART_V247.diagnostic()+" Cardinal fallback remains active.")
 	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
