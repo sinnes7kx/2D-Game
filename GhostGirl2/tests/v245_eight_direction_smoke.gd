@@ -23,6 +23,12 @@ func _verify() -> void:
 		if not art.sprite_frames.has_animation("idle_" + DIR.pose_name(i)):
 			_fail("Missing original idle art")
 			return
+	# Changing the visual heading cannot alter a committed jump travel vector.
+	actor.set("jump_direction", Vector2.LEFT)
+	actor.set("jump_strike_direction", Vector2.RIGHT)
+	actor.call("set_facing", Vector2.RIGHT)
+	assert(actor.get("jump_direction") == Vector2.LEFT)
+	assert(actor.get("jump_strike_direction") == Vector2.RIGHT)
 	var before: Vector2 = actor.get("facing")
 	actor.call("set_facing", Vector2.ZERO)
 	if not (actor.get("facing") as Vector2).is_equal_approx(before):
