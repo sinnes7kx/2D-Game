@@ -24,6 +24,11 @@ func _initialize() -> void:
 	if OS.is_debug_build():
 		assert(item.active_weapon_mod(true) == item.debug_weapon_mod)
 	assert(item.weapon_mod == genuine)
+	var specials = preload("res://scripts/unique_specials_v261.gd")
+	var spear: GhostItemInstance = GhostItemGenerator.create(preload("res://items/moonwarden_spear_v169.tres"),123,"unique")
+	assert(specials.kind(spear) == "heavens_reach")
+	assert(specials.kind(GhostItemGenerator.create(preload("res://items/moonwarden_spear_v169.tres"),123,"normal")) == "")
+	assert(specials.count("drowned_fork") == 3)
 	var inventory: Node = preload("res://scripts/inventory.gd").new()
 	var saved: Dictionary = inventory.call("_serialize_item", item, Vector2i.ZERO)
 	var restored: GhostItemInstance = inventory.call("_deserialize_item", saved)
