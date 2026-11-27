@@ -30,7 +30,7 @@ static func label(item: Variant) -> String:
 	var id: String = kind(item)
 	return ARSENAL.label(id) if ARSENAL.has_skill(id) else str(NAMES.get(id,""))
 
-static func count(id: String) -> int:
+static func count(_id: String) -> int:
 	return 1
 
 static func is_dagger_throw(id: String) -> bool:
@@ -72,12 +72,12 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		actor.set("camera_push",-heading.normalized()*lerpf(2.0,5.0,charge))
 		preload("res://scripts/combat_juice_v194.gd").play(root,origin,"throw_release",-12.0)
 		preload("res://scripts/impact_spawner_v149.gd").burst(root,origin,"slam",lerpf(0.4,0.8,charge),heading,item.visual_seed())
-	if id in ["vespers_return","ember_return","winter_return","ivory_return"]:
+	if id=="vespers_return":
 		var dagger = preload("res://scripts/returning_stiletto_v265.gd").new()
 		dagger.caster = actor
 		dagger.direction = heading.normalized()
 		dagger.power = power
-		dagger.ember_v272 = id=="ember_return"
+		dagger.ember_v272 = false
 		dagger.throw_charge_v276=charge
 		dagger.special_id_v276=id
 		dagger.palette = item.glow_gradient_colors()
@@ -92,14 +92,14 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		shot.set("special_id",id)
 		shot.set("throw_charge_v276",charge)
 		shot.set("direction",heading.rotated(deg_to_rad((float(i)-float(n-1)*0.5)*12.0)))
-		shot.set("speed",(980.0 if id in ["roseglass_fan","reliquary_fan"] else (470.0 if id in ["last_toll","reverie_wave"] else 780.0)) * (lerpf(0.88,1.18,charge) if is_throw(id) else 1.0))
+		shot.set("speed",(470.0 if id in ["last_toll","reverie_wave"] else 780.0) * (lerpf(0.88,1.18,charge) if is_throw(id) else 1.0))
 		shot.set("damage",power*1.10/float(n))
-		shot.set("range_left",(360.0 if id in ["roseglass_fan","reliquary_fan"] else (310.0 if id in ["last_toll","reverie_wave"] else 560.0)) * (lerpf(0.85,1.15,charge) if is_throw(id) else 1.0))
+		shot.set("range_left",(310.0 if id in ["last_toll","reverie_wave"] else 560.0) * (lerpf(0.85,1.15,charge) if is_throw(id) else 1.0))
 		shot.set("caster",actor)
 		shot.set("caster_rid",actor.get_rid())
 		shot.set("is_crossbow_bolt",true)
 		shot.set("secondary_projectile",true)
-		shot.set("can_return",id in ["heavens_reach","bellthorn_judgment"])
+		shot.set("can_return",id=="heavens_reach")
 		shot.set("full_palette",item.glow_gradient_colors())
 		shot.set("visual_glow_scale",preload("res://scripts/visual_choices_v216.gd").effect_scale(item))
 		root.add_child(shot)
