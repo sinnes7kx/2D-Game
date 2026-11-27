@@ -310,7 +310,7 @@ func uses_forge_bow() -> bool:
 	return definition != null and str(definition.item_id) in ["mourning_yew_bow_v238", "vesper_recurve_bow_v238"]
 
 func uses_forge_dagger() -> bool:
-	return definition != null and str(definition.item_id) in ["cinderveil_dirk_v238", "reliquary_knife_v238"]
+	return definition != null and str(definition.item_id) in ["cinderveil_dirk_v238", "reliquary_knife_v238", "silkglass_dirk_v276"]
 
 func bow_art_style() -> String:
 	if definition != null and str(definition.item_id) in ["moonveil_bow", "reliquary_silver_bow_v234"]:
