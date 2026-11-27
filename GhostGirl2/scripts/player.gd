@@ -396,7 +396,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("target_lock") and healing_time_left <= 0.0:
 		_toggle_lock_target()
-	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty() and ivory_guard_left_v289<=0.0 and seraph_item_v292==null:
+	if Input.is_action_just_pressed("use_dew") and parry_left <= 0.0 and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty() and ivory_guard_left_v289<=0.0 and seraph_item_v292==null:
 		_begin_heal()
 	if parry_left > 0.0:
 		parry_age += delta
