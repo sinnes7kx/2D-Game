@@ -10,7 +10,7 @@ const REVISED_ACTIONS: String = "res://assets/ghost/skins/ghost_diagonal_actions
 const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_", "spear_", "briarwake_spear_", "nocturne_dagger_"]
 # Approximate visible wrist guides, visually sampled from the normalized atlas.
 # Approximate initial per-frame wrist guides in full atlas-cell pixels.
-const WRISTS: Dictionary = {
+const LEGACY_WRISTS: Dictionary = {
 	"idle_front_right": [[107,151],[108,150],[108,151],[109,151],[109,152],[109,151],[108,150],[107,151]],
 	"idle_front_left": [[150,149],[149,149],[149,150],[148,150],[148,151],[149,150],[150,149],[150,149]],
 	"walk_front_right": [[96,151],[100,149],[104,146],[105,148],[98,150],[96,152],[101,150],[104,149]],
@@ -24,11 +24,27 @@ const WRISTS: Dictionary = {
 # Frame-specific far hand positions sampled from the actual v249 cells.
 # Empty entries are genuinely obscured; rear views deliberately have no
 # invented second wrist. Older v247 art retains its paired cardinal fallback.
+# Calibrated against the reconstructed v249 locomotion atlas distributed in
+# GhostGirl_Diagonal_Atlas_Repair.zip. Full-cell pixel coordinates, not
+# bounding-box coordinates. Legacy v247 remains available for old installs.
+const WRISTS: Dictionary = {
+	"idle_front_right": [[125,139],[123,139],[124,140],[121,139],[123,139],[123,139],[125,139],[123,139]],
+	"idle_front_left": [[126,138],[125,138],[125,138],[125,138],[123,138],[123,138],[123,138],[125,138]],
+	"idle_back_left": [[74,133],[73,132],[69,132],[73,132],[69,131],[74,130],[70,133],[75,133]],
+	"idle_back_right": [[176,137],[176,137],[175,138],[175,138],[176,138],[176,137],[177,138],[177,138]],
+	"walk_front_right": [[128,144],[125,144],[122,140],[118,140],[117,138],[122,138],[124,145],[124,144]],
+	"walk_front_left": [[129,143],[130,140],[123,138],[123,140],[125,141],[127,142],[128,142],[128,143]],
+	"walk_back_left": [[76,137],[76,130],[73,111],[72,115],[75,139],[81,133],[77,130],[76,138]],
+	"walk_back_right": [[177,143],[175,143],[180,143],[182,145],[181,144],[181,143],[176,142],[179,144]]
+}
+
+# Only clearly visible opposite hands receive a guide. Do not draw a
+# second weapon over hair or fabric where the hand is hidden.
 const FAR_WRISTS: Dictionary = {
-	"idle_front_right": [[166,143],[166,143],[165,143],[166,144],[165,144],[164,144],[165,143],[166,143]],
-	"idle_front_left": [[98,136],[98,136],[99,136],[99,137],[98,137],[98,137],[98,136],[98,136]],
-	"walk_front_right": [[160,142],[160,142],[],[],[],[159,143],[160,143],[161,142]],
-	"walk_front_left": [[100,144],[99,144],[96,143],[96,142],[92,144],[97,144],[99,143],[100,143]]
+	"idle_front_right": [[178,131],[178,131],[178,131],[178,131],[178,131],[178,131],[178,131],[178,131]],
+	"idle_front_left": [[75,130],[75,130],[75,130],[75,130],[75,130],[75,130],[75,130],[75,130]],
+	"walk_front_right": [[188,135],[],[],[],[],[],[],[]],
+	"walk_front_left": [[],[],[],[],[],[],[],[]]
 }
 
 static func available() -> bool:
@@ -128,9 +144,10 @@ static func wrist(clip: String, frame: int) -> Vector2:
 			break
 	if key.contains("back_") and not ResourceLoader.exists(REVISED_ATLAS, "Texture2D"):
 		return Vector2.INF
-	if not WRISTS.has(key):
+	var table: Dictionary = WRISTS if ResourceLoader.exists(REVISED_ATLAS,"Texture2D") else LEGACY_WRISTS
+	if not table.has(key):
 		return Vector2.INF
-	var guides: Array = WRISTS[key]
+	var guides: Array = table[key]
 	var p: Array = guides[clampi(frame,0,7)]
 	return Vector2(float(p[0])-128.0,float(p[1])-110.0)
 
