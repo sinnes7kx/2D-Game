@@ -1560,7 +1560,7 @@ func _advance_relic_channel_v288(delta: float) -> void:
 	relic_channel_age_v288+=delta
 	var ramp: float = clampf(relic_channel_age_v288/0.85,0.0,1.0)
 	var previous_angle: float = relic_spin_angle_v288
-	var travel: float = delta*(15.0 if relic_channel_v288=="spin" else lerpf(19.0,35.0,ramp))
+	var travel: float = delta*(lerpf(15.0,29.0,RELIC_MECHANICS_V288.bloom_v290(relic_channel_age_v288)) if relic_channel_v288=="hybrid" else lerpf(19.0,35.0,ramp))
 	relic_spin_angle_v288=wrapf(previous_angle+travel,0.0,TAU)
 	var direction: Vector2 = _movement_input()
 	var moving: bool = direction.length_squared()>0.01
@@ -1571,20 +1571,33 @@ func _advance_relic_channel_v288(delta: float) -> void:
 	velocity=velocity.move_toward(direction.normalized()*speed if moving else Vector2.ZERO,MOVE_ACCELERATION*delta)
 	if moving:
 		set_facing(direction)
-	_play_if_changed(_weapon_motion_prefix(moving)+facing_name)
+	# Cycle approved cardinal poses instead of rotating the whole sprite upside down.
+	var spin_faces: Array[String] = ["right","front","left","back"]
+	var spin_face: String = spin_faces[posmod(floori((relic_spin_angle_v288+PI*0.25)/(PI*0.5)),4)]
+	var spin_clip: String = _weapon_motion_prefix(moving)+spin_face
+	if body_art.sprite_frames.has_animation(spin_clip):
+		_play_if_changed(spin_clip)
+	else:
+		_play_if_changed(_weapon_motion_prefix(moving)+facing_name)
 	body_art.speed_scale=1.0
 	move_and_slide()
 	var radius: float = float(profile["radius"])*(lerpf(0.65,1.0,ramp) if relic_channel_v288=="cyclone" else 1.0)
 	var power: float = (15.0+item.weapon_damage())*float(profile["power"])*(1.0+_stat("melee_power_pct")/100.0)
 	var hits: int = 0
 	relic_pulse_v288-=delta
-	if relic_channel_v288=="spin":
+	if relic_channel_v288=="hybrid":
 		if relic_channel_age_v288>=0.16:
 			hits=RELIC_GROUND_V288.hit_spin(self,previous_angle,travel,radius,power,relic_channel_age_v288,relic_spin_hits_v288,float(profile["pulse"]))
 	if relic_pulse_v288<=0.0:
 		relic_pulse_v288+=float(profile["pulse"])
 		if relic_channel_v288=="cyclone":
 			hits=RELIC_GROUND_V288.hit_disk(self,global_position,radius,power,0.40,{},false)
+		elif relic_channel_v288=="hybrid" and relic_channel_age_v288>0.35:
+			var bloom: float = RELIC_MECHANICS_V288.bloom_v290(relic_channel_age_v288)
+			var outer: float = RELIC_MECHANICS_V288.hybrid_radius_v290(relic_channel_age_v288)
+			# Annulus only: the inner physical blades and outer wind never double-hit the same position.
+			if outer>radius+0.5:
+				hits+=RELIC_GROUND_V288.hit_disk(self,global_position,outer,power*float(profile["outer_power"])/float(profile["power"])*bloom,0.28,{},false,radius+0.01)
 		COMBAT_JUICE.play(get_tree().current_scene,global_position,"swing",-24.0)
 	if hits>0:
 		camera_kick=maxf(camera_kick,1.6)
