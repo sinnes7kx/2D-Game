@@ -62,10 +62,16 @@ static func draw_surface(canvas: Node2D, left: PackedVector2Array, right: Packed
 		for j in range(4):
 			var v0: float = 0.08 + float(j) * 0.21
 			var v1: float = v0 + 0.21
-			var ink: Color = surface_color(profile, (a+b)*0.5, (v0+v1)*0.5, phase)
-			# A subtle translucent pigment over the underlying opaque steel.
-			ink.a = FX_LEVEL.alpha(0.64)
-			canvas.draw_colored_polygon(PackedVector2Array([la.lerp(ra,v0),lb.lerp(rb,v0),lb.lerp(rb,v1),la.lerp(ra,v1)]), ink)
+			# Interpolate pigment across adjacent cells rather than painting
+			# visible flat squares. Keep a crisp center ridge on both faces.
+			var va: float = v0 if j != 2 else 0.501
+			var vb: float = v1 if j != 1 else 0.499
+			var inks: PackedColorArray = PackedColorArray([surface_color(profile,a,va,phase),surface_color(profile,b,va,phase),surface_color(profile,b,vb,phase),surface_color(profile,a,vb,phase)])
+			for k in range(4):
+				var ink: Color = inks[k]
+				ink.a = FX_LEVEL.alpha(0.64)
+				inks[k] = ink
+			canvas.draw_polygon(PackedVector2Array([la.lerp(ra,v0),lb.lerp(rb,v0),lb.lerp(rb,v1),la.lerp(ra,v1)]), inks)
 	# Small rune strokes or distant stars inside the actual steel, never
 	# outside the outline. No glow sprite or additional hit.
 	var mode: int = int(profile.get("surface_mode", 0))

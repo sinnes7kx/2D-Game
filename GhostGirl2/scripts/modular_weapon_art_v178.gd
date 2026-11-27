@@ -89,12 +89,16 @@ static func draw_grip(canvas: Node2D, start: Vector2, end: Vector2, width: float
 	var count: int = int(p.get("wrap_count", 5))
 	canvas.draw_line(start, end, Color("211b29"), w + 1.6, true)
 	canvas.draw_line(start, end, tint, w, true)
+	# Rounded leather/metal cross section, lit consistently along the grip.
+	canvas.draw_line(start - normal * w * 0.26, end - normal * w * 0.26, tint.lightened(0.20), maxf(0.55,w*0.19), true)
+	canvas.draw_line(start + normal * w * 0.28, end + normal * w * 0.28, tint.darkened(0.36), maxf(0.55,w*0.22), true)
 	for i in range(count):
 		var at: Vector2 = start.lerp(end, float(i + 1) / float(count + 1))
 		var n: Vector2 = normal * w * 0.43
 		match style:
 			0: # angled leather wrap
-				canvas.draw_line(at - n, at + n + axis * 1.1, tint.lightened(0.32), 0.75, true)
+				canvas.draw_line(at - n, at + n + axis * 1.1, tint.darkened(0.32), 1.05, true)
+				canvas.draw_line(at - n - axis * 0.45, at + n + axis * 0.65, tint.lightened(0.26), 0.55, true)
 			1: # alternating metal collars
 				canvas.draw_line(at - n, at + n, trim.darkened(0.12), 1.1 if i % 2 == 0 else 0.55, true)
 			2: # crossed silk lacing
@@ -109,7 +113,8 @@ static func draw_grip(canvas: Node2D, start: Vector2, end: Vector2, width: float
 				canvas.draw_line(at - n + axis, at + n + axis, tint.lightened(0.28), 0.5, true)
 	# Tiny collars stay inside the handle endpoints; no protruding club heads.
 	for at in [start.lerp(end, 0.07), start.lerp(end, 0.93)]:
-		canvas.draw_line(at - normal * w * 0.55, at + normal * w * 0.55, trim, 1.0, true)
+		canvas.draw_line(at - normal * w * 0.59, at + normal * w * 0.59, trim.darkened(0.48), 2.0, true)
+		canvas.draw_line(at - normal * w * 0.52 - axis * 0.40, at + normal * w * 0.52 - axis * 0.40, trim.lightened(0.20), 0.65, true)
 
 static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float, p: Dictionary, phase: float = -1.0) -> void:
 	if root.distance_squared_to(tip) < 16.0 or p.is_empty():
@@ -125,9 +130,12 @@ static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float
 	canvas.draw_colored_polygon(PackedVector2Array([root, tip, right[2], right[1], right[0]]), shade)
 	var time: float = float(Time.get_ticks_msec() % 3600000) / 1000.0 if phase < 0.0 else phase
 	SURFACE.draw_surface(canvas, left, right, p, time)
-	canvas.draw_polyline(left, edge, 0.85, true)
-	canvas.draw_polyline(right, edge.darkened(0.18), 0.7, true)
-	canvas.draw_line(root, tip, edge, 0.55, true)
+	_draw_forged_bevels(canvas, left, right, p)
+	# Broken highlights read as worn, ground steel, not a neon outline.
+	for i in range(3):
+		canvas.draw_line(left[i].lerp(left[i+1],0.07),left[i].lerp(left[i+1],0.95),edge.lerp(steel,0.28),0.66,true)
+		canvas.draw_line(right[i],right[i+1],edge.lerp(shade,0.48),0.54,true)
+	canvas.draw_line(root.lerp(tip,0.08), tip, edge.lerp(steel,0.48), 0.48, true)
 	var axis: Vector2 = (tip - root).normalized()
 	var normal: Vector2 = Vector2(-axis.y, axis.x)
 	# Every etching is sampled from the real cross section, so narrow blades
@@ -141,7 +149,10 @@ static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float
 		var r: Vector2 = SURFACE.at_edge(right, u)
 		var at: Vector2 = l.lerp(r, 0.5)
 		var extent: float = l.distance_to(r) * 0.22
-		var mark: Color = ink.lerp(steel, 0.35)
+		var mark: Color = ink.lerp(shade, 0.56)
+		# Tiny recessed relief beneath the seeded marking, clipped to the face.
+		if extent > 0.5:
+			canvas.draw_line(at - normal*extent + axis*0.35,at + normal*extent + axis*0.35,edge.lerp(steel,0.55),0.42,true)
 		match etch:
 			0: canvas.draw_line(at - normal * extent, at + normal * extent, mark, 0.6, true)
 			1: canvas.draw_polyline(PackedVector2Array([at - normal * extent - axis, at + axis, at + normal * extent - axis]), mark, 0.7, true)
@@ -150,6 +161,34 @@ static func draw_blade(canvas: Node2D, root: Vector2, tip: Vector2, width: float
 			4: canvas.draw_polyline(PackedVector2Array([at - normal * extent, at + axis, at + normal * extent, at - axis, at - normal * extent]), mark, 0.55, true)
 	_draw_guard(canvas, root, axis, normal, width, p)
 
+# Bevels are built strictly inside the same four-point outlines used by
+# weapon glow and attachment guides; every seeded shape keeps its exact tip.
+static func bevel_strip(left: PackedVector2Array, right: PackedVector2Array, segment: int, side: int) -> PackedVector2Array:
+	var a: Vector2 = left[segment]
+	var b: Vector2 = left[segment + 1]
+	var c: Vector2 = right[segment]
+	var d: Vector2 = right[segment + 1]
+	var fraction: float = 0.14
+	if side < 0:
+		return PackedVector2Array([a,b,b.lerp(d,fraction),a.lerp(c,fraction)])
+	return PackedVector2Array([c,d,d.lerp(b,fraction),c.lerp(a,fraction)])
+
+static func _draw_forged_bevels(canvas: Node2D, left: PackedVector2Array, right: PackedVector2Array, p: Dictionary) -> void:
+	var steel: Color = p["metal"]
+	var shade: Color = p["shade"]
+	var edge: Color = p["edge"]
+	for segment in range(3):
+		for side in [-1,1]:
+			var strip: PackedVector2Array = bevel_strip(left,right,segment,side)
+			var outside: Color = edge.lerp(steel,0.25) if side < 0 else steel.lerp(shade,0.25)
+			var inside: Color = steel.lerp(shade,0.15) if side < 0 else shade
+			# The final segment converges to one point. Use a triangle rather
+			# than passing a duplicate-vertex quad to the triangulator.
+			if segment == 2:
+				canvas.draw_polygon(PackedVector2Array([strip[0],strip[1],strip[3]]),PackedColorArray([outside,outside,inside]))
+			else:
+				canvas.draw_polygon(strip,PackedColorArray([outside,outside,inside,inside]))
+
 static func _draw_guard(canvas: Node2D, root: Vector2, axis: Vector2, normal: Vector2, width: float, p: Dictionary) -> void:
 	var edge: Color = p["edge"]
 	var trim: Color = p.get("ornament_ink", p["accent"])
@@ -157,7 +196,9 @@ static func _draw_guard(canvas: Node2D, root: Vector2, axis: Vector2, normal: Ve
 	var style: int = int(p.get("guard_style", 0))
 	var inset: int = int(p.get("inset_style", 0))
 	var size: float = minf(2.2, width * 0.42) * float(p.get("inset_scale", 1.0))
-	canvas.draw_line(root - normal * span, root + normal * span, edge.darkened(0.25), 1.6, true)
+	canvas.draw_line(root - normal * span, root + normal * span, Color(p["shade"]).darkened(0.25), 2.8, true)
+	canvas.draw_line(root - normal * span, root + normal * span, edge.darkened(0.28), 1.65, true)
+	canvas.draw_line(root - normal * span * 0.88 - axis * 0.65, root + normal * span * 0.88 - axis * 0.65, edge.lerp(trim,0.3), 0.55, true)
 	for side in [-1.0, 1.0]:
 		var tip: Vector2 = root + normal * span * side
 		var inner: Vector2 = root + normal * span * side * 0.42
