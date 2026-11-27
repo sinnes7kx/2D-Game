@@ -39,5 +39,21 @@ func _initialize() -> void:
 	if frames.has_animation("jump_front_right"):
 		assert(frames.get_frame_count("jump_front_right") == 8)
 		assert(not frames.get_animation_loop("jump_front_right"))
-	print("v248 diagonal art: frame structure, wrist guides, action fallbacks")
+	for prefix in ["scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_"]:
+		var clip: String = prefix + "walk_front_right"
+		for i in range(8):
+			var points: PackedVector2Array = ART.carried_span(clip,i,70.0,true)
+			assert(points.size()==2 and points[0]==ART.wrist(clip,i))
+			assert(is_equal_approx(points[0].distance_to(points[1]),70.0))
+		if frames.has_animation(clip):
+			assert(ART.armed_clip(prefix+"walk_front","front_right","front",frames)==clip)
+	var wand = preload("res://scripts/wand_anchors_v216.gd")
+	var result: PackedVector2Array = wand.transformed_span(PackedVector2Array([Vector2(12,5),Vector2(32,-10)]),Vector2(-20,30),0.17)
+	assert(result[0]==Vector2(-20,30))
+	assert(result[1].is_equal_approx(Vector2(-20,30)+Vector2(20,-15).rotated(0.17)*wand.VISUAL_SCALE))
+	var audio = preload("res://scripts/combat_juice_v194.gd")
+	for cue in ["blunt_hit","blade_hit","bow_release","crossbow_fire","crossbow_reload","dagger_swing","polearm_swing"]:
+		var stream: AudioStreamWAV = audio._render(cue)
+		assert(stream.mix_rate==audio.RATE and stream.data.size()>1000)
+	print("v257 diagonal anchors, shared wand transform and audio cue assertions")
 	quit(0)

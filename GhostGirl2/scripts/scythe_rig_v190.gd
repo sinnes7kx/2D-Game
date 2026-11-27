@@ -66,7 +66,8 @@ func _draw() -> void:
 		return
 	var name_now: String = str(body.animation)
 	var idle: bool = GENTLE.modular_idle(name_now)
-	var index: int = 0 if idle else body.frame
+	var diagonal: bool = not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(name_now).is_empty()
+	var index: int = 0 if idle and not diagonal else body.frame
 	var points: PackedVector2Array = SCYTHE.span(name_now, index, guides) if style == "scythe" else HEAVY.span(name_now, index, guides)
 	if idle:
 		points = GENTLE.smooth(body, name_now, points)

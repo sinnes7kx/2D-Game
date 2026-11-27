@@ -221,14 +221,13 @@ func _is_equipped(animation_name: String) -> bool:
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	if _is_equipped(animation_name):
-		var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, frame_index)
-		if wrist != Vector2.INF and not animation_name.begins_with("wand_"):
-			var rear: bool = animation_name.ends_with("back_left") or animation_name.ends_with("back_right")
-			var rightward: bool = animation_name.ends_with("right")
-			var sign_x: float = (1.0 if rightward else -1.0) if rear else (-1.0 if rightward else 1.0)
-			var axis: Vector2 = Vector2(sign_x * 0.56, 0.83).normalized()
-			var length: float = 43.0 if animation_name.begins_with("forge_dagger_") else (76.0 if animation_name.contains("twinblade") else 67.0)
-			return PackedVector2Array([wrist, wrist + axis * length])
+		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+		if not diagonal.diagonal_name(animation_name).is_empty() and not animation_name.begins_with("wand_"):
+			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (39.0 if animation_name.begins_with("forge_dagger_") else (76.0 if animation_name.contains("twinblade") else 67.0))
+			var carried: PackedVector2Array = diagonal.carried_span(animation_name,frame_index,length)
+			if carried.size() == 2:
+				return GENTLE.smooth(body,animation_name,carried) if GENTLE.modular_idle(animation_name) else carried
+
 	if animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
 		if not _is_equipped(animation_name):
 			return PackedVector2Array()

@@ -1,7 +1,7 @@
 extends RefCounted
 ## Original procedural, short transient layers. No external samples/licenses.
 ## Only presentation: never changes damage, stamina, animation timing or saves.
-const RATE: int = 22050
+const RATE: int = 32000
 const MAX_VOICES: int = 12
 static var sound_level: float = 1.0
 static var shake_level: float = 1.0
@@ -23,6 +23,8 @@ static func play(parent: Node, where: Vector2, kind: String, volume_db: float = 
     var voice: AudioStreamPlayer2D = AudioStreamPlayer2D.new()
     voice.stream = _cached[kind] as AudioStream
     voice.volume_db = volume_db + linear_to_db(maxf(0.001, sound_level))
+    # Quiet, bounded variation prevents identical repeated farming cues.
+    voice.pitch_scale = randf_range(0.965, 1.035)
     voice.max_distance = 980.0
     voice.bus = "Master"
     voice.add_to_group("ghost_impact_audio")
@@ -42,6 +44,22 @@ static func _render_air_sweep(kind: String) -> AudioStreamWAV:
     var air_weight: float = 0.80
     var bass_weight: float = 0.020
     match kind:
+        "dagger_swing":
+            duration = 0.145
+            air_weight = 0.72
+            bass_weight = 0.008
+        "blunt_swing":
+            duration = 0.35
+            air_weight = 0.88
+            bass_weight = 0.12
+        "polearm_swing":
+            duration = 0.28
+            air_weight = 1.02
+            bass_weight = 0.055
+        "dodge":
+            duration = 0.22
+            air_weight = 0.60
+            bass_weight = 0.012
         "scythe_heavy":
             duration = 0.64
             air_weight = 1.22
@@ -243,13 +261,15 @@ static func _render_arrow(kind: String) -> AudioStreamWAV:
     return stream
 
 static func _render(kind: String) -> AudioStreamWAV:
+    if kind in ["blunt_hit", "blade_hit", "crossbow_fire", "crossbow_reload", "bow_release", "ground_slam", "combo_finisher", "evade"]:
+        return _render_foley(kind)
     if kind.begins_with("surface_"):
         return _render_arrow("arrow_" + kind.trim_prefix("surface_"))
     if kind in ["arrow_flesh", "arrow_wood", "arrow_stone", "arrow_metal", "arrow_water", "arrow_magic"]:
         return _render_arrow(kind)
     if kind in ["spell", "spell_heavy", "spell_release", "spell_release_heavy", "spell_hit"]:
         return _render_wand(kind)
-    if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing", "scythe_heavy"]:
+    if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing", "scythe_heavy", "dagger_swing", "blunt_swing", "polearm_swing", "dodge"]:
         return _render_air_sweep(kind)
     if kind in ["hit", "parry"]:
         return _render_soft_contact(kind)
@@ -338,5 +358,75 @@ static func _render(kind: String) -> AudioStreamWAV:
     stream.format = AudioStreamWAV.FORMAT_16_BITS
     stream.mix_rate = RATE
     stream.stereo = false
+    stream.data = pcm
+    return stream
+
+# Original layered foley: filtered contact, a low body resonance and a
+# small secondary mechanical transient. Cached once per cue, no audio assets.
+static func _render_foley(kind: String) -> AudioStreamWAV:
+    var duration: float = 0.24
+    var fundamental: float = 135.0
+    var mass: float = 0.36
+    var grit: float = 0.45
+    var clicks: float = 0.0
+    var ring: float = 0.025
+    match kind:
+        "blunt_hit", "ground_slam":
+            duration = 0.34
+            fundamental = 74.0
+            mass = 0.62
+            grit = 0.42
+        "blade_hit":
+            duration = 0.17
+            fundamental = 155.0
+            mass = 0.26
+            grit = 0.64
+        "crossbow_fire", "bow_release":
+            duration = 0.20
+            fundamental = 215.0 if kind == "bow_release" else 140.0
+            clicks = 0.30
+            ring = 0.12
+        "crossbow_reload":
+            duration = 0.34
+            fundamental = 250.0
+            mass = 0.10
+            grit = 0.23
+            clicks = 0.60
+        "combo_finisher":
+            duration = 0.31
+            fundamental = 105.0
+            mass = 0.50
+            ring = 0.08
+        "evade":
+            duration = 0.27
+            fundamental = 395.0
+            mass = 0.08
+            grit = 0.18
+            ring = 0.18
+    var count: int = roundi(duration*RATE)
+    var pcm: PackedByteArray = PackedByteArray()
+    pcm.resize(count*2)
+    var state: int = posmod(kind.hash()+77321,2147483646)+1
+    var low: float = 0.0
+    var mid: float = 0.0
+    var phase: float = 0.0
+    for i in range(count):
+        var t: float = float(i)/float(count)
+        state = (state*16807)%2147483647
+        var white: float = float(state%65535)/32767.5-1.0
+        low = lerpf(low,white,0.023)
+        mid = lerpf(mid,white,0.21)
+        phase += TAU*fundamental*(1.0-0.27*t)/RATE
+        var contact: float = (mid-low)*grit*exp(-16.0*t)
+        var body: float = (sin(phase)+low*0.7)*mass*exp(-11.0*t)
+        var metal: float = (sin(phase*2.71)+0.22*sin(phase*4.13))*ring*exp(-7.0*t)
+        var mechanical: float = (mid-low)*clicks*(exp(-absf(t-0.19)*48.0)+0.64*exp(-absf(t-0.53)*60.0))
+        var env: float = minf(1.0,t/0.014)*pow(1.0-t,1.2)
+        var value: int = clampi(roundi((contact+body+metal+mechanical)*env*19000.0),-32768,32767)&0xffff
+        pcm[i*2] = value&255
+        pcm[i*2+1] = (value>>8)&255
+    var stream: AudioStreamWAV = AudioStreamWAV.new()
+    stream.format = AudioStreamWAV.FORMAT_16_BITS
+    stream.mix_rate = RATE
     stream.data = pcm
     return stream

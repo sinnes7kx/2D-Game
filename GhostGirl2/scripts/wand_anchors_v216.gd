@@ -107,12 +107,18 @@ static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2
 	if points.size() != 2:
 		return points
 	var grip: Vector2 = points[0]
-	var tip: Vector2 = grip + (points[1] - grip) * VISUAL_SCALE
-	if animation_name.begins_with("wand_idle_"):
-		tip = grip + (tip - grip).rotated(GENTLE.angle_at(GENTLE.phase_of(body)))
 	var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, body.frame)
-	var delta: Vector2 = wrist - grip if wrist != Vector2.INF else alignment_offset(animation_name, frame, face)
-	return PackedVector2Array([grip + delta, tip + delta])
+	if wrist == Vector2.INF:
+		wrist = target_grip(face,animation_name,frame)
+	var angle: float = GENTLE.angle_at(GENTLE.phase_of(body)) if animation_name.begins_with("wand_idle_") else 0.0
+	return transformed_span(points,wrist,angle)
+
+# Same transform used by equipment_visuals: scale and rotate about authored
+# grip, then translate that grip to the actual visible wrist.
+static func transformed_span(points: PackedVector2Array, wrist: Vector2, angle: float) -> PackedVector2Array:
+	if points.size() != 2:
+		return points
+	return PackedVector2Array([wrist,wrist+((points[1]-points[0])*VISUAL_SCALE).rotated(angle)])
 
 static func world_tip(actor: Node2D) -> Vector2:
 	if actor == null:

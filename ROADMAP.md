@@ -135,6 +135,12 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Opt-in shader finish for original painted wand atlases and bow-only masks (and their painted Inspect fallback): restrained source-value contrast and faint stationary grain, no new texture samples, alpha or palette changes. Existing painted silhouettes retained; full repainted wand/bow art and matching inventory icons remain pending. Extend painted preview regression. Runtime and visual verification pending.
 - Rebased on main after #105 merged during development; confirmed overlapping polearm blobs exactly match the merged source. This PR now contains the ranged pass only.
 
+### v2.57 combat foley and diagonal single-grip anchors (source implementation; runtime review pending)
+
+- Cached procedural 32 kHz positional foley: differentiated dagger, blunt and polearm sweeps; layered low-mass/metal/fabric contact, bow release, crossbow fire/reload and evade cues; slight bounded pitch variation, existing voice cap. No external samples. Confirmed contact triggers and combat timing retained. Live listening/mix review pending.
+- Extend original-skin optional diagonal idle/walk atlas aliases to scythe, halberd, warmaul and forged bows. Single-grip frame guides drive the physical heavy weapon and existing scythe/weapon FX; same span lengths as current rigs. Keep authored wrist and exact wand grip-to-tip transform shared with muzzle/visuals. Existing atlas required; approximate guide alignment needs visual review. Paired weapons, non-forged baked bows, spears and armed action/cast clips retain cardinal fallback. No new body or weapon images claimed. Extend registered diagonal smoke assertions for grip length, wand transform and synthesized cues. Godot and F5 pending.
+- Main-target PR includes still-open v2.56 ranged work; merge consolidated PR instead of separate overlapping #106.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.
