@@ -34,7 +34,8 @@ static func kind(item: Variant) -> String:
 	if item == null or item.definition == null or (item.quality != "unique" and not item.definition.unique) or item.is_broken():
 		return ""
 	var base: String = str(item.definition.item_id)
-	return base if ARSENAL.has_skill(base) else str(SPECIALS.get(base,""))
+	var relic: String = ARSENAL.base_key(item)
+	return relic if not relic.is_empty() else str(SPECIALS.get(base,""))
 
 static func label(item: Variant) -> String:
 	var id: String = kind(item)
