@@ -237,6 +237,29 @@ func _is_equipped(animation_name: String) -> bool:
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	var span: PackedVector2Array = _base_weapon_span_v288(animation_name,frame_index)
+	if span.size()==2 and player!=null and animation_name.begins_with("attack_seraph_scythe_"):
+		var face: String = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_name)
+		var heading: Vector2 = player.get("facing")
+		var progress: float = float(frame_index)/7.0
+		var impact: float = 0.46
+		if player.get("seraph_item_v292")!=null:
+			var skill = preload("res://scripts/seraph_descent_v292.gd")
+			var age: float = float(player.get("seraph_age_v292"))
+			heading=player.get("seraph_axis_v292")
+			if age<skill.TURN:
+				progress=age/skill.TURN
+				impact=skill.RISE_HIT/skill.TURN
+			else:
+				progress=(age-skill.TURN)/(skill.DURATION-skill.TURN)
+				impact=(skill.FALL_HIT-skill.TURN)/(skill.DURATION-skill.TURN)
+		elif float(player.get("attack_time_left"))>0.0:
+			heading=player.get("attack_direction")
+			progress=1.0-float(player.get("attack_time_left"))/maxf(0.01,float(player.get("attack_duration")))
+			impact=1.0-float(player.get("attack_hit_threshold"))
+		if not heading.is_zero_approx():
+			var local_axis: Vector2 = body.to_local(body.global_position+heading).normalized()
+			var left: bool = face.ends_with("left") or animation_name.ends_with("_left")
+			span[1]=span[0]+MODELS_V283.seraph_axis(local_axis,progress,impact,left)*68.0
 	if span.size()==2 and player!=null and animation_name.contains("twinblade") and not str(player.get("relic_channel_v288")).is_empty():
 		var radius: float = span[0].distance_to(span[1])
 		span[1]=span[0]+Vector2.from_angle(float(player.get("relic_spin_angle_v288")))*radius
@@ -379,7 +402,10 @@ func _draw() -> void:
 		var inventory_v283: Node = world_v283.get("inventory") as Node if world_v283!=null else null
 		var item_v283: GhostItemInstance = inventory_v283.get_equipped("sword") if inventory_v283!=null else null
 		if item_v283!=null:
-			MODELS_V283.draw_melee(self,str(item_v283.definition.item_id),grip,tip,item_v283.weapon_base_color(),FORGE_CHOICES.effect_scale(item_v283)*FORGE_FX.intensity*0.65)
+			var look_v294: Dictionary = item_v283.collector_appearance()
+			var colors_v294: Array[Color] = item_v283.glow_gradient_colors()
+			var mirror_v294: bool = animation_name.contains("seraph_scythe_") and animation_name.begins_with("attack_") and not animation_name.ends_with("left")
+			MODELS_V283.draw_melee(self,str(item_v283.definition.item_id),grip,tip,item_v283.weapon_base_color(),FORGE_CHOICES.effect_scale(item_v283)*FORGE_FX.intensity*0.80,colors_v294,look_v294,v180_elapsed,mirror_v294,item_v283.weapon_gradient_color())
 	elif animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
 		var profile: Dictionary = MODULAR.equipped_profile(self, body)
 		var world: Node = player.get("world") as Node
