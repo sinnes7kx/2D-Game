@@ -1,5 +1,6 @@
 extends SceneTree
 const DIR = preload("res://scripts/direction_controller_v245.gd")
+const PLAYER_SCRIPT = preload("res://scripts/player.gd")
 const PLAYER = preload("res://scenes/player.tscn")
 
 func _initialize() -> void:
@@ -58,7 +59,16 @@ func _verify() -> void:
 	assert(DIR.cursor_heading(precise, Vector2.DOWN).is_equal_approx(precise.normalized()))
 	assert(DIR.cursor_heading(Vector2.ZERO, Vector2.LEFT) == Vector2.LEFT)
 	assert(DIR.movement(Vector2.LEFT, Vector2.ZERO) == Vector2.LEFT)
+	# All octants use the same timed frontal contact rules.
+	for i in range(8):
+		var aim: Vector2 = DIR.heading(i)
+		assert(PLAYER_SCRIPT.parry_result(0.10,aim,aim*60.0)==2)
+		assert(PLAYER_SCRIPT.parry_result(0.24,aim,aim*60.0)==1)
+		assert(PLAYER_SCRIPT.parry_result(0.34,aim,aim*60.0)==0)
+		assert(PLAYER_SCRIPT.parry_result(0.10,aim,-aim*60.0)==0)
+		assert(PLAYER_SCRIPT.parry_result(0.10,aim,Vector2.ZERO)==0)
 	DIR.install_controller()
+	assert(InputMap.action_get_events("parry").size()==2)
 	var event_count: int = InputMap.action_get_events("attack_light").size()
 	DIR.install_controller()
 	assert(InputMap.action_get_events("attack_light").size()==event_count)

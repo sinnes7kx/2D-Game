@@ -72,6 +72,10 @@ func _physics_process(delta: float) -> void:
             # The strike only lands when the ghost remains in reach and within
             # the clearly telegraphed attack direction.
             if distance < 66.0 and distance > 1.0 and attack_heading.dot(towards.normalized()) > 0.20:
+                if girl.has_method("try_parry_contact") and bool(girl.call("try_parry_contact",self)):
+                    return
+                if girl.has_method("register_confirmed_evade"):
+                    girl.call("register_confirmed_evade",self,global_position)
                 girl.call("receive_damage", damage_to_player, global_position)
             recovery_left = 0.77
             contact_cooldown = 0.78
@@ -115,6 +119,16 @@ func _process(delta: float) -> void:
 
 func offers_backstep_counter(player_position: Vector2) -> bool:
     return health > 0.0 and windup_left > 0.0 and windup_left <= 0.36 and global_position.distance_to(player_position) < 160.0
+
+func on_parried(perfect: bool) -> void:
+    if health <= 0.0:
+        return
+    windup_left = 0.0
+    recovery_left = 0.0
+    stagger_left = 1.15 if perfect else 0.42
+    contact_cooldown = maxf(contact_cooldown,stagger_left)
+    impact_flash = 0.30
+    velocity = Vector2.ZERO
 
 func on_hook_yank(destination: Vector2, strength: float) -> void:
     if health <= 0.0:

@@ -423,6 +423,13 @@ static func missing_combat_clips_v293(frames: SpriteFrames) -> PackedStringArray
 # weapon motion drawn separately. These are NOT new painted attack poses.
 # Mark each reused body clip so the authored-art audit remains truthful.
 const MODULAR_COMBAT_V294: Array[String] = [
+	"attack_sword_modular_light_", "attack_sword_modular_heavy_", "attack_sword_modular_counter_",
+	"attack_twinblade_light_", "attack_twinblade_heavy_",
+	"attack_rosemirror_twinblade_light_", "attack_rosemirror_twinblade_heavy_",
+	"attack_spear_pierce_", "attack_spear_heavy_pierce_",
+	"attack_briarwake_spear_pierce_", "attack_briarwake_spear_heavy_pierce_",
+	"attack_dagger_pierce_", "attack_dagger_heavy_pierce_",
+	"attack_nocturne_dagger_pierce_", "attack_nocturne_dagger_heavy_pierce_",
 	"attack_rapier_pierce_", "attack_rapier_heavy_pierce_",
 	"attack_axe_light_", "attack_axe_heavy_",
 	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
@@ -439,6 +446,22 @@ static func is_modular_combat_v294(clip: String) -> bool:
 		if clip.begins_with(stem):
 			return true
 	return false
+
+# Single-grip modular melee actions use measured wrists from the existing
+# angled body atlas. This is a staged pose, not a newly painted attack.
+static func melee_span(clip: String, frame: int, length: float) -> PackedVector2Array:
+	var anchor: Vector2 = wrist(clip,frame)
+	var direction: String = diagonal_name(clip)
+	if anchor==Vector2.INF or direction.is_empty():
+		return PackedVector2Array()
+	var i: int = clampi(frame,0,7)
+	var angles: Array[float] = [-1.25,-1.55,-0.75,0.0,0.34,1.05,0.64,-0.38]
+	if clip.contains("_pierce_"):
+		angles.assign([-0.65,-0.85,-0.42,0.0,0.0,0.10,-0.38,-0.65])
+	elif clip.contains("_heavy_"):
+		angles.assign([-1.35,-1.65,-1.20,-0.35,0.0,1.25,0.80,-0.38])
+	var axis: Vector2 = heading_v294(direction).rotated(angles[i]*(-1.0 if direction.ends_with("left") else 1.0))
+	return PackedVector2Array([anchor,anchor+axis*length])
 
 static func combat_body_source_v294(clip: String) -> String:
 	var action: String = "jump_" if clip.contains("_air_") else "dodge_"

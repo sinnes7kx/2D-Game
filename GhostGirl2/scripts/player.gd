@@ -72,6 +72,14 @@ const MAX_DEW: int = 3
 const HEAL_WINDUP: float = 0.63
 const LOCK_RANGE: float = 620.0
 const INPUT_BUFFER: float = 0.38
+const PARRY_WINDOW: float = 0.32
+const PARRY_PERFECT_START: float = 0.04
+const PARRY_PERFECT_END: float = 0.15
+const PARRY_DURATION: float = 0.55
+var parry_left: float = 0.0
+var parry_age: float = 0.0
+var parry_used: bool = false
+var parry_heading: Vector2 = Vector2.DOWN
 const AIR_LANDING_BUFFER: float = 0.19  # Accept dodge/follow-up just before feet touch the ground.
 const STAMINA_RECOVERY_WAIT: float = 0.50
 
@@ -340,6 +348,7 @@ func _physics_process(delta: float) -> void:
 	if world == null:
 		return
 	if world.ui.is_menu_open() or world.ui.has_cursor_item():
+		parry_left = 0.0
 		_clear_seraph_v292()
 		_clear_ivory_guard_v289()
 		_end_relic_channel_v288()
@@ -387,8 +396,14 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("target_lock") and healing_time_left <= 0.0:
 		_toggle_lock_target()
-	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty() and ivory_guard_left_v289<=0.0 and seraph_item_v292==null:
+	if Input.is_action_just_pressed("use_dew") and parry_left <= 0.0 and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty() and ivory_guard_left_v289<=0.0 and seraph_item_v292==null:
 		_begin_heal()
+	if parry_left > 0.0:
+		parry_age += delta
+		parry_left = maxf(0.0,parry_left-delta)
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 	if healing_time_left > 0.0:
 		healing_time_left = maxf(0.0, healing_time_left - delta)
 		velocity = Vector2.ZERO
@@ -548,6 +563,9 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed("moonfall_blizzard") or Input.is_action_just_pressed("astral_rain") or Input.is_action_just_pressed("grasping_roses"):
 			world.ui.show_pickup("AREA MAGIC BELONGS TO UNIQUE RELICS · SHIFT + MOUSE2")
 			return
+		if Input.is_action_just_pressed("parry") and carrying == null and stamina >= _action_cost(16.0,false):
+			_begin_parry()
+			return
 		if Input.is_action_just_pressed("jump") and stamina >= _action_cost(JUMP_COST, false):
 			_begin_jump()
 			return
@@ -664,7 +682,7 @@ func _process(delta: float) -> void:
 		cam.offset = (Vector2(sin(visual_time * 74.0), cos(visual_time * 59.0)) * camera_kick * 0.72 + camera_push) * COMBAT_JUICE.shake_level
 	# CanvasItem retains draw commands; don't rebuild an empty canvas at
 	# render FPS when no target/charge/dodge/jump indicator is present.
-	var needs_draw: bool = throw_charge_active_v276 or dance_stage_v262 == 1 or bow_draw_active or is_instance_valid(lock_target) or counter_window > 0.0 or dodge_time_left > 0.0 or jump_time_left > 0.0
+	var needs_draw: bool = parry_left > 0.0 or throw_charge_active_v276 or dance_stage_v262 == 1 or bow_draw_active or is_instance_valid(lock_target) or counter_window > 0.0 or dodge_time_left > 0.0 or jump_time_left > 0.0
 	if needs_draw or had_player_draw:
 		queue_redraw()
 	had_player_draw = needs_draw
@@ -1086,6 +1104,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	parry_left = 0.0
 	_clear_seraph_v292()
 	_clear_ivory_guard_v289()
 	_end_relic_channel_v288()
@@ -1147,6 +1166,7 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 		return
 	if amount>0.0 and _try_ivory_guard_v289(attacker_position):
 		return
+	parry_left = 0.0
 	_clear_seraph_v292()
 	_clear_ivory_guard_v289()
 	_end_relic_channel_v288()
@@ -1403,6 +1423,43 @@ func _begin_dodge() -> void:
 # Called only from a confirmed hostile strike/bolt collision, directly before
 # the existing receive_damage call. Does not create an iframe or remove damage.
 # The existing receive_damage() is still the sole authority on health.
+func _begin_parry() -> void:
+	stamina -= _action_cost(16.0,false)
+	stamina_recovery_left = STAMINA_RECOVERY_WAIT
+	parry_left = PARRY_DURATION
+	parry_age = 0.0
+	parry_used = false
+	parry_heading = _combat_aim_direction().normalized()
+	set_facing(parry_heading)
+	velocity = Vector2.ZERO
+	_reset_combo_v239()
+	_play_if_changed(_weapon_motion_prefix(false)+facing_name)
+	world.ui.set_stamina(stamina,MAX_STAMINA)
+
+static func parry_result(age: float, heading: Vector2, offset: Vector2) -> int:
+	if age < 0.0 or age > PARRY_WINDOW or offset.length_squared() <= 1.0 or heading.is_zero_approx() or heading.normalized().dot(offset.normalized()) < 0.50:
+		return 0
+	return 2 if age >= PARRY_PERFECT_START and age <= PARRY_PERFECT_END else 1
+
+# Only a confirmed melee contact from an enemy supporting stagger may parry.
+# Hazards, projectiles, and speculative nearby attacks cannot award a parry.
+func try_parry_contact(attacker: Node2D) -> bool:
+	if parry_left <= 0.0 or parry_used or invulnerable_time > 0.0 or not is_instance_valid(attacker) or not attacker.has_method("on_parried"):
+		return false
+	var result: int = parry_result(parry_age,parry_heading,attacker.global_position-global_position)
+	if result == 0:
+		return false
+	parry_used = true
+	var perfect: bool = result == 2
+	attacker.call("on_parried",perfect)
+	parry_left = minf(parry_left,0.12 if perfect else 0.22)
+	counter_window = 0.95 if perfect else 0.50
+	_spawn_precision_feedback("riposte" if perfect else "ready",global_position+Vector2(0,-31),parry_heading)
+	COMBAT_JUICE.play(get_tree().current_scene,global_position,"parry",-10.0 if perfect else -16.0)
+	camera_kick = maxf(camera_kick,5.0 if perfect else 2.5)
+	world.ui.show_pickup("PERFECT PARRY · COUNTER NOW" if perfect else "PARRY")
+	return true
+
 func register_confirmed_evade(attacker: Node2D, _contact: Vector2) -> bool:
 	if not is_instance_valid(attacker) or precision_evade_registered:
 		return false
@@ -2611,6 +2668,11 @@ func _spawn_rose_slash(where: Vector2) -> void:
 	effect.play()
 
 func _draw() -> void:
+	if parry_left > 0.0 and not parry_used and parry_age <= PARRY_WINDOW:
+		var center: Vector2 = Vector2(0,-26)+parry_heading*10.0
+		var angle: float = parry_heading.angle()
+		var ink: Color = Color("f4d6a8") if parry_age >= PARRY_PERFECT_START and parry_age <= PARRY_PERFECT_END else Color("aa95b7")
+		draw_arc(center,23.0,angle-0.8,angle+0.8,24,ink,1.8,true)
 	if throw_charge_active_v276:
 		var ratio: float = throw_charge_ratio_v276()
 		var at: Vector2 = Vector2(0,-39)+attack_direction*18.0

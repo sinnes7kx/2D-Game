@@ -283,6 +283,9 @@ func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedV
 				return CROSSBOW_V236.aimed_span(body,aimed,player.get("crossbow_heading")) if animation_name.contains("_fire_") else aimed
 			if animation_name.contains("forge_dagger_"):
 				return FORGE_V238.span(animation_name,diagonal.cardinal_for_clip(animation_name),frame_index)
+			if animation_name.contains("sword_modular_") or animation_name.contains("twinblade") or animation_name.contains("_spear_") or animation_name.contains("_dagger_"):
+				var length: float = 76.0 if animation_name.contains("twinblade") else (74.0 if animation_name.contains("_spear_") else (39.0 if animation_name.contains("_dagger_") else 60.0))
+				return diagonal.melee_span(animation_name,frame_index,length)
 		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
 			return diagonal.crossbow_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and (animation_name.begins_with("spear_") or animation_name.begins_with("briarwake_spear_")):
