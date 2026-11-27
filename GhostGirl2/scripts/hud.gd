@@ -295,6 +295,12 @@ func _input(event: InputEvent) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	# Session-only accessibility controls; saves and combat are unaffected.
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_F6 and event.shift_pressed:
+			var grade: Node = get_parent().get_node_or_null("GothicGradeV277")
+			if grade!=null and grade.has_method("cycle"):
+				show_pickup("GOTHIC FILTER  ·  "+str(grade.call("cycle")))
+				get_viewport().set_input_as_handled()
+				return
 		if event.physical_keycode == KEY_F3 and event.shift_pressed:
 			PERF_V230.cycle()
 			show_pickup("GRAPHICS PROFILE  ·  " + PERF_V230.label().to_upper())
