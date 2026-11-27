@@ -811,7 +811,15 @@ func _has_unique_relic_v282(template: GhostItemData) -> bool:
 				return true
 	return false
 
-func deliver_relic_samples_v282(persist: bool = true) -> Dictionary:
+const FORGE_RECOVERY_V293: Array[String] = [
+	"briar_hatchet_v283", "gravecleaver_axe_v283", "gallows_greataxe_v283",
+	"rosehook_bearded_axe_v286", "ossuary_poleaxe_v286", "seraph_reaper_v292"
+]
+
+func recover_forge_v293(persist: bool = true) -> Dictionary:
+	return deliver_relic_samples_v282(persist,FORGE_RECOVERY_V293,"v293_forge_recovery_",293100)
+
+func deliver_relic_samples_v282(persist: bool = true, ids: Array[String] = RELIC_DELIVERY_V282, key_prefix: String = "v282_relic_delivery_", seed_base: int = 282100) -> Dictionary:
 	var result: Dictionary = {"vault":0,"backpack":0,"pending":0,"existing":0,"saved":true}
 	if not save_block_reason.is_empty():
 		result["saved"]=false
@@ -819,10 +827,11 @@ func deliver_relic_samples_v282(persist: bool = true) -> Dictionary:
 	var old_vault: int = vault.size()
 	var old_contents: int = contents.size()
 	var old_positions: int = grid_positions.size()
+	var old_stash_positions: Dictionary = stash_positions_v284.duplicate()
 	var added_flags: Array[String] = []
-	for i in range(RELIC_DELIVERY_V282.size()):
-		var id: String = RELIC_DELIVERY_V282[i]
-		var key: String = "v282_relic_delivery_"+id
+	for i in range(ids.size()):
+		var id: String = ids[i]
+		var key: String = key_prefix+id
 		if has_collected(key):
 			continue
 		var template: GhostItemData = load("res://items/"+id+".tres") as GhostItemData
@@ -834,12 +843,15 @@ func deliver_relic_samples_v282(persist: bool = true) -> Dictionary:
 			added_flags.append(key)
 			result["existing"]+=1
 			continue
-		var item: GhostItemInstance = generate_find(template,282100+i,"unique")
+		var item: GhostItemInstance = generate_find(template,seed_base+i,"unique")
 		if item==null:
 			result["pending"]+=1
 			continue
-		if vault.size()+unresolved_vault.size()<VAULT_CAPACITY:
+		sync_stash_v284()
+		var stash_pos: Vector2i = stash_open_v284(item)
+		if vault.size()+unresolved_vault.size()<VAULT_CAPACITY and stash_pos.x>=0:
 			vault.append(item)
+			stash_positions_v284[item]=stash_pos
 			result["vault"]+=1
 		else:
 			var position: Vector2i = _first_open(item)
@@ -857,6 +869,7 @@ func deliver_relic_samples_v282(persist: bool = true) -> Dictionary:
 		vault.resize(old_vault)
 		contents.resize(old_contents)
 		grid_positions.resize(old_positions)
+		stash_positions_v284=old_stash_positions
 		for key in added_flags:
 			collected_pickups.erase(key)
 		result["pending"]+=int(result["vault"])+int(result["backpack"])
