@@ -112,7 +112,7 @@ func _draw() -> void:
 		if t>0.58:
 			continue
 		var fade: float = 1.0-clampf((t-0.18)/0.40,0.0,1.0)
-		var rise: float = clampf(t/0.075,0.0,1.0)
+		var rise: float = clampf(t/0.075,0.02,1.0)
 		if kind=="impale":
 			var tip: Vector2 = p+Vector2(axis.x*18.0,-96.0)*rise
 			var normal: Vector2 = (tip-p).normalized().orthogonal()
