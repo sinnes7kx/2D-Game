@@ -61,8 +61,8 @@ static func airborne_pose(progress: float, airborne_strike: bool, direction: flo
     var plunge: float = pow(clampf((t - 0.20) / 0.56, 0.0, 1.0), 1.35)
     var turn: float = direction
     return {
-        "height": 34.0 * arc + (5.0 * arc if airborne_strike else 0.0) - (4.0 * plunge if airborne_strike else 0.0),
+        "height": maxf(0.0, 25.0 * arc + (4.0 * arc if airborne_strike else 0.0) - (4.0 * plunge if airborne_strike else 0.0)),
         "rotation": (0.095 * sin(clampf((t - 0.10) / 0.72, 0.0, 1.0) * PI) * turn if airborne_strike else 0.018 * turn),
-        "stretch": (0.025 * arc if airborne_strike else 0.012 * arc),
+        "stretch": (0.016 * arc if airborne_strike else 0.008 * arc),
         "arc": arc
     }
