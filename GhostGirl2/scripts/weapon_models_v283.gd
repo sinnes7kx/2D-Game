@@ -1,4 +1,7 @@
 extends RefCounted
+const SEED_FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
+const SEED_PARTICLES = preload("res://scripts/weapon_particle_paths_v244.gd")
+const DIAGONAL = preload("res://scripts/ghost_diagonal_art_v247.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const PAINTED_V287 = preload("res://scripts/painted_relic_art_v287.gd")
 const SERAPH = preload("res://assets/ui/weapons_v292/seraph_reaper_held.svg")
@@ -78,49 +81,68 @@ static func span(clip: String, face: String, frame: int) -> PackedVector2Array:
 		axis=Vector2(-0.45 if face=="left" else 0.45,-0.89).normalized()
 	return PackedVector2Array([anchor,anchor+axis*(84.0 if rapier else 68.0)])
 
-static func draw_melee(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, pigment: Color, glow: float) -> void:
+# The positive local X axis is always the head/blade, never the butt.
+static func seraph_axis(heading: Vector2, progress: float, impact: float, left: bool) -> Vector2:
+	var t: float = clampf(progress,0.0,1.0)
+	var hit: float = clampf(impact,0.05,0.95)
+	var angle: float = lerpf(-1.25,0.0,t/hit) if t<=hit else lerpf(0.0,1.12,(t-hit)/(1.0-hit))
+	return heading.normalized().rotated(angle*(-1.0 if left else 1.0))
+
+static func cutting_edge(id: String, painted: bool = false) -> PackedVector2Array:
 	if id=="seraph_reaper_v292":
-		var direction: Vector2 = (tip-grip).normalized()
-		canvas.draw_set_transform(grip,direction.angle())
-		canvas.draw_texture_rect(SERAPH,Rect2(-34,-52,136,76),false,Color.WHITE.lerp(pigment,0.12))
-		if glow>0.0:
-			canvas.draw_polyline(PackedVector2Array([Vector2(16,-45),Vector2(35,-46),Vector2(55,-44),Vector2(78,-33),Vector2(86,-16),Vector2(79,0)]),Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.65),1.8,true)
-		canvas.draw_set_transform(Vector2.ZERO)
+		return PackedVector2Array([Vector2(16,-45),Vector2(35,-46),Vector2(55,-44),Vector2(78,-33),Vector2(86,-16),Vector2(79,0)])
+	if painted:
+		return PAINTED_V287.edge(id)
+	if id.contains("rapier"):
+		return PackedVector2Array([Vector2(12,0),Vector2(83,0)])
+	if id=="rosehook_bearded_axe_v286":
+		return PackedVector2Array([Vector2(67,-25),Vector2(74,-20),Vector2(76,-13),Vector2(70,-4),Vector2(58,12)])
+	if id=="ossuary_poleaxe_v286":
+		return PackedVector2Array([Vector2(74,-28),Vector2(84,-23),Vector2(88,-15),Vector2(88,-8),Vector2(76,-2)])
+	var length: float = 53.0 if id.begins_with("briar_") else (82.0 if id.begins_with("gallows_") else 68.0)
+	var width: float = 19.0 if length==53.0 else (29.0 if length==82.0 else 24.0)
+	return PackedVector2Array([Vector2(length-8,-width),Vector2(length+3,-width*0.68),Vector2(length+6,-5)])
+
+static func seeded_edge(canvas: Node2D, edge: PackedVector2Array, colors: Array[Color], look: Dictionary, phase: float, glow: float) -> void:
+	if edge.size()<2 or colors.is_empty() or look.is_empty() or glow<=0.0:
 		return
-	if not MODELS.has(id):
+	SEED_FX.draw_edge(canvas,edge,colors,look,phase,glow)
+	var center: Vector2 = edge[0].lerp(edge[-1],0.5)
+	var axis: Vector2 = (edge[-1]-edge[0]).normalized()
+	SEED_PARTICLES.draw_pattern(canvas,center,axis,Vector2(edge[0].distance_to(edge[-1])*0.53,7.0),colors,look,phase,glow)
+
+static func draw_melee(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, pigment: Color, glow: float, colors: Array[Color] = [], look: Dictionary = {}, phase: float = 0.0, mirror_blade: bool = false, surface: Color = Color.WHITE) -> void:
+	if id!="seraph_reaper_v292" and not MODELS.has(id):
 		return
 	var axis: Vector2 = (tip-grip).normalized()
+	if axis.is_zero_approx():
+		return
+	var seraph: bool = id=="seraph_reaper_v292"
 	var rapier: bool = id.contains("rapier")
-	var rect: Rect2 = Rect2(-14,-18,102,36) if rapier else Rect2(-25,-32,117,64)
 	var painted: Texture2D = PAINTED_V287.texture(id,"held")
-	canvas.draw_set_transform(grip,axis.angle())
+	var rect: Rect2 = Rect2(-34,-52,136,76) if seraph else (Rect2(-14,-18,102,36) if rapier else Rect2(-25,-32,117,64))
+	var tex: Texture2D = SERAPH if seraph else (painted if painted!=null else MODELS[id])
 	if painted!=null:
-		# Preserve the concept's material colours while retaining seeded tint.
-		canvas.draw_texture_rect(painted,PAINTED_V287.held_rect(id),false,Color.WHITE.lerp(pigment,0.12))
-	else:
-		canvas.draw_texture_rect(MODELS[id],rect,false,Color.WHITE.lerp(pigment,0.22))
-	if glow>0.0:
-		var ink: Color = Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.46)
-		if painted!=null:
-			var edge: PackedVector2Array = PAINTED_V287.edge(id)
-			if edge.size()>1:
-				canvas.draw_polyline(edge,Color(ink.r,ink.g,ink.b,ink.a*0.25),4.0,true)
-				canvas.draw_polyline(edge,ink,1.25,true)
-		elif rapier:
-			canvas.draw_line(Vector2(12,0),Vector2(83,0),ink,2.4,true)
-		elif id=="rosehook_bearded_axe_v286":
-			canvas.draw_polyline(PackedVector2Array([Vector2(67,-25),Vector2(74,-20),Vector2(76,-13),Vector2(70,-4),Vector2(58,12)]),ink,2.4,true)
-		elif id=="ossuary_poleaxe_v286":
-			canvas.draw_polyline(PackedVector2Array([Vector2(74,-28),Vector2(84,-23),Vector2(88,-15),Vector2(88,-8),Vector2(76,-2)]),ink,2.6,true)
+		rect=PAINTED_V287.held_rect(id)
+	# Reflect the cutting edge across the shaft when changing swing handedness;
+	# never reverse the shaft itself or move the grip away from the wrist.
+	canvas.draw_set_transform(grip,axis.angle(),Vector2(1.0,-1.0 if mirror_blade else 1.0))
+	var tint: Color = Color.WHITE.lerp(pigment.lerp(surface,0.30),0.50)
+	canvas.draw_texture_rect(tex,rect,false,tint)
+	var edge: PackedVector2Array = cutting_edge(id,painted!=null)
+	if glow>0.0 and edge.size()>1:
+		if colors.is_empty() or look.is_empty():
+			canvas.draw_polyline(edge,Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.46),1.5,true)
 		else:
-			var length: float = 53.0 if id.begins_with("briar_") else (82.0 if id.begins_with("gallows_") else 68.0)
-			var width: float = 19.0 if length==53.0 else (29.0 if length==82.0 else 24.0)
-			canvas.draw_polyline(PackedVector2Array([Vector2(length-8,-width),Vector2(length+3,-width*0.68),Vector2(length+6,-5)]),ink,2.7,true)
-			if length==82.0:
-				canvas.draw_polyline(PackedVector2Array([Vector2(length-8,width),Vector2(length+3,width*0.68),Vector2(length+6,5)]),ink,2.7,true)
+			seeded_edge(canvas,edge,colors,look,phase,glow)
+		if id.begins_with("gallows_") and painted==null:
+			var opposite: PackedVector2Array = PackedVector2Array()
+			for point in edge:
+				opposite.append(Vector2(point.x,-point.y))
+			seeded_edge(canvas,opposite,colors,look,phase+0.2,glow)
 	canvas.draw_set_transform(Vector2.ZERO)
 
-static func draw_crossbow(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, loaded: bool, cocking: float, pigment: Color, glow: float) -> bool:
+static func draw_crossbow(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, loaded: bool, cocking: float, pigment: Color, glow: float, colors: Array[Color] = [], look: Dictionary = {}, phase: float = 0.0) -> bool:
 	if not MODELS.has(id) or not id.contains("crossbow") and id!="ossuary_arbalest_v237":
 		return false
 	var axis: Vector2 = (tip-grip).normalized()
@@ -133,7 +155,7 @@ static func draw_crossbow(canvas: Node2D, id: String, grip: Vector2, tip: Vector
 	var x: float = 21.0-sweeps[index]
 	var notch: float = 2.0 if loaded else lerpf(16.0,2.0,clampf(cocking,0.0,1.0))
 	canvas.draw_set_transform(grip,axis.angle(),Vector2.ONE*(0.70 if index==0 else 1.0))
-	canvas.draw_texture_rect(MODELS[id],Rect2(-26,-30,67,60),false,Color.WHITE.lerp(pigment,0.25))
+	canvas.draw_texture_rect(MODELS[id],Rect2(-26,-30,67,60),false,Color.WHITE.lerp(pigment,0.50))
 	var cord: PackedVector2Array = PackedVector2Array([Vector2(x,-w),Vector2(notch,0),Vector2(x,w)])
 	canvas.draw_polyline(cord,Color("28232b"),1.4,true)
 	canvas.draw_polyline(cord,Color("d6c6d9"),0.65,true)
@@ -142,6 +164,10 @@ static func draw_crossbow(canvas: Node2D, id: String, grip: Vector2, tip: Vector
 		canvas.draw_line(Vector2(34,-1.8),Vector2(37,0),Color("e2d5ce"),1.2,true)
 	if glow>0.0:
 		var ink: Color = Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.35)
-		canvas.draw_polyline(PackedVector2Array([Vector2(x,-w),Vector2(25,-w*0.45),Vector2(21,0),Vector2(25,w*0.45),Vector2(x,w)]),ink,2.6,true)
+		var limbs: PackedVector2Array = PackedVector2Array([Vector2(x,-w),Vector2(25,-w*0.45),Vector2(21,0),Vector2(25,w*0.45),Vector2(x,w)])
+		if colors.is_empty() or look.is_empty():
+			canvas.draw_polyline(limbs,ink,1.4,true)
+		else:
+			seeded_edge(canvas,limbs,colors,look,phase,glow)
 	canvas.draw_set_transform(Vector2.ZERO)
 	return true
