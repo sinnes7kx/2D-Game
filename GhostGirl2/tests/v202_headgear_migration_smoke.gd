@@ -55,6 +55,22 @@ func _verify() -> void:
     if head_layer == null or familiar == null:
         _fail("Live Ghost Girl body lacks accessory layer or companion")
         return
+    var horns = preload("res://scripts/horn_anchors_v268.gd")
+    var img: Image = Image.create(256,220,false,Image.FORMAT_RGBA8)
+    img.fill(Color.TRANSPARENT)
+    img.fill_rect(Rect2i(95,18,70,55),Color.WHITE)
+    var front: PackedVector2Array = horns.measure(img,"front")
+    assert(front.size()==2 and front[0].x>95.0 and front[1].x<165.0)
+    assert(front[0].y==36.0 and front[1].y==36.0)
+    var profile: PackedVector2Array = horns.measure(img,"left")
+    assert(profile[0].distance_to(profile[1])<front[0].distance_to(front[1]))
+    assert(horns.far_side("back_right")==1 and horns.far_side("front_left")==0)
+    assert(horns.direction("wand_walk_back_left","back")=="back_left")
+    var sprite: AnimatedSprite2D = actor.get_node("Ghost") as AnimatedSprite2D
+    assert(horns.pixel_to_local(Vector2(128,110),sprite).is_equal_approx(sprite.offset))
+    var guide = horns.new()
+    var roots: PackedVector2Array = guide.frame_roots(sprite,"front")
+    assert(roots.size()==2)
     actor.free()
     inv.free()
     restored.free()

@@ -4,6 +4,8 @@ extends Node2D
 ## No new item metadata or underlying Ghost Girl atlas edits.
 const WALK_V223 = preload("res://scripts/walk_inbetweens_v223.gd")
 const SWORD_V224 = preload("res://scripts/sword_attack_frames_v224.gd")
+const HORN_ANCHORS = preload("res://scripts/horn_anchors_v268.gd")
+var horn_anchors = HORN_ANCHORS.new()
 var phase: float = 0.0
 var last_eye_pose_key: String = ""
 var last_effect_bucket: int = -1
@@ -30,6 +32,10 @@ func _process(delta: float) -> void:
     var key: String = (str(body.animation) + ":" + str(body.frame)) if body != null else ""
     var has_art: bool = _item("wings") != null or _item("helm") != null or _item("trinket") != null or _item("charm") != null
     var bucket: int = floori(phase * 18.0)
+    var accessory: GhostItemInstance = _item("wings")
+    if body != null and accessory != null and accessory.definition != null and str(accessory.definition.item_id) == "v202_rose_horns":
+        # The body also leans, floats and jumps between animation frames.
+        queue_redraw()
     if (has_art and (key != last_eye_pose_key or bucket != last_effect_bucket)) or has_art != had_head_art:
         queue_redraw()
     last_eye_pose_key = key
@@ -213,15 +219,33 @@ func _draw_halo(color: Color, face: String) -> void:
     draw_line(Vector2(x - 5.0, -139.0), Vector2(x + 5.0, -139.0), Color("fff5df"), 1.2, true)
 
 func _draw_horns(color: Color, face: String) -> void:
-    for side in [-1.0, 1.0]:
-        var base: Vector2 = Vector2(side * 23.0, -101.0)
-        var tip: Vector2 = Vector2(side * 39.0, -130.0)
-        var mid: Vector2 = Vector2(side * 32.0, -116.0)
-        draw_line(base, mid, Color("3a253b"), 8.0, true)
-        draw_line(mid, tip, Color("3a253b"), 6.0, true)
-        draw_line(base, mid, color.darkened(0.35), 4.5, true)
-        draw_line(mid, tip, color.lightened(0.13), 2.8, true)
-        draw_circle(base, 3.1, Color("9e718a"))
+    var sprite: AnimatedSprite2D = _body_sprite()
+    if sprite == null:
+        return
+    var actual_face: String = HORN_ANCHORS.direction(str(sprite.animation),face)
+    var roots: PackedVector2Array = horn_anchors.frame_roots(sprite,actual_face)
+    if roots.size()!=2:
+        return
+    # Draw only the horns in Ghost-local coordinates. Other accessories keep
+    # their existing layout. Includes the real bob, scale, lean and air pose.
+    draw_set_transform_matrix(global_transform.affine_inverse()*sprite.global_transform)
+    var far: int = HORN_ANCHORS.far_side(actual_face)
+    var order: Array[int] = [1,0] if far==1 else [0,1]
+    for i in order:
+        var side: float = -1.0 if i==0 else 1.0
+        if sprite.flip_h:
+            side=-side
+        var root: Vector2 = HORN_ANCHORS.pixel_to_local(roots[i],sprite)
+        var size: float = 0.72 if i==far else 1.0
+        var mid: Vector2 = root+Vector2(side*16.0,-25.0)*size
+        var tip: Vector2 = root+Vector2(side*28.0,-49.0)*size
+        # The existing rose-metal palette and bent silhouette are retained.
+        draw_line(root,mid,Color("3a253b"),13.0*size,true)
+        draw_line(mid,tip,Color("3a253b"),9.0*size,true)
+        draw_line(root,mid,color.darkened(0.35),7.2*size,true)
+        draw_line(mid,tip,color.lightened(0.13),4.6*size,true)
+        draw_circle(root,4.8*size,Color("9e718a"))
+    draw_set_transform_matrix(Transform2D.IDENTITY)
 
 func _draw_crown(id: String, color: Color, face: String) -> void:
     if id not in ["v202_moonlit_tiara", "v202_starfall_diadem"]:
