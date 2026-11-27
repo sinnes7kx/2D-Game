@@ -386,12 +386,12 @@ func _physics_process(delta: float) -> void:
 			world.ui.set_health(health, maximum_health())
 		move_and_slide()
 		return
-	if not relic_channel_v288.is_empty():
-		_advance_relic_channel_v288(delta)
-		return
 	rally_time_left = maxf(0.0, rally_time_left - delta)
 	if rally_time_left <= 0.0:
 		rally_pool = 0.0
+	if not relic_channel_v288.is_empty():
+		_advance_relic_channel_v288(delta)
+		return
 	if attack_time_left <= 0.0 and crossbow_stage == 0 and bow_time_left <= 0.0 and not bow_draw_active and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and stamina_recovery_left <= 0.0:
 		stamina = minf(MAX_STAMINA, stamina + 39.0 * (1.0 + _stat("stamina_recovery_pct") / 100.0) * delta)
 	world.ui.set_stamina(stamina, MAX_STAMINA)
@@ -988,6 +988,9 @@ func _begin_spell_cast(heavy: bool = false, moonfall: bool = false) -> void:
 	_begin_spell_cast_v127(heavy, moonfall, "")
 
 func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> void:
+	# The old area-cast entry points cannot bypass unique item ownership.
+	if moonfall or not new_kind.is_empty():
+		return
 	if thrown_weapon_busy_v273() or carrying != null:
 		return
 	var spell_cost: float = (40.0 if new_kind == "astral" else 32.0) if not new_kind.is_empty() else (37.0 if moonfall else (HEAVY_ATTACK_COST if heavy else LIGHT_ATTACK_COST))
