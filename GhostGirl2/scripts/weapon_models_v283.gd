@@ -1,5 +1,6 @@
 extends RefCounted
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const PAINTED_V287 = preload("res://scripts/painted_relic_art_v287.gd")
 const MODELS: Dictionary = {
 	"ivory_duelist_rapier_v286":preload("res://assets/ui/weapons_v286/ivory_duelist_rapier_v286.svg"),
 	"nightglass_rapier_v286":preload("res://assets/ui/weapons_v286/nightglass_rapier_v286.svg"),
@@ -77,11 +78,21 @@ static func draw_melee(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, 
 	var axis: Vector2 = (tip-grip).normalized()
 	var rapier: bool = id.contains("rapier")
 	var rect: Rect2 = Rect2(-14,-18,102,36) if rapier else Rect2(-25,-32,117,64)
+	var painted: Texture2D = PAINTED_V287.texture(id,"held")
 	canvas.draw_set_transform(grip,axis.angle())
-	canvas.draw_texture_rect(MODELS[id],rect,false,Color.WHITE.lerp(pigment,0.22))
+	if painted!=null:
+		# Preserve the concept's material colours while retaining seeded tint.
+		canvas.draw_texture_rect(painted,PAINTED_V287.held_rect(id),false,Color.WHITE.lerp(pigment,0.12))
+	else:
+		canvas.draw_texture_rect(MODELS[id],rect,false,Color.WHITE.lerp(pigment,0.22))
 	if glow>0.0:
 		var ink: Color = Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.46)
-		if rapier:
+		if painted!=null:
+			var edge: PackedVector2Array = PAINTED_V287.edge(id)
+			if edge.size()>1:
+				canvas.draw_polyline(edge,Color(ink.r,ink.g,ink.b,ink.a*0.25),4.0,true)
+				canvas.draw_polyline(edge,ink,1.25,true)
+		elif rapier:
 			canvas.draw_line(Vector2(12,0),Vector2(83,0),ink,2.4,true)
 		elif id=="rosehook_bearded_axe_v286":
 			canvas.draw_polyline(PackedVector2Array([Vector2(67,-25),Vector2(74,-20),Vector2(76,-13),Vector2(70,-4),Vector2(58,12)]),ink,2.4,true)
