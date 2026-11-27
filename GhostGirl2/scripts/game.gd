@@ -245,6 +245,8 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 			var forge_bases: Array[GhostItemData] = [preload("res://items/cathedral_rapier_v283.tres"), preload("res://items/moonneedle_rapier_v283.tres"), preload("res://items/briar_hatchet_v283.tres"), preload("res://items/gravecleaver_axe_v283.tres"), preload("res://items/gallows_greataxe_v283.tres"), preload("res://items/ivory_duelist_rapier_v286.tres"), preload("res://items/nightglass_rapier_v286.tres"), preload("res://items/rosehook_bearded_axe_v286.tres"), preload("res://items/ossuary_poleaxe_v286.tres"), preload("res://items/seraph_reaper_v292.tres")]
 			return forge_bases[posmod(int(sword_seed / 65),forge_bases.size())]
 		if posmod(int(sword_seed / 5), 7) == 0:
+			if posmod(int(sword_seed / 35), 4) == 0:
+				return preload("res://items/penitent_longsword.tres")
 			return SINGLE_SWORDS_V235[posmod(int(sword_seed / 35), SINGLE_SWORDS_V235.size())] as GhostItemData
 		# Share the existing variant lane, without increasing sword frequency.
 		if posmod(int(sword_seed / 5), 11) == 0:
