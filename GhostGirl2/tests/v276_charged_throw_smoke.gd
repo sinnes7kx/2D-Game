@@ -12,7 +12,7 @@ func _verify() -> void:
 	assert(is_equal_approx(SPECIAL.charge_power(1.0),1.35))
 	assert(is_equal_approx(SPECIAL.charge_power(4.0),1.35))
 	assert(SPECIAL.charge_power(0.5)>SPECIAL.charge_power(0.0))
-	assert(SPECIAL.SPECIALS.size()==6)
+	assert(SPECIAL.SPECIALS.size()==7)
 	assert(INNATE.POWERS.size()==59)
 	for base in SPECIAL.SPECIALS:
 		var skill: String = SPECIAL.SPECIALS[base]
