@@ -7,7 +7,7 @@ const CELL: Vector2i = Vector2i(256, 220)
 const ACTION_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v248.png"
 const REVISED_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_v249.png"
 const REVISED_ACTIONS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v249.png"
-const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_", "spear_", "briarwake_spear_", "nocturne_dagger_"]
+const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "sword_", "dagger_", "thornrose_", "moonveil_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_", "spear_", "briarwake_spear_", "nocturne_dagger_"]
 # Approximate visible wrist guides, visually sampled from the normalized atlas.
 # Approximate initial per-frame wrist guides in full atlas-cell pixels.
 const LEGACY_WRISTS: Dictionary = {
@@ -53,6 +53,8 @@ static func available() -> bool:
 static func install(frames: SpriteFrames) -> bool:
 	if frames == null or not available():
 		return false
+	if bool(frames.get_meta("v270_diagonal_loaded",false)):
+		return true
 	var sheet: Texture2D = load(REVISED_ATLAS if ResourceLoader.exists(REVISED_ATLAS, "Texture2D") else ATLAS) as Texture2D
 	if sheet == null or sheet.get_size() != Vector2(2048, 1760):
 		return false
@@ -61,7 +63,7 @@ static func install(frames: SpriteFrames) -> bool:
 		var direction: String = DIRECTIONS[row % 4]
 		var clip: String = action + "_" + direction
 		if frames.has_animation(clip):
-			continue
+			frames.remove_animation(clip)
 		var cardinal: String = "front" if direction.begins_with("front") else "back"
 		var source: String = action + "_" + cardinal
 		if not frames.has_animation(source):
@@ -80,6 +82,7 @@ static func install(frames: SpriteFrames) -> bool:
 			frames.add_frame(clip, cell)
 	_install_actions(frames)
 	_install_armed_aliases(frames)
+	frames.set_meta("v270_diagonal_loaded",true)
 	return true
 
 static func resolve(requested: String, eight_facing: String, cardinal: String, armed: bool, frames: SpriteFrames) -> String:
@@ -129,7 +132,7 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 				continue
 			var clip: String = prefix + str(source)
 			if frames.has_animation(clip):
-				continue
+				frames.remove_animation(clip)
 			frames.add_animation(clip)
 			frames.set_animation_loop(clip,true)
 			frames.set_animation_speed(clip,frames.get_animation_speed(source))
@@ -252,3 +255,27 @@ static func armed_jump_carry(requested: String, direction: String, cardinal: Str
 	if not requested.contains("_walk_"):
 		return requested
 	return armed_clip(requested,direction,cardinal,frames)
+
+# All equipped locomotion aliases use the authored diagonal cells directly.
+static func is_carried_clip(clip: String) -> bool:
+	if diagonal_name(clip).is_empty():
+		return false
+	for family in WEAPON_PREFIXES:
+		if clip.begins_with(family+"idle_") or clip.begins_with(family+"walk_"):
+			return true
+	return false
+
+static func is_painted_bow_carry(clip: String) -> bool:
+	return is_carried_clip(clip) and (clip.begins_with("thornrose_") or clip.begins_with("moonveil_"))
+
+static func hand_local(body: AnimatedSprite2D) -> Vector2:
+	if body==null:
+		return Vector2.INF
+	var point: Vector2 = wrist(str(body.animation),body.frame)
+	if point==Vector2.INF:
+		return point
+	if body.flip_h:
+		point.x=-point.x
+	if body.flip_v:
+		point.y=-point.y
+	return point+body.offset

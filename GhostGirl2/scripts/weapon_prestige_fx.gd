@@ -240,7 +240,9 @@ func _axial_span() -> PackedVector2Array:
 	var grip: Vector2 = _hand_anchor(face)
 	var end_point: Vector2 = _fallback_tip(grip, face, 46.0)
 	var style: String = item.weapon_style()
-	var pose_frame: int = 0 if STEADY_IDLE.matches(animation) else body.frame
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	var diagonal_carry: bool = diagonal.is_carried_clip(animation)
+	var pose_frame: int = 0 if STEADY_IDLE.matches(animation) and not diagonal_carry else body.frame
 	if item.get_slot() == "wand":
 		# Shared with actual wand art and the spell release origin. Do not
 		# approximate a separate hand offset for the prestige layer.
@@ -283,6 +285,8 @@ func _axial_span() -> PackedVector2Array:
 			if span is PackedVector2Array and span.size() == 2:
 				return span
 	if style in ["maul", "twinblade"]:
+		if diagonal_carry:
+			return empty # Heavy rig owns its edge; no cardinal fallback.
 		# The four physical weapon variants have their own frame-authored
 		# guides. No arbitrary white glowing rectangles or detached rings.
 		var fresh_v170: Array = v170_axes_by_animation.get(animation, [])
@@ -307,7 +311,7 @@ func _axial_span() -> PackedVector2Array:
 				return PackedVector2Array([Vector2(float(pair[0]), float(pair[1])), Vector2(float(pair[2]), float(pair[3]))])
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 43.0 if style == "dagger" else 82.0)])
 	if style == "blade":
-		if item.uses_modular_single_sword():
+		if item.uses_modular_single_sword() or diagonal_carry:
 			var rig: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
 			if rig != null:
 				var shared: PackedVector2Array = rig.call("get_weapon_span", animation, body.frame)
@@ -325,6 +329,8 @@ func _axial_span() -> PackedVector2Array:
 			tracked.append(local + body.offset)
 		return tracked
 	if style in ["scythe", "halberd"]:
+		if diagonal_carry:
+			return empty
 		var axes: Array = long_axes_by_animation.get(animation, [])
 		if not axes.is_empty():
 			var guide: Variant = axes[clampi(body.frame, 0, axes.size() - 1)]
@@ -357,6 +363,8 @@ func _axial_span() -> PackedVector2Array:
 					start_pos.x *= -1.0
 					end_pos.x *= -1.0
 				return PackedVector2Array([start_pos + offset, end_pos + offset])
+		if diagonal_carry:
+			return empty # Missing painted mask: no floating bow aura.
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 46.0)])
 	# Every equipment category that actually occupies the weapon slot
 	# receives a visible fallback aura, not an empty array.

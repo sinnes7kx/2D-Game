@@ -252,7 +252,8 @@ func _ready() -> void:
 	# remain unchanged. Only ordinary ground sword clips gain samples.
 	SWORD_V224.install(body_art)
 	SKIN_V246.install(body_art.sprite_frames)
-	DIAGONAL_ART_V247.install(body_art.sprite_frames)
+	if not DIAGONAL_ART_V247.install(body_art.sprite_frames):
+		push_warning("Original eight-direction artwork missing or invalid: install GhostGirl2/assets/ghost/skins/ghost_diagonal_v249.png (2048x1760). Cardinal fallback remains active.")
 	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
@@ -582,8 +583,8 @@ func _physics_process(delta: float) -> void:
 		if facing_name != "back" and blink_cooldown <= 0.0 and blink_active <= 0.0:
 			blink_active = 0.52
 			blink_cooldown = blink_rng.randf_range(4.5, 10.5)
-		if world.inventory.get_equipped("sword") != null:
-			blink_active = 0.0  # Sword poses already have their weapon painted in.
+		if world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null:
+			blink_active = 0.0  # Keep the actual equipped idle pose and wrist guide.
 		if blink_active > 0.0:
 			blink_active = maxf(0.0, blink_active - delta)
 			_play_if_changed("blink_" + facing_name)
@@ -694,6 +695,10 @@ func _process(delta: float) -> void:
 		var landing_weight: float = MOTION_V225.landing_weight(landing_recoil_left / LANDING_RECOIL)
 		body_art.scale *= Vector2(1.0 + 0.065 * landing_weight, 1.0 - 0.095 * landing_weight)
 		body_art.position.y += 3.6 * landing_weight
+	# Attach the shared hand marker to the actual diagonal wrist after body motion.
+	var visible_hand: Vector2 = DIAGONAL_ART_V247.hand_local(body_art)
+	if visible_hand != Vector2.INF and not is_throwing and hook_gesture_left<=0.0 and not rose_hook.is_pulling_player():
+		hand.position = to_local(body_art.to_global(visible_hand))
 	# Feedback without altering Ghost Girl's approved textures or equipment tint.
 	body_art.self_modulate = Color(1.0, 0.78, 0.84, 1.0) if hurt_recoil_left > 0.0 else Color.WHITE
 
@@ -869,7 +874,7 @@ func _input(event: InputEvent) -> void:
 		controller_active_v260 = false
 
 func _movement_input() -> Vector2:
-	var keyboard: Vector2 = Input.get_vector("left", "right", "up", "down")
+	var keyboard: Vector2 = DIRECTIONS_V245.keyboard_vector()
 	var touch: Vector2 = Vector2.ZERO
 	if world != null:
 		var ui: Node = world.get("ui") as Node

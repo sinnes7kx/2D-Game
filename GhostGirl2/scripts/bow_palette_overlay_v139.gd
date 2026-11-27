@@ -5,6 +5,7 @@ const SHADE: Shader = preload("res://assets/equipment/weapon_surface_v190.gdshad
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const DIAGONAL_V270 = preload("res://scripts/ghost_diagonal_art_v247.gd")
 var inventory: Node = null
 var body: AnimatedSprite2D = null
 var last_bow_cosmetic_key: String = ""
@@ -246,6 +247,9 @@ func _process(_delta: float) -> void:
 		if bow_carry_visual != null:
 			bow_carry_visual.visible = false
 		return
+	if DIAGONAL_V270.is_painted_bow_carry(source_animation):
+		_show_diagonal_bow_v270(item,source_animation)
+		return
 	var animation: String = _resolved_animation_name(item, source_animation)
 	if STEADY_IDLE.is_bow_idle(source_animation):
 		if _show_idle_bow(item, source_animation):
@@ -332,3 +336,32 @@ func _process(_delta: float) -> void:
 		self.animation = StringName(animation)
 	set_frame_and_progress(clampi(overlay_frame, 0, sprite_frames.get_frame_count(animation) - 1), body.frame_progress)
 	visible = true
+
+# Actual bow-only neutral art and matching shader mask share one grip pivot.
+func _show_diagonal_bow_v270(item: GhostItemInstance,clip: String) -> void:
+	visible=false
+	if bow_carry_visual==null or bow_carry_visual.sprite_frames==null or sprite_frames==null:
+		return
+	bow_carry_visual.visible=false
+	var wrist: Vector2 = DIAGONAL_V270.wrist(clip,body.frame)
+	if wrist==Vector2.INF:
+		return
+	var face: String = "left" if DIAGONAL_V270.diagonal_name(clip).ends_with("left") else "right"
+	var pose: Dictionary = idle_hold_pose(face)
+	var carry_name: String = _bow_style_name(item)+"_idle_"+str(pose["source_face"])
+	if not bow_carry_visual.sprite_frames.has_animation(carry_name) or not sprite_frames.has_animation(carry_name):
+		return
+	var angle: float = float(pose["rotation_deg"])
+	var source: Vector2 = pose["source_handle"]
+	var position_at: Vector2 = wrist-source.rotated(deg_to_rad(angle))
+	for layer in [bow_carry_visual,self]:
+		layer.visible=true
+		layer.flip_h=bool(pose["flip_h"])
+		layer.show_behind_parent=false
+		layer.z_index=3 if layer==bow_carry_visual else 4
+		layer.position=position_at
+		layer.rotation_degrees=angle
+		layer.scale=Vector2.ONE
+		if str(layer.animation)!=carry_name:
+			layer.animation=StringName(carry_name)
+		layer.set_frame_and_progress(0,0.0)
