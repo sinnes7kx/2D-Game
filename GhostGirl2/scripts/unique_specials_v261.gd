@@ -3,32 +3,22 @@ extends RefCounted
 const MECHANICS_V288 = preload("res://scripts/relic_mechanics_v288.gd")
 const ARSENAL = preload("res://scripts/relic_arsenal_v277.gd")
 const SPECIALS: Dictionary = {
+	"seraph_reaper_v292": "seraph_descent",
 	"moonwarden_spear_v169": "heavens_reach",
 	"briarwake_trident_v171": "drowned_fork",
 	"gravebell_maul_v170": "last_toll",
 	"eclipse_twinblade_v170": "eclipse_dance",
 	"nocturne_stiletto_v171": "vespers_return",
-	"cinderveil_dirk_v238": "ember_return",
-	"roseglass_dagger_v169": "roseglass_fan",
 	"rose_reaper_scythe": "reverie_wave",
-	"silkglass_dirk_v276": "winter_return",
-	"bellthorn_lance_v276": "bellthorn_judgment",
-	"ivory_misericorde_v233": "ivory_return",
-	"reliquary_knife_v238": "reliquary_fan"
 }
 const NAMES: Dictionary = {
+	"seraph_descent": "Seraph’s Descent · Rising cut followed by a luminous descending reaper sweep",
 	"heavens_reach": "Heaven's Reach · Returning spear throw",
 	"drowned_fork": "Drowned Crown · Six spears erupt from the ground in sequence",
 	"last_toll": "Last Toll · Traveling shockwave",
 	"eclipse_dance": "Crimson Eclipse · Advancing blade dance and optional retreat",
 	"vespers_return": "Vesper’s Return · Piercing throw, hits again on return",
-	"ember_return": "Ember’s Promise · Burning returning dagger",
-	"roseglass_fan": "Rose’s Secret · Three spectral needles",
 	"reverie_wave": "Death’s Reverie · Traveling crescent",
-	"winter_return": "Winterglass · Returning blade slows enemies",
-	"bellthorn_judgment": "Bellthorn Judgment · Returning lance with crushing stagger",
-	"ivory_return": "Ivory Absolution · Returning blade restores 3 life on first hit",
-	"reliquary_fan": "Reliquary Seal · Three slowing spectral needles"
 }
 
 static func kind(item: Variant) -> String:
@@ -42,20 +32,20 @@ static func label(item: Variant) -> String:
 	var id: String = kind(item)
 	return ARSENAL.label(id) if ARSENAL.has_skill(id) else str(NAMES.get(id,""))
 
-static func count(id: String) -> int:
-	return 3 if id in ["drowned_fork","roseglass_fan","reliquary_fan"] else 1
+static func count(_id: String) -> int:
+	return 1
 
 static func is_dagger_throw(id: String) -> bool:
-	return id in ["vespers_return","ember_return","roseglass_fan","winter_return","ivory_return","reliquary_fan"]
+	return id == "vespers_return"
 
 static func is_throw(id: String) -> bool:
-	return is_dagger_throw(id) or id in ["heavens_reach","bellthorn_judgment"]
+	return is_dagger_throw(id) or id == "heavens_reach"
 
 static func charge_power(charge: float) -> float:
 	return lerpf(0.75,1.35,clampf(charge,0.0,1.0))
 
 static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vector2, id: String, charge: float = 0.0) -> void:
-	if kind(item) != id or heading.is_zero_approx() or id == "eclipse_dance" or actor.call("thrown_weapon_busy_v273"):
+	if id.is_empty() or kind(item) != id or heading.is_zero_approx() or id in ["eclipse_dance","seraph_descent"] or actor.call("thrown_weapon_busy_v273"):
 		return
 	var world: Node = actor.get("world")
 	var root: Node = actor.get_tree().current_scene
@@ -84,12 +74,12 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		actor.set("camera_push",-heading.normalized()*lerpf(2.0,5.0,charge))
 		preload("res://scripts/combat_juice_v194.gd").play(root,origin,"throw_release",-12.0)
 		preload("res://scripts/impact_spawner_v149.gd").burst(root,origin,"slam",lerpf(0.4,0.8,charge),heading,item.visual_seed())
-	if id in ["vespers_return","ember_return","winter_return","ivory_return"]:
+	if id=="vespers_return":
 		var dagger = preload("res://scripts/returning_stiletto_v265.gd").new()
 		dagger.caster = actor
 		dagger.direction = heading.normalized()
 		dagger.power = power
-		dagger.ember_v272 = id=="ember_return"
+		dagger.ember_v272 = false
 		dagger.throw_charge_v276=charge
 		dagger.special_id_v276=id
 		dagger.palette = item.glow_gradient_colors()
@@ -104,14 +94,14 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		shot.set("special_id",id)
 		shot.set("throw_charge_v276",charge)
 		shot.set("direction",heading.rotated(deg_to_rad((float(i)-float(n-1)*0.5)*12.0)))
-		shot.set("speed",(980.0 if id in ["roseglass_fan","reliquary_fan"] else (470.0 if id in ["last_toll","reverie_wave"] else 780.0)) * (lerpf(0.88,1.18,charge) if is_throw(id) else 1.0))
+		shot.set("speed",(470.0 if id in ["last_toll","reverie_wave"] else 780.0) * (lerpf(0.88,1.18,charge) if is_throw(id) else 1.0))
 		shot.set("damage",power*1.10/float(n))
-		shot.set("range_left",(360.0 if id in ["roseglass_fan","reliquary_fan"] else (310.0 if id in ["last_toll","reverie_wave"] else 560.0)) * (lerpf(0.85,1.15,charge) if is_throw(id) else 1.0))
+		shot.set("range_left",(310.0 if id in ["last_toll","reverie_wave"] else 560.0) * (lerpf(0.85,1.15,charge) if is_throw(id) else 1.0))
 		shot.set("caster",actor)
 		shot.set("caster_rid",actor.get_rid())
 		shot.set("is_crossbow_bolt",true)
 		shot.set("secondary_projectile",true)
-		shot.set("can_return",id in ["heavens_reach","bellthorn_judgment"])
+		shot.set("can_return",id=="heavens_reach")
 		shot.set("full_palette",item.glow_gradient_colors())
 		shot.set("visual_glow_scale",preload("res://scripts/visual_choices_v216.gd").effect_scale(item))
 		root.add_child(shot)

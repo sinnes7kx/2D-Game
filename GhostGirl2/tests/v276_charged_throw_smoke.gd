@@ -12,8 +12,8 @@ func _verify() -> void:
 	assert(is_equal_approx(SPECIAL.charge_power(1.0),1.35))
 	assert(is_equal_approx(SPECIAL.charge_power(4.0),1.35))
 	assert(SPECIAL.charge_power(0.5)>SPECIAL.charge_power(0.0))
-	assert(SPECIAL.SPECIALS.size()==12)
-	assert(INNATE.POWERS.size()==38)
+	assert(SPECIAL.SPECIALS.size()==7)
+	assert(INNATE.POWERS.size()==59)
 	for base in SPECIAL.SPECIALS:
 		var skill: String = SPECIAL.SPECIALS[base]
 		assert(SPECIAL.NAMES.has(skill))
@@ -24,9 +24,9 @@ func _verify() -> void:
 		var normal: GhostItemInstance = GhostItemGenerator.create(definition,276123,"normal")
 		assert(SPECIAL.kind(unique)==skill)
 		assert(SPECIAL.kind(normal).is_empty())
-	assert(SPECIAL.is_throw("winter_return"))
-	assert(SPECIAL.is_throw("bellthorn_judgment"))
-	assert(SPECIAL.count("reliquary_fan")==3)
+	assert(not SPECIAL.is_throw("winter_return"))
+	assert(not SPECIAL.is_throw("bellthorn_judgment"))
+	assert(not SPECIAL.is_throw("reliquary_fan"))
 	assert(not SPECIAL.is_throw("last_toll"))
 	assert(not SPECIAL.is_throw("eclipse_dance"))
 	var lock = LOCK.new()

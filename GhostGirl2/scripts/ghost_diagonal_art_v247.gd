@@ -7,7 +7,7 @@ const CELL: Vector2i = Vector2i(256, 220)
 const ACTION_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v248.png"
 const REVISED_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_v249.png"
 const REVISED_ACTIONS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v249.png"
-const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "sword_", "dagger_", "thornrose_", "moonveil_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_", "spear_", "briarwake_spear_", "nocturne_dagger_", "rapier_", "axe_"]
+const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "sword_", "dagger_", "thornrose_", "moonveil_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_", "spear_", "briarwake_spear_", "nocturne_dagger_", "rapier_", "axe_", "seraph_scythe_"]
 # Approximate visible wrist guides, visually sampled from the normalized atlas.
 # Approximate initial per-frame wrist guides in full atlas-cell pixels.
 const LEGACY_WRISTS: Dictionary = {

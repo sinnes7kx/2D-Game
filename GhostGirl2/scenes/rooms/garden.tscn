@@ -378,3 +378,20 @@ blast_damage = 7.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V150CombatBreakables/GardenTimberWest"]
 shape = SubResource("v150_cover_circle")
+
+[node name="AtmosphereV292" type="Node2D" parent="."]
+
+[node name="MoonPool01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1880, 690)
+
+[node name="MoonPool02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(530, 490)
+
+[node name="Bloom01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1890, 980)
+
+[node name="Bloom02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(720, 1120)
+
+[node name="Water01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1190, 810)

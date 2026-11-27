@@ -1,6 +1,7 @@
 extends RefCounted
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const PAINTED_V287 = preload("res://scripts/painted_relic_art_v287.gd")
+const SERAPH = preload("res://assets/ui/weapons_v292/seraph_reaper_held.svg")
 const MODELS: Dictionary = {
 	"ivory_duelist_rapier_v286":preload("res://assets/ui/weapons_v286/ivory_duelist_rapier_v286.svg"),
 	"nightglass_rapier_v286":preload("res://assets/ui/weapons_v286/nightglass_rapier_v286.svg"),
@@ -36,12 +37,12 @@ static func install(frames: SpriteFrames) -> void:
 		var source: String = "attack_unarmed_light_"+face
 		if not frames.has_animation(source) or frames.get_frame_count(source)<8:
 			continue
-		for style in ["rapier","axe"]:
+		for style in ["rapier","axe","seraph_scythe"]:
 			var names: Array[String] = [style+"_idle_"+face,style+"_walk_"+face]
 			if style=="rapier":
 				names.append_array(["attack_rapier_pierce_"+face,"attack_rapier_heavy_pierce_"+face])
 			else:
-				names.append_array(["attack_axe_light_"+face,"attack_axe_heavy_"+face])
+				names.append_array(["attack_"+style+"_light_"+face,"attack_"+style+"_heavy_"+face])
 			for name in names:
 				if frames.has_animation(name):
 					continue
@@ -78,6 +79,14 @@ static func span(clip: String, face: String, frame: int) -> PackedVector2Array:
 	return PackedVector2Array([anchor,anchor+axis*(84.0 if rapier else 68.0)])
 
 static func draw_melee(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, pigment: Color, glow: float) -> void:
+	if id=="seraph_reaper_v292":
+		var direction: Vector2 = (tip-grip).normalized()
+		canvas.draw_set_transform(grip,direction.angle())
+		canvas.draw_texture_rect(SERAPH,Rect2(-34,-52,136,76),false,Color.WHITE.lerp(pigment,0.12))
+		if glow>0.0:
+			canvas.draw_polyline(PackedVector2Array([Vector2(16,-45),Vector2(35,-46),Vector2(55,-44),Vector2(78,-33),Vector2(86,-16),Vector2(79,0)]),Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.65),1.8,true)
+		canvas.draw_set_transform(Vector2.ZERO)
+		return
 	if not MODELS.has(id):
 		return
 	var axis: Vector2 = (tip-grip).normalized()

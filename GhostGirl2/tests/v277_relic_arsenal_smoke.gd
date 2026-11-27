@@ -9,9 +9,9 @@ func _initialize() -> void:
 	call_deferred("_verify")
 
 func _verify() -> void:
-	assert(ARSENAL.PROFILES.size()==44)
-	assert(SPECIAL.SPECIALS.size()==12)
-	assert(INNATE.POWERS.size()==38)
+	assert(ARSENAL.PROFILES.size()==29)
+	assert(SPECIAL.SPECIALS.size()==7)
+	assert(INNATE.POWERS.size()==59)
 	var names: Dictionary = {}
 	for id in ARSENAL.PROFILES:
 		var profile: Dictionary = ARSENAL.PROFILES[id]

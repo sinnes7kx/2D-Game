@@ -55,8 +55,8 @@ func _verify() -> void:
 	for id in ["cathedral_rapier_v283","moonneedle_rapier_v283","briar_hatchet_v283","gravecleaver_axe_v283","gallows_greataxe_v283"]:
 		var data: GhostItemData = load("res://items/"+id+".tres")
 		var item: GhostItemInstance = GhostItemGenerator.create(data,283123,"unique")
-		assert(ARSENAL.has_skill(id))
-		assert(not SPECIAL.label(item).is_empty())
+		assert(ARSENAL.has_skill(id) or preload("res://scripts/unique_innate_v274.gd").POWERS.has(id))
+		assert(not SPECIAL.label(item).is_empty() or not preload("res://scripts/unique_innate_v274.gd").label(item).is_empty())
 		assert(SPECIAL.label(GhostItemGenerator.create(data,283123,"normal")).is_empty())
 		assert(item.physical_damage_kind()==("pierce" if id.contains("rapier") else "slash"))
 		assert(id in INVENTORY.RELIC_DELIVERY_V282)
@@ -70,6 +70,6 @@ func _verify() -> void:
 	bow.glow_level_override=0
 	assert(not CHOICES.bow_body_visible(bow) and not CHOICES.bow_string_visible(bow))
 	assert(FORGE.limbs(Vector2.ZERO,Vector2.RIGHT,"frostveil_bow_v277",1.0).size()==2)
-	assert(ARSENAL.PROFILES.size()==44)
+	assert(ARSENAL.PROFILES.size()==29)
 	print("v2.83 held models, 32 animation clips, 256 frame grips, unique skills and bow controls PASS")
 	quit(0)

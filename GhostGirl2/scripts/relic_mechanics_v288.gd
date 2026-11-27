@@ -29,6 +29,8 @@ static func parry_contact_v289(offset: Vector2,axis: Vector2) -> bool:
 	return offset.length_squared()>4.0 and offset.length_squared()<=220.0*220.0 and not axis.is_zero_approx() and offset.normalized().dot(axis.normalized())>=0.60
 
 static func cooldown(id: String) -> float:
+	if id=="seraph_descent":
+		return 4.0
 	if id=="ivory_duelist_rapier_v286":
 		return 2.5
 	if AREAS.has(id):

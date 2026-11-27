@@ -181,6 +181,11 @@ var relic_pulse_v288: float = 0.0
 var relic_channel_worn_v288: bool = false
 var relic_spin_hits_v288: Dictionary = {}
 var relic_cooldowns_v288: Dictionary = {}
+const SERAPH_V292 = preload("res://scripts/seraph_descent_v292.gd")
+var seraph_item_v292: GhostItemInstance
+var seraph_age_v292: float = 0.0
+var seraph_axis_v292: Vector2 = Vector2.DOWN
+var seraph_hits_v292: int = 0
 var ivory_guard_left_v289: float = 0.0
 var ivory_guard_item_v289: GhostItemInstance
 var ivory_guard_direction_v289: Vector2 = Vector2.DOWN
@@ -334,6 +339,7 @@ func _physics_process(delta: float) -> void:
 	if world == null:
 		return
 	if world.ui.is_menu_open() or world.ui.has_cursor_item():
+		_clear_seraph_v292()
 		_clear_ivory_guard_v289()
 		_end_relic_channel_v288()
 		if throw_charge_active_v276:
@@ -380,7 +386,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("target_lock") and healing_time_left <= 0.0:
 		_toggle_lock_target()
-	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty() and ivory_guard_left_v289<=0.0:
+	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty() and ivory_guard_left_v289<=0.0 and seraph_item_v292==null:
 		_begin_heal()
 	if healing_time_left > 0.0:
 		healing_time_left = maxf(0.0, healing_time_left - delta)
@@ -394,6 +400,9 @@ func _physics_process(delta: float) -> void:
 	rally_time_left = maxf(0.0, rally_time_left - delta)
 	if rally_time_left <= 0.0:
 		rally_pool = 0.0
+	if seraph_item_v292!=null:
+		_advance_seraph_v292(delta)
+		return
 	if ivory_guard_left_v289>0.0:
 		_advance_ivory_guard_v289(delta)
 		return
@@ -664,6 +673,12 @@ func _process(delta: float) -> void:
 		body_art.position = BASE_ART_POS - hurt_direction * 3.0 * recoil
 		body_art.rotation = 0.065 * hurt_direction.x * recoil
 		body_art.scale = Vector2.ONE * BASE_ART_SCALE
+	elif seraph_item_v292!=null:
+		var lift: float = SERAPH_V292.height_at(seraph_age_v292)
+		body_art.position=BASE_ART_POS+Vector2(seraph_axis_v292.x*lift*0.06,-lift)
+		body_art.rotation=seraph_axis_v292.x*0.07*sin(PI*seraph_age_v292/SERAPH_V292.DURATION)
+		body_art.scale=Vector2.ONE*BASE_ART_SCALE
+		hand.position=_hand_position_for_facing()+Vector2(0,-lift)
 	elif dance_stage_v262 > 0 and attack_time_left > 0.0:
 		var spin: float = DANCE_V262.spin(dance_stage_v262,dance_elapsed_v262)
 		var envelope: float = sin(clampf(dance_elapsed_v262/attack_duration,0.0,1.0)*PI)
@@ -815,6 +830,7 @@ func _weapon_art_style() -> String:
 		"rosemirror_twinblade_v170": return "rosemirror_twinblade"
 		"nocturne_stiletto_v171": return "nocturne_dagger"
 		"briarwake_trident_v171": return "briarwake_spear"
+		"seraph_reaper_v292": return "seraph_scythe"
 	return weapon.weapon_style()
 
 func _install_empty_throw_carry_v276() -> void:
@@ -877,6 +893,8 @@ func _attack_action_cost(heavy: bool) -> float:
 		return INF
 	if heavy and world!=null and (_special_modifier_v272() or (buffered_attack_valid and buffered_special_v261)):
 		var skill_v289: String = UNIQUE_SPECIALS_V261.kind(world.inventory.get_equipped("sword"))
+		if skill_v289=="seraph_descent":
+			return _action_cost(SERAPH_V292.COST,false)
 		if skill_v289=="ivory_duelist_rapier_v286":
 			return _action_cost(18.0,false)
 		if RELIC_MECHANICS_V288.is_channel(skill_v289):
@@ -897,7 +915,7 @@ func _resolve_skin_clip(animation_name: String) -> String:
 	var armed: bool = world == null or world.inventory == null
 	if not armed:
 		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
-	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not (armed and _weapon_style() in ["bow","crossbow","rapier","axe"]):
+	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not (armed and (_weapon_style() in ["bow","crossbow","rapier","axe"] or _weapon_art_style()=="seraph_scythe")):
 		return SKIN_V246.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
 	# Nocturne has no authored armed rows. Bows keep the approved original
 	# equipped diagonal clips rather than silently reverting to cardinal art.
@@ -1057,6 +1075,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	_clear_seraph_v292()
 	_clear_ivory_guard_v289()
 	_end_relic_channel_v288()
 	thrown_lock_v273.clear()
@@ -1117,6 +1136,7 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 		return
 	if amount>0.0 and _try_ivory_guard_v289(attacker_position):
 		return
+	_clear_seraph_v292()
 	_clear_ivory_guard_v289()
 	_end_relic_channel_v288()
 	clear_throw_charge_v276()
@@ -1405,6 +1425,10 @@ func _begin_weapon_attack(heavy: bool) -> void:
 	if heavy and special_requested_v288:
 		var owner_v288: GhostItemInstance = world.inventory.get_equipped("sword")
 		var id_v288: String = UNIQUE_SPECIALS_V261.kind(owner_v288)
+		if id_v288=="seraph_descent":
+			buffered_attack_valid=false
+			_begin_seraph_v292(owner_v288)
+			return
 		if id_v288=="ivory_duelist_rapier_v286":
 			buffered_attack_valid=false
 			_begin_ivory_guard_v289(owner_v288)
@@ -1431,6 +1455,88 @@ func _begin_weapon_attack(heavy: bool) -> void:
 	else:
 		_begin_attack(heavy)
 
+
+func _begin_seraph_v292(item: GhostItemInstance) -> void:
+	var cost: float = _action_cost(SERAPH_V292.COST,false)
+	if item==null or item.is_broken() or stamina<cost or not relic_ready_v288("seraph_descent"):
+		return
+	if attack_time_left>0.0 or jump_time_left>0.0 or dodge_time_left>0.0 or thrown_weapon_busy_v273() or rose_hook.is_pulling_player() or hook_gesture_left>0.0 or is_throwing:
+		return
+	seraph_item_v292=item
+	seraph_age_v292=0.0
+	seraph_hits_v292=0
+	seraph_axis_v292=_combat_aim_direction().normalized()
+	if seraph_axis_v292.is_zero_approx():
+		seraph_axis_v292=facing.normalized()
+	if seraph_axis_v292.is_zero_approx():
+		seraph_axis_v292=Vector2.DOWN
+	set_facing(seraph_axis_v292)
+	stamina-=cost
+	stamina_recovery_left=STAMINA_RECOVERY_WAIT
+	queued_action=""
+	buffered_attack_valid=false
+	_reset_combo_v239()
+	relic_commit_v288("seraph_descent",4.0)
+	velocity=Vector2.ZERO
+	_play_action_frames("attack_seraph_scythe_light_"+facing_name,0.40)
+	var fx: Node2D = preload("res://scripts/seraph_wings_fx_v292.gd").new()
+	fx.set("actor",self)
+	add_child(fx)
+	world.ui.set_stamina(stamina,MAX_STAMINA)
+	COMBAT_JUICE.play(get_tree().current_scene,global_position,"jump_swing",-15.0)
+
+func _clear_seraph_v292() -> void:
+	if seraph_item_v292==null:
+		return
+	seraph_item_v292=null
+	seraph_hits_v292=0
+	seraph_age_v292=0.0
+	velocity=Vector2.ZERO
+	stamina_recovery_left=maxf(stamina_recovery_left,STAMINA_RECOVERY_WAIT)
+	if is_instance_valid(body_art):
+		body_art.position=BASE_ART_POS
+		body_art.rotation=0.0
+		body_art.speed_scale=1.0
+
+func _advance_seraph_v292(delta: float) -> void:
+	var item: GhostItemInstance = seraph_item_v292
+	if item==null or item.is_broken() or world.inventory.get_equipped("sword")!=item:
+		_clear_seraph_v292()
+		return
+	var before: float = seraph_age_v292
+	seraph_age_v292=minf(SERAPH_V292.DURATION,before+delta)
+	stamina_recovery_left=STAMINA_RECOVERY_WAIT
+	# A physical movement skill: keep all solid collision masks enabled.
+	velocity=seraph_axis_v292*SERAPH_V292.speed_at(seraph_age_v292)
+	move_and_slide()
+	if before<0.40 and seraph_age_v292>=0.40:
+		_play_action_frames(AIR_V203.air_name("attack_seraph_scythe_heavy_"+facing_name),SERAPH_V292.DURATION-0.40)
+	if seraph_hits_v292==0 and seraph_age_v292>=SERAPH_V292.RISE_HIT:
+		seraph_hits_v292=1
+		_seraph_strike_v292(item,false)
+	if seraph_hits_v292==1 and seraph_age_v292>=SERAPH_V292.FALL_HIT:
+		seraph_hits_v292=2
+		_seraph_strike_v292(item,true)
+	if seraph_age_v292>=SERAPH_V292.DURATION:
+		_clear_seraph_v292()
+		landing_recoil_left=LANDING_RECOIL
+		_play_if_changed(_weapon_motion_prefix(false)+facing_name)
+
+func _seraph_strike_v292(item: GhostItemInstance,descending: bool) -> void:
+	var power: float = (18.0+item.weapon_damage())*(0.78 if not descending else 1.35)*(1.0+_stat("melee_power_pct")/100.0)
+	if descending:
+		power*=1.0+_stat("heavy_power_pct")/100.0
+	var hits: int = SERAPH_V292.strike(self,seraph_axis_v292,power,descending)
+	var root: Node = get_tree().current_scene
+	COMBAT_JUICE.play(root,global_position,"heavy_swing" if descending else "charged_swing",-14.0)
+	if descending:
+		PHYSICAL_FEEL.burst(root,global_position,"slam",0.9,seraph_axis_v292,item.visual_seed())
+	if hits>0:
+		camera_kick=maxf(camera_kick,5.5 if descending else 2.6)
+		camera_push=seraph_axis_v292*(2.5 if descending else 1.1)
+		COMBAT_JUICE.play(root,global_position,"blade_hit",-15.0)
+		if descending and item.ethereal:
+			world.inventory.wear_ethereal(item)
 
 func _begin_ivory_guard_v289(item: GhostItemInstance) -> void:
 	var cost: float = _action_cost(18.0,false)

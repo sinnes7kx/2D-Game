@@ -277,3 +277,19 @@ interaction_name = "Collect Moonwoven Dress"
 texture = ExtResource("icon_1")
 scale = Vector2(0.42, 0.42)
 
+[node name="AtmosphereV292" type="Node2D" parent="."]
+
+[node name="MoonPool01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(2080, 425)
+
+[node name="MoonPool02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(350, 429)
+
+[node name="Bloom01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(690, 770)
+
+[node name="Bloom02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1740, 725)
+
+[node name="Bloom03" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1050, 1220)

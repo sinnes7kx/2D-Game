@@ -477,7 +477,7 @@ func _draw() -> void:
 	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0 or FX_LEVEL.intensity <= 0.0:
 		return
 	# Crossbow geometry owns its restrained physical finish; bolt glow is independent.
-	if item.weapon_style() in ["crossbow","rapier","axe"] or item.uses_forge_bow():
+	if item.weapon_style() in ["crossbow","rapier","axe"] or item.uses_forge_bow() or str(item.definition.item_id)=="seraph_reaper_v292":
 		return
 	var visible_clip: String = str(body.animation)
 	if item.get_slot() == "wand" and not WAND_ANCHORS_V216.is_wand_pose(visible_clip):
