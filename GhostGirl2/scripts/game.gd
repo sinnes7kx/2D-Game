@@ -101,6 +101,7 @@ const WORLD_DROP_SCENE: PackedScene = preload("res://scenes/world_drop.tscn")
 const WORLD_SAVE_FILE: String = "user://ghost_girl_world_v1.json"
 const GROUND_SAVE_FILE: String = "user://ghost_girl_ground_loot_v1.json"
 const ROOM_TITLES = {
+	"colosseum": "The Colosseum of Vows",
 	"sepulchre_ossuary": "DEPTH 1 · THE OSSUARY",
 	"sepulchre_thorn": "DEPTH 2 · THE THORN RELIQUARY",
 	"sepulchre_crownless": "DEPTH 3 · THE CROWNLESS SEPULCHRE",
