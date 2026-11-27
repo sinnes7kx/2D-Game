@@ -242,7 +242,7 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# saved items load their original resource path, not this selector.
 	if posmod(sword_seed, 5) == 0:
 		if posmod(int(sword_seed / 5), 13)==0:
-			var forge_bases: Array[GhostItemData] = [preload("res://items/cathedral_rapier_v283.tres"), preload("res://items/moonneedle_rapier_v283.tres"), preload("res://items/briar_hatchet_v283.tres"), preload("res://items/gravecleaver_axe_v283.tres"), preload("res://items/gallows_greataxe_v283.tres")]
+			var forge_bases: Array[GhostItemData] = [preload("res://items/cathedral_rapier_v283.tres"), preload("res://items/moonneedle_rapier_v283.tres"), preload("res://items/briar_hatchet_v283.tres"), preload("res://items/gravecleaver_axe_v283.tres"), preload("res://items/gallows_greataxe_v283.tres"), preload("res://items/ivory_duelist_rapier_v286.tres"), preload("res://items/nightglass_rapier_v286.tres"), preload("res://items/rosehook_bearded_axe_v286.tres"), preload("res://items/ossuary_poleaxe_v286.tres")]
 			return forge_bases[posmod(int(sword_seed / 65),forge_bases.size())]
 		if posmod(int(sword_seed / 5), 7) == 0:
 			return SINGLE_SWORDS_V235[posmod(int(sword_seed / 35), SINGLE_SWORDS_V235.size())] as GhostItemData
@@ -559,10 +559,9 @@ func _process(_delta: float) -> void:
 	elif current_target.is_in_group("world_loot"):
 		ui.set_prompt("E  COLLECT " + str(current_target.get("display_title")))
 	elif current_target.is_in_group("v127_spell_reliquary"):
-		var key_hint: String = str(current_target.get("key_hint"))
-		ui.set_prompt("E  STUDY SPELL" if not bool(current_target.get("learned")) else key_hint + "  CAST (WITH WAND)")
+		ui.set_prompt("E  READ RELIC INSCRIPTION")
 	elif current_target.is_in_group("moonfall_shrine"):
-		ui.set_prompt("E  STUDY MOONFALL" if not inventory.has_collected("v125_moonfall_unlocked") else "Z  MOONFALL (WITH WAND)")
+		ui.set_prompt("E  READ FROST RELIC INSCRIPTION")
 	elif current_target.is_in_group("v148_rose_run"):
 		ui.set_prompt(str(current_target.call("prompt_text")))
 	elif current_target.is_in_group("v147_echo_trial"):
@@ -704,18 +703,18 @@ func interact() -> void:
 			inventory.collected_pickups[key] = true
 			inventory.save_game()
 			target.call("restore_from_inventory", inventory)
-			ui.show_pickup("SPELL LEARNED  ·  EQUIP WAND  ·  " + str(target.get("key_hint")) + " TO CAST", Color("ddb8ee"))
+			ui.show_pickup("ASTRAL RAIN · LUNAR VIGIL / GRASPING ROSES · ROSEHOOK AXE · UNIQUE ONLY", Color("ddb8ee"))
 		else:
-			ui.show_pickup("SPELL ALREADY LEARNED", Color("ddb8ee"))
+			ui.show_pickup("RELIC MAGIC · EQUIP THE MATCHING UNIQUE WEAPON", Color("ddb8ee"))
 		return
 	if target.is_in_group("moonfall_shrine"):
 		if not inventory.has_collected("v125_moonfall_unlocked"):
 			inventory.collected_pickups["v125_moonfall_unlocked"] = true
 			inventory.save_game()
 			target.call("restore_from_inventory", inventory)
-			ui.show_pickup("MOONFALL LEARNED  ·  EQUIP WAND  ·  Z TO CAST", Color("b9d9ff"))
+			ui.show_pickup("MOONFALL · UNIQUE FROSTVEIL BOW · SHIFT + MOUSE2", Color("b9d9ff"))
 		else:
-			ui.show_pickup("MOONFALL  ·  Z  ·  37 STAMINA  ·  6.2s RECHARGE", Color("b9d9ff"))
+			ui.show_pickup("MOONFALL · UNIQUE FROSTVEIL BOW · 6.2s RECHARGE", Color("b9d9ff"))
 		return
 	if target.is_in_group("v148_rose_run"):
 		var rose_reply: String = str(target.call("interact"))
@@ -1000,10 +999,10 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 			removed_room_items.append(extra)
 	_wear_cast_wand(wand)
 
-func cast_moonfall(target_position: Vector2) -> void:
-	var wand: GhostItemInstance = inventory.get_equipped("wand")
-	if wand == null or not inventory.has_collected("v125_moonfall_unlocked"):
-		return
+func cast_moonfall(target_position: Vector2,relic_owner: GhostItemInstance = null) -> bool:
+	if not _relic_area_owner_v288(relic_owner,"frostveil_bow_v277"):
+		return false
+	var wand: GhostItemInstance = relic_owner
 	# Target is intentionally cursor/lock-aimed, with line of sight checked so
 	# players cannot conjure frost through stone or destructible cover.
 	var start: Vector2 = player.global_position + Vector2(0.0, -28.0)
@@ -1018,7 +1017,7 @@ func cast_moonfall(target_position: Vector2) -> void:
 		point = obstruction.get("position", point)
 	var storm: Node2D = MOONFALL_SCENE.instantiate() as Node2D
 	storm.set("appearance_seed", wand.visual_seed())
-	storm.set("damage_per_pulse", 7.8 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
+	storm.set("damage_per_pulse", (5.0+relic_owner.weapon_damage()*0.16) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if relic_owner.ethereal else 1.0))
 	storm.set("style_index", GhostWeaponFXLibrary.moonfall_style(wand.visual_seed(), wand.quality))
 	var signature: Dictionary = wand.effect_rolls()
 	storm.set("main_color", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("b9dfff"), 0.58))
@@ -1027,7 +1026,9 @@ func cast_moonfall(target_position: Vector2) -> void:
 	removed_room_items.append(storm)
 	storm.global_position = point
 
-	_wear_cast_wand(wand)
+	if relic_owner.ethereal:
+		inventory.wear_ethereal(relic_owner)
+	return true
 
 func _v127_aimed_area_point(target_position: Vector2) -> Vector2:
 	# The target cannot be summoned through masonry or movable cover.
@@ -1039,35 +1040,45 @@ func _v127_aimed_area_point(target_position: Vector2) -> Vector2:
 	var wall: Dictionary = get_world_2d().direct_space_state.intersect_ray(query)
 	return wall.get("position", endpoint) if not wall.is_empty() else endpoint
 
-func _v127_spawn_area(scene: PackedScene, target_position: Vector2, is_astral: bool) -> void:
-	var wand: GhostItemInstance = inventory.get_equipped("wand")
-	if wand == null:
-		return
+func _v127_spawn_area(scene: PackedScene, target_position: Vector2, is_astral: bool,relic_owner: GhostItemInstance) -> bool:
+	if not _relic_area_owner_v288(relic_owner,"lunar_vigil_halberd" if is_astral else "rosehook_bearded_axe_v286"):
+		return false
+	var wand: GhostItemInstance = relic_owner
 	var effect: Node2D = scene.instantiate() as Node2D
 	if effect == null:
-		return
+		return false
 	var signature: Dictionary = wand.effect_rolls()
 	effect.set("seed_value", wand.visual_seed())
 	effect.set("rarity", GhostWeaponFXLibrary.tier(wand.quality))
 	effect.set("primary", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("d6b9ed"), 0.48))
 	effect.set("secondary", GhostWeaponFXLibrary.color(int(signature["accent"])).lerp(Color("efd1eb"), 0.38))
 	if is_astral:
-		effect.set("pulse_damage", 10.5 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
+		effect.set("pulse_damage", (6.0+relic_owner.weapon_damage()*0.20) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if relic_owner.ethereal else 1.0))
 	else:
-		effect.set("one_hit_damage", 14.0 * (1.0 + inventory.get_stat_total("spell_power_pct") / 100.0) * _ethereal_wand_power())
+		effect.set("one_hit_damage", (9.0+relic_owner.weapon_damage()*0.36) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if relic_owner.ethereal else 1.0))
 	add_child(effect)
 	removed_room_items.append(effect)
 	effect.global_position = _v127_aimed_area_point(target_position)
 
-	_wear_cast_wand(wand)
+	if relic_owner.ethereal:
+		inventory.wear_ethereal(relic_owner)
+	return true
 
-func cast_astral_rain(target_position: Vector2) -> void:
-	if inventory.has_collected("v127_astral_rain_unlocked"):
-		_v127_spawn_area(ASTRAL_SCENE, target_position, true)
+func _relic_area_owner_v288(relic_owner: GhostItemInstance,id: String) -> bool:
+	return relic_owner!=null and relic_owner.definition!=null and not relic_owner.is_broken() and inventory.get_equipped("sword")==relic_owner and str(relic_owner.definition.item_id)==id and (relic_owner.quality=="unique" or relic_owner.definition.unique)
 
-func cast_grasping_roses(target_position: Vector2) -> void:
-	if inventory.has_collected("v127_grasping_roses_unlocked"):
-		_v127_spawn_area(ROSES_SCENE, target_position, false)
+func cast_astral_rain(target_position: Vector2,relic_owner: GhostItemInstance = null) -> bool:
+	return _v127_spawn_area(ASTRAL_SCENE,target_position,true,relic_owner)
+
+func cast_grasping_roses(target_position: Vector2,relic_owner: GhostItemInstance = null) -> bool:
+	return _v127_spawn_area(ROSES_SCENE,target_position,false,relic_owner)
+
+func cast_relic_area_v288(kind: String,relic_owner: GhostItemInstance,target_position: Vector2) -> bool:
+	match kind:
+		"moonfall": return cast_moonfall(target_position,relic_owner)
+		"astral": return cast_astral_rain(target_position,relic_owner)
+		"roses": return cast_grasping_roses(target_position,relic_owner)
+	return false
 
 func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: String) -> void:
 	if data == null:

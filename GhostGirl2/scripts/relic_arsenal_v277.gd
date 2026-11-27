@@ -1,26 +1,31 @@
 extends RefCounted
 ## Each item base owns its skill, projectile behavior, shape and damage budget.
 ## Spectral special shots are separate from physical archery/puzzle scoring.
+const MECHANICS_V288 = preload("res://scripts/relic_mechanics_v288.gd")
 const SHOT = preload("res://scripts/relic_skill_projectile_v277.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const IMPACT = preload("res://scripts/impact_spawner_v149.gd")
 const PROFILES: Dictionary = {
+	"ivory_duelist_rapier_v286": {"name":"Ivory Riposte","description":"Timed frontal parry opens a counterattack window; strike after blocking","pattern":"single","count":1,"spread":0,"power":1.95,"speed":1350,"range":390,"stagger":1.05,"effect":"heal","ink":"f0d9b0"},
+	"nightglass_rapier_v286": {"name":"Nightglass Reversal","description":"A returning piercing spectral needle","pattern":"single","count":1,"spread":0,"power":2.1,"speed":1400,"range":530,"stagger":1.1,"effect":"return_pierce","ink":"b4b1f2"},
+	"rosehook_bearded_axe_v286": {"name":"Briar Funeral","description":"Summons Grasping Roses at the aimed location; 7.1s recharge","pattern":"blade","count":3,"spread":24,"power":2.05,"speed":640,"range":300,"stagger":1.5,"effect":"frost","ink":"d1a3c4"},
+	"ossuary_poleaxe_v286": {"name":"Ossuary Verdict","description":"Four timed ground fissures erupt in a line; 2.4s recharge","pattern":"wave","count":1,"spread":0,"power":2.3,"speed":510,"range":400,"stagger":2.8,"effect":"burst","ink":"dfc7a2"},
 	"cathedral_rapier_v283": {"name":"The Gilded Verdict","description":"Piercing golden thrust with high stagger","pattern":"single","count":1,"spread":0,"power":2.1,"speed":1250,"range":440,"stagger":2.2,"effect":"pierce","ink":"e9c694"},
 	"moonneedle_rapier_v283": {"name":"Lunar Oath","description":"Twin piercing frost needles","pattern":"fan","count":2,"spread":6,"power":2,"speed":1320,"range":480,"stagger":0.9,"effect":"frost_pierce","ink":"a6d9f3"},
 	"briar_hatchet_v283": {"name":"Briar's Severance","description":"Two returning spectral axe crescents","pattern":"blade","count":2,"spread":16,"power":1.9,"speed":720,"range":310,"stagger":1.25,"effect":"return","ink":"d89aa6"},
 	"gravecleaver_axe_v283": {"name":"Gravecleaver's Toll","description":"A crushing explosive cleave","pattern":"blade","count":1,"spread":0,"power":2.25,"speed":560,"range":310,"stagger":2.4,"effect":"burst","ink":"c6bdd7"},
-	"gallows_greataxe_v283": {"name":"Gallows Requiem","description":"Six radial staggering shockwaves","pattern":"radial","count":6,"spread":60,"power":2.3,"speed":480,"range":245,"stagger":2.1,"effect":"none","ink":"e0bc89"},
+	"gallows_greataxe_v283": {"name":"Gallows Requiem","description":"A physical expanding shock ring strikes each enemy once; 2.4s recharge","pattern":"radial","count":6,"spread":60,"power":2.3,"speed":480,"range":245,"stagger":2.1,"effect":"none","ink":"e0bc89"},
 	"mourning_longsword": {"name":"Grief's Edge","description":"Two sweeping spectral crescents","pattern":"blade","count":2,"spread":22,"power":1.9,"speed":610,"range":285,"stagger":1.2,"effect":"none","ink":"c39cc3"},
 	"moonveil_grandblade": {"name":"Hollow Moon","description":"A broad crescent bursts on contact","pattern":"blade","count":1,"spread":0,"power":2.25,"speed":490,"range":320,"stagger":1.8,"effect":"burst","ink":"c4c6f7"},
 	"vesper_rapier": {"name":"Heart's Silence","description":"A precise piercing thrust","pattern":"single","count":1,"spread":0,"power":2,"speed":1260,"range":410,"stagger":1,"effect":"pierce","ink":"e7c2d5"},
-	"lunar_vigil_halberd": {"name":"Endless Vigil","description":"A long-reaching staggering crescent","pattern":"blade","count":1,"spread":0,"power":2.2,"speed":680,"range":440,"stagger":2.7,"effect":"none","ink":"dad2ab"},
+	"lunar_vigil_halberd": {"name":"Endless Vigil","description":"Calls Astral Rain onto an aimed area; 7.8s recharge","pattern":"blade","count":1,"spread":0,"power":2.2,"speed":680,"range":440,"stagger":2.7,"effect":"none","ink":"dad2ab"},
 	"moonlace_dual_daggers_v173": {"name":"Moon's Teeth","description":"Twin piercing frost needles","pattern":"fan","count":2,"spread":9,"power":1.8,"speed":1150,"range":360,"stagger":0.9,"effect":"frost_pierce","ink":"b3d8fb"},
 	"mourninglace_dual_daggers_v231": {"name":"Weeping Sisters","description":"Two spectral blades restore stamina on contact","pattern":"fan","count":2,"spread":15,"power":1.7,"speed":1000,"range":310,"stagger":0.9,"effect":"stamina","ink":"c4a4b9"},
 	"gloamrose_dual_swords_v174": {"name":"Bride and Widow","description":"Two returning spectral blades","pattern":"blade","count":2,"spread":14,"power":1.9,"speed":790,"range":350,"stagger":1.2,"effect":"return","ink":"e6a8c1"},
 	"cathedral_dual_swords_v233": {"name":"Broken Vows","description":"Twin crushing crescents","pattern":"blade","count":2,"spread":9,"power":2.15,"speed":650,"range":290,"stagger":2.35,"effect":"none","ink":"d7b78d"},
 	"vesperthorn_dual_swords_v231": {"name":"Sorrow and Solace","description":"Twin rose blades restore 3 life per first contact","pattern":"blade","count":2,"spread":18,"power":1.75,"speed":740,"range":290,"stagger":1.05,"effect":"heal","ink":"df8da9"},
-	"rosemirror_twinblade_v170": {"name":"Rose Reflection","description":"Four spectral crescents circle outward","pattern":"radial","count":4,"spread":90,"power":2,"speed":520,"range":230,"stagger":1.15,"effect":"none","ink":"e7b5ca"},
-	"cathedral_thorn_twinblade_v231": {"name":"Martyr Crown","description":"Six radial stagger crescents","pattern":"radial","count":6,"spread":60,"power":2.25,"speed":480,"range":215,"stagger":2,"effect":"none","ink":"d2b58c"},
+	"rosemirror_twinblade_v170": {"name":"Rose Reflection","description":"Hold to continuously spin both blades while walking; drains stamina","pattern":"radial","count":4,"spread":90,"power":2,"speed":520,"range":230,"stagger":1.15,"effect":"none","ink":"e7b5ca"},
+	"cathedral_thorn_twinblade_v231": {"name":"Martyr Crown","description":"Hold to become a mobile cyclone; radius and spin speed build over time","pattern":"radial","count":6,"spread":60,"power":2.25,"speed":480,"range":215,"stagger":2,"effect":"none","ink":"d2b58c"},
 	"widowglass_twinblade_v231": {"name":"Widow Embrace","description":"Three piercing frost crescents","pattern":"blade","count":3,"spread":24,"power":1.9,"speed":680,"range":285,"stagger":1.1,"effect":"frost_pierce","ink":"b4b1f1"},
 	"blackthorn_bow_v234": {"name":"Widow's Volley","description":"Five narrow arrows fan outward","pattern":"fan","count":5,"spread":8.0,"power":1.65,"speed":1030.0,"range":660.0,"stagger":0.9,"effect":"none","ink":"b989c5"},
 	"moonveil_bow": {"name":"Lunar Needle","description":"A piercing frost arrow slows up to two enemies","pattern":"single","count":1,"spread":0.0,"power":1.8,"speed":1200.0,"range":880.0,"stagger":0.9,"effect":"frost_pierce","ink":"a7d9fb"},
@@ -42,9 +47,9 @@ const PROFILES: Dictionary = {
 	"v203_mournful_mace": {"name":"Mercy Denied","description":"A focused crushing ground wave","pattern":"wave","count":1,"spread":0.0,"power":2.25,"speed":490.0,"range":300.0,"stagger":3.2,"effect":"none","ink":"d6b7a4"},
 	"v203_nightchain_flail": {"name":"Unbroken Chain","description":"Five chained waves sweep a broad frontal arc","pattern":"wave","count":5,"spread":22.0,"power":2,"speed":530.0,"range":245.0,"stagger":1.65,"effect":"none","ink":"aa9dc5"},
 	"v203_rosequartz_morningstar": {"name":"Dawn Sorrow","description":"Six radial waves restore stamina on contact","pattern":"radial","count":6,"spread":60.0,"power":1.8,"speed":465.0,"range":190.0,"stagger":1.2,"effect":"stamina","ink":"e5a4be"},
-	"frostveil_bow_v277": {"name":"Winter's Choir","description":"A broad frost fan of five slowing arrows","pattern":"fan","count":5,"spread":11.0,"power":1.85,"speed":1040.0,"range":680.0,"stagger":0.95,"effect":"frost","ink":"9adfe9"},
+	"frostveil_bow_v277": {"name":"Winter's Choir","description":"Full draw summons Moonfall Blizzard at the aimed location; 6.2s recharge","pattern":"fan","count":5,"spread":11.0,"power":1.85,"speed":1040.0,"range":680.0,"stagger":0.95,"effect":"frost","ink":"9adfe9"},
 	"mourning_star_crossbow_v277": {"name":"Astral Sentence","description":"A long-range returning piercing bolt","pattern":"single","count":1,"spread":0.0,"power":2.1,"speed":1540.0,"range":960.0,"stagger":1.35,"effect":"return_pierce","ink":"c7a8ff"},
-	"hollowbell_maul_v277": {"name":"Hollow Cathedral","description":"Three seismic waves burst on enemy contact","pattern":"wave","count":3,"spread":18.0,"power":2.1,"speed":420.0,"range":290.0,"stagger":2,"effect":"burst","ink":"e0bb83"}
+	"hollowbell_maul_v277": {"name":"Hollow Cathedral","description":"Three giant bells descend onto marked ground and crush enemies; 5s recharge","pattern":"wave","count":3,"spread":18.0,"power":2.1,"speed":420.0,"range":290.0,"stagger":2,"effect":"burst","ink":"e0bb83"}
 }
 
 static func has_skill(id: String) -> bool:
@@ -72,6 +77,12 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 	var root: Node = actor.get_tree().current_scene
 	if world==null or root==null or world.get("inventory").get_equipped("sword")!=item:
 		return false
+	if MECHANICS_V288.is_channel(id) or id=="ivory_duelist_rapier_v286":
+		# Channels run exclusively in the player's held-input state.
+		return false
+	if MECHANICS_V288.AREAS.has(id) or MECHANICS_V288.GROUND_SKILLS.has(id):
+		# Never fall through to a projectile if a bespoke skill is on cooldown.
+		return MECHANICS_V288.launch(actor,item,heading,id)
 	var p: Dictionary = PROFILES[id]
 	var count: int = int(p["count"])
 	var axis: Vector2 = heading.normalized()

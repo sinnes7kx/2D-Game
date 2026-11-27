@@ -12,7 +12,7 @@ func _initialize() -> void:
 	call_deferred("_verify")
 
 func _verify() -> void:
-	assert(MODELS.MODELS.size()==11)
+	assert(MODELS.MODELS.size()==15)
 	for id in MODELS.MODELS:
 		assert(MODELS.MODELS[id] is Texture2D)
 	var frames: SpriteFrames = SpriteFrames.new()
@@ -38,6 +38,8 @@ func _verify() -> void:
 			for name in names:
 				assert(frames.has_animation(name))
 				assert(frames.get_frame_count(name)==8)
+				var looping: bool = bool(frames.call("get_animation_loop_mode",name)==1) if frames.has_method("get_animation_loop_mode") else bool(frames.call("get_animation_loop",name))
+				assert(looping==not name.begins_with("attack_"))
 				for i in range(8):
 					var span: PackedVector2Array = MODELS.span(name,face,i)
 					var anchor: Vector2 = HAND.hand_anchor(face,MODELS.sequence(name,face)[i],0 if face=="left" else 1)
@@ -68,6 +70,6 @@ func _verify() -> void:
 	bow.glow_level_override=0
 	assert(not CHOICES.bow_body_visible(bow) and not CHOICES.bow_string_visible(bow))
 	assert(FORGE.limbs(Vector2.ZERO,Vector2.RIGHT,"frostveil_bow_v277",1.0).size()==2)
-	assert(ARSENAL.PROFILES.size()==40)
+	assert(ARSENAL.PROFILES.size()==44)
 	print("v2.83 held models, 32 animation clips, 256 frame grips, unique skills and bow controls PASS")
 	quit(0)

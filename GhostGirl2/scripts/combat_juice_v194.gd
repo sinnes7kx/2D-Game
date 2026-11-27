@@ -44,6 +44,18 @@ static func _render_air_sweep(kind: String) -> AudioStreamWAV:
     var air_weight: float = 0.80
     var bass_weight: float = 0.020
     match kind:
+        "rapier_thrust":
+            duration = 0.13
+            air_weight = 1.0
+            bass_weight = 0.012
+        "axe_swing":
+            duration = 0.29
+            air_weight = 1.04
+            bass_weight = 0.085
+        "axe_heavy_swing":
+            duration = 0.46
+            air_weight = 1.21
+            bass_weight = 0.13
         "dagger_swing":
             duration = 0.145
             air_weight = 0.72
@@ -300,7 +312,7 @@ static func _render_throw_v276(kind: String) -> AudioStreamWAV:
 static func _render(kind: String) -> AudioStreamWAV:
     if kind in ["throw_charge","throw_ready","throw_release","throw_impact"]:
         return _render_throw_v276(kind)
-    if kind in ["blunt_hit", "blade_hit", "crossbow_fire", "crossbow_reload", "bow_release", "ground_slam", "combo_finisher", "evade"]:
+    if kind in ["axe_impact", "rapier_impact", "blunt_hit", "blade_hit", "crossbow_fire", "crossbow_reload", "bow_release", "ground_slam", "combo_finisher", "evade"]:
         return _render_foley(kind)
     if kind.begins_with("surface_"):
         return _render_arrow("arrow_" + kind.trim_prefix("surface_"))
@@ -308,7 +320,7 @@ static func _render(kind: String) -> AudioStreamWAV:
         return _render_arrow(kind)
     if kind in ["spell", "spell_heavy", "spell_release", "spell_release_heavy", "spell_hit"]:
         return _render_wand(kind)
-    if kind in ["swing", "heavy_swing", "jump_swing", "charged_swing", "scythe_heavy", "dagger_swing", "blunt_swing", "polearm_swing", "dodge"]:
+    if kind in ["rapier_thrust", "axe_swing", "axe_heavy_swing", "swing", "heavy_swing", "jump_swing", "charged_swing", "scythe_heavy", "dagger_swing", "blunt_swing", "polearm_swing", "dodge"]:
         return _render_air_sweep(kind)
     if kind in ["hit", "parry"]:
         return _render_soft_contact(kind)
@@ -415,6 +427,18 @@ static func _render_foley(kind: String) -> AudioStreamWAV:
             fundamental = 74.0
             mass = 0.62
             grit = 0.42
+        "axe_impact":
+            duration = 0.29
+            fundamental = 89.0
+            mass = 0.60
+            grit = 0.68
+            ring = 0.045
+        "rapier_impact":
+            duration = 0.14
+            fundamental = 240.0
+            mass = 0.17
+            grit = 0.58
+            ring = 0.095
         "blade_hit":
             duration = 0.17
             fundamental = 155.0

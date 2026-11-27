@@ -1,5 +1,6 @@
 extends RefCounted
 ## Base-specific abilities of genuine unique weapons. No changes to loot rolls.
+const MECHANICS_V288 = preload("res://scripts/relic_mechanics_v288.gd")
 const ARSENAL = preload("res://scripts/relic_arsenal_v277.gd")
 const SPECIALS: Dictionary = {
 	"moonwarden_spear_v169": "heavens_reach",
@@ -17,7 +18,7 @@ const SPECIALS: Dictionary = {
 }
 const NAMES: Dictionary = {
 	"heavens_reach": "Heaven's Reach · Returning spear throw",
-	"drowned_fork": "Drowned Crown · Three spectral spears",
+	"drowned_fork": "Drowned Crown · Six spears erupt from the ground in sequence",
 	"last_toll": "Last Toll · Traveling shockwave",
 	"eclipse_dance": "Crimson Eclipse · Advancing blade dance and optional retreat",
 	"vespers_return": "Vesper’s Return · Piercing throw, hits again on return",
@@ -48,7 +49,7 @@ static func is_dagger_throw(id: String) -> bool:
 	return id in ["vespers_return","ember_return","roseglass_fan","winter_return","ivory_return","reliquary_fan"]
 
 static func is_throw(id: String) -> bool:
-	return is_dagger_throw(id) or id in ["heavens_reach","drowned_fork","bellthorn_judgment"]
+	return is_dagger_throw(id) or id in ["heavens_reach","bellthorn_judgment"]
 
 static func charge_power(charge: float) -> float:
 	return lerpf(0.75,1.35,clampf(charge,0.0,1.0))
@@ -68,6 +69,9 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 			var span: PackedVector2Array = rig.call("get_weapon_span",str(body.animation),body.frame)
 			if span.size() == 2:
 				origin = body.to_global(span[0])
+	if id=="drowned_fork":
+		MECHANICS_V288.launch(actor,item,heading,id)
+		return
 	if ARSENAL.has_skill(id):
 		ARSENAL.launch(actor,item,heading,id,origin)
 		return

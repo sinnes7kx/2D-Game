@@ -13,6 +13,10 @@ const LABELS: Dictionary = {
 	"cleaving": "25% Wider Melee Attack Arc"
 }
 const NAMES: Dictionary = {
+	"ivory_duelist_rapier_v286": "Ivory Riposte",
+	"nightglass_rapier_v286": "Nightglass Reversal",
+	"rosehook_bearded_axe_v286": "Briar Funeral",
+	"ossuary_poleaxe_v286": "Ossuary Verdict",
 	"cathedral_rapier_v283": "The Gilded Verdict",
 	"moonneedle_rapier_v283": "Lunar Oath",
 	"briar_hatchet_v283": "Briar's Severance",
