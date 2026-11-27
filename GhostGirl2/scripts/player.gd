@@ -838,7 +838,9 @@ func _install_empty_throw_carry_v276() -> void:
 			frames.add_animation(clip)
 			frames.set_animation_loop(clip,true)
 			frames.set_animation_speed(clip,8.0)
-			var sequence: Array[int] = [0,0,0,0,0,0,0,0] if motion=="idle" else [0,1,2,1,0,1,2,1]
+			var sequence: Array[int] = [0,0,0,0,0,0,0,0]
+			if motion == "walk":
+				sequence.assign([0,1,2,1,0,1,2,1])
 			for i in sequence:
 				frames.add_frame(clip,frames.get_frame_texture(source,i))
 
