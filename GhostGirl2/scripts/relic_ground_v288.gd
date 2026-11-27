@@ -23,6 +23,34 @@ static func clear_path(actor: CharacterBody2D,from: Vector2,to: Vector2) -> bool
 	var query: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(from,to,6,[actor.get_rid()])
 	return actor.get_world_2d().direct_space_state.intersect_ray(query).is_empty()
 
+# A physical double-ended blade contacts only where its two edges have
+# swept during this physics step. The cyclone uses the full disk instead.
+static func blade_sweep_contact(offset: Vector2,angle: float,travel: float,radius: float,width: float) -> bool:
+	var distance: float = offset.length()
+	if distance>radius:
+		return false
+	if distance<=width:
+		return true
+	var margin: float = asin(clampf(width/distance,0.0,1.0))
+	var relative: float = fposmod(offset.angle()-angle,PI)
+	return relative<=maxf(0.0,travel)+margin or relative>=PI-margin
+
+static func hit_spin(actor: CharacterBody2D,angle: float,travel: float,radius: float,damage: float,age: float,ledger: Dictionary,interval: float) -> int:
+	var hits: int = 0
+	for other in actor.get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(other) or other.is_queued_for_deletion() or not other is Node2D or not other.has_method("hit"):
+			continue
+		var point: Vector2 = (other as Node2D).global_position
+		var key: int = other.get_instance_id()
+		if age<float(ledger.get(key,0.0)) or not blade_sweep_contact(point-actor.global_position,angle,travel,radius,18.0):
+			continue
+		if not clear_path(actor,actor.global_position,point):
+			continue
+		ledger[key]=age+interval
+		other.call("hit",damage,0.45)
+		hits+=1
+	return hits
+
 static func hit_disk(actor: CharacterBody2D,center: Vector2,radius: float,damage: float,poise: float,ledger: Dictionary,slow: bool=false,inner: float=0.0) -> int:
 	if not is_instance_valid(actor) or not actor.is_inside_tree():
 		return 0
@@ -120,7 +148,7 @@ func _draw() -> void:
 			var head: Vector2 = p.lerp(tip,0.69)
 			draw_line(p,head,Color(0.28,0.19,0.26,fade),5.0,true)
 			draw_line(p,head,Color(ink.r,ink.g,ink.b,fade),2.0,true)
-			draw_colored_polygon(PackedVector2Array([head-normal*7.0,tip,head+normal*7.0,head+direction*3.0]),Color(ink.r,ink.g,ink.b,fade))
+			draw_colored_polygon(PackedVector2Array([head-normal*7.0,tip,head+normal*7.0]),Color(ink.r,ink.g,ink.b,fade))
 			draw_line(head,tip,Color(1.0,0.96,0.88,fade),1.6,true)
 			draw_line(p-Vector2(12,9),p+Vector2(12,9),Color(ink.r,ink.g,ink.b,fade*0.8),3.0,true)
 			draw_arc(p,35.0*rise,0.0,TAU,32,Color(ink.r,ink.g,ink.b,fade*0.55),2.0,true)
