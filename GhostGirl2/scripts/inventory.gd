@@ -263,14 +263,38 @@ func stash_at_v284(page: int,col: int,row: int) -> GhostItemInstance:
 			return item
 	return null
 
+func stash_placement_v284(item: GhostItemInstance,pos: Vector2i) -> Dictionary:
+	if not vault.has(item) or not _grid_bounds_v284(item,pos,STASH_COLS,STASH_ROWS,STASH_PAGES):
+		return {"ok":false}
+	var hits: Array[GhostItemInstance] = []
+	for other in stash_positions_v284:
+		if other!=item and _overlap_v284(item,pos,other,stash_positions_v284[other]):
+			hits.append(other)
+	if hits.is_empty():
+		return {"ok":true,"swap":null}
+	if hits.size()!=1:
+		return {"ok":false}
+	var displaced: GhostItemInstance = hits[0]
+	var origin: Vector2i = stash_position_v284(item)
+	if not _grid_bounds_v284(displaced,origin,STASH_COLS,STASH_ROWS,STASH_PAGES) or _overlap_v284(item,pos,displaced,origin):
+		return {"ok":false}
+	for other in stash_positions_v284:
+		if other!=item and other!=displaced and _overlap_v284(displaced,origin,other,stash_positions_v284[other]):
+			return {"ok":false}
+	return {"ok":true,"swap":displaced}
+
 func move_stash_v284(item: GhostItemInstance,pos: Vector2i,persist: bool=true) -> bool:
 	sync_stash_v284()
-	if not vault.has(item) or not stash_fits_v284(item,pos):
+	var plan: Dictionary = stash_placement_v284(item,pos)
+	if not bool(plan.get("ok",false)):
 		return false
-	var old: Vector2i = stash_position_v284(item)
+	var before: Dictionary = stash_positions_v284.duplicate()
+	var displaced: GhostItemInstance = plan.get("swap")
+	if displaced!=null:
+		stash_positions_v284[displaced]=stash_position_v284(item)
 	stash_positions_v284[item]=pos
 	if persist and not save_game():
-		stash_positions_v284[item]=old
+		stash_positions_v284=before
 		return false
 	contents_changed.emit()
 	return true
