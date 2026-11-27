@@ -578,10 +578,6 @@ func _physics_process(delta: float) -> void:
 			# A buffered input that failed its stamina check must never aim a
 			# future unrelated click in the old direction.
 			buffered_attack_valid = false
-		# Former learned area spells are intrinsic equipment abilities.
-		if Input.is_action_just_pressed("moonfall_blizzard") or Input.is_action_just_pressed("astral_rain") or Input.is_action_just_pressed("grasping_roses"):
-			world.ui.show_pickup("AREA MAGIC BELONGS TO UNIQUE RELICS · SHIFT + MOUSE2")
-			return
 		if Input.is_action_just_pressed("parry") and carrying == null and stamina >= _action_cost(16.0,false):
 			_begin_parry()
 			return
@@ -597,10 +593,6 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed("attack_light") and stamina >= _attack_action_cost(false):
 			_begin_weapon_attack(false)
 			return
-	# X remains a backward-compatible quick-cast shortcut; mouse buttons are primary.
-	if Input.is_action_just_pressed("cast_spell") and spell_time_left <= 0.0 and spell_cooldown <= 0.0 and hook_gesture_left <= 0.0 and not is_throwing and stamina >= _action_cost(LIGHT_ATTACK_COST, false):
-		if world.inventory.get_equipped("wand") != null and carrying == null:
-			_begin_spell_cast(false)
 	if spell_time_left > 0.0:
 		if spell_time_left < 0.27:
 			if Input.is_action_just_pressed("dodge"):
