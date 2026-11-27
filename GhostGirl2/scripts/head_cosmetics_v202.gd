@@ -32,9 +32,8 @@ func _process(delta: float) -> void:
     var key: String = (str(body.animation) + ":" + str(body.frame)) if body != null else ""
     var has_art: bool = _item("wings") != null or _item("helm") != null or _item("trinket") != null or _item("charm") != null
     var bucket: int = floori(phase * 18.0)
-    var accessory: GhostItemInstance = _item("wings")
-    if body != null and accessory != null and accessory.definition != null and str(accessory.definition.item_id) == "v202_rose_horns":
-        # The body also leans, floats and jumps between animation frames.
+    if body != null and (has_art or had_head_art):
+        # Body transforms change between pose frames, including airborne motion.
         queue_redraw()
     if (has_art and (key != last_eye_pose_key or bucket != last_effect_bucket)) or has_art != had_head_art:
         queue_redraw()
@@ -72,13 +71,14 @@ func _draw() -> void:
     var accessory: GhostItemInstance = _item("wings")
     var crown: GhostItemInstance = _item("helm")
     var face: String = _face()
+    var horns: bool = accessory != null and accessory.definition != null and str(accessory.definition.item_id)=="v202_rose_horns"
     var charm: GhostItemInstance = _item("trinket")
     if charm == null:
         charm = _item("charm")
     if charm != null and (accessory == null or accessory.definition == null or str(accessory.definition.item_id) != "v202_crescent_halo"):
-        _draw_seeded_halo(charm, face, crown != null)
+        _draw_seeded_halo(charm, face, crown != null, horns)
     if crown != null and crown.definition != null:
-        _draw_crown(str(crown.definition.item_id), crown.palette_color(), face)
+        _draw_crown(str(crown.definition.item_id), crown.palette_color(), face, horns)
     if accessory != null and accessory.definition != null:
         var id: String = str(accessory.definition.item_id)
         var accent: Color = accessory.palette_color().lerp(Color("e1d2ef"), 0.35)
@@ -88,9 +88,7 @@ func _draw() -> void:
             "v202_bandit_mask":
                 _draw_mask(accent, face)
             "v202_crescent_halo":
-                _draw_halo(accent, face)
-                var halo_x: float = 0.0 if face in ["front", "back"] else (4.0 if face == "right" else -4.0)
-                _draw_halo_fx(accessory, Vector2(halo_x, -118.0), Vector2(22.0, 22.0))
+                _draw_halo(accent, face, accessory, crown != null)
             "v202_rose_horns":
                 _draw_horns(accent, face)
 
@@ -211,12 +209,29 @@ func _draw_mask(color: Color, face: String) -> void:
     for s in [-1.0, 1.0]:
         draw_arc(Vector2(offset + s * w * 0.45, -72.0), 5.2, -PI, 0.0, 14, Color("b8a4b9"), 1.6, true)
 
-func _draw_halo(color: Color, face: String) -> void:
-    var shimmer: float = 0.73 + 0.14 * sin(phase * 2.0)
-    var x: float = 0.0 if face in ["front", "back"] else (4.0 if face == "right" else -4.0)
-    draw_arc(Vector2(x, -118.0), 22.0, -PI, PI, 36, Color(color.r, color.g, color.b, 0.13 * shimmer), 6.0, true)
-    draw_arc(Vector2(x, -118.0), 22.0, -PI, PI, 36, Color(color.r, color.g, color.b, 0.90 * shimmer), 2.2, true)
-    draw_line(Vector2(x - 5.0, -139.0), Vector2(x + 5.0, -139.0), Color("fff5df"), 1.2, true)
+# All head ornaments share the measured silhouette, but retain their own
+# silhouette, palette and existing cosmetic UID channel.
+func _head_layout(face: String) -> Dictionary:
+    var sprite: AnimatedSprite2D = _body_sprite()
+    if sprite == null:
+        return {}
+    var actual: String = HORN_ANCHORS.direction(str(sprite.animation),face)
+    var roots: PackedVector2Array = horn_anchors.frame_roots(sprite,actual)
+    return {"center":HORN_ANCHORS.head_center(roots,sprite),"width":HORN_ANCHORS.crown_width(roots),"face":actual,"transform":HORN_ANCHORS.accessory_transform(sprite,self)}
+
+func _draw_halo(color: Color, face: String, item: GhostItemInstance, crown: bool) -> void:
+    var layout: Dictionary = _head_layout(face)
+    if layout.is_empty():
+        return
+    draw_set_transform_matrix(layout["transform"])
+    var center: Vector2 = layout["center"]-Vector2(0,HORN_ANCHORS.halo_lift(crown,false))
+    var shimmer: float = 0.73+0.14*sin(phase*2.0)
+    # Retain the original round crescent; keep its decoration on the same ring.
+    draw_arc(center,22.0,-PI,PI,36,Color(color.r,color.g,color.b,0.13*shimmer),6.0,true)
+    draw_arc(center,22.0,-PI,PI,36,Color(color.r,color.g,color.b,0.90*shimmer),2.2,true)
+    draw_line(center+Vector2(-5,-21),center+Vector2(5,-21),Color("fff5df"),1.2,true)
+    _draw_halo_fx(item,center,Vector2(22,22))
+    draw_set_transform_matrix(Transform2D.IDENTITY)
 
 func _draw_horns(color: Color, face: String) -> void:
     var sprite: AnimatedSprite2D = _body_sprite()
@@ -247,16 +262,24 @@ func _draw_horns(color: Color, face: String) -> void:
         draw_circle(root,4.8*size,Color("9e718a"))
     draw_set_transform_matrix(Transform2D.IDENTITY)
 
-func _draw_crown(id: String, color: Color, face: String) -> void:
+func _draw_crown(id: String, color: Color, face: String, horns: bool) -> void:
     if id not in ["v202_moonlit_tiara", "v202_starfall_diadem"]:
         return
+    var layout: Dictionary = _head_layout(face)
+    if layout.is_empty():
+        return
+    draw_set_transform_matrix(layout["transform"])
     var metal: Color = color.lerp(Color("d4b5cf"), 0.35)
-    var center: Vector2 = Vector2(0.0, -96.0)
-    var base_width: float = 27.0 if face in ["front", "back"] else 17.0
+    var center: Vector2 = layout["center"]+Vector2(0,8.0 if horns else 3.0)
+    var base_width: float = float(layout["width"])
     var left: Vector2 = center + Vector2(-base_width, 1.0)
     var right: Vector2 = center + Vector2(base_width, 1.0)
-    draw_arc(center, base_width, PI * 1.08, PI * 1.92, 20, Color("352b37"), 5.8, true)
-    draw_arc(center, base_width, PI * 1.08, PI * 1.92, 20, metal, 2.0, true)
+    var band: PackedVector2Array = PackedVector2Array()
+    for i in range(21):
+        var u: float = float(i)/20.0
+        band.append(center+Vector2(lerpf(-base_width,base_width,u),1.0-sin(u*PI)*4.0))
+    draw_polyline(band,Color("352b37"),5.8,true)
+    draw_polyline(band,metal,2.0,true)
     if id == "v202_starfall_diadem":
         draw_line(left, center + Vector2(0, -18), metal, 2.1, true)
         draw_line(center + Vector2(0, -18), right, metal, 2.1, true)
@@ -265,6 +288,7 @@ func _draw_crown(id: String, color: Color, face: String) -> void:
         draw_line(left, center + Vector2(0, -11), metal, 1.8, true)
         draw_line(center + Vector2(0, -11), right, metal, 1.8, true)
         draw_circle(center + Vector2(0, -11), 2.7, Color("ecd3df"))
+    draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 # Independent cosmetic channel; never change a saved charm, its affixes,
@@ -291,17 +315,21 @@ static func body_halo_center(sprite: AnimatedSprite2D, face: String, crown: bool
         index = SWORD_V224.source_pose_index(sprite.sprite_frames, animation, index)
     return halo_center(face, animation, index, crown)
 
-func _draw_seeded_halo(item: GhostItemInstance, face: String, crown: bool) -> void:
+func _draw_seeded_halo(item: GhostItemInstance, face: String, crown: bool, horns: bool) -> void:
+    var layout: Dictionary = _head_layout(face)
+    if layout.is_empty():
+        return
     var key: String = "%s:%d:%d" % [item.cosmetic_uid, item.visual_seed(), item.gradient_version]
     if halo_key != key:
         halo_key = key
         var palette: Array[Color] = EYE_RNG.gradient_for_channel(item.cosmetic_uid, item.visual_seed(), "accessory-halo-v232", item.gradient_version)
         halo_look = {"kind": halo_variant(item.visual_seed()), "metal": EYE_RNG.sample_palette(palette, 0.25).lerp(Color("b8a8b9"), 0.52), "edge": EYE_RNG.sample_palette(palette, 0.72).lerp(Color("f4e5df"), 0.48)}
-    var center: Vector2 = body_halo_center(_body_sprite(), face, crown)
+    draw_set_transform_matrix(layout["transform"])
+    var center: Vector2 = layout["center"]-Vector2(0,HORN_ANCHORS.halo_lift(crown,horns))
     var metal: Color = halo_look["metal"]
     var edge: Color = halo_look["edge"]
     var kind: int = int(halo_look["kind"])
-    var radius: Vector2 = Vector2(23.0 if face in ["front", "back"] else 19.0, 7.0)
+    var radius: Vector2 = Vector2(23.0 if str(layout["face"]) in ["front","back"] else 19.0,7.0)
     _draw_halo_fx(item, center, radius)
     var segments: int = 36
     var points: PackedVector2Array = PackedVector2Array()
@@ -330,6 +358,7 @@ func _draw_seeded_halo(item: GhostItemInstance, face: String, crown: bool) -> vo
             var angle: float = PI * float(i) / 18.0
             inner.append(center + Vector2(cos(angle) * (radius.x - 2.0), sin(angle) * (radius.y - 2.0)))
         draw_polyline(inner, metal.lightened(0.22), 1.2, true)
+    draw_set_transform_matrix(Transform2D.IDENTITY)
 
 # Seeded, bounded decorative halo effects. The ring remains visible at FX Off.
 func _draw_halo_fx(item: GhostItemInstance, center: Vector2, radius: Vector2) -> void:

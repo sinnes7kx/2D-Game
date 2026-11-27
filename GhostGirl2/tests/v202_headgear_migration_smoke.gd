@@ -71,6 +71,18 @@ func _verify() -> void:
     var guide = horns.new()
     var roots: PackedVector2Array = guide.frame_roots(sprite,"front")
     assert(roots.size()==2)
+    assert(horns.halo_lift(false,true)>horns.halo_lift(true,false))
+    assert(horns.halo_lift(true,false)>horns.halo_lift(false,false))
+    var center: Vector2 = horns.head_center(roots,sprite)
+    var mapped: Vector2 = horns.accessory_transform(sprite,head_layer as Node2D)*center
+    var expected: Vector2 = (head_layer as Node2D).to_local(sprite.to_global(horns.pixel_to_local((roots[0]+roots[1])*0.5,sprite)))
+    assert(mapped.is_equal_approx(expected))
+    sprite.position+=Vector2(6,-20)
+    sprite.rotation=0.1
+    mapped=horns.accessory_transform(sprite,head_layer as Node2D)*center
+    expected=(head_layer as Node2D).to_local(sprite.to_global(horns.pixel_to_local((roots[0]+roots[1])*0.5,sprite)))
+    assert(mapped.is_equal_approx(expected))
+    assert(horns.crown_width(profile)<horns.crown_width(front))
     actor.free()
     inv.free()
     restored.free()
