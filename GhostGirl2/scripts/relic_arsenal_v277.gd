@@ -5,6 +5,10 @@ const SHOT = preload("res://scripts/relic_skill_projectile_v277.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const IMPACT = preload("res://scripts/impact_spawner_v149.gd")
 const PROFILES: Dictionary = {
+	"ivory_duelist_rapier_v286": {"name":"Ivory Riposte","description":"A narrow life-restoring spectral thrust","pattern":"single","count":1,"spread":0,"power":1.95,"speed":1350,"range":390,"stagger":1.05,"effect":"heal","ink":"f0d9b0"},
+	"nightglass_rapier_v286": {"name":"Nightglass Reversal","description":"A returning piercing spectral needle","pattern":"single","count":1,"spread":0,"power":2.1,"speed":1400,"range":530,"stagger":1.1,"effect":"return_pierce","ink":"b4b1f2"},
+	"rosehook_bearded_axe_v286": {"name":"Briar Funeral","description":"Three slowing frost-edged cleaves","pattern":"blade","count":3,"spread":24,"power":2.05,"speed":640,"range":300,"stagger":1.5,"effect":"frost","ink":"d1a3c4"},
+	"ossuary_poleaxe_v286": {"name":"Ossuary Verdict","description":"A crushing ground wave with an explosive impact","pattern":"wave","count":1,"spread":0,"power":2.3,"speed":510,"range":400,"stagger":2.8,"effect":"burst","ink":"dfc7a2"},
 	"cathedral_rapier_v283": {"name":"The Gilded Verdict","description":"Piercing golden thrust with high stagger","pattern":"single","count":1,"spread":0,"power":2.1,"speed":1250,"range":440,"stagger":2.2,"effect":"pierce","ink":"e9c694"},
 	"moonneedle_rapier_v283": {"name":"Lunar Oath","description":"Twin piercing frost needles","pattern":"fan","count":2,"spread":6,"power":2,"speed":1320,"range":480,"stagger":0.9,"effect":"frost_pierce","ink":"a6d9f3"},
 	"briar_hatchet_v283": {"name":"Briar's Severance","description":"Two returning spectral axe crescents","pattern":"blade","count":2,"spread":16,"power":1.9,"speed":720,"range":310,"stagger":1.25,"effect":"return","ink":"d89aa6"},
