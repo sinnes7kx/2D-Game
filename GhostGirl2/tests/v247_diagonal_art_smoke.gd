@@ -28,6 +28,19 @@ func _initialize() -> void:
 	if frames.has_animation("sword_modular_idle_front_right"):
 		assert(ART.armed_clip("sword_modular_idle_front", "front_right", "front", frames) == "sword_modular_idle_front_right")
 	assert(ART.wrist("sword_modular_idle_front_right",0) != Vector2.INF)
+	# Actual repaired-atlas near wrist pixel centers. Keep legacy fallback.
+	if ResourceLoader.exists(ART.REVISED_ATLAS,"Texture2D"):
+		assert(ART.wrist("sword_modular_idle_front_right",0)==Vector2(-3,29))
+		assert(ART.wrist("nocturne_dagger_idle_front_left",0)==Vector2(-2,28))
+		assert(ART.wrist("wand_walk_front_right",0)==Vector2(0,34))
+		assert(ART.wrist("spear_idle_back_right",0)==Vector2(48,27))
+		assert(ART.far_wrist("dual_sword_walk_front_left",0)==Vector2.INF)
+		for direction in ART.DIRECTIONS:
+			for action in ["idle","walk"]:
+				for frame in range(8):
+					var clip: String = "sword_modular_"+action+"_"+direction
+					var points: PackedVector2Array = ART.carried_span(clip,frame,67.0)
+					assert(points.size()==2 and points[0]==ART.wrist(clip,frame))
 	assert(ART.cardinal_for_clip("wand_walk_back_left") == "back")
 	assert(ART.cardinal_for_clip("sword_modular_idle_front_right") == "front")
 	if frames.has_animation("sword_modular_idle_back_left"):
