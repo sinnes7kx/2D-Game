@@ -33,8 +33,6 @@ const POWERS: Dictionary = {
 	"v203_nightchain_flail":["Unbroken Chain","stamina_efficiency_pct",10,"poise_power_pct",8],
 	"v203_rosequartz_morningstar":["Dawn Sorrow","heavy_power_pct",11,"rally_power_pct",11],
 	"vesper_athame_v233":["Blood Covenant","rally_power_pct",20,"attack_speed_pct",4],
-	"ivory_misericorde_v233":["Ivory Mercy","counter_damage_pct",21,"stamina_efficiency_pct",4],
-	"reliquary_knife_v238":["Saint's Wound","melee_power_pct",8,"rally_power_pct",13],
 	"moonlace_dual_daggers_v173":["Moon's Teeth","attack_speed_pct",13,"stamina_recovery_pct",6],
 	"mourninglace_dual_daggers_v231":["Weeping Sisters","rally_power_pct",12,"backstep_efficiency_pct",12],
 	"gloamrose_dual_swords_v174":["Bride and Widow","melee_power_pct",8,"counter_damage_pct",13],
