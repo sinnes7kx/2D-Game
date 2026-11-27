@@ -352,6 +352,75 @@ func move_stash_v284(item: GhostItemInstance,pos: Vector2i,persist: bool=true) -
 	contents_changed.emit()
 	return true
 
+# A cross-store swap keeps the displaced item in the original reserved
+# footprint. No item is ever detached from the saved inventory.
+func cross_swap_plan_v285(item: GhostItemInstance,to_stash: bool,pos: Vector2i) -> Dictionary:
+	if item==null or item.definition==null:
+		return {"ok":false}
+	var source_index: int = contents.find(item)
+	if to_stash:
+		if source_index<0 or equipment.values().has(source_index) or item.definition.item_class=="quest":
+			return {"ok":false}
+	else:
+		if not vault.has(item):
+			return {"ok":false}
+	if not _grid_bounds_v284(item,pos,STASH_COLS if to_stash else GRID_COLUMNS,STASH_ROWS if to_stash else GRID_ROWS,STASH_PAGES if to_stash else GRID_PAGES):
+		return {"ok":false}
+	var targets: Array = vault if to_stash else contents
+	var hits: Array[GhostItemInstance] = []
+	for i in range(targets.size()):
+		var target: GhostItemInstance = targets[i]
+		var at: Vector2i = stash_position_v284(target) if to_stash else grid_positions[i]
+		if _overlap_v284(item,pos,target,at):
+			hits.append(target)
+	if hits.size()!=1:
+		return {"ok":false}
+	var other: GhostItemInstance = hits[0]
+	if not to_stash and (equipment.values().has(contents.find(other)) or other.definition.item_class=="quest"):
+		return {"ok":false}
+	var origin: Vector2i = grid_positions[source_index] if to_stash else stash_position_v284(item)
+	if not _grid_bounds_v284(other,origin,GRID_COLUMNS if to_stash else STASH_COLS,GRID_ROWS if to_stash else STASH_ROWS,GRID_PAGES if to_stash else STASH_PAGES):
+		return {"ok":false}
+	var sources: Array = contents if to_stash else vault
+	for i in range(sources.size()):
+		var neighbor: GhostItemInstance = sources[i]
+		if neighbor==item:
+			continue
+		var at: Vector2i = grid_positions[i] if to_stash else stash_position_v284(neighbor)
+		if _overlap_v284(other,origin,neighbor,at):
+			return {"ok":false}
+	return {"ok":true,"other":other,"origin":origin}
+
+func cross_swap_v285(item: GhostItemInstance,to_stash: bool,pos: Vector2i,persist: bool=true) -> GhostItemInstance:
+	var plan: Dictionary = cross_swap_plan_v285(item,to_stash,pos)
+	if not bool(plan.get("ok",false)):
+		return null
+	var other: GhostItemInstance = plan["other"]
+	var backpack_item: GhostItemInstance = item if to_stash else other
+	var stash_item: GhostItemInstance = other if to_stash else item
+	var bi: int = contents.find(backpack_item)
+	var vi: int = vault.find(stash_item)
+	var old_bag: Vector2i = grid_positions[bi]
+	var old_stash: Vector2i = stash_position_v284(stash_item)
+	var old_display: int = stash_item.exhibition_slot
+	contents[bi]=stash_item
+	grid_positions[bi]=plan["origin"] if to_stash else pos
+	vault[vi]=backpack_item
+	stash_positions_v284.erase(stash_item)
+	stash_positions_v284[backpack_item]=pos if to_stash else plan["origin"]
+	stash_item.exhibition_slot=-1
+	if persist and not save_game():
+		contents[bi]=backpack_item
+		grid_positions[bi]=old_bag
+		vault[vi]=stash_item
+		stash_positions_v284.erase(backpack_item)
+		stash_positions_v284[stash_item]=old_stash
+		stash_item.exhibition_slot=old_display
+		return null
+	contents_changed.emit()
+	equipment_changed.emit()
+	return other
+
 func transfer_grid_v284(item: GhostItemInstance,to_stash: bool,pos: Vector2i,persist: bool=true) -> bool:
 	if item==null or item.definition==null:
 		return false
