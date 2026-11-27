@@ -900,7 +900,7 @@ func _resolve_skin_clip(animation_name: String) -> String:
 	var armed: bool = world == null or world.inventory == null
 	if not armed:
 		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
-	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not (armed and _weapon_style() == "bow"):
+	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not (armed and _weapon_style() in ["bow","crossbow","rapier","axe"]):
 		return SKIN_V246.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
 	# Nocturne has no authored armed rows. Bows keep the approved original
 	# equipped diagonal clips rather than silently reverting to cardinal art.
@@ -1804,6 +1804,9 @@ func _begin_attack(heavy: bool) -> void:
 		_:
 			attack_duration = 0.80 if heavy else [0.40, 0.43, 0.51][combo_step]
 			attack_hit_threshold = 0.58
+	if active_attack_style=="axe" and combo_item!=null:
+		var axe_id: String = str(combo_item.definition.item_id)
+		attack_duration*=0.86 if axe_id=="briar_hatchet_v283" else (1.14 if axe_id=="gallows_greataxe_v283" else 1.0)
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
 	twinblade_weapon_v272=combo_item if heavy and active_attack_style=="twinblade" and active_special_v261.is_empty() else null
