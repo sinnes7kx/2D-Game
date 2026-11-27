@@ -915,7 +915,7 @@ func _resolve_skin_clip(animation_name: String) -> String:
 	var armed: bool = world == null or world.inventory == null
 	if not armed:
 		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
-	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not (armed and (_weapon_style() in ["bow","crossbow","rapier","axe"] or _weapon_art_style()=="seraph_scythe")):
+	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not armed:
 		return SKIN_V246.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
 	# Nocturne has no authored armed rows. Bows keep the approved original
 	# equipped diagonal clips rather than silently reverting to cardinal art.
@@ -936,6 +936,7 @@ func _play_if_changed(animation_name: String) -> void:
 # Synchronize non-looping directional frames with the actual combat timing,
 # including attack-speed modifiers. No animation-notify timing drift.
 func _play_action_frames(animation_name: String, duration: float) -> void:
+	animation_name=DIAGONAL_ART_V247.combat_clip_v294(animation_name,facing_eight_name,body_art.sprite_frames)
 	# Walk/sprint/idle speed_scale otherwise multiplies the computed action
 	# rate and can shorten or stretch the visual clip without changing damage.
 	body_art.speed_scale = 1.0
@@ -1899,9 +1900,9 @@ func _advance_bow_draw(delta: float) -> void:
 	var aim: Vector2 = _combat_aim_direction().normalized()
 	if aim.length_squared() > 0.001:
 		bow_firing_direction = aim
-		var previous_face: String = facing_name
+		var previous_face: String = facing_eight_name
 		set_facing(aim)
-		if facing_name != previous_face:
+		if facing_eight_name != previous_face:
 			var name: String = "attack_" + _bow_art_style() + "_heavy_" + facing_name
 			if bow_draw_airborne or jump_time_left > 0.0:
 				name = AIR_V203.air_name(name)
@@ -2724,7 +2725,7 @@ func _diagonal_action_clip(action: String, fallback: String) -> String:
 		return fallback
 	if thrown_weapon_busy_v273():
 		return DIAGONAL_ART_V247.action_clip(action,facing_eight_name,fallback,body_art.sprite_frames)
-	if SKIN_V246.current() != SKIN_V246.ORIGINAL and _weapon_style() != "bow":
+	if SKIN_V246.current() != SKIN_V246.ORIGINAL and world.inventory.get_equipped("sword")==null and world.inventory.get_equipped("wand")==null:
 		return fallback
 	if world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null:
 		var safe: String = DIAGONAL_ART_V247.armed_jump_carry(fallback,facing_eight_name,facing_name,body_art.sprite_frames) if action=="jump" else fallback
