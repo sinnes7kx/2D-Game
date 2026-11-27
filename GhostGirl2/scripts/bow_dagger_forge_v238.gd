@@ -42,8 +42,7 @@ static func span(name: String, face: String, frame: int) -> PackedVector2Array:
 		if anchor==Vector2.INF or heading.is_zero_approx():
 			return PackedVector2Array()
 		if name.contains("forge_dagger_"):
-			var reach: float = 39.0+sin(PI*float(clampi(frame,0,7))/7.0)*10.0
-			return PackedVector2Array([anchor,anchor+heading*reach])
+			return diagonal.melee_span(name,frame,HAND.SINGLE_LENGTH)
 		return PackedVector2Array([anchor,anchor+heading*32.0])
 	var index: int = clampi(frame, 0, 7)
 	var hand: int = 0 if face == "left" else 1
@@ -55,7 +54,7 @@ static func span(name: String, face: String, frame: int) -> PackedVector2Array:
 	var axis: Vector2 = HAND.direction(face)
 	if not name.begins_with("attack_"):
 		axis = axis.rotated(0.75 if face == "left" else -0.75)
-	return PackedVector2Array([grip, grip + axis * (32.0 if name.contains("forge_bow_") else 39.0)])
+	return PackedVector2Array([grip, grip + axis * (32.0 if name.contains("forge_bow_") else HAND.SINGLE_LENGTH)])
 
 static func bow_span(body: AnimatedSprite2D, name: String, face: String, frame: int, heading: Vector2) -> PackedVector2Array:
 	var points: PackedVector2Array = span(name, face, frame)
