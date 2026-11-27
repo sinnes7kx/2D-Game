@@ -184,6 +184,8 @@ func _physics_process(delta: float) -> void:
 						var in_reach: bool = distance < attack_distance + (42.0 if archetype == "warder" else 27.0)
 						var in_arc: bool = archetype == "warder" or (distance > 0.01 and last_target.dot(offset.normalized()) > 0.15)
 						if not strike_done and in_reach and in_arc:
+							if girl.has_method("try_parry_contact") and bool(girl.call("try_parry_contact",self)):
+								return
 							if girl.has_method("register_confirmed_evade"):
 								girl.call("register_confirmed_evade", self, global_position)
 							girl.call("receive_damage", strike_damage, global_position)
@@ -195,6 +197,8 @@ func _physics_process(delta: float) -> void:
 			velocity = last_target * move_speed * lunge_speed
 			var reach: float = 76.0 if archetype == "bell_keeper" else 63.0
 			if not strike_done and distance < reach and distance > 0.01 and last_target.dot(offset.normalized()) > -0.1:
+				if girl.has_method("try_parry_contact") and bool(girl.call("try_parry_contact",self)):
+					return
 				if girl.has_method("register_confirmed_evade"):
 					girl.call("register_confirmed_evade", self, global_position)
 				girl.call("receive_damage", strike_damage, global_position)
@@ -330,6 +334,16 @@ func offers_backstep_counter(player_position: Vector2) -> bool:
 	# Telegraph must be nearing completion and the opponent in striking range.
 	# Enemies without this method do not accidentally award a counterattack.
 	return hp > 0.0 and state == WARN and remaining <= 0.44 and remaining > 0.0 and global_position.distance_to(player_position) < attack_distance + 115.0
+
+func on_parried(perfect: bool) -> void:
+	if hp <= 0.0:
+		return
+	strike_done = true
+	state = STAGGER
+	remaining = (0.65 if is_elite else 1.15) if perfect else (0.20 if is_elite else 0.42)
+	stagger_flash = 0.30
+	poise_damage = 0.0
+	velocity = Vector2.ZERO
 
 func on_hook_yank(destination: Vector2, strength: float) -> void:
 	if hp <= 0.0:
