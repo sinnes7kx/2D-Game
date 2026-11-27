@@ -78,7 +78,10 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 	var foot: Vector2 = grip-axis*(29.0 if style=="halberd" else 26.0)
 	var trim: Color = p["ornament_ink"]
 	canvas.draw_line(foot,head,Color("211b29"),5.6,true)
-	canvas.draw_line(foot,head,p["grip"],3.8,true)
+	canvas.draw_line(foot,head,Color(p["grip"]).lerp(Color("594239"),0.30) if style == "maul" else p["grip"],3.8,true)
+	if style == "maul":
+		canvas.draw_line(head-axis*17.0,head-axis*6.0,Color("3c3a40"),7.0,true)
+		canvas.draw_line(head-axis*16.0+n*2.7,head-axis*7.0+n*2.7,Color("88858a"),0.8,true)
 	ART.draw_grip(canvas,grip-axis*9.0,grip+axis*9.0,4.3,p)
 	canvas.draw_line(foot-n*3.0,foot+n*3.0,trim,1.7,true)
 	if style=="halberd":
@@ -103,9 +106,20 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 		var closed: PackedVector2Array = outline.duplicate()
 		closed.append(outline[0])
 		canvas.draw_polyline(closed,p["edge"],0.9,true)
-		var core: Color = trim.darkened(0.25)
-		canvas.draw_colored_polygon(PackedVector2Array([head-axis*4.0,head+n*5.0,head+axis*4.0,head-n*5.0]),core)
-		canvas.draw_line(head-n*3.0,head+n*3.0,trim,0.75,true)
+		# Recessed central socket and forged striking faces, not a jeweled block.
+		var metal: Color = SURFACE.surface_color(p,0.52,0.55,phase).lerp(Color("65676c"),0.48)
+		var socket: PackedVector2Array = PackedVector2Array([head-axis*5.0-n*5.0,head+axis*5.0-n*5.0,head+axis*5.0+n*5.0,head-axis*5.0+n*5.0])
+		canvas.draw_colored_polygon(socket,metal.darkened(0.45))
+		canvas.draw_line(socket[0],socket[1],metal.lightened(0.26),0.7,true)
+		for edge_index in [1,5]:
+			var a: Vector2 = outline[edge_index]
+			var b: Vector2 = outline[edge_index+1]
+			canvas.draw_line(a.lerp(b,0.12),a.lerp(b,0.88),metal.lightened(0.22),1.2,true)
+		for sign_value in [-1.0,1.0]:
+			var rivet: Vector2 = head+n*sign_value*7.0
+			canvas.draw_circle(rivet,1.6,metal.darkened(0.5))
+			canvas.draw_circle(rivet-axis*0.4,0.65,metal.lightened(0.25))
+
 		if glow and FX_LEVEL.intensity > 0.0:
 			# Illuminate the complete head silhouette, not only one side.
 			# The shaft stays faint so the actual maul shape remains dominant.

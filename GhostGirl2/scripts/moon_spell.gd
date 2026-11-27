@@ -29,6 +29,10 @@ const LANCE_FADE: float = 0.52  # A bright, sustained-looking one-hit flash
 const IMPACT_SCRIPT: Script = preload("res://scripts/weapon_spectacle.gd")
 const IMPACT_PRESTIGE: Script = preload("res://scripts/impact_prestige_v116.gd")
 var impact_style: int = 0
+var can_return: bool = false
+var returning: bool = false
+var struck_ids: Dictionary = {}
+const RETURN_RANGE: float = 950.0
 
 func _ready() -> void:
 	self_modulate.a = 0.68
@@ -38,8 +42,20 @@ func _physics_process(delta: float) -> void:
 		if not beam_resolved:
 			_resolve_beam()
 		elif age >= (LANCE_FADE if spell_form == 7 else BEAM_FADE):
-			queue_free()
+			if can_return and not returning:
+				_begin_return(beam_end)
+			else:
+				queue_free()
 		return
+	if returning:
+		if not is_instance_valid(caster) or not caster.is_inside_tree():
+			queue_free()
+			return
+		var toward: Vector2 = caster.global_position + Vector2(0, -39) - global_position
+		if toward.length() <= maxf(12.0, speed * delta):
+			queue_free()
+			return
+		direction = toward.normalized()
 	var distance: float = minf(speed * delta, distance_left)
 	if distance <= 0.0:
 		queue_free()
@@ -56,7 +72,10 @@ func _physics_process(delta: float) -> void:
 	var victim: Node2D = _find_contact(space, start, safe_finish)
 	if victim != null:
 		_hit_enemy(victim)
-		queue_free()
+		if can_return and not returning:
+			_begin_return(victim.global_position + Vector2(0, -25))
+		else:
+			queue_free()
 		return
 	if not wall.is_empty():
 		_hit_cover(wall)
@@ -68,7 +87,23 @@ func _physics_process(delta: float) -> void:
 	if trail.size() > 10:
 		trail.pop_front()
 	if distance_left <= 0.0:
-		queue_free()
+		if can_return and not returning:
+			_begin_return(global_position)
+		else:
+			queue_free()
+
+func _begin_return(origin: Vector2) -> void:
+	returning = true
+	global_position = origin
+	distance_left = RETURN_RANGE
+	damage *= 0.60
+	charged = false
+	# The outward beam keeps its authored fade; the returning orb is a real
+	# traveling projectile and retains the original palette and motif.
+	if spell_form >= 5:
+		spell_form = 0
+	age = 0.0
+	trail.clear()
 
 func _resolve_beam() -> void:
 	beam_resolved = true
@@ -88,6 +123,7 @@ func _resolve_beam() -> void:
 		_hit_enemy(victim)
 	elif not wall.is_empty():
 		_hit_cover(wall)
+		can_return = false # Solid geometry stops the volley, including beams.
 
 func _hit_cover(hit: Dictionary) -> void:
 	var cover: Object = hit.get("collider")
@@ -97,6 +133,7 @@ func _hit_cover(hit: Dictionary) -> void:
 
 func _hit_enemy(victim: Node2D) -> void:
 	# The visible extra wisps never multiply the hitbox or this damage event.
+	struck_ids[victim.get_instance_id()] = true
 	victim.call("hit", damage, 1.0 if not charged else 1.25)
 	_spawn_contact_effect(victim.global_position + Vector2(0.0, -25.0))
 	if is_instance_valid(caster) and caster.has_method("on_wand_projectile_hit"):
@@ -146,7 +183,7 @@ func _find_contact(space: PhysicsDirectSpaceState2D, start: Vector2, finish: Vec
 			var target: Node = collider as Node
 			if target is Area2D:
 				target = target.get_parent()
-			if target is Node2D and target.is_in_group("enemies") and target.has_method("hit"):
+			if target is Node2D and not target.is_queued_for_deletion() and target.is_in_group("enemies") and target.has_method("hit") and not struck_ids.has(target.get_instance_id()):
 				return target as Node2D
 	return null
 

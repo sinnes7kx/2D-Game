@@ -45,6 +45,7 @@ quick_tests=(
   v245_eight_direction_smoke.gd
   v247_diagonal_art_smoke.gd
   v250_weapon_mods_smoke.gd
+  v252_anomalous_wisp_smoke.gd
 )
 full_tests=(
   v174_animation_smoke.gd

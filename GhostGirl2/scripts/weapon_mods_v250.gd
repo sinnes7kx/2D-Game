@@ -1,12 +1,16 @@
 extends RefCounted
 const EXTRA: String = "extra_projectiles"
 const RETURN: String = "returning_projectiles"
-const MELEE: Array[String] = ["crushing", "execution", "long_reach", "finisher", "riposte"]
+const MELEE: Array[String] = ["crushing", "execution", "long_reach", "finisher", "riposte", "soul_siphon", "vigor", "frostbite", "cleaving"]
 const LABELS: Dictionary = {
 	EXTRA: "+2 Projectiles", RETURN: "Returning Projectiles",
 	"crushing": "+35% Stagger Power", "execution": "+25% Heavy Attack Damage",
 	"long_reach": "+20% Melee Reach", "finisher": "+25% Combo Finisher Damage",
-	"riposte": "+35% Counter Damage"
+	"riposte": "+35% Counter Damage",
+	"soul_siphon": "+2 Life per Successful Attack",
+	"vigor": "+5 Stamina per Successful Attack",
+	"frostbite": "Hits Slow Enemies for 1.5 Seconds",
+	"cleaving": "25% Wider Melee Attack Arc"
 }
 const NAMES: Dictionary = {
 	"ashbound_wand": "Ashes of Eternity", "briar_wand": "The Pale Thorn", "hunter_censer_wand": "Saint's Last Breath",
@@ -36,7 +40,7 @@ const NAMES: Dictionary = {
 }
 static func allowed(slot: String, style: String) -> Array[String]:
 	if slot == "wand":
-		return [EXTRA]
+		return [EXTRA, RETURN]
 	if slot != "sword":
 		return []
 	if style in ["bow", "crossbow"]:
