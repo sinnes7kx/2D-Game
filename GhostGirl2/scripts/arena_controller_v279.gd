@@ -212,7 +212,7 @@ func _on_victory(id: String) -> void:
 	if first:
 		world.inventory.collected_pickups[victory_key(id)]=true
 		world.inventory.save_game()
-		if champion_run:
+	if champion_run:
 		world.inventory.collected_pickups[champion_key(id)]=true
 		if flawless:
 			world.inventory.collected_pickups[flawless_key(id)]=true
