@@ -29,7 +29,7 @@ static func movement(keyboard: Vector2, touch: Vector2, pad: Vector2 = Vector2.Z
 	if keyboard.length_squared() > 0.01:
 		return keyboard.limit_length(1.0)
 	if pad.length_squared() > 0.01:
-		return heading(octant(pad)) * pad.length()
+		return heading(octant(pad)) * minf(pad.length(),1.0)
 	return Vector2.ZERO
 
 static func stick(x_axis: int, y_axis: int) -> Vector2:

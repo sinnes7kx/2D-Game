@@ -2084,7 +2084,7 @@ func _toggle_lock_target() -> void:
 	var winner: Node2D = null
 	var best_score: float = -INF
 	var cursor: Vector2 = get_global_mouse_position() - global_position
-	var aim: Vector2 = cursor.normalized() if cursor.length_squared() > 1.0 else facing
+	var aim: Vector2 = _combat_aim_direction() if controller_active_v260 else (cursor.normalized() if cursor.length_squared() > 1.0 else facing)
 	for candidate in get_tree().get_nodes_in_group("enemies"):
 		if not is_instance_valid(candidate) or not candidate is Node2D:
 			continue

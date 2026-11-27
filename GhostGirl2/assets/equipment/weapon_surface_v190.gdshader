@@ -13,6 +13,8 @@ uniform vec2 cell_size = vec2(176.0);
 uniform bool overlay_only = false;
 // Opt-in for painted bow limbs and wand art; preserve alpha/pose silhouette.
 uniform bool refined_finish = false;
+// -1 retains the exact previous finish for protected top tiers.
+uniform int rarity_shine_tier = -1;
 varying vec4 vertex_tint;
 void vertex() {
     vertex_tint = COLOR;
@@ -69,6 +71,12 @@ void fragment() {
         // Fine, stationary grain, subtle enough for the native sprite scale.
         float grain = sin(u * 83.0 + v * 13.0) * sin(v * 37.0 + u * 9.0);
         result *= 1.0 + grain * 0.018 * (1.0 - relief);
+    }
+    if (rarity_shine_tier >= 0) {
+        float tier = float(rarity_shine_tier);
+        float sweep = pow(max(0.0,cos((u + v * 0.28 - TIME * (0.09 + tier * 0.015) + surface_phase) * 6.2831853)), 16.0);
+        float crest = sweep * (0.06 + tier * 0.032) * clamp(fx_intensity,0.0,1.35);
+        result = mix(result,mix(pigment,vec3(1.0),0.56),crest);
     }
     COLOR = vec4(result * vertex_tint.rgb, alpha);
 }
