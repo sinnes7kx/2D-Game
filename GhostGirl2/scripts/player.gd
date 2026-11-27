@@ -524,7 +524,7 @@ func _physics_process(delta: float) -> void:
 		var thrust: float = sin(clampf(phase / 0.58, 0.0, 1.0) * PI)
 		velocity = attack_direction * (92.0 if active_attack_style == "halberd" else (98.0 if active_attack_style == "scythe" else (105.0 if world.inventory.get_equipped("sword") != null else 65.0))) * thrust
 		if active_lunge and not attack_hit_done and not dagger_charge_active:
-			velocity += attack_direction * 240.0 * thrust
+			velocity += attack_direction * (380.0 if active_special_v261 == "penitent_plunge" else 240.0) * thrust
 		move_and_slide()
 		return
 	if spell_time_left <= 0.0 and not is_throwing and hook_gesture_left <= 0.0 and not rose_hook.is_pulling_player():
@@ -2078,7 +2078,7 @@ func _begin_attack(heavy: bool) -> void:
 	if combo_grace <= 0.0 or combo_item != finisher_weapon:
 		finisher_lights = 0
 	active_finisher = heavy and combo_item != null and finisher_lights == 2
-	active_lunge = heavy and combo_item != null and lunge_window > 0.0
+	active_lunge = heavy and combo_item != null and (lunge_window > 0.0 or active_special_v261 == "penitent_plunge")
 	lunge_window = 0.0
 	finisher_weapon = combo_item
 	finisher_lights = 0 if heavy else mini(3, finisher_lights + 1)
@@ -2141,6 +2141,11 @@ func _begin_attack(heavy: bool) -> void:
 	if active_attack_style in ["axe","rapier"] and combo_item!=null:
 		var tuning: Dictionary = FORGE_TACTICS_V286.tuning(str(combo_item.definition.item_id))
 		attack_duration*=float(tuning["time"])
+	if active_special_v261 == "penitent_plunge":
+		attack_duration = 0.86
+		attack_hit_threshold = 0.40
+		active_finisher = false
+		relic_commit_v288("penitent_plunge", 3.0)
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
 	twinblade_weapon_v272=combo_item if heavy and active_attack_style=="twinblade" and active_special_v261.is_empty() else null
@@ -2294,7 +2299,10 @@ func _advance_attack(delta: float) -> void:
 			COMBAT_JUICE.play(get_tree().current_scene, global_position, "swing", -24.0)
 			camera_kick = maxf(camera_kick, 1.9)
 			camera_push = attack_direction * 1.4
-		if not active_special_v261.is_empty():
+		if active_special_v261 == "penitent_plunge":
+			if world.inventory.get_equipped("sword") == special_weapon_v261 and UNIQUE_SPECIALS_V261.kind(special_weapon_v261) == "penitent_plunge":
+				_strike_nearby_enemies(1.40)
+		elif not active_special_v261.is_empty():
 			if world.inventory.get_equipped("sword") == special_weapon_v261:
 				UNIQUE_SPECIALS_V261.launch(self,special_weapon_v261,attack_direction,active_special_v261,throw_charge_ratio_v276())
 		else:
@@ -2396,6 +2404,10 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 				if active_finisher and not jump_attack_active: power *= 1.25
 			"riposte":
 				if counter_window > 0.0: power *= 1.35
+	if active_special_v261 == "penitent_plunge":
+		reach = minf(reach, 190.0)
+		attack_arc = 0.88
+		poise_bonus *= 1.35
 	power *= 1.0 + _stat("melee_power_pct") / 100.0
 	power *= power_multiplier
 	if heavy_attack:

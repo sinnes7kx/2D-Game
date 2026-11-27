@@ -31,7 +31,7 @@ const NAMES: Dictionary = {
 	"v202_fletcher_moonflight_bow": "The Falling Star", "vesper_recurve_bow_v238": "Evenfall",
 	"silver_reliquary_crossbow_v236": "Saint's Verdict", "vesper_latch_crossbow_v237": "The Last Word", "ossuary_arbalest_v237": "Bone Covenant",
 	"bloodrose_falchion": "Blood's Remembrance", "mourning_longsword": "Grief's Edge", "moonveil_grandblade": "The Hollow Moon",
-	"vesper_arming_sword_v235": "Vesper's Oath", "ossuary_falchion_v235": "Grave's Demand", "thornveil_sabre_v235": "Thorn's Kiss",
+	"penitent_longsword": "Penitent’s Descent", "vesper_arming_sword_v235": "Vesper's Oath", "ossuary_falchion_v235": "Grave's Demand", "thornveil_sabre_v235": "Thorn's Kiss",
 	"thornwake_sabre": "Briar's Reckoning", "vesper_rapier": "Heart's Silence", "dusk_needle": "Night's Needle",
 	"rose_reaper_scythe": "Death's Reverie", "lunar_vigil_halberd": "The Endless Vigil", "moonwarden_spear_v169": "Heaven's Reach",
 	"briarwake_trident_v171": "The Drowned Crown", "ashglass_warmaul_v170": "Cathedral's Ruin", "gravebell_maul_v170": "The Last Toll",
