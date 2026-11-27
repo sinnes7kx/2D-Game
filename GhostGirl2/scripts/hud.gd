@@ -112,13 +112,15 @@ func _build_codex_bar() -> void:
 	$Overlay.add_child(bar)
 	bar.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	bar.offset_left = 20.0
-	bar.offset_right = 335.0
-	bar.offset_top = -48.0
+	bar.offset_right = 224.0
+	bar.offset_top = -54.0
 	bar.offset_bottom = -12.0
-	for entry in [["Menu","Menu"],["Effects","Effects"],["Codex","Discoveries"],["Reliquary","Reliquary"]]:
+	for entry in [["Menu","Menu","menu"],["Effects","Effects","effects"],["Codex","Discoveries","codex"],["Reliquary","Reliquary","reliquary"]]:
 		var button: Button = Button.new()
-		button.text = entry[0]
-		button.custom_minimum_size = Vector2(72,34)
+		button.tooltip_text = str(entry[0])
+		button.icon = load("res://assets/ui/codex/"+str(entry[2])+".svg") as Texture2D
+		button.expand_icon = true
+		button.custom_minimum_size = Vector2(44,40)
 		button.focus_mode = Control.FOCUS_NONE
 		button.add_theme_color_override("font_color",Color("d8b98f"))
 		button.button_down.connect(_open_codex_section.bind(str(entry[1])))
