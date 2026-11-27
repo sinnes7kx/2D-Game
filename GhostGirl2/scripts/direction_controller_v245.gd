@@ -5,6 +5,12 @@ const NAMES: Array[String] = ["right", "front_right", "front", "front_left", "le
 const ART_FALLBACK: Array[String] = ["right", "front", "front", "front", "left", "back", "back", "back"]
 const STEP: float = PI / 4.0
 const DEAD_ZONE_SQUARED: float = 0.0001
+const CURSOR_DEAD_ZONE: float = 16.0
+
+# Aim and travel are independent. Retain the last heading inside the
+# cursor dead zone; keyboard movement must not steal mouse facing.
+static func cursor_heading(offset: Vector2, previous: Vector2) -> Vector2:
+	return offset.normalized() if offset.length_squared() > CURSOR_DEAD_ZONE * CURSOR_DEAD_ZONE else previous
 
 static func octant(direction: Vector2, previous: int = -1) -> int:
 	if direction.length_squared() < DEAD_ZONE_SQUARED:
