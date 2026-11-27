@@ -159,7 +159,7 @@ func _draw() -> void:
 			if str(item.definition.item_id) == "briarwake_trident_v171":
 				_draw_trident()
 			else:
-				_grip(Vector2(0, 55), Vector2(0, -29), 3.8, 0)
+				preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-29),3.8,profiles[0])
 				_blade(Vector2(0, -29), Vector2(0, -53), 4.5, 0)
 		"blade":
 			_grip(Vector2(0, 22), Vector2(0, 0), 3.0, 0)
@@ -177,10 +177,9 @@ func _draw() -> void:
 		# Weapon signatures are drawn along the same edge as equipped art.
 
 func _draw_trident() -> void:
-	_grip(Vector2(0, 55), Vector2(0, -36), 4.5, 0)
+	preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-36),4.5,profiles[0])
 	for side in [-1.0, 1.0]:
-		var accent: Color = profiles[0]["accent"]
-		draw_line(Vector2(0, -36), Vector2(side * 8, -36), accent.darkened(0.25), 2.5, true)
+		preload("res://scripts/forged_polearm_v255.gd").draw_fork(self,Vector2(0,-36),Vector2(side*8,-36),Vector2.UP,profiles[0])
 		_blade(Vector2(side * 8, -36), Vector2(side * 7, -51), 1.8, 0)
 	_blade(Vector2(0, -36), Vector2(0, -53), 2.6, 0)
 

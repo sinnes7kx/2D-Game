@@ -8,6 +8,7 @@ const FX = preload("res://scripts/anomalous_steel_fx_v180.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const BLUNT_V203 = preload("res://scripts/blunt_weapon_family_v203.gd")
+const FORGED = preload("res://scripts/forged_polearm_v255.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 
 static func matches(name: String) -> bool:
@@ -85,17 +86,24 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 	ART.draw_grip(canvas,grip-axis*9.0,grip+axis*9.0,4.3,p)
 	canvas.draw_line(foot-n*3.0,foot+n*3.0,trim,1.7,true)
 	if style=="halberd":
+		FORGED.draw_haft(canvas,foot,grip,head,4.0,p)
 		var outline: PackedVector2Array = halberd_outline(head,axis,p,side)
 		var center: Vector2 = head-axis*3.0+n*side*6.0
 		for i in range(outline.size()):
 			var ink: Color = SURFACE.surface_color(p,float(i)/float(outline.size()),0.25 if i%2==0 else 0.75,phase)
 			canvas.draw_colored_polygon(PackedVector2Array([center,outline[i],outline[(i+1)%outline.size()]]),ink)
 		var edge: PackedVector2Array = PackedVector2Array([outline[1],outline[2],outline[3],outline[4]])
-		canvas.draw_polyline(edge,p["edge"],0.85,true)
+		for i in range(edge.size()-1):
+			var a: Vector2 = edge[i]
+			var b: Vector2 = edge[i+1]
+			var ink: Color = SURFACE.surface_color(p,float(i)/3.0,0.25,phase)
+			canvas.draw_polygon(PackedVector2Array([a,b,b.lerp(center,0.18),a.lerp(center,0.18)]),PackedColorArray([p["edge"],p["edge"],ink,ink]))
+		canvas.draw_polyline(edge,Color(p["edge"]).lerp(p["metal"],0.22),0.65,true)
 		ART.draw_blade(canvas,head-axis*3.0,head+axis*22.0,3.7,p,phase)
 		var hook: PackedVector2Array = PackedVector2Array([head-axis*9.0,head-axis*12.0-n*side*12.0,head+axis*5.0-n*side*5.0])
 		canvas.draw_colored_polygon(hook,p["shade"])
-		canvas.draw_polyline(hook,p["edge"],0.7,true)
+		canvas.draw_polyline(hook,Color(p["shade"]).darkened(0.20),0.85,true)
+		canvas.draw_line(hook[1],hook[2],Color(p["edge"]).lerp(p["metal"],0.40),0.7,true)
 		if glow:
 			FX.draw_edge(canvas,edge,colors,look,phase,0.66)
 	else:
