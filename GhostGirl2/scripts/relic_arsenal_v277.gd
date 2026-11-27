@@ -6,7 +6,7 @@ const SHOT = preload("res://scripts/relic_skill_projectile_v277.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const IMPACT = preload("res://scripts/impact_spawner_v149.gd")
 const PROFILES: Dictionary = {
-	"ivory_duelist_rapier_v286": {"name":"Ivory Riposte","description":"A narrow life-restoring spectral thrust","pattern":"single","count":1,"spread":0,"power":1.95,"speed":1350,"range":390,"stagger":1.05,"effect":"heal","ink":"f0d9b0"},
+	"ivory_duelist_rapier_v286": {"name":"Ivory Riposte","description":"Timed frontal parry opens a counterattack window; strike after blocking","pattern":"single","count":1,"spread":0,"power":1.95,"speed":1350,"range":390,"stagger":1.05,"effect":"heal","ink":"f0d9b0"},
 	"nightglass_rapier_v286": {"name":"Nightglass Reversal","description":"A returning piercing spectral needle","pattern":"single","count":1,"spread":0,"power":2.1,"speed":1400,"range":530,"stagger":1.1,"effect":"return_pierce","ink":"b4b1f2"},
 	"rosehook_bearded_axe_v286": {"name":"Briar Funeral","description":"Summons Grasping Roses at the aimed location; 7.1s recharge","pattern":"blade","count":3,"spread":24,"power":2.05,"speed":640,"range":300,"stagger":1.5,"effect":"frost","ink":"d1a3c4"},
 	"ossuary_poleaxe_v286": {"name":"Ossuary Verdict","description":"Four timed ground fissures erupt in a line; 2.4s recharge","pattern":"wave","count":1,"spread":0,"power":2.3,"speed":510,"range":400,"stagger":2.8,"effect":"burst","ink":"dfc7a2"},
@@ -77,7 +77,7 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 	var root: Node = actor.get_tree().current_scene
 	if world==null or root==null or world.get("inventory").get_equipped("sword")!=item:
 		return false
-	if MECHANICS_V288.is_channel(id):
+	if MECHANICS_V288.is_channel(id) or id=="ivory_duelist_rapier_v286":
 		# Channels run exclusively in the player's held-input state.
 		return false
 	if MECHANICS_V288.AREAS.has(id) or MECHANICS_V288.GROUND_SKILLS.has(id):
