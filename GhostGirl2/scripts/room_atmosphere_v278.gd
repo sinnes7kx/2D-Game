@@ -32,7 +32,7 @@ static func profile(key: String) -> Dictionary:
 	if key in WARM_ROOMS:
 		return {"ink":Color("a68b8d"),"far":0.066,"near":0.029,"drift":3.0}
 	if key in ["garden","garden_bridge","garden_arbor","glasshouse"]:
-		return {"ink":Color("9b93a4"),"far":0.078,"near":0.032,"drift":5.5}
+		return {"ink":Color("a7a5bc"),"far":0.055,"near":0.021,"drift":3.0}
 	if key=="observatory":
 		return {"ink":Color("7e83b5"),"far":0.082,"near":0.034,"drift":2.5}
 	return {"ink":Color("85809c"),"far":0.085,"near":0.036,"drift":4.5}
@@ -87,6 +87,14 @@ func _ready() -> void:
 		cozy.name="LanternhavenCozyV291"
 		cozy.set("ambience",self)
 		add_child(cozy)
+	var markers: Node2D = room_root.get_node_or_null("AtmosphereV292") as Node2D
+	if markers!=null:
+		var garden: Node2D = preload("res://scripts/garden_moonlight_v292.gd").new()
+		garden.name="GardenMoonlightV292"
+		garden.set("landmarks",markers)
+		garden.set("actor",actor)
+		garden.set("room_key",room_key)
+		add_child(garden)
 
 func _room_bounds() -> Rect2:
 	var painted: Sprite2D = room_root.get_node_or_null("PaintedRoom") as Sprite2D
@@ -118,6 +126,9 @@ func _collect_anchors() -> void:
 	anchors.clear()
 	for node in room_root.find_children("*","Node2D",true,false):
 		var source: Node2D = node as Node2D
+		if source is Marker2D and source.get_parent().name=="AtmosphereV292" and str(source.name).begins_with("MoonPool"):
+			anchors.append({"source":source,"offset":Vector2.ZERO,"color":Color("b8c5ff"),"diameter":440.0,"energy":0.24,"phase":float(anchors.size())*1.713})
+			continue
 		var script: Script = source.get_script() as Script
 		if script==null:
 			continue
@@ -205,6 +216,8 @@ func _refresh() -> void:
 			continue
 		var entry: Dictionary = candidates[i]
 		var flicker: float = 0.94+0.045*sin(clock*2.7+float(entry["phase"]))+0.015*sin(clock*5.2+float(entry["phase"]))
+		if entry["source"] is Marker2D:
+			flicker=0.98+0.02*sin(clock*0.7+float(entry["phase"]))
 		lamp.global_position=entry["at"]
 		lamp.texture_scale=float(entry["diameter"])/128.0
 		lamp.color=entry["color"]
