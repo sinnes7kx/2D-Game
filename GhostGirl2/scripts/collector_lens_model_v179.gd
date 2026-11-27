@@ -113,11 +113,11 @@ func _draw() -> void:
 			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, FX_LEVEL.intensity * CHOICES_V216.effect_scale(item) if glow_enabled and CHOICES_V216.bow_body_visible(item) else 0.0)
 		"dagger":
 			if item.uses_forge_dagger():
-				FORGE_V238.draw_dagger(self, PackedVector2Array([Vector2(0, 14), Vector2(0, -25)]), profiles[0])
-				segments.append(PackedVector2Array([Vector2(0, 6), Vector2(0, -25)]))
+				FORGE_V238.draw_dagger(self, PackedVector2Array([Vector2(0, 14), Vector2(0, -40)]), profiles[0])
+				segments.append(PackedVector2Array([Vector2(0, 6), Vector2(0, -40)]))
 			else:
 				_grip(Vector2(0, 20), Vector2(0, 5), 3.2, 0)
-				_blade(Vector2(0, 5), Vector2(0, -35), 3.2, 0)
+				_blade(Vector2(0, 5), Vector2(0, -49), 3.2, 0)
 		"crossbow":
 			var base: String = str(item.definition.item_id)
 			var fx: Dictionary = look if glow_enabled and CHOICES_V216.effect_scale(item) > 0.0 else {}
@@ -152,7 +152,7 @@ func _draw() -> void:
 			for hand in range(2):
 				var x: float = -17.0 if hand == 0 else 17.0
 				var a: Vector2 = Vector2(x, 9)
-				var tip: Vector2 = Vector2(x, -26 if dagger else -53)
+				var tip: Vector2 = Vector2(x, -41 if dagger else -53)
 				_grip(Vector2(x, 25), a, 3.5 if dagger else 5.1, hand)
 				_blade(a, tip, 3.1 if dagger else (5.2 if hand == 0 else 4.8), hand)
 		"spear":

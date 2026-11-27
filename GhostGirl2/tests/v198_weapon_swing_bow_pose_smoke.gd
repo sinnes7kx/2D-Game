@@ -32,10 +32,10 @@ func _verify() -> void:
         if not active:
             _fail("Silent swing: " + str(kind))
             return
-    if not is_equal_approx(SCYTHE.REAPER_SPAN, 86.0) or POSE.TRIDENT_SHAFT_BACK < 25.0 or DUAL.BLADE_LENGTH < 34.0:
+    if not is_equal_approx(SCYTHE.REAPER_SPAN, 86.0) or POSE.TRIDENT_SHAFT_BACK < 25.0 or DUAL.BLADE_LENGTH != 50.0:
         _fail("Longer Reaper/trident/paired-dagger art lengths missing")
         return
-    if not is_equal_approx(BLADE_EXT.dagger_extra_tip(Vector2.ZERO, Vector2(40, 0)).x, 46.0) or not is_equal_approx(BLADE_EXT.trident_extra_tail(Vector2.ZERO, Vector2(40, 0)).x, -26.0):
+    if not is_equal_approx(BLADE_EXT.dagger_extra_tip(Vector2.ZERO, Vector2(40, 0)).x, 58.0) or not is_equal_approx(BLADE_EXT.trident_extra_tail(Vector2.ZERO, Vector2(40, 0)).x, -26.0):
         _fail("Idle/walk extension endpoints drifted from the authored weapon guides")
         return
     var scythe: PackedVector2Array = SCYTHE.span("scythe_idle_right", 0, {})
@@ -44,7 +44,7 @@ func _verify() -> void:
         return
     var single: PackedVector2Array = DAGGER.single_span("front", 3, false)
     var paired: PackedVector2Array = DAGGER.span("front", 3, 0, false, true)
-    if single.size() != 2 or paired.size() != 2 or single[0].distance_to(single[1]) < 31.0 or paired[0].distance_to(paired[1]) < 27.0:
+    if single.size() != 2 or paired.size() != 2 or not is_equal_approx(single[0].distance_to(single[1]),54.0*0.82) or not is_equal_approx(paired[0].distance_to(paired[1]),50.0*0.82):
         _fail("Dagger or stiletto blade did not lengthen")
         return
     var wake: Node2D = AIR_WAKE.new() as Node2D

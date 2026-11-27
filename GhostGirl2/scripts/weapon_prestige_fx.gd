@@ -231,7 +231,7 @@ func _axial_span() -> PackedVector2Array:
 		return empty
 	var animation: String = str(body.animation)
 	# Aerial clips change pose tempo, not physical weapon guide identity.
-	if animation.contains("_air_"):
+	if animation.contains("_air_") and not preload("res://scripts/ghost_diagonal_art_v247.gd").is_modular_combat_v294(animation):
 		animation = animation.replace("_air_", "_")
 	if body.sprite_frames != null:
 		var repaired: Dictionary = body.sprite_frames.get_meta("v186_heavy_fallbacks", {})
@@ -241,7 +241,7 @@ func _axial_span() -> PackedVector2Array:
 	var end_point: Vector2 = _fallback_tip(grip, face, 46.0)
 	var style: String = item.weapon_style()
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
-	var diagonal_carry: bool = diagonal.is_carried_clip(animation)
+	var diagonal_carry: bool = diagonal.is_carried_clip(animation) or diagonal.is_modular_combat_v294(animation)
 	var pose_frame: int = 0 if STEADY_IDLE.matches(animation) and not diagonal_carry else body.frame
 	if item.get_slot() == "wand":
 		# Shared with actual wand art and the spell release origin. Do not
@@ -276,7 +276,7 @@ func _axial_span() -> PackedVector2Array:
 					return second
 		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation).is_empty():
 			return empty
-		return PackedVector2Array([grip, _fallback_tip(grip, face, 35.0)])
+		return PackedVector2Array([grip, _fallback_tip(grip, face, 50.0)])
 	if style == "twinblade":
 		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
 		if physical != null:
@@ -307,8 +307,12 @@ func _axial_span() -> PackedVector2Array:
 		if not fresh.is_empty():
 			var pair: Variant = fresh[clampi(pose_frame, 0, fresh.size() - 1)]
 			if pair is Array and pair.size() == 4:
-				return PackedVector2Array([Vector2(float(pair[0]), float(pair[1])), Vector2(float(pair[2]), float(pair[3]))])
-		return PackedVector2Array([grip, _fallback_tip(grip, face, 43.0 if style == "dagger" else 82.0)])
+				var start: Vector2 = Vector2(float(pair[0]), float(pair[1]))
+				var end: Vector2 = Vector2(float(pair[2]), float(pair[3]))
+				if style == "dagger" and (animation.contains("_idle_") or animation.contains("_walk_")) and str(item.definition.item_id) in ["roseglass_dagger_v169", "nocturne_stiletto_v171"]:
+					end = preload("res://scripts/weapon_tip_extension_v198.gd").dagger_extra_tip(start,end)
+				return PackedVector2Array([start,end])
+		return PackedVector2Array([grip, _fallback_tip(grip, face, 54.0 if style == "dagger" else 82.0)])
 	if style == "blade":
 		if item.uses_modular_single_sword() or diagonal_carry:
 			var rig: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null

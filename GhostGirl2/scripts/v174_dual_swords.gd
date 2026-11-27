@@ -88,7 +88,8 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 	if not diagonal.diagonal_name(animation_name).is_empty():
 		if not is_active(animation_name):
 			return []
-		var carried: Array = diagonal.paired_spans(animation_name,frame_index,Vector2(18.0,54.0).length()*IDLE_BLADE_LENGTH_SCALE)
+		var length: float = Vector2(18.0,54.0).length()
+		var carried: Array = diagonal.paired_attack_spans(animation_name,frame_index,length*ATTACK_BLADE_LENGTH_SCALE) if diagonal.is_modular_combat_v294(animation_name) else diagonal.paired_spans(animation_name,frame_index,length*IDLE_BLADE_LENGTH_SCALE)
 		if GENTLE.modular_idle(animation_name):
 			for hand in range(carried.size()):
 				carried[hand] = GENTLE.smooth(body,animation_name,carried[hand],hand)

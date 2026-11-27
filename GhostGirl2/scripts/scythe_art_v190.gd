@@ -43,9 +43,9 @@ static func install(sprite: AnimatedSprite2D) -> void:
 static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2Array:
 	if not matches(name):
 		return PackedVector2Array()
-	var diagonal: PackedVector2Array = preload("res://scripts/ghost_diagonal_art_v247.gd").carried_span(name,frame,REAPER_SPAN,true)
-	if diagonal.size() == 2:
-		return diagonal
+	var art = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if not art.diagonal_name(name).is_empty():
+		return art.heavy_attack_span(name,frame,REAPER_SPAN) if art.is_modular_combat_v294(name) else art.carried_span(name,frame,REAPER_SPAN,true)
 	var face: String = name.get_slice("_", name.get_slice_count("_") - 1)
 	var anchor: Vector2 = HAND.hand_anchor(face, source_frame(name, frame), 0 if face == "left" else 1)
 	# At the back the hand can be hidden by hair. A behind-body shaft emerges

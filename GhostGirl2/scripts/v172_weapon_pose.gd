@@ -191,7 +191,8 @@ func _process(_delta: float) -> void:
 		last_animation = animation_now
 		last_frame = body.frame
 		var rear_bow: bool = (animation_now.begins_with("attack_forge_bow_") or animation_now.begins_with("attack_crossbow_") or animation_now.begins_with("attack_forge_dagger_") or animation_now.begins_with("attack_rapier_") or animation_now.begins_with("attack_axe_") or animation_now.begins_with("attack_seraph_scythe_") or animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_") or animation_now.begins_with("seraph_scythe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
-		z_index = -1 if animation_now.ends_with("back") or rear_bow else 5 # Keep rear bow behind the body.
+		var rear_diagonal: bool = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
+		z_index = -1 if animation_now.ends_with("back") or rear_bow or rear_diagonal else 5 # Keep rear bow behind the body.
 		queue_redraw()
 
 func _is_equipped(animation_name: String) -> bool:
@@ -223,7 +224,7 @@ func _is_equipped(animation_name: String) -> bool:
 		return true
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
 	if not diagonal.diagonal_name(animation_name).is_empty():
-		if equipped.weapon_style() == "blade" and animation_name.begins_with("sword_") and diagonal.is_carried_clip(animation_name):
+		if equipped.weapon_style() == "blade" and ((animation_name.begins_with("sword_") and diagonal.is_carried_clip(animation_name)) or (animation_name.begins_with("attack_sword_") and diagonal.is_modular_combat_v294(animation_name))):
 			return true
 		if equipped.weapon_style() == "dagger" and animation_name.begins_with("dagger_") and diagonal.is_carried_clip(animation_name):
 			return true
@@ -283,15 +284,15 @@ func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedV
 				return CROSSBOW_V236.aimed_span(body,aimed,player.get("crossbow_heading")) if animation_name.contains("_fire_") else aimed
 			if animation_name.contains("forge_dagger_"):
 				return FORGE_V238.span(animation_name,diagonal.cardinal_for_clip(animation_name),frame_index)
-			if animation_name.contains("sword_modular_") or animation_name.contains("twinblade") or animation_name.contains("_spear_") or animation_name.contains("_dagger_"):
-				var length: float = 76.0 if animation_name.contains("twinblade") else (74.0 if animation_name.contains("_spear_") else (39.0 if animation_name.contains("_dagger_") else 60.0))
+			if animation_name.contains("sword_modular_") or animation_name.begins_with("attack_sword_") or animation_name.contains("twinblade") or animation_name.contains("_spear_") or animation_name.contains("_dagger_"):
+				var length: float = 76.0 if animation_name.contains("twinblade") else (74.0 if animation_name.contains("_spear_") else (DAGGER_THRUST.SINGLE_LENGTH if animation_name.contains("_dagger_") else 60.0))
 				return diagonal.melee_span(animation_name,frame_index,length)
 		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
 			return diagonal.crossbow_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and (animation_name.begins_with("spear_") or animation_name.begins_with("briarwake_spear_")):
 			return diagonal.spear_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and not animation_name.begins_with("wand_"):
-			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (39.0 if (animation_name.begins_with("forge_dagger_") or animation_name.begins_with("nocturne_dagger_") or animation_name.begins_with("dagger_")) else (76.0 if animation_name.contains("twinblade") else 67.0))
+			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (DAGGER_THRUST.SINGLE_LENGTH if (animation_name.begins_with("forge_dagger_") or animation_name.begins_with("nocturne_dagger_") or animation_name.begins_with("dagger_")) else (76.0 if animation_name.contains("twinblade") else 67.0))
 			var carried: PackedVector2Array = diagonal.carried_span(animation_name,frame_index,length)
 			if carried.size() == 2:
 				return GENTLE.smooth(body,animation_name,carried) if GENTLE.modular_idle(animation_name) else carried
@@ -389,7 +390,7 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 	# A slender dagger/stiletto gets a slightly longer visible blade. The
 	# weapon remains anchored to the same hand; the attack collider is unchanged.
 	if animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_"):
-		tips[n] = anchor + (tips[n] - anchor) * 1.13
+		tips[n] = anchor + (tips[n] - anchor) * 1.38
 	# A heavy blow has a longer forearm extension, not a spinning flat weapon.
 	var reach: Vector2 = tips[n] - anchor
 	if heavy and n in [3, 4, 5]:
@@ -452,7 +453,7 @@ func _draw() -> void:
 			if off.size() == 2:
 				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
 		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
-	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)):
+	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)) or (animation_name.begins_with("attack_sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_modular_combat_v294(animation_name)):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
 			var root: Vector2 = grip + tangent * 10.0

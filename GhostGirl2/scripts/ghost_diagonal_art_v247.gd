@@ -328,6 +328,35 @@ static func paired_spans(clip: String, frame: int, length: float) -> Array:
 		result.append(PackedVector2Array([anchor,anchor+axis*length]))
 	return result
 
+# Preserve separate left/right slots and never invent an occluded wrist.
+static func paired_dagger_attack_spans(clip: String, frame: int, length: float) -> Array:
+	return paired_attack_spans(clip,frame,length)
+
+static func paired_attack_spans(clip: String, frame: int, length: float) -> Array:
+	var result: Array = []
+	var direction: String = diagonal_name(clip)
+	var forward: Vector2 = heading_v294(direction)
+	var near: int = near_hand(clip)
+	var n: int = clampi(frame,0,7)
+	var thrust: bool = clip.contains("_pierce_")
+	var lead: int = 0 if clip.contains("_light_a_") else (1 if clip.contains("_light_b_") else near)
+	var both: bool = clip.contains("_light_c_") or clip.contains("_riposte_") or (clip.contains("_heavy_") and not thrust)
+	var swing: Array[float] = [-1.25,-1.55,-0.75,0.0,0.34,1.05,0.64,-0.38]
+	if clip.contains("_dual_sword_") and clip.contains("_heavy_"):
+		swing.assign([-1.45,-1.70,-1.10,-0.30,0.0,1.18,0.72,-0.45])
+	var stab: Array[float] = [-0.65,-0.85,-0.42,0.0,0.0,0.10,-0.38,-0.65]
+	for hand in range(2):
+		var anchor: Vector2 = hand_wrist(clip,frame,hand)
+		if anchor==Vector2.INF or forward.is_zero_approx():
+			result.append(PackedVector2Array())
+			continue
+		var side: float = -1.0 if hand==0 else 1.0
+		var angle: float = (stab[n] if thrust else swing[n])*side
+		if not both and hand!=lead:
+			angle = side*0.95
+		result.append(PackedVector2Array([anchor,anchor+forward.rotated(angle)*length]))
+	return result
+
 static func crossbow_span(clip: String, frame: int) -> PackedVector2Array:
 	var anchor: Vector2 = wrist(clip,frame)
 	if anchor==Vector2.INF:
@@ -424,12 +453,21 @@ static func missing_combat_clips_v293(frames: SpriteFrames) -> PackedStringArray
 # Mark each reused body clip so the authored-art audit remains truthful.
 const MODULAR_COMBAT_V294: Array[String] = [
 	"attack_sword_modular_light_", "attack_sword_modular_heavy_", "attack_sword_modular_counter_",
+	"attack_sword_light_", "attack_sword_heavy_",
+	"attack_unarmed_light_", "attack_unarmed_heavy_",
+	"attack_scythe_light_", "attack_scythe_heavy_",
+	"attack_halberd_light_", "attack_halberd_heavy_",
+	"attack_maul_light_", "attack_maul_heavy_",
+	"attack_ashglass_maul_light_", "attack_ashglass_maul_heavy_",
+	"attack_dual_sword_light_a_", "attack_dual_sword_light_b_", "attack_dual_sword_light_c_", "attack_dual_sword_heavy_", "attack_dual_sword_riposte_",
 	"attack_twinblade_light_", "attack_twinblade_heavy_",
 	"attack_rosemirror_twinblade_light_", "attack_rosemirror_twinblade_heavy_",
 	"attack_spear_pierce_", "attack_spear_heavy_pierce_",
 	"attack_briarwake_spear_pierce_", "attack_briarwake_spear_heavy_pierce_",
 	"attack_dagger_pierce_", "attack_dagger_heavy_pierce_",
 	"attack_nocturne_dagger_pierce_", "attack_nocturne_dagger_heavy_pierce_",
+	"attack_dual_dagger_pierce_", "attack_dual_dagger_heavy_pierce_",
+	"attack_dual_dagger_light_a_", "attack_dual_dagger_light_b_", "attack_dual_dagger_light_c_", "attack_dual_dagger_heavy_",
 	"attack_rapier_pierce_", "attack_rapier_heavy_pierce_",
 	"attack_axe_light_", "attack_axe_heavy_",
 	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
@@ -463,6 +501,24 @@ static func melee_span(clip: String, frame: int, length: float) -> PackedVector2
 	var axis: Vector2 = heading_v294(direction).rotated(angles[i]*(-1.0 if direction.ends_with("left") else 1.0))
 	return PackedVector2Array([anchor,anchor+axis*length])
 
+# Weighted weapon-head arcs. Heavy recovery poses are deliberately distinct
+# from the shorter light sweep; only the rendered geometry is affected.
+static func heavy_attack_span(clip: String, frame: int, length: float) -> PackedVector2Array:
+	var anchor: Vector2 = wrist(clip,frame)
+	var direction: String = diagonal_name(clip)
+	if anchor==Vector2.INF or direction.is_empty():
+		return PackedVector2Array()
+	var n: int = clampi(frame,0,7)
+	var side: float = -1.0 if direction.ends_with("left") else 1.0
+	var angles: Array[float] = [-1.1,-1.65,-0.95,0.0,0.52,1.08,0.78,-0.50]
+	if clip.contains("_heavy_"):
+		angles.assign([-1.25,-2.05,-1.55,-0.58,0.0,1.40,0.92,-0.50])
+	if clip.contains("maul_"):
+		# Overhead hammer windup travels across the target axis at impact.
+		angles.assign([-1.4,-2.10,-1.70,-0.75,0.0,0.65,0.85,-0.50] if clip.contains("_heavy_") else [-1.20,-1.60,-0.80,0.0,0.35,0.70,0.52,-0.45])
+	var heading: Vector2 = heading_v294(direction).rotated(side*angles[n])
+	return PackedVector2Array([anchor,anchor+heading*length])
+
 static func combat_body_source_v294(clip: String) -> String:
 	var action: String = "jump_" if clip.contains("_air_") else "dodge_"
 	if not clip.contains("_air_") and (clip.contains("forge_bow_") or clip.contains("crossbow_")):
@@ -487,8 +543,15 @@ static func _install_modular_combat_v294(frames: SpriteFrames) -> void:
 				frames.add_animation(target)
 				_set_loop_v293(frames,target,false)
 				frames.set_animation_speed(target,frames.get_animation_speed(timing))
+				var count: int = frames.get_frame_count(timing)
 				for i in range(8):
-					frames.add_frame(target,frames.get_frame_texture(source,i),frames.get_frame_duration(timing,i))
+					# Preserve total authored duration, including denser sword clips.
+					var start: int = floori(float(i*count)/8.0)
+					var stop: int = floori(float((i+1)*count)/8.0)
+					var duration: float = 0.0
+					for sample in range(start,stop):
+						duration += frames.get_frame_duration(timing,sample)
+					frames.add_frame(target,frames.get_frame_texture(source,i),duration)
 				frames.set_meta("v294_reused_"+target,true)
 
 static func combat_clip_v294(requested: String,direction: String,frames: SpriteFrames) -> String:

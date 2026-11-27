@@ -4,7 +4,7 @@ extends Node2D
 ## No collision, combat reach, hit counts, item/save writes or emitters.
 const GUIDE_PATH: String = "res://resources/new_weapon_axes_v169.json"
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
-const EXTRA_DAGGER: float = 6.0
+const EXTRA_DAGGER: float = 18.0
 const SHAFT_BACK: float = 26.0
 var body: AnimatedSprite2D = null
 var player: Node = null
@@ -86,9 +86,9 @@ func _draw() -> void:
         draw_line(old_tail, new_tail, shaft_color, 4.2, true)
         draw_line(old_tail - n * 0.6, new_tail, edge_color.darkened(0.34), 0.8, true)
         return
-    # Only extend the last few pixels: the original decorated hilt,
+    # Extend the steel tip without changing the grip: the original decorated hilt,
     # blade faces and approved Ghost Girl body are not repainted.
     var extended: Vector2 = dagger_extra_tip(grip, tip)
-    var root: Vector2 = tip - direction * 7.0
+    var root: Vector2 = tip - direction * 10.0
     draw_colored_polygon(PackedVector2Array([root - n * 1.5, root + n * 1.5, extended]), blade_color)
     draw_line(root - n * 0.35, extended, edge_color, 1.25, true)
