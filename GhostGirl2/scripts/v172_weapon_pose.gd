@@ -190,7 +190,7 @@ func _process(_delta: float) -> void:
 	if animation_now != last_animation or body.frame != last_frame:
 		last_animation = animation_now
 		last_frame = body.frame
-		var rear_bow: bool = (animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_") or animation_now.begins_with("seraph_scythe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
+		var rear_bow: bool = (animation_now.begins_with("attack_rapier_") or animation_now.begins_with("attack_axe_") or animation_now.begins_with("attack_seraph_scythe_") or animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_") or animation_now.begins_with("seraph_scythe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
 		z_index = -1 if animation_now.ends_with("back") or rear_bow else 5 # Keep rear bow behind the body.
 		queue_redraw()
 
@@ -268,6 +268,8 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedVector2Array:
 	if _is_equipped(animation_name) and (animation_name.contains("rapier_") or animation_name.contains("axe_") or animation_name.contains("seraph_scythe_")):
 		var diagonal_v283 = preload("res://scripts/ghost_diagonal_art_v247.gd")
+		if diagonal_v283.is_modular_combat_v294(animation_name):
+			return MODELS_V283.diagonal_attack_span(animation_name,frame_index)
 		if not diagonal_v283.diagonal_name(animation_name).is_empty():
 			return diagonal_v283.carried_span(animation_name,frame_index,84.0 if animation_name.contains("rapier_") else 68.0,true)
 		return MODELS_V283.span(animation_name,animation_name.get_slice("_",animation_name.get_slice_count("_")-1),frame_index)
