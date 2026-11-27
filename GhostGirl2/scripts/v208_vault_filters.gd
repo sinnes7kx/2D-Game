@@ -18,7 +18,7 @@ static func filtered(items: Array, family: String = "all", quality: String = "al
 			continue
 		if favorites_only and not item.collector_favorite:
 			continue
-		var text: String = " ".join([item.display_name(), item.collector_material_label(), item.regional_imprint_label(), item.origin_label(), item.get_slot(), item.quality])
+		var text: String = " ".join([item.display_name(), item.definition.display_name, item.weapon_style(), item.collector_material_label(), item.regional_imprint_label(), item.origin_label(), item.get_slot(), item.quality])
 		if not wanted.is_empty() and not text.to_lower().contains(wanted):
 			continue
 		result.append({"item": item, "index": i})
