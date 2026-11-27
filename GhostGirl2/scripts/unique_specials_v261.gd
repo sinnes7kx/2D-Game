@@ -3,6 +3,7 @@ extends RefCounted
 const MECHANICS_V288 = preload("res://scripts/relic_mechanics_v288.gd")
 const ARSENAL = preload("res://scripts/relic_arsenal_v277.gd")
 const SPECIALS: Dictionary = {
+	"seraph_reaper_v292": "seraph_descent",
 	"moonwarden_spear_v169": "heavens_reach",
 	"briarwake_trident_v171": "drowned_fork",
 	"gravebell_maul_v170": "last_toll",
@@ -11,6 +12,7 @@ const SPECIALS: Dictionary = {
 	"rose_reaper_scythe": "reverie_wave",
 }
 const NAMES: Dictionary = {
+	"seraph_descent": "Seraph’s Descent · Rising cut followed by a luminous descending reaper sweep",
 	"heavens_reach": "Heaven's Reach · Returning spear throw",
 	"drowned_fork": "Drowned Crown · Six spears erupt from the ground in sequence",
 	"last_toll": "Last Toll · Traveling shockwave",
@@ -43,7 +45,7 @@ static func charge_power(charge: float) -> float:
 	return lerpf(0.75,1.35,clampf(charge,0.0,1.0))
 
 static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vector2, id: String, charge: float = 0.0) -> void:
-	if id.is_empty() or kind(item) != id or heading.is_zero_approx() or id == "eclipse_dance" or actor.call("thrown_weapon_busy_v273"):
+	if id.is_empty() or kind(item) != id or heading.is_zero_approx() or id in ["eclipse_dance","seraph_descent"] or actor.call("thrown_weapon_busy_v273"):
 		return
 	var world: Node = actor.get("world")
 	var root: Node = actor.get_tree().current_scene
