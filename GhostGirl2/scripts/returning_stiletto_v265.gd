@@ -14,6 +14,7 @@ const RETURN_RANGE: float = 980.0
 const OUT_POWER: float = 0.72
 const RETURN_POWER: float = 0.65
 const MAX_TARGETS_PER_LEG: int = 4
+var ember_v272: bool = false
 var caster: CharacterBody2D
 var direction: Vector2 = Vector2.RIGHT
 var power: float = 20.0
@@ -53,7 +54,7 @@ func begin_return() -> void:
 		COMBAT_AUDIO.play(get_tree().current_scene,global_position,"dagger_swing",-23.0)
 
 func damage_now() -> float:
-	return power * (RETURN_POWER if returning else OUT_POWER)
+	return power * (RETURN_POWER if returning else OUT_POWER) * (1.10 if ember_v272 else 1.0)
 
 func _catch_point() -> Vector2:
 	var body: AnimatedSprite2D = caster.get_node_or_null("Ghost") as AnimatedSprite2D
@@ -131,7 +132,10 @@ func _physics_process(delta: float) -> void:
 	_record_trail(start,end)
 	queue_redraw()
 	if not wall.is_empty():
-		AUDIO.play(get_tree().current_scene,end,AUDIO.material_for(wall.get("collider"),"stone"),false)
+		var surface: Object = wall.get("collider")
+		if ember_v272 and is_instance_valid(surface) and surface.has_method("ignite_from_environment"):
+			surface.call("ignite_from_environment")
+		AUDIO.play(get_tree().current_scene,end,AUDIO.material_for(surface,"stone"),false)
 		_emit_fx("wall",end,wall.get("normal",-direction))
 		if returning:
 			queue_free()
@@ -162,7 +166,8 @@ func _record_trail(start: Vector2,end: Vector2) -> void:
 	trail_carry = fposmod(trail_carry+distance,TRAIL_STEP)
 
 func _palette_at(u: float) -> Color:
-	return GhostCosmeticRNGV152.sample_palette(palette,u,true) if not palette.is_empty() else Color("b7a3d8")
+	var color: Color = GhostCosmeticRNGV152.sample_palette(palette,u,true) if not palette.is_empty() else Color("b7a3d8")
+	return color.lerp(Color("ee8a49"),0.66) if ember_v272 else color
 
 func _emit_fx(kind: String,where: Vector2,axis: Vector2) -> void:
 	if glow<=0.0 or FX.intensity<=0.0 or not is_inside_tree():

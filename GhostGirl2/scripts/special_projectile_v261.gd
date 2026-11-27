@@ -6,6 +6,17 @@ func _draw() -> void:
 	var axis: Vector2 = direction.normalized()
 	var n: Vector2 = axis.orthogonal()
 	var tint: Color = full_palette[0] if not full_palette.is_empty() else Color("c5c6e7")
+	if special_id=="roseglass_fan":
+		draw_line(-axis*12.0,axis*16.0,Color("d4b8cb"),2.6,true)
+		draw_colored_polygon(PackedVector2Array([-axis*2.0-n*3.0,axis*20.0,-axis*2.0+n*3.0]),Color("f1e2ee"))
+		if visual_glow_scale>0.0:
+			draw_line(-axis*28.0,axis*12.0,Color(tint.r,tint.g,tint.b,decoration_alpha(0.48)),1.5,true)
+		return
+	if special_id=="reverie_wave":
+		draw_arc(-axis*9.0,29.0,axis.angle()-1.15,axis.angle()+1.15,28,Color("d0c4dd"),2.1,true)
+		if visual_glow_scale>0.0:
+			draw_arc(-axis*9.0,29.0,axis.angle()-1.1,axis.angle()+1.1,28,Color(tint.r,tint.g,tint.b,decoration_alpha(0.36)),6.0,true)
+		return
 	if special_id == "last_toll":
 		draw_arc(Vector2.ZERO,24.0,axis.angle()-1.15,axis.angle()+1.15,20,Color("c4b29a"),2.0,true)
 		if visual_glow_scale > 0.0:

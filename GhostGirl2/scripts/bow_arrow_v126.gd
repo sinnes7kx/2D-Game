@@ -1,6 +1,10 @@
 extends Node2D
 const RelicPaletteV139 = preload("res://scripts/procedural_relic_palette_v139.gd")
 const ARROW_AUDIO = preload("res://scripts/arrow_impact_audio_v233.gd")
+const ARCHERY_ENV = preload("res://scripts/archery_environment_v272.gd")
+const EMBED = preload("res://scripts/embedded_arrow_v272.gd")
+var physical_archery: bool = true
+var ignited_v272: bool = false
 ## One physical arrow. Rare decorations add visual wisps but never extra hits.
 ## Charged arrows may pierce TWO distinct enemies, once each; world/cover stops them.
 var direction: Vector2 = Vector2.RIGHT
@@ -79,6 +83,9 @@ func _physics_process(delta: float) -> void:
 		wall_query.exclude = [caster_rid]
 	var wall: Dictionary = state.intersect_ray(wall_query)
 	var end: Vector2 = wall.get("position", destination) if not wall.is_empty() else destination
+	# Track potential ignition at the end of the clipped segment without
+	# prematurely giving a nearer enemy the fire damage bonus.
+	var end_ignited: bool = _fire_at_v272(start,end)
 	# v1.39: environmental objects share this same swept segment, so visual
 	# echo arrows never create multiple activations or hitboxes.
 	# Light reveals nearby world secrets as its one physical arrow passes,
@@ -93,7 +100,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if not is_crossbow_bolt and not returning and not secondary_projectile and _check_moon_targets(start, end):
 		return
-	if not is_crossbow_bolt and not returning and not secondary_projectile and element_index == 2 and _freeze_water_on_sweep(start, end):
+	if not is_crossbow_bolt and not returning and not secondary_projectile and ARCHERY_ENV.effective_element(element_index,end_ignited) == 2 and _freeze_water_on_sweep(start, end):
 		_impact(end, "water")
 		queue_free()
 		return
@@ -120,9 +127,10 @@ func _physics_process(delta: float) -> void:
 			if hit_ids.has(target_id):
 				continue
 			hit_ids[target_id] = true
+			ignited_v272=_fire_at_v272(start,point)
 			var material: String = ARROW_AUDIO.material_for(target, "flesh")
-			target.call("hit", damage, 1.3 if charged else 0.85)
-			if element_index == 2 and target.has_method("apply_frost_slow") and is_instance_valid(target) and not target.is_queued_for_deletion():
+			target.call("hit", ARCHERY_ENV.impact_power(damage,ignited_v272), 1.3 if charged else 0.85)
+			if ARCHERY_ENV.effective_element(element_index,ignited_v272) == 2 and target.has_method("apply_frost_slow") and is_instance_valid(target) and not target.is_queued_for_deletion():
 				target.call("apply_frost_slow", 1.35, 0.78)
 			_impact(point, material)
 			if not returning and (not charged or hit_ids.size() >= 2):
@@ -135,14 +143,17 @@ func _physics_process(delta: float) -> void:
 			if returning:
 				queue_free()
 				return
+	ignited_v272=end_ignited
 	if not wall.is_empty():
 		var cover: Object = wall.get("collider")
 		var material: String = ARROW_AUDIO.material_for(cover, "stone")
-		if cover != null and element_index == 1 and cover.has_method("ignite_from_environment"):
+		if is_instance_valid(cover) and ARCHERY_ENV.effective_element(element_index,ignited_v272) == 1 and cover.has_method("ignite_from_environment"):
 			cover.call("ignite_from_environment")
-		if cover != null and cover.has_method("receive_damage"):
-			cover.call("receive_damage", damage, end)
+		if is_instance_valid(cover) and cover.has_method("receive_damage"):
+			cover.call("receive_damage", ARCHERY_ENV.impact_power(damage,ignited_v272), end)
 		_impact(end, material)
+		if physical_archery and is_instance_valid(cover):
+			_embed_surface_v272(cover,end)
 		queue_free()
 		return
 	global_position = destination
@@ -198,7 +209,9 @@ func _check_world_elements(start: Vector2, end: Vector2) -> bool:
 		var radius: float = float(candidate.get("trigger_radius"))
 		if contact.distance_squared_to(candidate.global_position) <= radius * radius:
 			var material: String = ARROW_AUDIO.material_for(candidate, "magic")
-			if bool(candidate.call("on_elemental_arrow_hit", element_index, formation_index, charged, launched_in_air)):
+			var contact_ignited: bool = _fire_at_v272(start,contact)
+			if bool(candidate.call("on_elemental_arrow_hit", ARCHERY_ENV.effective_element(element_index,contact_ignited), formation_index, charged, launched_in_air)):
+				ignited_v272=contact_ignited
 				_impact(contact, material)
 				queue_free()
 				return true
@@ -221,7 +234,9 @@ func _check_elemental_targets(start: Vector2, end: Vector2) -> bool:
 		var hit_point: Vector2 = start + segment * projection
 		var radius: float = float(target.get("trigger_radius"))
 		if hit_point.distance_squared_to(target.global_position) <= radius * radius:
-			if bool(target.call("on_elemental_arrow_hit", element_index, formation_index, charged, launched_in_air)):
+			var contact_ignited: bool = _fire_at_v272(start,hit_point)
+			if bool(target.call("on_elemental_arrow_hit", ARCHERY_ENV.effective_element(element_index,contact_ignited), formation_index, charged, launched_in_air)):
+				ignited_v272=contact_ignited
 				_impact(hit_point, "magic")
 				queue_free()
 				return true
@@ -261,7 +276,7 @@ func _impact(where: Vector2, surface: String = "stone") -> void:
 	var flash: Node2D = Node2D.new()
 	flash.set_script(BOW_IMPACT_V129)
 	flash.call("configure", ink, accent, visual_variant, fx_tier, direction, charged, motif)
-	flash.set("element_index", element_index)
+	flash.set("element_index", ARCHERY_ENV.effective_element(element_index,ignited_v272))
 	flash.set("formation_index", formation_index)
 	flash.self_modulate.a = decoration_alpha(1.0)
 	root.add_child(flash)
@@ -293,6 +308,8 @@ func _draw() -> void:
 		glow_ink = RelicPaletteV139.color_at(procedural_look, time_pulse, 0.33)
 	var mixed: Color = glow_ink.lerp(element_ink, 0.15 + 0.08 * sin(time_pulse))
 	_draw_arrow_shaft(Vector2.ZERO, Color("e4dce5").lerp(element_ink, 0.43), 1.0, 0.58 if is_crossbow_bolt else 1.0)
+	if ignited_v272:
+		_draw_fire_v272() # Gameplay-readable flame even when cosmetic glow is off.
 	if is_crossbow_bolt:
 		if visual_glow_scale > 0.0:
 			draw_line(-direction * 19.0, -direction * 5.0, decoration_color(Color(glow_ink.r, glow_ink.g, glow_ink.b, 0.38)), 1.5, true)
@@ -356,3 +373,33 @@ func _draw() -> void:
 		var n: float = float(j)
 		var pos: Vector2 = -direction * (10.0 + n * step) + p * sin(time_pulse * (2.0 + float(bow_trail_index) * 0.15) + n * 0.85) * (2.0 + float(bow_detail_index % 3))
 		draw_circle(pos, 1.1 + float(bow_detail_index % 2) * 0.5, decoration_color(Color(glow_ink.r, glow_ink.g, glow_ink.b, 0.30 - n * 0.045)))
+
+func _embed_surface_v272(surface: Object,point: Vector2) -> void:
+	var root: Node = get_tree().current_scene
+	if root==null:
+		return
+	if surface is Node2D and (surface.is_queued_for_deletion() or (surface.is_in_group("breakable_cover") and bool(surface.get("broken")))):
+		return
+	var existing: Array[Node] = get_tree().get_nodes_in_group("embedded_arrow_v272")
+	if existing.size()>=ARCHERY_ENV.EMBED_LIMIT:
+		for i in range(existing.size()-ARCHERY_ENV.EMBED_LIMIT+1):
+			existing[i].queue_free()
+	var shaft = EMBED.new()
+	shaft.bolt=is_crossbow_bolt
+	shaft.burning=ARCHERY_ENV.effective_element(element_index,ignited_v272)==1
+	shaft.tint=Color("e4dce5").lerp(GhostBowImprintsV138.color_for_element(ARCHERY_ENV.effective_element(element_index,ignited_v272)),0.43)
+	root.add_child(shaft)
+	shaft.bind_surface(surface,point,direction)
+	if root.has_method("track_room_effect"):
+		root.call("track_room_effect",shaft)
+
+func _draw_fire_v272() -> void:
+	var tip: Vector2 = direction*(12.0 if is_crossbow_bolt else 19.0)
+	var n: Vector2 = direction.orthogonal()
+	var pulse: float = 0.5+0.5*sin(distance_travelled*0.095)
+	draw_circle(tip,6.0+pulse*2.0,Color(1.0,0.29,0.09,0.23))
+	draw_colored_polygon(PackedVector2Array([tip+direction*3.0,tip+n*3.3,tip-direction*(23.0+4.0*pulse),tip-n*3.3]),Color(1.0,0.42,0.12,0.56))
+	draw_line(tip,tip-direction*12.0,Color(1.0,0.84,0.44,0.86),1.7,true)
+
+func _fire_at_v272(start: Vector2,end: Vector2) -> bool:
+	return ignited_v272 or (physical_archery and ARCHERY_ENV.crosses_fire(self,start,end))
