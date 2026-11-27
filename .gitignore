@@ -1,0 +1,9 @@
+# Godot editor and generated import caches
+.godot/
+.import/
+# Local tooling and export output
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+# Keep permanent .uid metadata tracked.
