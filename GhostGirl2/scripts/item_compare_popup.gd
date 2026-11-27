@@ -66,6 +66,7 @@ func display_item(item: Variant, equipped: Variant = null, _advanced: bool = fal
     rare_star.hide()
     var look: Dictionary = item.collector_appearance()
     anomaly_label.visible = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0))) == 6
+    ANOMALY_TITLE.apply(anomaly_label, Time.get_ticks_msec() * 0.001, item)
     anomaly_label.text = "Anomalous"
     anomaly_label.tooltip_text = "Test appearance — genuine roll unchanged" if preload("res://scripts/collector_roll_code_v1931.gd").debug_active(item) else ""
     impact_label.text = ITEM_MARKUP.impact_text(item)
@@ -149,7 +150,7 @@ func _rare_details(item: Variant) -> String:
 
 func _process(_delta: float) -> void:
     if visible and is_instance_valid(anomaly_label) and anomaly_label.visible:
-        ANOMALY_TITLE.apply(anomaly_label, Time.get_ticks_msec() * 0.001)
+        ANOMALY_TITLE.apply(anomaly_label, Time.get_ticks_msec() * 0.001, _current_item)
     if visible and not pinned:
         _place_popup()
 
