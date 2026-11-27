@@ -307,7 +307,7 @@ func glow_gradient_colors() -> Array[Color]:
 # A single base-to-art mapping for player, physical bow, FX and inspection.
 # New material variants reuse the exact calibrated painted bow geometry.
 func uses_forge_bow() -> bool:
-	return definition != null and str(definition.item_id) in ["mourning_yew_bow_v238", "vesper_recurve_bow_v238"]
+	return definition != null and str(definition.item_id) in ["mourning_yew_bow_v238", "vesper_recurve_bow_v238", "frostveil_bow_v277"]
 
 func uses_forge_dagger() -> bool:
 	return definition != null and str(definition.item_id) in ["cinderveil_dirk_v238", "reliquary_knife_v238", "silkglass_dirk_v276"]

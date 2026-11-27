@@ -172,6 +172,9 @@ const TWINBLADE_FIRST_GATE_V272: float = 0.66
 const TWINBLADE_SECOND_GATE_V272: float = 0.30
 var active_special_v261: String = ""
 var special_weapon_v261: GhostItemInstance = null
+const RELIC_ARSENAL_V277 = preload("res://scripts/relic_arsenal_v277.gd")
+var ranged_relic_v277: String = ""
+var ranged_relic_item_v277: GhostItemInstance = null
 const UNIQUE_SPECIALS_V261 = preload("res://scripts/unique_specials_v261.gd")
 const DANCE_V262 = preload("res://scripts/eclipse_dance_v262.gd")
 var dance_stage_v262: int = 0
@@ -1051,6 +1054,8 @@ func _advance_spell(delta: float) -> void:
 func reset_action_state() -> void:
 	thrown_lock_v273.clear()
 	clear_throw_charge_v276()
+	ranged_relic_v277=""
+	ranged_relic_item_v277=null
 	_clear_eclipse_dance_v262()
 	active_special_v261 = ""
 	special_weapon_v261 = null
@@ -1104,6 +1109,8 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	if invulnerable_time > 0.0:
 		return
 	clear_throw_charge_v276()
+	ranged_relic_v277=""
+	ranged_relic_item_v277=null
 	_clear_eclipse_dance_v262()
 	twinblade_second_v272=false
 	twinblade_weapon_v272=null
@@ -1397,7 +1404,28 @@ func _begin_weapon_attack(heavy: bool) -> void:
 	else:
 		_begin_attack(heavy)
 
+func _capture_ranged_relic_v277(item: GhostItemInstance, heavy: bool) -> void:
+	ranged_relic_v277=""
+	ranged_relic_item_v277=null
+	var requested: bool = buffered_special_v261 if buffered_attack_valid else _special_modifier_v272()
+	buffered_attack_valid=false
+	if not heavy or not requested:
+		return
+	var id: String = UNIQUE_SPECIALS_V261.kind(item)
+	if RELIC_ARSENAL_V277.has_skill(id):
+		ranged_relic_v277=id
+		ranged_relic_item_v277=item
+
+func _release_ranged_relic_v277(item: GhostItemInstance, heading: Vector2, origin: Vector2, eligible: bool) -> bool:
+	var id: String = ranged_relic_v277
+	var owner: GhostItemInstance = ranged_relic_item_v277
+	ranged_relic_v277=""
+	ranged_relic_item_v277=null
+	return eligible and owner!=null and owner==item and UNIQUE_SPECIALS_V261.kind(item)==id and RELIC_ARSENAL_V277.launch(self,item,heading,id,origin)
+
 func _clear_crossbow() -> void:
+	ranged_relic_v277=""
+	ranged_relic_item_v277=null
 	crossbow_stage = 0
 	crossbow_left = 0.0
 	crossbow_item = null
@@ -1412,6 +1440,7 @@ func _begin_crossbow(heavy: bool, airborne: bool) -> void:
 		return
 	stamina -= cost
 	stamina_recovery_left = STAMINA_RECOVERY_WAIT
+	_capture_ranged_relic_v277(held,heavy)
 	crossbow_item = held
 	crossbow_heavy = heavy
 	crossbow_fired = false
@@ -1473,6 +1502,8 @@ func _launch_crossbow_bolt() -> void:
 	var origin: Vector2 = global_position + Vector2(0, -39) + heading * 31.0
 	if points.size() == 2:
 		origin = body_art.to_global(points[0].lerp(points[1], CROSSBOW_V236.weapon_scale(base)))
+	if _release_ranged_relic_v277(crossbow_item,heading,origin,crossbow_heavy):
+		return
 	var second_origin: Vector2 = origin
 	if base_count == 2:
 		# Use the second authored wrist where visible. A hidden wrist fires
@@ -1516,6 +1547,7 @@ func _begin_bow_shot(charged: bool, airborne: bool) -> void:
 		return
 	stamina -= cost
 	stamina_recovery_left = STAMINA_RECOVERY_WAIT
+	_capture_ranged_relic_v277(world.inventory.get_equipped("sword"),charged)
 	bow_charge = charged
 	bow_firing_direction = _combat_aim_direction().normalized()
 	if bow_firing_direction.length_squared() < 0.01:
@@ -1603,6 +1635,13 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 		return
 	var equipped: GhostItemInstance = world.inventory.get_equipped("sword")
 	if equipped == null or equipped.weapon_style() != "bow":
+		return
+	var relic_origin: Vector2 = global_position+Vector2(0,-39)+heading.normalized()*31.0
+	if equipped.uses_forge_bow():
+		var relic_span: PackedVector2Array = FORGE_V238.bow_span(body_art,str(body_art.animation),facing_name,body_art.frame,heading)
+		if relic_span.size()==2:
+			relic_origin=body_art.to_global(relic_span[0]+(relic_span[1]-relic_span[0]).normalized()*8.0)
+	if _release_ranged_relic_v277(equipped,heading,relic_origin,charged):
 		return
 	var arrow: Node2D = BOW_ARROW_SCENE.instantiate() as Node2D
 	var root: Node = get_tree().current_scene

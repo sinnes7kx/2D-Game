@@ -164,6 +164,9 @@ var last_shrine_room: String = "lanternhaven"
 var last_shrine_point: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
+	var grade: CanvasLayer = preload("res://scripts/gothic_grade_v277.gd").new()
+	grade.name="GothicGradeV277"
+	add_child(grade)
 	player.world = self
 	preload("res://scripts/direction_controller_v245.gd").install_controller()
 	reticle.player = player
@@ -212,11 +215,17 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# Existing saved item instances remain untouched.
 	if posmod(seed_value, 23) == 0:
 		if posmod(int(seed_value / 23), 5) == 0:
+			if posmod(int(seed_value / 115), 7) == 0:
+				return preload("res://items/mourning_star_crossbow_v277.tres")
 			return CROSSBOW_LOOT_V236[posmod(int(seed_value / 115), CROSSBOW_LOOT_V236.size())] as GhostItemData
+		if posmod(int(seed_value / 23), 7) == 0:
+			return preload("res://items/frostveil_bow_v277.tres")
 		return BOW_LOOT_TABLE[posmod(int(seed_value / 23), BOW_LOOT_TABLE.size())] as GhostItemData
 	# New v2.03 blunt heads arrive in a small separate new-drop lane.
 	# Preserve the existing 1/7 sword table index mapping for old seeds.
 	if posmod(seed_value, 7) != 0 and posmod(seed_value, 41) == 0:
+		if posmod(int(seed_value / 41), 5) == 0:
+			return preload("res://items/hollowbell_maul_v277.tres")
 		return BLUNT_LOOT_TABLE[posmod(int(seed_value / 41), BLUNT_LOOT_TABLE.size())] as GhostItemData
 	# One in seven ordinary monster drops becomes a sword, deterministic by seed.
 	if posmod(seed_value, 7) != 0:
