@@ -75,7 +75,22 @@ func _verify() -> void:
 		assert(PLAYER_SCRIPT.parry_result(0.10,aim,-aim*60.0)==0)
 		assert(PLAYER_SCRIPT.parry_result(0.10,aim,Vector2.ZERO)==0)
 	DIR.install_controller()
-	assert(InputMap.action_get_events("parry").size()==2)
+	assert(InputMap.action_get_events("parry").size()==4)
+	for code in [KEY_F,KEY_P]:
+		var key: InputEventKey=InputEventKey.new()
+		key.physical_keycode=code
+		assert(InputMap.action_has_event("parry",key))
+	for button in [MOUSE_BUTTON_XBUTTON1,MOUSE_BUTTON_MIDDLE]:
+		var mouse: InputEventMouseButton=InputEventMouseButton.new()
+		mouse.button_index=button
+		assert(InputMap.action_has_event("parry",mouse))
+	var grapple_key: InputEventKey=InputEventKey.new()
+	grapple_key.physical_keycode=KEY_R
+	var throw_key: InputEventKey=InputEventKey.new()
+	throw_key.physical_keycode=KEY_Y
+	assert(InputMap.event_is_action(grapple_key,"hook_anchor"))
+	assert(not InputMap.event_is_action(grapple_key,"throw"))
+	assert(InputMap.event_is_action(throw_key,"throw"))
 	var event_count: int = InputMap.action_get_events("attack_light").size()
 	DIR.install_controller()
 	assert(InputMap.action_get_events("attack_light").size()==event_count)
