@@ -28,6 +28,8 @@ func confirmed_contact_v276(target: Node, point: Vector2) -> void:
 				world.ui.set_health(caster.get("health"),caster.call("maximum_health"))
 		elif effect=="stamina":
 			caster.set("stamina",minf(float(caster.get("stamina"))+1.5,100.0))
+			if world!=null:
+				world.ui.set_stamina(caster.get("stamina"),100.0)
 		elif effect=="burst":
 			_burst_neighbors(target,point)
 	if caster.has_method("thrown_impact_v276"):
