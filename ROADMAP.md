@@ -1104,3 +1104,7 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 - No broad rewrite, broken save compatibility, or “feature complete” announcement without real tests.
 
 **North star check before every change:** *Does this make a cherished rare item more exciting to find, safer to own, easier to admire, or more meaningful to show and eventually trade—without making ordinary collecting frustrating?* If not, explain why it deserves priority now.
+
+
+### Cursor-facing combat and independent travel (source implementation; runtime review pending)
+- Mouse/keyboard locomotion and idle now face the live world cursor independently of WASD travel. Eight visual octants retain angular hysteresis, while attacks sample the continuous mouse heading with a 16-world-unit dead zone retaining the last facing. Backstep samples the current mouse heading before retreating; ordinary attacks, buffered attack directions, jump trajectory, cast/throw and other committed actions keep their existing timing and direction locks. Target lock remains higher priority; controller right-stick aim and touch movement retain non-mouse paths. No changes to damage, item identity, saved data or animation artwork. Extend the registered eight-direction smoke test with cursor-heading and dead-zone assertions. Pending Godot runtime and F5 checks for all octants, rapid strafing, dodge and combat commitments, controller/touch, UI and existing diagonal atlas coverage.
