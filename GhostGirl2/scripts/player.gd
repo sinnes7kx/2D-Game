@@ -837,6 +837,16 @@ func set_facing(direction: Vector2) -> void:
 	# Keep the visual hand marker aligned to the actual cardinal sprite.
 	_update_hand()
 
+var controller_active_v260: bool = false
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton and event.pressed:
+		controller_active_v260 = true
+	elif event is InputEventJoypadMotion and absf(event.axis_value) > 0.30:
+		controller_active_v260 = true
+	elif event is InputEventKey and event.pressed or event is InputEventMouseButton and event.pressed or event is InputEventMouseMotion and event.relative.length_squared() > 4.0:
+		controller_active_v260 = false
+
 func _movement_input() -> Vector2:
 	var keyboard: Vector2 = Input.get_vector("left", "right", "up", "down")
 	var touch: Vector2 = Vector2.ZERO
@@ -844,7 +854,7 @@ func _movement_input() -> Vector2:
 		var ui: Node = world.get("ui") as Node
 		if ui != null and ui.has_method("get_joystick_vector"):
 			touch = ui.call("get_joystick_vector")
-	return DIRECTIONS_V245.movement(keyboard, touch)
+	return DIRECTIONS_V245.movement(keyboard, touch, DIRECTIONS_V245.stick(JOY_AXIS_LEFT_X,JOY_AXIS_LEFT_Y))
 
 func _hand_position_for_facing() -> Vector2:
 	match facing_name:
@@ -884,7 +894,7 @@ func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> vo
 	special_spell_kind = new_kind
 	stamina -= cost
 	stamina_recovery_left = STAMINA_RECOVERY_WAIT
-	spell_aim_point = _select_wand_target(get_global_mouse_position())
+	spell_aim_point = _select_wand_target(global_position + _combat_aim_direction() * 350.0 if controller_active_v260 else get_global_mouse_position())
 	var muzzle: Vector2 = WAND_ANCHORS_V216.world_tip(self)
 	spell_direction = spell_aim_point - muzzle
 	if spell_direction.length_squared() < 36.0:
@@ -1328,7 +1338,7 @@ func _launch_crossbow_bolt() -> void:
 		return
 	var base: String = str(crossbow_item.definition.item_id)
 	var base_count: int = CROSSBOW_V236.bolt_count(base)
-	var mod: String = crossbow_item.weapon_mod
+	var mod: String = crossbow_item.active_weapon_mod(world.room == "lanternhaven")
 	var count: int = WEAPON_MODS_V250.projectile_count(mod, base_count)
 	var heading: Vector2 = crossbow_heading.normalized()
 	var clip: String = str(body_art.animation)
@@ -1523,7 +1533,7 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 		release.self_modulate.a = VISUAL_CHOICES_V216.effect_scale(equipped)
 		root.add_child(release)
 		release.global_position = shot_origin - heading.normalized() * 5.0
-	var mod: String = equipped.weapon_mod
+	var mod: String = equipped.active_weapon_mod(world.room == "lanternhaven")
 	var count: int = WEAPON_MODS_V250.projectile_count(mod, 1)
 	var volley_damage: float = float(arrow.get("damage")) * WEAPON_MODS_V250.volley_multiplier(mod)
 	var shots: Array[Node2D] = [arrow]
@@ -1666,6 +1676,12 @@ func _combat_aim_direction() -> Vector2:
 		var locked_heading: Vector2 = lock_target.global_position - global_position
 		if locked_heading.length_squared() > 4.0:
 			return locked_heading.normalized()
+	if controller_active_v260:
+		var aim: Vector2 = DIRECTIONS_V245.stick(JOY_AXIS_RIGHT_X,JOY_AXIS_RIGHT_Y)
+		if aim.length_squared() > 0.01:
+			return DIRECTIONS_V245.heading(DIRECTIONS_V245.octant(aim))
+		var movement: Vector2 = _movement_input()
+		return DIRECTIONS_V245.heading(DIRECTIONS_V245.octant(movement)) if movement.length_squared() > 0.01 else facing
 	# Mouse dead zone covers the character's full illustrated body. When the
 	# pointer is inside it, use held movement or the last intentional facing.
 	var cursor_heading: Vector2 = get_global_mouse_position() - global_position
@@ -1766,7 +1782,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 			poise_bonus = 0.85
 	if sword != null:
 		power += sword.weapon_damage()
-		match sword.weapon_mod:
+		match sword.active_weapon_mod(world.room == "lanternhaven"):
 			"long_reach": reach *= 1.20
 			"crushing": poise_bonus *= 1.35
 			"cleaving": attack_arc = cos(minf(PI, acos(clampf(attack_arc, -1.0, 1.0)) * 1.25))
@@ -1809,7 +1825,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
 			continue
 		candidate.call("hit", power, poise_bonus * (1.0 + _stat("poise_power_pct") / 100.0))
-		if sword != null and sword.weapon_mod == "frostbite" and is_instance_valid(candidate) and not candidate.is_queued_for_deletion() and candidate.has_method("apply_frost_slow"):
+		if sword != null and sword.active_weapon_mod(world.room == "lanternhaven") == "frostbite" and is_instance_valid(candidate) and not candidate.is_queued_for_deletion() and candidate.has_method("apply_frost_slow"):
 			candidate.call("apply_frost_slow", 1.5, 0.78)
 			_spawn_spectacle("strike", candidate.global_position + Vector2(0,-27), Color("9ed5f6"), fx_motif, fx_tier, Color("c9e8ff"), fx_trail)
 		var blunt_contact: bool = sword != null and sword.physical_damage_kind() == "blunt"
@@ -1890,10 +1906,10 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 			counter_window = 0.0
 	# Resource gains are once per attack, not once per enemy or scenery hit.
 	if struck and sword != null:
-		if sword.weapon_mod == "soul_siphon":
+		if sword.active_weapon_mod(world.room == "lanternhaven") == "soul_siphon":
 			health = minf(maximum_health(), health + 2.0)
 			world.ui.set_health(health, maximum_health())
-		elif sword.weapon_mod == "vigor":
+		elif sword.active_weapon_mod(world.room == "lanternhaven") == "vigor":
 			stamina = minf(MAX_STAMINA, stamina + 5.0)
 			world.ui.set_stamina(stamina, MAX_STAMINA)
 	if struck and rally_pool > 0.0 and rally_time_left > 0.0:

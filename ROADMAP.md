@@ -150,6 +150,13 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Extend original-skin diagonal idle/walk aliases to Moonwarden Spear, Briarwake Trident and Nocturne Stiletto. Existing per-frame visible wrist guides drive modular physical weapon geometry and matching prestige effect span. Spear/trident carry uses existing 74-pixel thrust-span length, no fabricated second wrist. Cardinal baked and attack poses remain unchanged.
 - Armed jumps already used a locomotion carry clip; select the matching diagonal carry alias where available instead of dropping to cardinal. This is not dedicated armed jump art. Armed dodge, attack and cast art still require measured action-frame wrists. Suppress unsupported paired diagonal fallback glow if physical spans are missing. No combat/rarity/save changes; registered regression assertions added, runtime and visual checks pending.
 
+### v2.60 rarity contrast, training targets and gamepad controls (source implementation; runtime review pending)
+
+- Distinguish Standard through Ethereal shared edge rendering by polished edge, traveling glint, bead, ribbon, stars and slow wisps. Restore intermittent blade-bound shine; keep tier 6 and signature >=4 paths unchanged (highest-tier protection). No rarity odds, seeds or saved appearance changes. Existing non-edge and painted effects are unchanged.
+- TEST EFFECTS / MODS menu includes compatible unique modifier overrides, restore and clear; separate in-memory property, genuine serialization unchanged; combat overrides only in debug Lanternhaven. Three indestructible wooden practice dummies in town use ordinary hit/projectile interfaces, no loot, death, XP or persistent damage state, short reset timer and hit readouts.
+- Existing eight-direction movement extended with physical gamepad left stick octant movement/deadzone, D-pad and mapped combat buttons, right-stick octant aim or facing fallback, mouse/keyboard takeover. Existing optional diagonal atlas and cardinal attack fallback preserved. No new directional action artwork. Runtime tests and controller feel verification pending.
+- Consolidates open v2.59 source on its existing head; use this PR if #109 is not yet merged.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

@@ -76,6 +76,14 @@ var stat_value: float = 0.0
 var quality: String = "normal"
 var affixes: Array[Dictionary] = []
 var weapon_mod: String = ""
+# In-memory test override only. The serializer continues to read weapon_mod.
+var debug_weapon_mod: String = ""
+
+func active_weapon_mod(training: bool = false) -> String:
+	if OS.is_debug_build() and training and debug_weapon_mod in WEAPON_MODS_V250.allowed(get_slot(),weapon_style()):
+		return debug_weapon_mod
+	return weapon_mod
+
 const WEAPON_MODS_V250 = preload("res://scripts/weapon_mods_v250.gd")
 var sockets: int = 0
 var socketed: Array[Dictionary] = []
