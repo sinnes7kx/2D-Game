@@ -348,7 +348,10 @@ func _input(event: InputEvent) -> void:
 		# world space (outside both windows) may release a carried treasure.
 		if inventory_panel.get_global_rect().has_point(mouse_event.position) or equipment_panel.get_global_rect().has_point(mouse_event.position):
 			return
-	_drop_selected_item(cursor_item_index)
+	if socket_cursor_v285:
+		_cancel_cursor_item()
+	else:
+		_drop_selected_item(cursor_item_index)
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
