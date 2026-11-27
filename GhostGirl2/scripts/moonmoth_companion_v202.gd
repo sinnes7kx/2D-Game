@@ -212,8 +212,7 @@ func _draw_valid_wing_v282(points: PackedVector2Array,ink: Color) -> void:
     var triangles: PackedInt32Array = Geometry2D.triangulate_polygon(points)
     if triangles.is_empty():
         return
-    for i in range(0,triangles.size(),3):
-        draw_colored_polygon(PackedVector2Array([points[triangles[i]],points[triangles[i+1]],points[triangles[i+2]]]),ink)
+    draw_colored_polygon(points,ink)
 
 static func profile_v273(uid: String,seed: int) -> Dictionary:
     var key: String = "%s|%d|familiar-v273" % [uid,seed]
