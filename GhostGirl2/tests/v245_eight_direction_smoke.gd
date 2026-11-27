@@ -37,6 +37,24 @@ func _verify() -> void:
 	if DIR.movement(Vector2.LEFT, Vector2(0.5, 0.5)) != Vector2(0.5, 0.5):
 		_fail("Touch input not shared")
 		return
+	for i in range(8):
+		var raw: Vector2 = DIR.heading(i).rotated(0.12)*0.63
+		assert(DIR.movement(Vector2.ZERO,Vector2.ZERO,raw).is_equal_approx(DIR.heading(i)*0.63))
+	assert(DIR.movement(Vector2.LEFT,Vector2.ZERO,Vector2.RIGHT)==Vector2.LEFT)
+	assert(DIR.movement(Vector2.ZERO,Vector2.ZERO,Vector2.ZERO)==Vector2.ZERO)
+	DIR.install_controller()
+	var event_count: int = InputMap.action_get_events("attack_light").size()
+	DIR.install_controller()
+	assert(InputMap.action_get_events("attack_light").size()==event_count)
+	var dummy: Node2D = preload("res://scripts/training_dummy_v260.gd").new()
+	root.add_child(dummy)
+	assert(dummy.is_in_group("enemies"))
+	dummy.call("hit",12.5)
+	dummy.call("hit",7.5)
+	assert(int(dummy.get("hits"))==2 and is_equal_approx(float(dummy.get("total_damage")),20.0))
+	dummy.call("_process",5.0)
+	assert(int(dummy.get("hits"))==0)
+	dummy.free()
 	actor.free()
 	print("v2.45 PASS: eight logical headings, original pose fallback, input and hysteresis")
 	quit(0)

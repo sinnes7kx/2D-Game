@@ -21,6 +21,8 @@
 [ext_resource type="Texture2D" path="res://assets/world/lanternhaven_oath_tree_v243.svg" id="v243_tree"]
 [ext_resource type="Texture2D" path="res://assets/world/lanternhaven_bench_v243.svg" id="v243_bench"]
 
+[ext_resource type="Script" path="res://scripts/training_dummy_v260.gd" id="v260_dummy"]
+
 [sub_resource type="CircleShape2D" id="V243TreeRoots"]
 radius = 46.0
 
@@ -539,3 +541,18 @@ offset = Vector2(-78, -46)
 
 [node name="SeatCollision" type="CollisionShape2D" parent="Gameplay/HearthBenchEast"]
 shape = SubResource("V243BenchShape")
+
+[node name="PracticeDummiesV260" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+
+[node name="Practice01" type="StaticBody2D" parent="Gameplay/PracticeDummiesV260"]
+position = Vector2(2010, 1570)
+script = ExtResource("v260_dummy")
+
+[node name="Practice02" type="StaticBody2D" parent="Gameplay/PracticeDummiesV260"]
+position = Vector2(2220, 1570)
+script = ExtResource("v260_dummy")
+
+[node name="Practice03" type="StaticBody2D" parent="Gameplay/PracticeDummiesV260"]
+position = Vector2(2430, 1570)
+script = ExtResource("v260_dummy")

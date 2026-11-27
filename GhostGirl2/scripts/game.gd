@@ -159,6 +159,7 @@ var last_shrine_point: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	player.world = self
+	preload("res://scripts/direction_controller_v245.gd").install_controller()
 	reticle.player = player
 	ui.bind_inventory(inventory)
 	_grant_v14_first_sword()
@@ -932,10 +933,10 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		release_fx.global_position = bolt.global_position
 		release_fx.call("configure", bolt.effect_color, bolt.accent_color, bolt.gradient_c, wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
 
-	if wand != null and wand.weapon_mod == "returning_projectiles":
+	if wand != null and wand.active_weapon_mod(room == "lanternhaven") == "returning_projectiles":
 		bolt.can_return = true
 		bolt.damage *= 0.85
-	if wand != null and wand.weapon_mod == "extra_projectiles":
+	if wand != null and wand.active_weapon_mod(room == "lanternhaven") == "extra_projectiles":
 		var mod = preload("res://scripts/weapon_mods_v250.gd")
 		var original_heading: Vector2 = bolt.direction
 		bolt.damage *= 0.50

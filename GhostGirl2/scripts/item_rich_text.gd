@@ -126,6 +126,9 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		var special: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.weapon_mod, ""))
 		if not special.is_empty():
 			out.append("[font_size=15][color=%s]%s[/color][/font_size]" % [GOLD, escape(special)])
+	if OS.is_debug_build() and not item.debug_weapon_mod.is_empty():
+		var preview: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.debug_weapon_mod, ""))
+		out.append("[font_size=12][color=#9cb9de]TEST ONLY · %s (Lanternhaven)[/color][/font_size]" % escape(preview))
 	if int(item.sockets) > 0:
 		out.append("[font_size=13][color=%s]◈  SOCKETS (%d/%d)[/color][/font_size]" % [GOLD, item.socketed.size(), item.sockets])
 		for jewel in item.socketed:

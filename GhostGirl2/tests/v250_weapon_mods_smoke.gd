@@ -18,10 +18,17 @@ func _initialize() -> void:
 	assert(is_equal_approx(MOD.angle(0,3),-MOD.angle(2,3)))
 	assert(is_zero_approx(MOD.angle(1,3)))
 	assert(MOD.roll("sword","maul","unique",999) in MOD.MELEE)
+	var genuine: String = item.weapon_mod
+	item.debug_weapon_mod = MOD.RETURN if genuine == MOD.EXTRA else MOD.EXTRA
+	assert(item.active_weapon_mod(false) == genuine)
+	if OS.is_debug_build():
+		assert(item.active_weapon_mod(true) == item.debug_weapon_mod)
+	assert(item.weapon_mod == genuine)
 	var inventory: Node = preload("res://scripts/inventory.gd").new()
 	var saved: Dictionary = inventory.call("_serialize_item", item, Vector2i.ZERO)
 	var restored: GhostItemInstance = inventory.call("_deserialize_item", saved)
 	assert(restored != null and restored.weapon_mod == item.weapon_mod)
+	assert(restored.debug_weapon_mod.is_empty())
 	assert(restored.item_seed == item.item_seed and restored.affixes == item.affixes)
 	saved.erase("weapon_mod_v250")
 	var legacy: GhostItemInstance = inventory.call("_deserialize_item", saved)

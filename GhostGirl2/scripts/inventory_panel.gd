@@ -814,7 +814,7 @@ func _apply_rarity_preview(tier: int) -> void:
 
 func _setup_effect_menu() -> void:
 	test_looks.clear()
-	test_looks.add_item("TEST EFFECTS", 0)
+	test_looks.add_item("TEST EFFECTS / MODS", 0)
 	test_looks.add_item("Clear all previews", 1)
 	test_looks.add_separator("Signatures · weapons / inspect")
 	for i in range(6):
@@ -840,6 +840,12 @@ func _setup_effect_menu() -> void:
 	test_looks.add_separator("Grip · modular weapons")
 	for i in range(6):
 		test_looks.add_item(["Leather wrap", "Metal collars", "Silk lacing", "Inlaid", "Riveted", "Carved"][i], 80 + i)
+	test_looks.add_separator("Unique modifiers · Lanternhaven practice only")
+	test_looks.add_item("Restore genuine modifier", 90)
+	var mods = preload("res://scripts/weapon_mods_v250.gd")
+	var keys: Array = mods.LABELS.keys()
+	for i in range(keys.size()):
+		test_looks.add_item(str(mods.LABELS[keys[i]]), 100 + i)
 	test_looks.select(0)
 
 func _preview_look(index: int) -> void:
@@ -853,7 +859,15 @@ func _preview_look(index: int) -> void:
 		notice.text = "Not supported on this item. See TEST EFFECTS tooltips."
 		test_looks.select(0)
 		return
-	if id == 1:
+	if id == 90:
+		item.debug_weapon_mod = ""
+	elif id >= 100:
+		var keys: Array = preload("res://scripts/weapon_mods_v250.gd").LABELS.keys()
+		if id - 100 >= keys.size():
+			return
+		item.debug_weapon_mod = str(keys[id - 100])
+	elif id == 1:
+		item.debug_weapon_mod = ""
 		item.debug_visual_override = -1
 		item.debug_mythic_variant = -1
 		item.debug_collector_tier = -1
@@ -923,6 +937,12 @@ func _effect_support(item: GhostItemInstance, id: int) -> Dictionary:
 	var inspect_surface: bool = grip or attack_only or painted
 	var equipped: bool = slot != "none" and inventory != null and inventory.get_equipped(slot) == item
 	var context: String = " Equipped: compare live character and world." if equipped else " Inspect this item, or equip it to see supported held effects."
+	if id == 90:
+		return {"enabled": weapon, "hint": "Restore genuine combat modifier."}
+	if id >= 100:
+		var mods = preload("res://scripts/weapon_mods_v250.gd")
+		var keys: Array = mods.LABELS.keys()
+		return {"enabled": id-100 < keys.size() and str(keys[id-100]) in mods.allowed(slot,style), "hint": "Unsaved combat test; active only in Lanternhaven."}
 	if id >= 10 and id <= 15:
 		return {"enabled": true, "hint": ("Weapon signature; no natural rarity required in debug." if weapon else ("Dress aura for Mythic/Moonfall; other signatures in Inspect." if slot == "dress" else "Inspect preview; accessories have limited in-world effects.")) + " Anomaly rarity can override the signature shape." + context}
 	if id >= 20 and id <= 23:

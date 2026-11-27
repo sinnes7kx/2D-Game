@@ -56,6 +56,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 	var motif: int = int(look.get("glow_motif", 0))
 	var region_rank: int = int(look.get("region_rank", 0))
 	var power: float = clampf(strength, 0.0, 1.35)
+	var protected_top: bool = tier >= 6 or int(look.get("signature",0)) >= 4
 	if power <= 0.0:
 		return
 	for i in range(path.size() - 1):
@@ -67,6 +68,9 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 			# Layered soft bloom and a bright metal-following core. Independent of
 			# particle motion; no flat opaque rectangle over the weapon.
 			var shimmer: float = 0.90 + 0.10 * sin(time * 1.3 + u * TAU)
+			if not protected_top:
+				var crest: float = pow(maxf(0.0,cos((u-time*(0.11+float(tier)*0.018))*TAU)),9.0)
+				shimmer = (0.50 + float(tier)*0.075) + crest*0.60
 			var core: Color = ink.lerp(Color.WHITE, 0.34)
 			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.025 * power)), 8.0, true)
 			canvas.draw_line(a, b, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.075 * power)), 5.0, true)
@@ -78,26 +82,30 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 	var tip: Vector2 = path[path.size() - 1]
 	var axis: Vector2 = (tip - root).normalized()
 	var normal: Vector2 = Vector2(-axis.y, axis.x)
-	for j in range(2 + mini(tier, 3)):
-		var u: float = fposmod(float(j) * 0.23 + time * (0.13 + float(motif) * 0.018), 1.0)
-		var p: Vector2 = point_on_path(path, u)
-		var ink: Color = color_at(colors, look, u, time)
-		ink = ink.lerp(Color.WHITE, 0.24)
-		ink.a = FX_LEVEL.edge_alpha(canvas, sin(u * PI) * 0.55)
-		var wiggle: Vector2 = normal * sin(u * TAU * 2.0 + time * 3.0) * 3.0
-		match motif:
-			0: canvas.draw_circle(p, 1.3, ink)
-			1: canvas.draw_line(p - normal * 3.0, p + normal * 3.0, ink, 1.0, true)
-			2: canvas.draw_colored_polygon(PackedVector2Array([p, p + wiggle + axis * 2.0, p + wiggle - axis * 2.0]), ink)
-			3: canvas.draw_polyline(PackedVector2Array([p - axis * 3.0, p + wiggle, p + axis * 3.0]), ink, 1.0, true)
-			4: canvas.draw_arc(p, 2.5, time, time + PI, 10, ink, 1.0, true)
-			5: canvas.draw_line(p - axis * 5.0, p + axis * 2.0, ink, 1.4, true)
-			6:
-				canvas.draw_line(p - normal * 3.0, p + normal * 3.0, ink, 1.0, true)
-				canvas.draw_line(p - axis * 3.0, p + axis * 3.0, ink, 1.0, true)
-			7: canvas.draw_circle(p + wiggle, 1.7, ink)
-		if tier == 6:
-			canvas.draw_line(p + wiggle * 1.8, p - wiggle * 1.8 + axis * 2.0, ink, 0.9, true)
+	if protected_top:
+		for j in range(2 + mini(tier, 3)):
+			var u: float = fposmod(float(j) * 0.23 + time * (0.13 + float(motif) * 0.018), 1.0)
+			var p: Vector2 = point_on_path(path, u)
+			var ink: Color = color_at(colors, look, u, time)
+			ink = ink.lerp(Color.WHITE, 0.24)
+			ink.a = FX_LEVEL.edge_alpha(canvas, sin(u * PI) * 0.55)
+			var wiggle: Vector2 = normal * sin(u * TAU * 2.0 + time * 3.0) * 3.0
+			match motif:
+				0: canvas.draw_circle(p, 1.3, ink)
+				1: canvas.draw_line(p - normal * 3.0, p + normal * 3.0, ink, 1.0, true)
+				2: canvas.draw_colored_polygon(PackedVector2Array([p, p + wiggle + axis * 2.0, p + wiggle - axis * 2.0]), ink)
+				3: canvas.draw_polyline(PackedVector2Array([p - axis * 3.0, p + wiggle, p + axis * 3.0]), ink, 1.0, true)
+				4: canvas.draw_arc(p, 2.5, time, time + PI, 10, ink, 1.0, true)
+				5: canvas.draw_line(p - axis * 5.0, p + axis * 2.0, ink, 1.4, true)
+				6:
+					canvas.draw_line(p - normal * 3.0, p + normal * 3.0, ink, 1.0, true)
+					canvas.draw_line(p - axis * 3.0, p + axis * 3.0, ink, 1.0, true)
+				7: canvas.draw_circle(p + wiggle, 1.7, ink)
+			if tier == 6:
+				canvas.draw_line(p + wiggle * 1.8, p - wiggle * 1.8 + axis * 2.0, ink, 0.9, true)
+
+	else:
+		_draw_tier_detail(canvas,path,colors,look,time,power,tier)
 
 	# A distinct local signature accompanies the independent original motif.
 	if region_rank > 0:
@@ -181,3 +189,37 @@ static func draw_signature(canvas: Node2D, path: PackedVector2Array, colors: Arr
 				canvas.draw_polyline(PackedVector2Array([center-axis*4.0,p-axis*2.0,p+zig,center+axis*4.0]),ink,1.1,true)
 				ink.a *= 0.65
 				canvas.draw_circle(p+zig,1.2,ink)
+
+# Lower tiers have different silhouettes and cadence, not merely more dots.
+# The existing highest-tier and Mythic/Moonfall effects are untouched.
+static func _draw_tier_detail(canvas: Node2D,path: PackedVector2Array,colors: Array[Color],look: Dictionary,time: float,power: float,tier: int) -> void:
+	var axis: Vector2 = (path[-1]-path[0]).normalized()
+	var n: Vector2 = axis.orthogonal()
+	if axis.is_zero_approx():
+		return
+	if tier == 0:
+		return # Plain polished edge.
+	var count: int = 1 if tier <= 2 else (2 if tier <= 4 else 3)
+	for j in range(count):
+		var u: float = fposmod(time*(0.075+float(tier)*0.012)+float(j)/float(count),1.0)
+		var p: Vector2 = point_on_path(path,u)
+		var ink: Color = color_at(colors,look,u,time).lerp(Color.WHITE,0.36)
+		var alpha: float = FX_LEVEL.edge_alpha(canvas,sin(u*PI)*power*0.70)
+		ink.a = alpha
+		match tier:
+			1: # A passing silver glint.
+				canvas.draw_line(p-axis*3.0,p+axis*3.0,ink,1.5,true)
+			2: # A small luminous bead with a soft halo.
+				canvas.draw_circle(p,4.0,Color(ink.r,ink.g,ink.b,alpha*0.13))
+				canvas.draw_circle(p,1.4,ink)
+			3: # A short slow ribbon, bound to the edge.
+				canvas.draw_polyline(PackedVector2Array([p-axis*5.0,p+n*2.0,p+axis*4.0]),ink,1.2,true)
+			4: # Celestial stars.
+				canvas.draw_line(p-axis*3.0,p+axis*3.0,ink,1.0,true)
+				canvas.draw_line(p-n*3.5,p+n*3.5,ink,1.0,true)
+				canvas.draw_circle(p,1.25,ink)
+			5: # Ethereal wisps, not a fast swarm.
+				var drift: Vector2 = p+n*sin(time*0.55+float(j)*2.1)*5.0
+				canvas.draw_circle(drift,6.0,Color(ink.r,ink.g,ink.b,alpha*0.10))
+				canvas.draw_line(drift-axis*5.0,drift,Color(ink.r,ink.g,ink.b,alpha*0.45),2.1,true)
+				canvas.draw_circle(drift,2.0,ink)
