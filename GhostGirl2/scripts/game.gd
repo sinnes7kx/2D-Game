@@ -1078,7 +1078,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F6:
 			_enter_room("hollow_veil_moor")
 		elif event.physical_keycode == KEY_F7:
-			if OS.is_debug_build() and event.ctrl_pressed:
+			if OS.is_debug_build() and event.ctrl_pressed and event.shift_pressed:
+				_give_stiletto_trial_v265()
+			elif OS.is_debug_build() and event.ctrl_pressed:
 				_give_eclipse_dance_trial_v262()
 			elif OS.is_debug_build() and event.shift_pressed:
 				_give_ethereal_trial()
@@ -1349,3 +1351,15 @@ func _give_eclipse_dance_trial_v262() -> void:
 	inventory.collected_pickups["v262_eclipse_dance_trial"] = true
 	inventory.save_game()
 	ui.show_pickup("ECLIPSE'S HUNGER · EQUIP · SHIFT + MOUSE2",Color("d8b7c8"))
+
+func _give_stiletto_trial_v265() -> void:
+	if inventory.has_collected("v265_stiletto_trial"):
+		ui.show_pickup("STILETTO TRIAL ALREADY CLAIMED · OPEN INVENTORY")
+		return
+	var item: GhostItemInstance = inventory.add_loot(preload("res://items/nocturne_stiletto_v171.tres"),265137,"unique")
+	if item == null:
+		ui.show_pickup(inventory.last_add_failure)
+		return
+	inventory.collected_pickups["v265_stiletto_trial"] = true
+	inventory.save_game()
+	ui.show_pickup("THE QUIET DEATH · EQUIP · SHIFT + MOUSE2",Color("d8b7c8"))

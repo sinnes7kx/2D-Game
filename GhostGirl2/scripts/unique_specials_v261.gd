@@ -4,13 +4,15 @@ const SPECIALS: Dictionary = {
 	"moonwarden_spear_v169": "heavens_reach",
 	"briarwake_trident_v171": "drowned_fork",
 	"gravebell_maul_v170": "last_toll",
-	"eclipse_twinblade_v170": "eclipse_dance"
+	"eclipse_twinblade_v170": "eclipse_dance",
+	"nocturne_stiletto_v171": "vespers_return"
 }
 const NAMES: Dictionary = {
 	"heavens_reach": "Heaven's Reach · Returning spear throw",
 	"drowned_fork": "Drowned Crown · Three spectral spears",
 	"last_toll": "Last Toll · Traveling shockwave",
-	"eclipse_dance": "Crimson Eclipse · Advancing blade dance and optional retreat"
+	"eclipse_dance": "Crimson Eclipse · Advancing blade dance and optional retreat",
+	"vespers_return": "Vesper’s Return · Piercing throw, hits again on return"
 }
 
 static func kind(item: Variant) -> String:
@@ -41,6 +43,17 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 				origin = body.to_global(span[0])
 	var n: int = count(id)
 	var power: float = (34.0 + item.weapon_damage()) * (1.0+float(actor.call("_stat","melee_power_pct"))/100.0) * (1.0+float(actor.call("_stat","heavy_power_pct"))/100.0)
+	if id == "vespers_return":
+		var dagger = preload("res://scripts/returning_stiletto_v265.gd").new()
+		dagger.caster = actor
+		dagger.direction = heading.normalized()
+		dagger.power = power
+		dagger.palette = item.glow_gradient_colors()
+		dagger.glow = preload("res://scripts/visual_choices_v216.gd").effect_scale(item)
+		root.add_child(dagger)
+		dagger.global_position = origin
+		world.call("track_room_effect",dagger)
+		return
 	for i in range(n):
 		var shot: Node2D = preload("res://scripts/special_projectile_v261.gd").new()
 		shot.set("special_id",id)
