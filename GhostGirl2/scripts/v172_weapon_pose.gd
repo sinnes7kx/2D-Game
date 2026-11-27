@@ -223,7 +223,7 @@ func _is_equipped(animation_name: String) -> bool:
 		return true
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
 	if not diagonal.diagonal_name(animation_name).is_empty():
-		if equipped.weapon_style() == "blade" and animation_name.begins_with("sword_") and diagonal.is_carried_clip(animation_name):
+		if equipped.weapon_style() == "blade" and ((animation_name.begins_with("sword_") and diagonal.is_carried_clip(animation_name)) or (animation_name.begins_with("attack_sword_") and diagonal.is_modular_combat_v294(animation_name))):
 			return true
 		if equipped.weapon_style() == "dagger" and animation_name.begins_with("dagger_") and diagonal.is_carried_clip(animation_name):
 			return true
@@ -283,7 +283,7 @@ func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedV
 				return CROSSBOW_V236.aimed_span(body,aimed,player.get("crossbow_heading")) if animation_name.contains("_fire_") else aimed
 			if animation_name.contains("forge_dagger_"):
 				return FORGE_V238.span(animation_name,diagonal.cardinal_for_clip(animation_name),frame_index)
-			if animation_name.contains("sword_modular_") or animation_name.contains("twinblade") or animation_name.contains("_spear_") or animation_name.contains("_dagger_"):
+			if animation_name.contains("sword_modular_") or animation_name.begins_with("attack_sword_") or animation_name.contains("twinblade") or animation_name.contains("_spear_") or animation_name.contains("_dagger_"):
 				var length: float = 76.0 if animation_name.contains("twinblade") else (74.0 if animation_name.contains("_spear_") else (DAGGER_THRUST.SINGLE_LENGTH if animation_name.contains("_dagger_") else 60.0))
 				return diagonal.melee_span(animation_name,frame_index,length)
 		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
@@ -452,7 +452,7 @@ func _draw() -> void:
 			if off.size() == 2:
 				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
 		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
-	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)):
+	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)) or (animation_name.begins_with("attack_sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_modular_combat_v294(animation_name)):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
 			var root: Vector2 = grip + tangent * 10.0
