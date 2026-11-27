@@ -326,7 +326,7 @@ func _update_painted_preview() -> void:
 	var size: Vector2 = Vector2(painted_preview.texture.get_size())
 	painted_preview.scale = Vector2.ONE * (90.0 / maxf(1.0, maxf(size.x, size.y)))
 	var mat: ShaderMaterial = ShaderMaterial.new()
-	PAINTED_SURFACE.configure(mat, look, size, false, look.get("surface_colors", []))
+	PAINTED_SURFACE.configure(mat, look, size, false, look.get("surface_colors", []), item.get_slot() == "wand" or item.weapon_style() == "bow")
 	painted_preview.material = mat
 	painted_preview.self_modulate.a = item.weapon_opacity()
 	painted_preview.show()

@@ -129,6 +129,12 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Shared physical haft renderer for scythes, halberds, modular spear/trident poses and matching Inspect models: wood grain, rounded cross-section, localized leather grip, reinforced sockets and rivets. Scythe crescent and halberd axe receive narrow interpolated cutting bevels, darker spines, more grounded steel fittings; trident forks gain forged construction. Existing geometry endpoints, pose guides, cosmetic rolls, glow paths, combat and save data unchanged. No new baked art or icons. Correct stale heavy smoke expectation from 54 to already implemented 70-pixel shaft span; existing geometry/identity regression suite remains registered. Engine and visual review pending.
 - Consolidated main-target PR contains all still-open #104 changes (v2.53 and v2.54) plus v2.55. Review and merge consolidated PR instead of independently merging overlapping work.
 
+### v2.56 ranged weapon construction and painted finish (source implementation; runtime review pending)
+
+- Refine procedural forged bows with tapered layered limbs, muted grain, horn tips, wraps and grounded cord; crossbows with wood-stock grain, recessed bolt rails, reinforced mounts, rivets, asymmetric bevel lighting and cord. Preserve authored hand/muzzle/limb/string coordinates, weapon scales, firing, damage, independent pigments and FX. Shared renderers already serve Inspect and equipped models.
+- Opt-in shader finish for original painted wand atlases and bow-only masks (and their painted Inspect fallback): restrained source-value contrast and faint stationary grain, no new texture samples, alpha or palette changes. Existing painted silhouettes retained; full repainted wand/bow art and matching inventory icons remain pending. Extend painted preview regression. Runtime and visual verification pending.
+- Rebased on main after #105 merged during development; confirmed overlapping polearm blobs exactly match the merged source. This PR now contains the ranged pass only.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

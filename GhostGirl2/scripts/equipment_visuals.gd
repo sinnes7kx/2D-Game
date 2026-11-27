@@ -265,7 +265,7 @@ func _process(delta: float) -> void:
 			wand_surface_key = surface_key
 			if wand_surface == null:
 				wand_surface = ShaderMaterial.new()
-			WEAPON_SURFACE.configure(wand_surface, wand_item.collector_appearance(), WAND_FRAME_SIZE, false)
+			WEAPON_SURFACE.configure(wand_surface, wand_item.collector_appearance(), WAND_FRAME_SIZE, false, [], true)
 			wand_visual.material = wand_surface
 		wand_visual.region_filter_clip_enabled = true
 		wand_visual.region_enabled = true

@@ -16,7 +16,7 @@ static func ramp(colors: Array) -> GradientTexture1D:
 	tex.width = 256
 	return tex
 
-static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, overlay: bool, colors: Array = []) -> void:
+static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, overlay: bool, colors: Array = [], refined: bool = false) -> void:
 	mat.shader = SHADER
 	mat.set_shader_parameter("pigment_ramp", ramp(colors if not colors.is_empty() else look.get("surface_colors", [])))
 	mat.set_shader_parameter("signature_kind", FX.signature_kind(look))
@@ -27,6 +27,7 @@ static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, over
 	mat.set_shader_parameter("surface_speed", float(look.get("surface_speed", 0.5)))
 	mat.set_shader_parameter("cell_size", cell)
 	mat.set_shader_parameter("overlay_only", overlay)
+	mat.set_shader_parameter("refined_finish", refined or overlay)
 	mat.set_shader_parameter("strength", 0.94 if overlay else 0.40)
 	mat.set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
 

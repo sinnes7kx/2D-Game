@@ -11,6 +11,8 @@ uniform float strength = 0.35;
 uniform float fx_intensity = 1.0;
 uniform vec2 cell_size = vec2(176.0);
 uniform bool overlay_only = false;
+// Opt-in for painted bow limbs and wand art; preserve alpha/pose silhouette.
+uniform bool refined_finish = false;
 varying vec4 vertex_tint;
 void vertex() {
     vertex_tint = COLOR;
@@ -57,6 +59,16 @@ void fragment() {
         // Bow-only mask: paint the whole authored bow silhouette, not a
         // translucent 20% tint. Underlying body is never recolored.
         alpha *= clamp(strength, 0.0, 0.98);
+    }
+    if (refined_finish) {
+        // Lift the source artwork’s sculpted value contrast; no extra texture
+        // taps, hue wheel, or changes to the saved pigment ramp.
+        float relief = smoothstep(0.12, 0.82, lum);
+        float light_factor = mix(0.84, 1.11, relief);
+        result = clamp(result * light_factor, vec3(0.0), vec3(1.0));
+        // Fine, stationary grain, subtle enough for the native sprite scale.
+        float grain = sin(u * 83.0 + v * 13.0) * sin(v * 37.0 + u * 9.0);
+        result *= 1.0 + grain * 0.018 * (1.0 - relief);
     }
     COLOR = vec4(result * vertex_tint.rgb, alpha);
 }
