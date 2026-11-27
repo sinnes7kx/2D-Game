@@ -171,6 +171,16 @@ var twinblade_wear_v272: bool = false
 const TWINBLADE_HIT_POWER_V272: float = 0.65
 const TWINBLADE_FIRST_GATE_V272: float = 0.66
 const TWINBLADE_SECOND_GATE_V272: float = 0.30
+const RELIC_MECHANICS_V288 = preload("res://scripts/relic_mechanics_v288.gd")
+const RELIC_GROUND_V288 = preload("res://scripts/relic_ground_v288.gd")
+var relic_channel_v288: String = ""
+var relic_channel_owner_v288: GhostItemInstance
+var relic_channel_age_v288: float = 0.0
+var relic_spin_angle_v288: float = 0.0
+var relic_pulse_v288: float = 0.0
+var relic_channel_worn_v288: bool = false
+var relic_spin_hits_v288: Dictionary = {}
+var relic_cooldowns_v288: Dictionary = {}
 var active_special_v261: String = ""
 var special_weapon_v261: GhostItemInstance = null
 const RELIC_ARSENAL_V277 = preload("res://scripts/relic_arsenal_v277.gd")
@@ -321,6 +331,7 @@ func _physics_process(delta: float) -> void:
 	if world == null:
 		return
 	if world.ui.is_menu_open() or world.ui.has_cursor_item():
+		_end_relic_channel_v288()
 		if throw_charge_active_v276:
 			clear_throw_charge_v276()
 			attack_time_left=0.0
@@ -365,7 +376,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("target_lock") and healing_time_left <= 0.0:
 		_toggle_lock_target()
-	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0:
+	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty():
 		_begin_heal()
 	if healing_time_left > 0.0:
 		healing_time_left = maxf(0.0, healing_time_left - delta)
@@ -379,6 +390,9 @@ func _physics_process(delta: float) -> void:
 	rally_time_left = maxf(0.0, rally_time_left - delta)
 	if rally_time_left <= 0.0:
 		rally_pool = 0.0
+	if not relic_channel_v288.is_empty():
+		_advance_relic_channel_v288(delta)
+		return
 	if attack_time_left <= 0.0 and crossbow_stage == 0 and bow_time_left <= 0.0 and not bow_draw_active and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and stamina_recovery_left <= 0.0:
 		stamina = minf(MAX_STAMINA, stamina + 39.0 * (1.0 + _stat("stamina_recovery_pct") / 100.0) * delta)
 	world.ui.set_stamina(stamina, MAX_STAMINA)
@@ -513,40 +527,9 @@ func _physics_process(delta: float) -> void:
 			# A buffered input that failed its stamina check must never aim a
 			# future unrelated click in the old direction.
 			buffered_attack_valid = false
-		# Unlock Moonfall in Moonwake Crypt, equip a wand, then press Z.
-		if Input.is_action_just_pressed("moonfall_blizzard"):
-			if not world.inventory.has_collected("v125_moonfall_unlocked"):
-				world.ui.show_pickup("LEARN MOONFALL AT THE FROST RELIQUARY")
-			elif world.inventory.get_equipped("wand") == null:
-				world.ui.show_pickup("EQUIP A WAND TO CAST MOONFALL")
-			elif moonfall_cooldown > 0.0:
-				world.ui.show_pickup("MOONFALL IS RECHARGING")
-			elif carrying == null and stamina >= _action_cost(37.0, false):
-				_begin_spell_cast(false, true)
-				moonfall_cooldown = 6.2
-			else:
-				world.ui.show_pickup("NOT ENOUGH STAMINA FOR MOONFALL")
-			return
-		# v1.27 discovered area spells. V = Astral Rain, T = Grasping Roses.
-		if Input.is_action_just_pressed("astral_rain") or Input.is_action_just_pressed("grasping_roses"):
-			var kind: String = "astral" if Input.is_action_just_pressed("astral_rain") else "roses"
-			var unlock: String = "v127_astral_rain_unlocked" if kind == "astral" else "v127_grasping_roses_unlocked"
-			var cost: float = 40.0 if kind == "astral" else 32.0
-			var waiting: float = astral_cooldown if kind == "astral" else roses_cooldown
-			if not world.inventory.has_collected(unlock):
-				world.ui.show_pickup("STUDY THE MATCHING RELIQUARY IN MOONWAKE CRYPT")
-			elif world.inventory.get_equipped("wand") == null:
-				world.ui.show_pickup("EQUIP A WAND TO CAST")
-			elif waiting > 0.0:
-				world.ui.show_pickup("SPELL IS RECHARGING")
-			elif carrying == null and stamina >= _action_cost(cost, false):
-				_begin_spell_cast_v127(false, false, kind)
-				if kind == "astral":
-					astral_cooldown = 7.8
-				else:
-					roses_cooldown = 7.1
-			else:
-				world.ui.show_pickup("NOT ENOUGH STAMINA")
+		# Former learned area spells are intrinsic equipment abilities.
+		if Input.is_action_just_pressed("moonfall_blizzard") or Input.is_action_just_pressed("astral_rain") or Input.is_action_just_pressed("grasping_roses"):
+			world.ui.show_pickup("AREA MAGIC BELONGS TO UNIQUE RELICS · SHIFT + MOUSE2")
 			return
 		if Input.is_action_just_pressed("jump") and stamina >= _action_cost(JUMP_COST, false):
 			_begin_jump()
@@ -885,6 +868,9 @@ func _melee_cost(heavy: bool) -> float:
 func _attack_action_cost(heavy: bool) -> float:
 	if thrown_weapon_busy_v273():
 		return INF
+	if heavy and world!=null and (_special_modifier_v272() or (buffered_attack_valid and buffered_special_v261)):
+		if RELIC_MECHANICS_V288.is_channel(UNIQUE_SPECIALS_V261.kind(world.inventory.get_equipped("sword"))):
+			return 5.0
 	if _weapon_style() == "crossbow":
 		return _action_cost(26.0 if heavy else 18.0, false)
 	if _weapon_style() == "bow":
@@ -1003,6 +989,9 @@ func _begin_spell_cast(heavy: bool = false, moonfall: bool = false) -> void:
 	_begin_spell_cast_v127(heavy, moonfall, "")
 
 func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> void:
+	# The old area-cast entry points cannot bypass unique item ownership.
+	if moonfall or not new_kind.is_empty():
+		return
 	if thrown_weapon_busy_v273() or carrying != null:
 		return
 	var spell_cost: float = (40.0 if new_kind == "astral" else 32.0) if not new_kind.is_empty() else (37.0 if moonfall else (HEAVY_ATTACK_COST if heavy else LIGHT_ATTACK_COST))
@@ -1058,6 +1047,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	_end_relic_channel_v288()
 	thrown_lock_v273.clear()
 	clear_throw_charge_v276()
 	ranged_relic_v277=""
@@ -1114,6 +1104,7 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	# I-frame contacts must not cancel a bow charge or punish valid dodges.
 	if invulnerable_time > 0.0:
 		return
+	_end_relic_channel_v288()
 	clear_throw_charge_v276()
 	ranged_relic_v277=""
 	ranged_relic_item_v277=null
@@ -1396,6 +1387,18 @@ func _emit_air_wake(kind: String, heading: Vector2) -> void:
 func _begin_weapon_attack(heavy: bool) -> void:
 	if carrying != null:
 		return
+	var special_requested_v288: bool = buffered_special_v261 if buffered_attack_valid else _special_modifier_v272()
+	if heavy and special_requested_v288:
+		var owner_v288: GhostItemInstance = world.inventory.get_equipped("sword")
+		var id_v288: String = UNIQUE_SPECIALS_V261.kind(owner_v288)
+		if RELIC_MECHANICS_V288.is_channel(id_v288):
+			buffered_attack_valid=false
+			_begin_relic_channel_v288(owner_v288,id_v288)
+			return
+		if not relic_ready_v288(id_v288):
+			buffered_attack_valid=false
+			world.ui.show_pickup("UNIQUE SKILL IS RECHARGING")
+			return
 	if stamina < _attack_action_cost(heavy):
 		return
 	if _weapon_style() in ["bow", "crossbow"] or world.inventory.get_equipped("wand") != null:
@@ -1409,6 +1412,105 @@ func _begin_weapon_attack(heavy: bool) -> void:
 			_begin_spell_cast(heavy)
 	else:
 		_begin_attack(heavy)
+
+
+func relic_ready_v288(id: String) -> bool:
+	return Time.get_ticks_msec()>=int(relic_cooldowns_v288.get(id,0))
+
+func relic_commit_v288(id: String,seconds: float) -> void:
+	relic_cooldowns_v288[id]=Time.get_ticks_msec()+roundi(seconds*1000.0)
+
+func _begin_relic_channel_v288(item: GhostItemInstance,id: String) -> void:
+	if item==null or item.is_broken() or stamina<5.0 or not Input.is_action_pressed("attack_heavy") or not relic_channel_v288.is_empty():
+		return
+	if thrown_weapon_busy_v273() or jump_time_left>0.0 or dodge_time_left>0.0 or attack_time_left>0.0:
+		return
+	var profile: Dictionary = RELIC_MECHANICS_V288.CHANNELS[id]
+	relic_channel_owner_v288=item
+	relic_channel_v288=str(profile["mode"])
+	relic_channel_age_v288=0.0
+	relic_spin_angle_v288=0.0
+	relic_pulse_v288=0.16
+	relic_channel_worn_v288=false
+	relic_spin_hits_v288.clear()
+	stamina-=5.0
+	stamina_recovery_left=STAMINA_RECOVERY_WAIT
+	queued_action=""
+	buffered_attack_valid=false
+	_reset_combo_v239()
+	var fx: Node2D = preload("res://scripts/relic_cyclone_fx_v288.gd").new()
+	fx.set("actor",self)
+	fx.set("mode",relic_channel_v288)
+	fx.set("ink",item.glow_gradient_colors()[0])
+	add_child(fx)
+	world.ui.set_stamina(stamina,MAX_STAMINA)
+	COMBAT_JUICE.play(get_tree().current_scene,global_position,"charged_swing",-15.0)
+
+func _end_relic_channel_v288() -> void:
+	if relic_channel_v288.is_empty():
+		return
+	relic_channel_v288=""
+	relic_channel_owner_v288=null
+	relic_spin_hits_v288.clear()
+	stamina_recovery_left=maxf(stamina_recovery_left,STAMINA_RECOVERY_WAIT)
+	velocity=Vector2.ZERO
+
+func _advance_relic_channel_v288(delta: float) -> void:
+	var item: GhostItemInstance = relic_channel_owner_v288
+	var id: String = UNIQUE_SPECIALS_V261.kind(item)
+	if item==null or world.inventory.get_equipped("sword")!=item or not RELIC_MECHANICS_V288.is_channel(id) or not Input.is_action_pressed("attack_heavy") or stamina<=0.0:
+		_end_relic_channel_v288()
+		move_and_slide()
+		return
+	if Input.is_action_just_pressed("dodge"):
+		_end_relic_channel_v288()
+		if stamina>=_action_cost(DODGE_COST,true):
+			_begin_dodge()
+		return
+	var profile: Dictionary = RELIC_MECHANICS_V288.CHANNELS[id]
+	var drain: float = maxf(float(profile["drain"])*0.55,_action_cost(float(profile["drain"]),false))
+	stamina=maxf(0.0,stamina-drain*delta)
+	stamina_recovery_left=STAMINA_RECOVERY_WAIT
+	world.ui.set_stamina(stamina,MAX_STAMINA)
+	if stamina<=0.0:
+		_end_relic_channel_v288()
+		return
+	relic_channel_age_v288+=delta
+	var ramp: float = clampf(relic_channel_age_v288/0.85,0.0,1.0)
+	var previous_angle: float = relic_spin_angle_v288
+	var travel: float = delta*(15.0 if relic_channel_v288=="spin" else lerpf(19.0,35.0,ramp))
+	relic_spin_angle_v288=wrapf(previous_angle+travel,0.0,TAU)
+	var direction: Vector2 = _movement_input()
+	var moving: bool = direction.length_squared()>0.01
+	var speed: float = WALK_SPEED*float(profile["move"])*(1.0+_stat("move_speed_pct")/100.0)
+	for water in get_tree().get_nodes_in_group("water_body"):
+		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
+			speed*=float(water.call("movement_multiplier_at",global_position))
+	velocity=velocity.move_toward(direction.normalized()*speed if moving else Vector2.ZERO,MOVE_ACCELERATION*delta)
+	if moving:
+		set_facing(direction)
+	_play_if_changed(_weapon_motion_prefix(moving)+facing_name)
+	body_art.speed_scale=1.0
+	move_and_slide()
+	var radius: float = float(profile["radius"])*(lerpf(0.65,1.0,ramp) if relic_channel_v288=="cyclone" else 1.0)
+	var power: float = (15.0+item.weapon_damage())*float(profile["power"])*(1.0+_stat("melee_power_pct")/100.0)
+	var hits: int = 0
+	relic_pulse_v288-=delta
+	if relic_channel_v288=="spin":
+		if relic_channel_age_v288>=0.16:
+			hits=RELIC_GROUND_V288.hit_spin(self,previous_angle,travel,radius,power,relic_channel_age_v288,relic_spin_hits_v288,float(profile["pulse"]))
+	if relic_pulse_v288<=0.0:
+		relic_pulse_v288+=float(profile["pulse"])
+		if relic_channel_v288=="cyclone":
+			hits=RELIC_GROUND_V288.hit_disk(self,global_position,radius,power,0.40,{},false)
+		COMBAT_JUICE.play(get_tree().current_scene,global_position,"swing",-24.0)
+	if hits>0:
+		camera_kick=maxf(camera_kick,1.6)
+		if not relic_channel_worn_v288 and item.ethereal:
+			relic_channel_worn_v288=true
+			world.inventory.wear_ethereal(item)
+			if item.is_broken():
+				_end_relic_channel_v288()
 
 func _capture_ranged_relic_v277(item: GhostItemInstance, heavy: bool) -> void:
 	ranged_relic_v277=""

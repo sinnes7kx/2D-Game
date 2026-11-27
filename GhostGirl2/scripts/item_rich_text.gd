@@ -119,6 +119,13 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			out.append("[font_size=14][color=#e4cfde]%s[/color][/font_size]" % escape(parts[1]))
 		out.append("[font_size=13][color=#a9d8d3][b]SHIFT + MOUSE2[/b][/color][/font_size]")
 		var ability_kind: String = preload("res://scripts/unique_specials_v261.gd").kind(item)
+		var mechanics = preload("res://scripts/relic_mechanics_v288.gd")
+		if mechanics.is_channel(ability_kind):
+			var channel: Dictionary = mechanics.CHANNELS[ability_kind]
+			out.append(_label("Hold Mouse2 after activation · move with WASD"))
+			out.append(_label("5 stamina to start · %.0f/s base drain · release or dodge to stop" % float(channel["drain"])))
+		elif mechanics.cooldown(ability_kind)>0.0:
+			out.append(_label("%.1fs recharge" % mechanics.cooldown(ability_kind)))
 		if preload("res://scripts/relic_arsenal_v277.gd").has_skill(ability_kind):
 			if item.weapon_style()=="bow":
 				out.append(_label("Hold Shift + Mouse2 to full draw, then release"))
