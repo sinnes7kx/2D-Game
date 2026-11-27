@@ -26,6 +26,24 @@ func _initialize() -> void:
 	assert(item.weapon_mod == genuine)
 	var innate = preload("res://scripts/unique_innate_v274.gd")
 	assert(innate.POWERS.size()==72)
+	var resources: Array[String] = []
+	_collect_equipment_paths_v274("res://items",resources)
+	var covered: int = 0
+	var unique_names: Dictionary = {}
+	for path in resources:
+		var template: GhostItemData = load(path) as GhostItemData
+		if template==null or template.item_class!="equipment" or template.equip_slot=="none":
+			continue
+		var candidate: GhostItemInstance = GhostItemGenerator.create(template,27401,"unique")
+		var active_label: String = preload("res://scripts/unique_specials_v261.gd").label(candidate)
+		var passive_label: String = innate.label(candidate)
+		assert(not active_label.is_empty() or not passive_label.is_empty(),"Missing unique power: "+path)
+		assert(active_label.is_empty() or passive_label.is_empty(),"Double unique power: "+path)
+		var label: String = passive_label if active_label.is_empty() else active_label
+		assert(not unique_names.has(label),"Duplicate unique power: "+label)
+		unique_names[label]=true
+		covered+=1
+	assert(covered==80)
 	var fixed_bonus: Dictionary = innate.bonuses(item)
 	assert(fixed_bonus.size()==2)
 	assert(float(item.all_stats()["melee_power_pct"])>=float(fixed_bonus["melee_power_pct"]))
@@ -167,3 +185,14 @@ func _initialize() -> void:
 	spell.free()
 	print("v251 weapon mods: deterministic rolls, save roundtrip, legacy defaults and return phase")
 	quit(0)
+
+func _collect_equipment_paths_v274(path: String,out: Array[String]) -> void:
+	var dir: DirAccess = DirAccess.open(path)
+	if dir==null:
+		return
+	for file in dir.get_files():
+		if file.ends_with(".tres"):
+			out.append(path.path_join(file))
+	for folder in dir.get_directories():
+		if not folder.begins_with("."):
+			_collect_equipment_paths_v274(path.path_join(folder),out)
