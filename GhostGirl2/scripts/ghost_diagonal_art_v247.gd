@@ -7,7 +7,7 @@ const CELL: Vector2i = Vector2i(256, 220)
 const ACTION_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v248.png"
 const REVISED_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_v249.png"
 const REVISED_ACTIONS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v249.png"
-const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_"]
+const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_"]
 # Approximate visible wrist guides, visually sampled from the normalized atlas.
 # Approximate initial per-frame wrist guides in full atlas-cell pixels.
 const WRISTS: Dictionary = {
@@ -152,3 +152,17 @@ static func cardinal_for_clip(clip: String, fallback: String = "front") -> Strin
 		if clip.ends_with("_" + face):
 			return face
 	return fallback
+
+# All single-grip rigs consume this same measured near-wrist coordinate.
+# Keep the original cardinal span length and do not invent a hidden second hand.
+static func carried_span(clip: String, frame: int, length: float, upright: bool = false) -> PackedVector2Array:
+	var anchor: Vector2 = wrist(clip,frame)
+	if anchor == Vector2.INF:
+		return PackedVector2Array()
+	var direction: String = diagonal_name(clip)
+	var sign_x: float = 1.0 if direction.ends_with("right") else -1.0
+	var rear: bool = direction.begins_with("back")
+	var axis: Vector2 = Vector2(sign_x * (0.50 if upright else (-0.56 if not rear else 0.56)), -0.86 if upright else 0.83).normalized()
+	if clip.begins_with("forge_bow_"):
+		axis = Vector2(sign_x * 0.70, -0.45 if rear else 0.45).normalized()
+	return PackedVector2Array([anchor,anchor+axis*length])

@@ -1541,6 +1541,7 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 		shot.global_position = shot_origin
 	# Exactly one authentic released arrow per scored range shot; cosmetic
 	# formation wisps never report extra shots to the optional fletcher trial.
+	COMBAT_JUICE.play(root, shot_origin, "bow_release", -17.0)
 	get_tree().call_group("v202_archery_range", "on_player_arrow_launched", global_position)
 
 func _reset_combo_v239() -> void:
@@ -1619,6 +1620,12 @@ func _begin_attack(heavy: bool) -> void:
 	dagger_charge_time = 0.0
 	# Actual moving-air sound, without the old bright WAV transient on swords.
 	var swing_cue: String = "scythe_heavy" if heavy and active_attack_style == "scythe" else ("heavy_swing" if heavy else "swing")
+	if active_attack_style == "maul":
+		swing_cue = "blunt_swing"
+	elif active_attack_style in ["dagger", "dual_dagger"] and not heavy:
+		swing_cue = "dagger_swing"
+	elif active_attack_style in ["spear", "halberd"] and not heavy:
+		swing_cue = "polearm_swing"
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, swing_cue, -15.0 if swing_cue == "scythe_heavy" else (-16.5 if heavy else -18.5))
 	attack_hit_done = false
 	heavy_attack = heavy
@@ -1873,7 +1880,8 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		hitstop_left = (0.105 if counter_hit and struck else (0.089 if jump_attack_active else (0.065 if heavy_attack else 0.040)))
 		body_art.pause()
 		_play_action_sfx(RIPOSTE_SFX if counter_hit and struck else HIT_SFX)
-		COMBAT_JUICE.play(get_tree().current_scene, global_position, "parry" if counter_hit and struck else "hit", -14.0 if counter_hit and struck else -18.0)
+		var contact_cue: String = "parry" if counter_hit and struck else ("blunt_hit" if active_attack_style == "maul" else ("blade_hit" if sword != null and struck else "hit"))
+		COMBAT_JUICE.play(get_tree().current_scene, global_position, contact_cue, -14.0 if counter_hit and struck else -16.5)
 		if struck_world and not struck:
 			camera_kick = maxf(camera_kick, 4.5 if jump_attack_active else 3.0)
 			camera_push = attack_direction * (4.0 if jump_attack_active else 2.5)
