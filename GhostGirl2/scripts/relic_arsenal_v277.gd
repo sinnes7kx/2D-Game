@@ -84,7 +84,7 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		var shot: Node2D = SHOT.new()
 		shot.set("profile",p)
 		shot.set("direction",axis.rotated(TAU*float(i)/float(count) if radial else deg_to_rad((float(i)-float(count-1)*0.5)*float(p["spread"]))))
-		shot.set("speed",float(p["speed"]))
+		shot.set("speed",float(p["speed"])*0.88)
 		shot.set("range_left",float(p["range"]))
 		shot.set("damage",power/float(count))
 		shot.set("caster",actor)
