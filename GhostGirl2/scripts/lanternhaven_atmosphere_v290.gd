@@ -38,7 +38,7 @@ static func wind_stream() -> AudioStreamWAV:
 		for strike in [3.0,6.8]:
 			var elapsed: float = t-float(strike)
 			if elapsed>=0.0 and elapsed<3.0:
-				var envelope: float = minf(elapsed*45.0,1.0)*exp(-elapsed*2.5)*smoothstep(3.0,2.4,elapsed)
+				var envelope: float = minf(elapsed*45.0,1.0)*exp(-elapsed*2.5)*(1.0-smoothstep(2.4,3.0,elapsed))
 				sample+=envelope*(sin(TAU*196.0*elapsed)*0.030+sin(TAU*311.0*elapsed)*0.012+sin(TAU*489.0*elapsed)*0.005)
 		bytes.encode_s16(i*2,roundi(clampf(sample,-1.0,1.0)*32767.0))
 	cached_wind=AudioStreamWAV.new()
