@@ -13,6 +13,7 @@ var page: int = 0
 var selected_index: int = -1
 var cursor_index: int = -1
 var hover_index: int = -1
+var hover_cell: Vector2i = Vector2i(-1,-1)
 
 func _display_icon(item: Variant) -> Texture2D:
 	if item == null or item.definition == null or item.definition.icon == null:
@@ -53,6 +54,9 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseMotion:
 		var cell: Vector2i = _cell_at(event.position)
+		hover_cell=cell
+		if cursor_index>=0:
+			queue_redraw()
 		var index: int = inventory.get_grid_index(page, cell.x, cell.y)
 		if index != hover_index:
 			hover_index = index
@@ -78,6 +82,8 @@ func _gui_input(event: InputEvent) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_MOUSE_EXIT:
 		hover_index = -1
+		hover_cell=Vector2i(-1,-1)
+		queue_redraw()
 		item_hovered.emit(-1)
 
 func _draw() -> void:
@@ -131,3 +137,12 @@ func _draw() -> void:
 				draw_line(swatch + Vector2(-31, 4), swatch + Vector2(-27, -4), Color("8aaec7"), 1.8)
 		for socket in range(int(item.sockets)):
 			draw_circle(bounds.position + Vector2(bounds.size.x - 9 - socket * 10, 9), 3.5, Color(0.84, 0.65, 0.79) if socket < item.socketed.size() else Color(0.37, 0.32, 0.37))
+
+	if cursor_index>=0 and hover_cell.x>=0 and hover_cell.y>=0 and hover_cell.x<COLS and hover_cell.y<ROWS:
+		var item: GhostItemInstance = inventory.get_item(cursor_index)
+		if item!=null:
+			var plan: Dictionary = inventory.placement_v284(cursor_index,page,hover_cell.x,hover_cell.y)
+			var rect: Rect2 = Rect2(Vector2(hover_cell)*CELL,Vector2(inventory.get_item_size(item))*CELL-Vector2.ONE*2)
+			var tint: Color = Color(0.35,0.68,0.40,0.30) if bool(plan.get("ok",false)) else Color(0.82,0.27,0.29,0.33)
+			draw_rect(rect,tint)
+			draw_rect(rect,tint.lightened(0.25),false,2.0)
