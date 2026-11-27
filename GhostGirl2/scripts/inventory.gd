@@ -594,6 +594,99 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	item.durability = clampi(int(saved.get("durability", item.max_durability)), 0, item.max_durability)
 	return item
 
+# Explicit developer-requested test delivery. The vault is preferred, and
+# the item and its claim flag are committed together through the atomic save.
+const RELIC_DELIVERY_V282: Array[String] = [
+	"silkglass_dirk_v276",
+	"bellthorn_lance_v276",
+	"frostveil_bow_v277",
+	"mourning_star_crossbow_v277",
+	"hollowbell_maul_v277",
+	"ivory_misericorde_v233",
+	"reliquary_knife_v238",
+	"mourning_longsword",
+	"moonveil_grandblade",
+	"vesper_rapier",
+	"lunar_vigil_halberd",
+	"moonlace_dual_daggers_v173",
+	"mourninglace_dual_daggers_v231",
+	"gloamrose_dual_swords_v174",
+	"cathedral_dual_swords_v233",
+	"vesperthorn_dual_swords_v231",
+	"rosemirror_twinblade_v170",
+	"cathedral_thorn_twinblade_v231",
+	"widowglass_twinblade_v231"
+]
+
+func _has_unique_relic_v282(template: GhostItemData) -> bool:
+	for item in contents:
+		if item!=null and item.definition!=null and item.definition.item_id==template.item_id and (item.quality=="unique" or item.definition.unique):
+			return true
+	for item in vault:
+		if item!=null and item.definition!=null and item.definition.item_id==template.item_id and (item.quality=="unique" or item.definition.unique):
+			return true
+	for records in [unresolved_vault,unresolved_backpack]:
+		for record in records:
+			if str(record.get("resource",""))==template.resource_path and str(record.get("quality",""))=="unique":
+				return true
+	return false
+
+func deliver_relic_samples_v282(persist: bool = true) -> Dictionary:
+	var result: Dictionary = {"vault":0,"backpack":0,"pending":0,"existing":0,"saved":true}
+	if not save_block_reason.is_empty():
+		result["saved"]=false
+		return result
+	var old_vault: int = vault.size()
+	var old_contents: int = contents.size()
+	var old_positions: int = grid_positions.size()
+	var added_flags: Array[String] = []
+	for i in range(RELIC_DELIVERY_V282.size()):
+		var id: String = RELIC_DELIVERY_V282[i]
+		var key: String = "v282_relic_delivery_"+id
+		if has_collected(key):
+			continue
+		var template: GhostItemData = load("res://items/"+id+".tres") as GhostItemData
+		if template==null:
+			result["pending"]+=1
+			continue
+		if _has_unique_relic_v282(template):
+			collected_pickups[key]=true
+			added_flags.append(key)
+			result["existing"]+=1
+			continue
+		var item: GhostItemInstance = generate_find(template,282100+i,"unique")
+		if item==null:
+			result["pending"]+=1
+			continue
+		if vault.size()+unresolved_vault.size()<VAULT_CAPACITY:
+			vault.append(item)
+			result["vault"]+=1
+		else:
+			var position: Vector2i = _first_open(item)
+			if position.x<0:
+				result["pending"]+=1
+				continue
+			contents.append(item)
+			grid_positions.append(position)
+			result["backpack"]+=1
+		collected_pickups[key]=true
+		added_flags.append(key)
+	if added_flags.is_empty():
+		return result
+	if persist and not save_game():
+		vault.resize(old_vault)
+		contents.resize(old_contents)
+		grid_positions.resize(old_positions)
+		for key in added_flags:
+			collected_pickups.erase(key)
+		result["pending"]+=int(result["vault"])+int(result["backpack"])
+		result["vault"]=0
+		result["backpack"]=0
+		result["saved"]=false
+		return result
+	contents_changed.emit()
+	return result
+
 func vault_store(index: int, persist: bool = true) -> bool:
 	var item: GhostItemInstance = get_item(index)
 	# Any recognized equipment item is a collectible, not just weapons.
