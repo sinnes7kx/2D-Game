@@ -321,3 +321,20 @@ collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/V148RoseRun/Lanterns/Lantern3/HookBody"]
 shape = SubResource("v148_lantern_hit")
+
+[node name="AtmosphereV292" type="Node2D" parent="."]
+
+[node name="MoonPool01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(2100, 225)
+
+[node name="MoonPool02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(360, 265)
+
+[node name="Bloom01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1910, 745)
+
+[node name="Bloom02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(360, 700)
+
+[node name="Water01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1415, 460)
