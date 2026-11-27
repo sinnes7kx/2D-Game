@@ -191,7 +191,8 @@ func _process(_delta: float) -> void:
 		last_animation = animation_now
 		last_frame = body.frame
 		var rear_bow: bool = (animation_now.begins_with("attack_forge_bow_") or animation_now.begins_with("attack_crossbow_") or animation_now.begins_with("attack_forge_dagger_") or animation_now.begins_with("attack_rapier_") or animation_now.begins_with("attack_axe_") or animation_now.begins_with("attack_seraph_scythe_") or animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_") or animation_now.begins_with("seraph_scythe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
-		z_index = -1 if animation_now.ends_with("back") or rear_bow else 5 # Keep rear bow behind the body.
+		var rear_diagonal: bool = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
+		z_index = -1 if animation_now.ends_with("back") or rear_bow or rear_diagonal else 5 # Keep rear bow behind the body.
 		queue_redraw()
 
 func _is_equipped(animation_name: String) -> bool:
