@@ -604,7 +604,7 @@ func _process(delta: float) -> void:
 		cam.offset = (Vector2(sin(visual_time * 74.0), cos(visual_time * 59.0)) * camera_kick * 0.72 + camera_push) * COMBAT_JUICE.shake_level
 	# CanvasItem retains draw commands; don't rebuild an empty canvas at
 	# render FPS when no target/charge/dodge/jump indicator is present.
-	var needs_draw: bool = bow_draw_active or is_instance_valid(lock_target) or counter_window > 0.0 or dodge_time_left > 0.0 or jump_time_left > 0.0
+	var needs_draw: bool = dance_stage_v262 == 1 or bow_draw_active or is_instance_valid(lock_target) or counter_window > 0.0 or dodge_time_left > 0.0 or jump_time_left > 0.0
 	if needs_draw or had_player_draw:
 		queue_redraw()
 	had_player_draw = needs_draw
@@ -616,6 +616,12 @@ func _process(delta: float) -> void:
 		body_art.position = BASE_ART_POS - hurt_direction * 3.0 * recoil
 		body_art.rotation = 0.065 * hurt_direction.x * recoil
 		body_art.scale = Vector2.ONE * BASE_ART_SCALE
+	elif dance_stage_v262 > 0 and attack_time_left > 0.0:
+		var spin: float = DANCE_V262.spin(dance_stage_v262,dance_elapsed_v262)
+		var envelope: float = sin(clampf(dance_elapsed_v262/attack_duration,0.0,1.0)*PI)
+		body_art.position = BASE_ART_POS + Vector2(0,-5.0*envelope*absf(sin(spin)))
+		body_art.rotation = sin(spin)*0.065*envelope
+		body_art.scale = Vector2.ONE*BASE_ART_SCALE
 	elif attack_time_left > 0.0:
 		var t: float = 1.0 - attack_time_left / maxf(0.01, attack_duration)
 		var motion: float = sin(t * PI)
@@ -2013,6 +2019,12 @@ func _spawn_rose_slash(where: Vector2) -> void:
 	effect.play()
 
 func _draw() -> void:
+	if dance_stage_v262 == 1 and (DANCE_V262.can_chain(dance_elapsed_v262) or dance_follow_v262):
+		var ratio: float = DANCE_V262.chain_remaining(dance_elapsed_v262)
+		var enough: bool = stamina >= _action_cost(DANCE_V262.FOLLOW_COST,false)
+		var ink: Color = Color("e4c59d") if dance_follow_v262 else (Color("c49ab9") if enough else Color("8b7882"))
+		draw_line(Vector2(-16,9),Vector2(16,9),Color(0.31,0.24,0.31,0.65),1.6,true)
+		draw_line(Vector2(-16,9),Vector2(-16+32.0*(1.0 if dance_follow_v262 else ratio),9),ink,1.8,true)
 	if bow_draw_active:
 		# v1.42: quiet thin tension bar beneath her feet. No magic ring in front
 		# of Ghost Girl or the bow, and the final frame holds until release.
@@ -2172,8 +2184,7 @@ func _start_eclipse_dance_v262() -> void:
 	queued_action = ""
 	attack_duration = DANCE_V262.FIRST
 	attack_time_left = attack_duration
-	_play_action_frames("attack_twinblade_heavy_"+facing_name,attack_duration)
-	body_art.set_frame_and_progress(0,0.0)
+	_sync_eclipse_pose_v263()
 
 func _clear_eclipse_dance_v262() -> void:
 	dance_stage_v262 = 0
@@ -2187,6 +2198,24 @@ func _clear_eclipse_dance_v262() -> void:
 func eclipse_spin_v262() -> float:
 	return DANCE_V262.spin(dance_stage_v262,dance_elapsed_v262) if dance_stage_v262 > 0 and attack_time_left > 0.0 else 0.0
 
+func eclipse_axis_v263() -> Vector2:
+	return DANCE_V262.blade_axis(dance_heading_v262,dance_stage_v262,dance_elapsed_v262) if dance_stage_v262 > 0 and attack_time_left > 0.0 else Vector2.ZERO
+
+func _sync_eclipse_pose_v263() -> void:
+	var face: String = DANCE_V262.facing_at(dance_heading_v262,dance_stage_v262,dance_elapsed_v262)
+	var clip: String = "attack_twinblade_heavy_"+face
+	if not body_art.sprite_frames.has_animation(clip):
+		clip = "attack_twinblade_heavy_"+facing_name
+	if not body_art.sprite_frames.has_animation(clip):
+		return
+	if str(body_art.animation) != clip:
+		body_art.play(clip)
+	body_art.pause()
+	var count: int = body_art.sprite_frames.get_frame_count(clip)
+	if count > 0:
+		body_art.set_frame_and_progress(DANCE_V262.frame_at(dance_stage_v262,dance_elapsed_v262,count),0.0)
+
+
 func _advance_eclipse_dance_v262(delta: float) -> void:
 	if dance_stage_v262 == 0 or world.inventory.get_equipped("sword") != special_weapon_v261 or UNIQUE_SPECIALS_V261.kind(special_weapon_v261) != DANCE_V262.ID:
 		_clear_eclipse_dance_v262()
@@ -2194,10 +2223,13 @@ func _advance_eclipse_dance_v262(delta: float) -> void:
 		velocity = Vector2.ZERO
 		return
 	if dance_stage_v262 == 1 and DANCE_V262.can_chain(dance_elapsed_v262) and Input.is_action_just_pressed("attack_heavy") and Input.is_physical_key_pressed(KEY_SHIFT):
-		dance_follow_v262 = true
+		if not dance_follow_v262 and stamina >= _action_cost(DANCE_V262.FOLLOW_COST,false):
+			dance_follow_v262 = true
+			COMBAT_JUICE.play(get_tree().current_scene,global_position,"evade",-23.0)
 	var previous: float = dance_elapsed_v262
 	dance_elapsed_v262 = minf(attack_duration,dance_elapsed_v262+delta)
 	attack_time_left = maxf(0.0,attack_duration-dance_elapsed_v262)
+	_sync_eclipse_pose_v263()
 	# Real collision movement. Only the optional retreat gets a brief evade.
 	velocity = dance_heading_v262*DANCE_V262.motion(dance_stage_v262,dance_elapsed_v262)
 	if dance_stage_v262 == 2 and previous < 0.36 and dance_elapsed_v262 >= 0.36:
@@ -2206,10 +2238,10 @@ func _advance_eclipse_dance_v262(delta: float) -> void:
 	var gates: Array[float] = DANCE_V262.timings(dance_stage_v262)
 	while dance_hit_index_v262 < gates.size() and dance_elapsed_v262 >= gates[dance_hit_index_v262]:
 		_eclipse_dance_hit_v262(DANCE_V262.hit_multiplier(dance_stage_v262,dance_hit_index_v262))
-		dance_hit_index_v262 += 1
 		if dance_stage_v262 == 0:
 			attack_time_left = 0.0
 			return
+		dance_hit_index_v262 += 1
 	if attack_time_left > 0.0:
 		return
 	var extra_cost: float = _action_cost(DANCE_V262.FOLLOW_COST,false)
@@ -2221,8 +2253,7 @@ func _advance_eclipse_dance_v262(delta: float) -> void:
 		dance_hit_index_v262 = 0
 		attack_duration = DANCE_V262.FOLLOW
 		attack_time_left = attack_duration
-		_play_action_frames("attack_twinblade_heavy_"+facing_name,attack_duration)
-		body_art.set_frame_and_progress(0,0.0)
+		_sync_eclipse_pose_v263()
 		return
 	_clear_eclipse_dance_v262()
 	velocity = Vector2.ZERO
@@ -2263,10 +2294,17 @@ func _eclipse_dance_hit_v262(multiplier: float) -> void:
 	if root != null:
 		var arc: Node2D = preload("res://scripts/eclipse_dance_arc_v262.gd").new()
 		arc.set("ink",tint)
-		arc.set("heading",dance_heading_v262.angle()+float(dance_hit_index_v262)*1.6)
+		var axis: Vector2 = eclipse_axis_v263()
+		arc.set("heading",axis.angle() if not axis.is_zero_approx() else dance_heading_v262.angle())
+		arc.set("reverse",dance_stage_v262==2)
 		arc.set("strength",preload("res://scripts/visual_choices_v216.gd").effect_scale(item))
 		root.add_child(arc)
 		arc.global_position = global_position+Vector2(0,-28)
+		var rig: Node = body_art.get_node_or_null("WeaponPoseV172")
+		if rig != null:
+			var span: PackedVector2Array = rig.call("get_weapon_span",str(body_art.animation),body_art.frame)
+			if span.size()==2:
+				arc.global_position = body_art.to_global(span[0])
 		world.track_room_effect(arc)
 	if contact:
 		camera_kick = maxf(camera_kick,2.1)

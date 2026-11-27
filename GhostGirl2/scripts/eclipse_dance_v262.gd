@@ -32,3 +32,25 @@ static func hit_multiplier(stage: int, index: int) -> float:
 	if stage == 1:
 		return 0.27 if index < 3 else 0.36
 	return 0.24 if index == 0 else 0.34
+
+# Presentation turns follow the same physics timeline as the damage gates.
+# Four genuinely authored heavy clips, not a mirrored body or a new atlas.
+const FACES: Array[String] = ["right","front","left","back"]
+
+static func facing_at(heading: Vector2, stage: int, elapsed: float) -> String:
+	return FACES[posmod(roundi((heading.angle()+spin(stage,elapsed))/(PI*0.5)),4)]
+
+static func frame_at(stage: int, elapsed: float, count: int) -> int:
+	if count <= 1:
+		return 0
+	var turns: float = 2.0 if stage == 1 else 1.0
+	var phase: float = clampf(elapsed/duration(stage),0.0,1.0)*turns
+	return clampi(int(floor(fposmod(phase,1.0)*float(count))),0,count-1)
+
+static func blade_axis(heading: Vector2, stage: int, elapsed: float) -> Vector2:
+	# Absolute angle prevents the underlying cardinal guide from adding a
+	# second discontinuous rotation whenever the illustrated body turns.
+	return heading.normalized().rotated(spin(stage,elapsed)-PI*0.25)
+
+static func chain_remaining(elapsed: float) -> float:
+	return clampf((1.10-elapsed)/0.72,0.0,1.0) if can_chain(elapsed) else 0.0
