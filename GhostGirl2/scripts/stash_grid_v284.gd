@@ -16,7 +16,9 @@ var tabs: Label
 func _ready() -> void:
 	custom_minimum_size=Vector2(744,430)
 	mouse_filter=Control.MOUSE_FILTER_STOP
-	mouse_exited.connect(func(): mouse=Vector2(-100,-100); queue_redraw())
+	mouse_exited.connect(func():
+		mouse=Vector2(-100,-100)
+		queue_redraw())
 
 func setup(source: Node,gate: Callable) -> void:
 	inventory=source
@@ -62,7 +64,7 @@ func _valid(zone: Dictionary) -> bool:
 	if stash:
 		if not held_stash and (inventory.equipment.values().has(inventory.contents.find(held)) or held.definition.item_class=="quest" or inventory.vault.size()+inventory.unresolved_vault.size()>=inventory.VAULT_CAPACITY):
 			return false
-		return inventory.stash_fits_v284(held,zone["pos"])
+		return bool(inventory.stash_placement_v284(held,zone["pos"]).get("ok",false)) if held_stash else inventory.stash_fits_v284(held,zone["pos"])
 	if held_stash:
 		return inventory._fits(held,zone["pos"])
 	return bool(inventory.placement_v284(inventory.contents.find(held),zone["page"],zone["cell"].x,zone["cell"].y).get("ok",false))
