@@ -33,12 +33,21 @@ const PROFILES: Dictionary = {
 static func has_skill(id: String) -> bool:
 	return PROFILES.has(id)
 
+static func base_key(item: Variant) -> String:
+	if item==null or item.definition==null:
+		return ""
+	var id: String = str(item.definition.item_id)
+	if has_skill(id):
+		return id
+	var basename: String = item.definition.resource_path.get_file().get_basename()
+	return basename if has_skill(basename) else ""
+
 static func label(id: String) -> String:
 	var p: Dictionary = PROFILES.get(id,{})
 	return "" if p.is_empty() else str(p["name"])+" · "+str(p["description"])
 
 static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vector2, id: String, origin: Vector2) -> bool:
-	if not has_skill(id) or item==null or item.definition==null or str(item.definition.item_id)!=id or item.is_broken():
+	if not has_skill(id) or item==null or item.definition==null or base_key(item)!=id or item.is_broken():
 		return false
 	if item.quality!="unique" and not item.definition.unique:
 		return false
@@ -53,6 +62,8 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		axis=Vector2.DOWN
 	var radial: bool = p["pattern"]=="radial"
 	var wave: bool = radial or p["pattern"]=="wave"
+	if wave:
+		origin=actor.global_position+Vector2(0,-21)+axis*12.0
 	var power: float = item.weapon_damage()*float(p["power"])*(1.0+float(actor.call("_stat","melee_power_pct"))/100.0)
 	if wave:
 		power*=1.0+float(actor.call("_stat","heavy_power_pct"))/100.0
