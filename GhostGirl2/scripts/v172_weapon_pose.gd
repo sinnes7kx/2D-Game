@@ -228,7 +228,7 @@ func _is_equipped(animation_name: String) -> bool:
 			return true
 	if equipped.weapon_style() == "dagger" and animation_name.contains("_pierce_"):
 		return true
-	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
+	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident in ["moonwarden_spear_v169","bellthorn_lance_v276"] and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	if _is_equipped(animation_name):
