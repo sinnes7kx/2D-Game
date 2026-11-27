@@ -9,7 +9,7 @@ func _draw() -> void:
 	if special_id == "last_toll":
 		draw_arc(Vector2.ZERO,24.0,axis.angle()-1.15,axis.angle()+1.15,20,Color("c4b29a"),2.0,true)
 		if visual_glow_scale > 0.0:
-			draw_arc(Vector2.ZERO,28.0,axis.angle()-1.15,axis.angle()+1.15,20,Color(tint.r,tint.g,tint.b,0.28),6.0,true)
+			draw_arc(Vector2.ZERO,28.0,axis.angle()-1.15,axis.angle()+1.15,20,Color(tint.r,tint.g,tint.b,decoration_alpha(0.28)),6.0,true)
 		return
 	draw_line(-axis*48.0,axis*15.0,Color("362c2c"),4.0,true)
 	draw_line(-axis*48.0-n*0.7,axis*15.0-n*0.7,Color("a58b73"),0.9,true)
@@ -18,5 +18,5 @@ func _draw() -> void:
 	draw_colored_polygon(PackedVector2Array([root-n*4.5,tip,root+n*4.5,root-axis*5.0]),Color("777b88"))
 	draw_colored_polygon(PackedVector2Array([root,tip,root-n*4.5]),Color("d4d7df"))
 	if visual_glow_scale > 0.0:
-		draw_line(root,tip,Color(tint.r,tint.g,tint.b,0.72),1.6,true)
-		draw_line(-axis*54.0,-axis*24.0,Color(tint.r,tint.g,tint.b,0.20),3.0,true)
+		draw_line(root,tip,Color(tint.r,tint.g,tint.b,decoration_alpha(0.72)),1.6,true)
+		draw_line(-axis*54.0,-axis*24.0,Color(tint.r,tint.g,tint.b,decoration_alpha(0.20)),3.0,true)

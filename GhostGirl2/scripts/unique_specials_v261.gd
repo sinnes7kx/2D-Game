@@ -22,7 +22,7 @@ static func label(item: Variant) -> String:
 static func count(id: String) -> int:
 	return 3 if id == "drowned_fork" else 1
 
-static func launch(actor: Node2D, item: GhostItemInstance, heading: Vector2, id: String) -> void:
+static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vector2, id: String) -> void:
 	if kind(item) != id or heading.is_zero_approx():
 		return
 	var world: Node = actor.get("world")

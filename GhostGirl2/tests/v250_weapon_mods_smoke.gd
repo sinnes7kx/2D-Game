@@ -38,6 +38,21 @@ func _initialize() -> void:
 	saved.erase("weapon_mod_v250")
 	var legacy: GhostItemInstance = inventory.call("_deserialize_item", saved)
 	assert(legacy != null and legacy.weapon_mod.is_empty())
+	# Old scenes could still export 72. Restore and withdraw by grid fit.
+	inventory.set("capacity",72)
+	var pet = preload("res://items/moonwisp_companion_v239.tres")
+	var records: Array = []
+	for i in range(90):
+		var specimen: GhostItemInstance = GhostItemGenerator.create(pet,261000+i,"normal")
+		records.append(inventory.call("_serialize_item",specimen,Vector2i(i%10,i/10)))
+	var recovery: Dictionary = {"items":records,"grid_rows":6,"vault":[records[0].duplicate(true)],"collected":{"v261_lanternhaven_moonwisp_01":true},"equipment":{"companion":89}}
+	assert(inventory.call("_restore_save_data",recovery))
+	assert(inventory.get("contents").size()==90)
+	assert(inventory.get("unresolved_backpack").is_empty())
+	assert(inventory.call("get_equipped","companion").item_seed==261089)
+	assert(inventory.call("has_collected","v261_lanternhaven_moonwisp_01"))
+	assert(inventory.call("vault_withdraw",0,false))
+	assert(inventory.get("contents").size()==91)
 	inventory.free()
 	var spell: Node2D = preload("res://scripts/moon_spell.gd").new()
 	spell.set("spell_form", 7)

@@ -1063,7 +1063,7 @@ func _give_luminous_lance_trial() -> void:
 	var wand_template: GhostItemData = load("res://items/briar_wand.tres") as GhostItemData
 	var trial: GhostItemInstance = inventory.add_loot(wand_template, 117171, "rare") if wand_template != null else null
 	if trial == null:
-		ui.show_pickup("BACKPACK FULL · MAKE ROOM FOR THE LANCE WAND")
+		ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING SPACE FOR THE LANCE WAND")
 		return
 	inventory.collected_pickups["v117_luminous_lance_trial"] = true
 	inventory.save_game()
