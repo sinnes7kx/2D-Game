@@ -1655,7 +1655,13 @@ func _begin_attack(heavy: bool) -> void:
 			attack_hit_threshold = 0.58
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
-	dagger_charge_active = heavy and active_attack_style == "dagger"
+	if active_special_v261 == "vespers_return":
+		attack_duration = 0.56 / (1.0+_stat("attack_speed_pct")/100.0)
+		attack_time_left = attack_duration
+		attack_hit_threshold = 0.48
+		active_lunge = false
+		active_finisher = false
+	dagger_charge_active = heavy and active_attack_style == "dagger" and active_special_v261 != "vespers_return"
 	dagger_charge_time = 0.0
 	# Actual moving-air sound, without the old bright WAV transient on swords.
 	var swing_cue: String = "scythe_heavy" if heavy and active_attack_style == "scythe" else ("heavy_swing" if heavy else "swing")
