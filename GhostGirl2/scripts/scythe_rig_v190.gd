@@ -57,7 +57,8 @@ func _process(delta: float) -> void:
 		profile["scythe_curve"] = float(look.get("scythe_curve", 0.7))
 		colors = item.glow_gradient_colors()
 	self_modulate.a = item.weapon_opacity()
-	show_behind_parent = str(body.animation).ends_with("_back")
+	var diagonal_face: String = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(str(body.animation))
+	show_behind_parent = str(body.animation).ends_with("_back") or diagonal_face.begins_with("back")
 	z_index = -2 if show_behind_parent else 5
 	queue_redraw()
 
