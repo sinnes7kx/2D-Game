@@ -84,6 +84,15 @@ func is_active(animation_name: String) -> bool:
 	return _equipped() and (animation_name.begins_with("dual_sword_") or animation_name.begins_with("attack_dual_sword_"))
 
 func get_blade_spans(animation_name: String, frame_index: int) -> Array:
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if not diagonal.diagonal_name(animation_name).is_empty():
+		if not is_active(animation_name):
+			return []
+		var carried: Array = diagonal.paired_spans(animation_name,frame_index,Vector2(18.0,54.0).length()*IDLE_BLADE_LENGTH_SCALE)
+		if GENTLE.modular_idle(animation_name):
+			for hand in range(carried.size()):
+				carried[hand] = GENTLE.smooth(body,animation_name,carried[hand],hand)
+		return carried
 	# Both [grip, tip] spans in Ghost-local 256×220 pixel coordinates.
 	# Frame-authored independent movements, no mirrored full-body art.
 	if not is_active(animation_name):

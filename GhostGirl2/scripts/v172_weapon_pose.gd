@@ -222,6 +222,8 @@ func _is_equipped(animation_name: String) -> bool:
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
 	if _is_equipped(animation_name):
 		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
+			return diagonal.crossbow_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and not animation_name.begins_with("wand_"):
 			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (39.0 if animation_name.begins_with("forge_dagger_") else (76.0 if animation_name.contains("twinblade") else 67.0))
 			var carried: PackedVector2Array = diagonal.carried_span(animation_name,frame_index,length)

@@ -8,6 +8,10 @@ static func weapon_scale(base: String) -> float:
 	return 0.70 if base == "blackthorn_crossbow_v236" else 1.0
 
 static func offhand_span(name: String, face: String, frame: int, axis: Vector2) -> PackedVector2Array:
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if not diagonal.diagonal_name(name).is_empty():
+		var wrist: Vector2 = diagonal.far_wrist(name,frame)
+		return PackedVector2Array() if wrist==Vector2.INF else PackedVector2Array([wrist,wrist+axis.normalized()*32.0])
 	var hand: int = 1 if face == "left" else 0
 	var grip: Vector2 = HAND.hand_anchor(face, sequence(name, face)[clampi(frame, 0, 7)], hand)
 	if grip == Vector2.INF:
@@ -49,6 +53,9 @@ static func install(frames: SpriteFrames) -> void:
 				frames.add_frame(name, frames.get_frame_texture(source, index))
 
 static func span(name: String, face: String, frame: int) -> PackedVector2Array:
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if not diagonal.diagonal_name(name).is_empty():
+		return diagonal.crossbow_span(name,frame)
 	var index: int = clampi(frame, 0, 7)
 	var grip: Vector2 = HAND.hand_anchor(face, sequence(name, face)[index], 0 if face == "left" else 1)
 	if grip == Vector2.INF:
