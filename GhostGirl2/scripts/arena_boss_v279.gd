@@ -35,6 +35,8 @@ var charge_contact_done: bool = false
 var followups: Array[String] = []
 var phase_announced: bool = false
 var opening: String = ""
+var champion: bool = false
+var damage_taken_contacts: int = 0
 var boss_id: String = "iron"
 var health: float = 320.0
 var maximum_health: float = 320.0
@@ -57,7 +59,7 @@ var age: float = 0.0
 var dead: bool = false
 
 func _ready() -> void:
-	maximum_health=float(DATA[boss_id]["hp"])
+	maximum_health=float(DATA[boss_id]["hp"])*(1.28 if champion else 1.0)
 	health=maximum_health
 	collision_layer=16
 	collision_mask=2
@@ -123,6 +125,22 @@ static func pattern(id: String, stage: int, index: int, distance: float) -> Arra
 				result.assign(["astral_seal","astral_seal","astral_beam"])
 			else:
 				result.assign(["astral_beam"] if index%2==0 else ["astral_seal"])
+	return result
+
+static func champion_pattern(id: String, stage: int, index: int, distance: float) -> Array[String]:
+	var result: Array[String] = []
+	match id:
+		"iron":
+			if distance>210.0:
+				result.assign(["iron_charge","shield_lance","iron_charge"] if stage==2 else ["iron_charge","shield_lance"])
+			else:
+				result.assign(["shield_sweep","shield_lance","shield_sweep","iron_charge"] if stage==2 else ["shield_sweep","shield_lance","shield_sweep"])
+		"bell":
+			result.assign(["bell_wave","bell_wave","bell_wave"] if stage==2 else ["bell_wave","bell_wave"])
+			if distance<160.0 and index%2==0:
+				result.append("bell_sweep")
+		"astral":
+			result.assign(["astral_seal","astral_seal","astral_seal","astral_beam"] if stage==2 else ["astral_seal","astral_beam"])
 	return result
 
 static func guard_factor(id: String, state: int, facing: Vector2, attacker_offset: Vector2) -> float:
@@ -207,7 +225,11 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _start_attack() -> void:
-	followups=pattern(boss_id,phase,attack_index,global_position.distance_to(player.global_position))
+	var distance: float = global_position.distance_to(player.global_position)
+	if champion:
+		followups=champion_pattern(boss_id,phase,attack_index,distance)
+	else:
+		followups=pattern(boss_id,phase,attack_index,distance)
 	attack_index+=1
 	_next_followup()
 
@@ -229,6 +251,8 @@ func _next_followup() -> void:
 		"astral_beam": total=1.65
 		"astral_seal": total=0.85
 		_: total=0.78
+	if champion and attack!="astral_beam":
+		total*=0.90
 	timer=total
 	AUDIO.play(get_parent(),global_position,"spell" if boss_id=="astral" else "heavy_swing",-18.0)
 
@@ -237,9 +261,13 @@ func _finish_step() -> void:
 	if not followups.is_empty():
 		mode=INTERVAL
 		timer=0.24 if boss_id=="iron" else 0.48
+		if champion:
+			timer*=0.85
 		return
 	mode=RECOVER
 	timer=1.65 if boss_id=="bell" else (1.45 if boss_id=="iron" else 1.8)
+	if champion:
+		timer*=0.92
 	opening="EXPOSED · PUNISH"
 
 func _begin_wave() -> void:
@@ -251,7 +279,8 @@ func _begin_wave() -> void:
 	FX.rumble(global_position,6.0)
 
 func _advance_wave(delta: float) -> void:
-	wave_radius=minf(WAVE_MAX,wave_radius+WAVE_SPEED*delta)
+	var speed: float = WAVE_SPEED*(1.12 if champion else 1.0)
+	wave_radius=minf(WAVE_MAX,wave_radius+speed*delta)
 	var gap: float = player.global_position.distance_to(global_position)-wave_radius
 	if not wave_contact_done and wave_crossed(previous_gap,gap):
 		wave_contact_done=true
@@ -295,7 +324,10 @@ func _damage_player(amount: float) -> void:
 		return
 	if player.has_method("register_confirmed_evade"):
 		player.call("register_confirmed_evade",self,player.global_position)
-	player.call("receive_damage",amount,global_position)
+	var before: float = float(player.get("health"))
+	player.call("receive_damage",amount*(1.15 if champion else 1.0),global_position)
+	if is_instance_valid(player) and is_inside_tree() and float(player.get("health"))<before:
+		damage_taken_contacts+=1
 
 func _resolve() -> void:
 	release_left=0.24
@@ -371,6 +403,11 @@ func _draw() -> void:
 	if dead:
 		return
 	var ink: Color = DATA[boss_id]["color"]
+	if champion:
+		draw_arc(Vector2(0,-153),29.0,PI,TAU,32,Color("f1ce96"),2.0,true)
+		for i in range(3):
+			var p: Vector2 = Vector2(float(i-1)*15.0,-183.0+absf(float(i-1))*6.0)
+			draw_colored_polygon(PackedVector2Array([p+Vector2(0,-5),p+Vector2(4,0),p+Vector2(0,5),p+Vector2(-4,0)]),Color("eac58c"))
 	if mode==WAVE:
 		draw_arc(Vector2.ZERO,wave_radius,0,TAU,96,Color(ink.r,ink.g,ink.b,0.22),WAVE_HALF*2.0,true)
 		draw_arc(Vector2.ZERO,wave_radius,0,TAU,96,ink,3.0,true)

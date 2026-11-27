@@ -7,6 +7,11 @@ var world: Node
 var active_boss: CharacterBody2D
 var pending_id: String = ""
 var countdown: float = 0.0
+var champion_run: bool = false
+var duel_seconds: float = 0.0
+var start_health: float = 0.0
+var damage_free: bool = true
+var last_health: float = 0.0
 var hud: CanvasLayer
 var title_label: Label
 var health_bar: ProgressBar
@@ -17,6 +22,21 @@ static func victory_key(id: String) -> String:
 
 static func reward_key(id: String) -> String:
 	return "v279_arena_reward_"+id
+
+static func champion_key(id: String) -> String:
+	return "v281_arena_champion_"+id
+
+static func flawless_key(id: String) -> String:
+	return "v281_arena_flawless_"+id
+
+func mastery(id: String) -> int:
+	if not is_instance_valid(world):
+		return 0
+	if world.inventory.has_collected(flawless_key(id)):
+		return 3
+	if world.inventory.has_collected(champion_key(id)):
+		return 2
+	return 1 if world.inventory.has_collected(victory_key(id)) else 0
 
 func bind(game: Node) -> void:
 	world=game
@@ -80,13 +100,15 @@ func prompt(id: String) -> String:
 	if busy():
 		return "DUEL IN PROGRESS"
 	if world.inventory.has_collected(victory_key(id)) and not world.inventory.has_collected(reward_key(id)):
-		return "E  CLAIM VICTORY RELIC"
-	return "E  REMATCH" if world.inventory.has_collected(victory_key(id)) else "E  CHALLENGE"
+		return "E  CLAIM RELIC   ·   SHIFT+E  CHAMPION"
+	return "E  REMATCH   ·   SHIFT+E  CHAMPION" if mastery(id)>0 else "E  CHALLENGE"
 
-func interact_boss(id: String) -> String:
+func interact_boss(id: String, request_champion: bool = false) -> String:
 	if world==null or not BOSS.DATA.has(id) or busy():
 		return ""
-	if world.inventory.has_collected(victory_key(id)) and not world.inventory.has_collected(reward_key(id)):
+	if request_champion and mastery(id)==0:
+		return "DEFEAT THE NORMAL BOSS TO UNLOCK CHAMPION"
+	if not request_champion and world.inventory.has_collected(victory_key(id)) and not world.inventory.has_collected(reward_key(id)):
 		var data: GhostItemData = load(str(BOSS.DATA[id]["reward"])) as GhostItemData
 		# Save the successful claim in the same inventory write as the item.
 		# A full backpack does not consume the reward.
@@ -99,6 +121,9 @@ func interact_boss(id: String) -> String:
 	if world.player.carrying!=null:
 		return "PUT DOWN THE OBJECT BEFORE CHALLENGING"
 	pending_id=id
+	champion_run=request_champion
+	duel_seconds=0.0
+	damage_free=true
 	countdown=2.5
 	world.player.rose_hook.cancel_hook()
 	world.player.clear_lock_target()
@@ -117,13 +142,18 @@ func _physics_process(delta: float) -> void:
 		return
 	if not pending_id.is_empty():
 		countdown=maxf(0.0,countdown-delta)
-		title_label.text=str(BOSS.DATA[pending_id]["title"])
+		title_label.text=("CHAMPION · " if champion_run else "")+str(BOSS.DATA[pending_id]["title"])
 		detail_label.text="DUEL BEGINS IN %.1f"%countdown
 		health_bar.max_value=1
 		health_bar.value=1
 		if countdown<=0.0:
 			_spawn()
 	elif is_instance_valid(active_boss):
+		duel_seconds+=delta
+		var now: float = float(world.player.health)
+		if now<last_health:
+			damage_free=false
+		last_health=now
 		health_bar.max_value=float(active_boss.get("maximum_health"))
 		health_bar.value=float(active_boss.get("health"))
 		var state: int = int(active_boss.get("mode"))
@@ -148,7 +178,10 @@ func _physics_process(delta: float) -> void:
 			hint="ASTRAL SEAL · KEEP MOVING"
 		elif str(active_boss.get("boss_id"))=="iron":
 			hint="GUARDED · FLANK OR BREAK GUARD"
-		detail_label.text="II  ·  "+hint if phase==2 else hint
+		var status: String = ("II  ·  " if phase==2 else "")+hint
+		if champion_run and damage_free and int(active_boss.get("damage_taken_contacts"))==0:
+			status+="  ·  NO HIT"
+		detail_label.text=status
 
 func _spawn() -> void:
 	var id: String = pending_id
@@ -157,17 +190,21 @@ func _spawn() -> void:
 		return
 	var boss: CharacterBody2D = BOSS.new()
 	boss.set("boss_id",id)
+	boss.set("champion",champion_run)
 	boss.set("player",world.player)
 	boss.position=Vector2(900,405)
 	add_child(boss)
 	boss.connect("defeated",_on_victory)
 	active_boss=boss
-	title_label.text=str(BOSS.DATA[id]["title"])
+	start_health=float(world.player.health)
+	last_health=start_health
+	title_label.text=("CHAMPION · " if champion_run else "")+str(BOSS.DATA[id]["title"])
 	detail_label.text="PHASE 1"
 	health_bar.max_value=float(boss.get("maximum_health"))
 	health_bar.value=health_bar.max_value
 
 func _on_victory(id: String) -> void:
+	var flawless: bool = champion_run and damage_free and is_instance_valid(active_boss) and int(active_boss.get("damage_taken_contacts"))==0 and float(world.player.health)>=last_health
 	active_boss=null
 	hud.visible=false
 	world.player.clear_lock_target()
@@ -175,4 +212,13 @@ func _on_victory(id: String) -> void:
 	if first:
 		world.inventory.collected_pickups[victory_key(id)]=true
 		world.inventory.save_game()
-	world.ui.show_pickup("DUEL WON · CLAIM YOUR RELIC" if first else "DUEL WON · REMATCH COMPLETE",Color("e9d4af"))
+	if champion_run:
+		world.inventory.collected_pickups[champion_key(id)]=true
+		if flawless:
+			world.inventory.collected_pickups[flawless_key(id)]=true
+		world.inventory.save_game()
+		var result: String = "FLAWLESS CHAMPION" if flawless else "CHAMPION DEFEATED"
+		world.ui.show_pickup("%s · %.1fs · TROPHY EARNED"%[result,duel_seconds],Color("f1d49e"))
+	else:
+		world.ui.show_pickup("DUEL WON · CLAIM YOUR RELIC" if first else "DUEL WON · REMATCH COMPLETE",Color("e9d4af"))
+	champion_run=false
