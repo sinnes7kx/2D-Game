@@ -1,0 +1,38 @@
+extends SceneTree
+const BOSS = preload("res://scripts/arena_boss_v279.gd")
+
+func _initialize() -> void:
+	call_deferred("_verify")
+
+func _verify() -> void:
+	assert(BOSS.pattern("iron",1,0,350.0)==["iron_charge"])
+	assert(BOSS.pattern("iron",2,0,350.0)==["iron_charge","shield_lance"])
+	assert(BOSS.pattern("iron",2,0,110.0)==["shield_sweep","shield_lance","iron_charge"])
+	assert(BOSS.pattern("bell",1,1,300.0)==["bell_wave"])
+	assert(BOSS.pattern("bell",2,1,300.0)==["bell_wave","bell_wave"])
+	assert(BOSS.pattern("bell",2,1,110.0)==["bell_wave","bell_wave","bell_sweep"])
+	assert(BOSS.pattern("astral",2,0,400.0)==["astral_seal","astral_seal","astral_beam"])
+	assert(BOSS.wave_crossed(35.0,-35.0))
+	assert(BOSS.wave_crossed(20.0,12.0))
+	assert(not BOSS.wave_crossed(90.0,40.0))
+	assert(not BOSS.wave_crossed(-90.0,-40.0))
+	assert(BOSS.charge_contact(Vector2.ZERO,Vector2(100,0),Vector2(50,54)))
+	assert(not BOSS.charge_contact(Vector2.ZERO,Vector2(100,0),Vector2(50,56)))
+	assert(BOSS.charge_contact(Vector2.ZERO,Vector2.ZERO,Vector2(0,30)))
+	assert(BOSS.guard_factor("iron",BOSS.CHARGE,Vector2.RIGHT,Vector2.RIGHT)==1.0)
+	assert(BOSS.guard_factor("iron",BOSS.INTERVAL,Vector2.RIGHT,Vector2.RIGHT)==0.22)
+	var boss: CharacterBody2D = BOSS.new()
+	boss.set("boss_id","astral")
+	root.add_child(boss)
+	boss.set("mode",BOSS.TELL)
+	boss.set("attack","astral_beam")
+	var followups: Array[String] = ["astral_seal"]
+	boss.set("followups",followups)
+	boss.call("on_hook_yank",Vector2.ZERO,320.0)
+	assert(int(boss.get("mode"))==BOSS.STAGGER)
+	assert(boss.get("followups").is_empty())
+	assert(float(boss.get("timer"))==2.15)
+	assert(float(boss.get("hook_cooldown"))==3.0)
+	boss.free()
+	print("v2.80 boss patterns, swept charge, ring crossing, shield and channel checks PASS")
+	quit(0)
