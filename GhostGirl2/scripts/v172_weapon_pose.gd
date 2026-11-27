@@ -189,7 +189,8 @@ func _process(_delta: float) -> void:
 	if animation_now != last_animation or body.frame != last_frame:
 		last_animation = animation_now
 		last_frame = body.frame
-		z_index = -1 if animation_now.ends_with("back") else 5 # Diagonal guides use the visible near wrist.
+		var rear_bow: bool = animation_now.begins_with("forge_bow_") and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
+		z_index = -1 if animation_now.ends_with("back") or rear_bow else 5 # Keep rear bow behind the body.
 		queue_redraw()
 
 func _is_equipped(animation_name: String) -> bool:
