@@ -1478,7 +1478,7 @@ func _begin_seraph_v292(item: GhostItemInstance) -> void:
 	_reset_combo_v239()
 	relic_commit_v288("seraph_descent",4.0)
 	velocity=Vector2.ZERO
-	_play_action_frames("attack_seraph_scythe_light_"+facing_name,0.40)
+	_play_action_frames("attack_seraph_scythe_light_"+facing_name,SERAPH_V292.TURN)
 	var fx: Node2D = preload("res://scripts/seraph_wings_fx_v292.gd").new()
 	fx.set("actor",self)
 	add_child(fx)
@@ -1509,8 +1509,8 @@ func _advance_seraph_v292(delta: float) -> void:
 	# A physical movement skill: keep all solid collision masks enabled.
 	velocity=seraph_axis_v292*SERAPH_V292.speed_at(seraph_age_v292)
 	move_and_slide()
-	if before<0.40 and seraph_age_v292>=0.40:
-		_play_action_frames(AIR_V203.air_name("attack_seraph_scythe_heavy_"+facing_name),SERAPH_V292.DURATION-0.40)
+	if before<SERAPH_V292.TURN and seraph_age_v292>=SERAPH_V292.TURN:
+		_play_action_frames(AIR_V203.air_name("attack_seraph_scythe_heavy_"+facing_name),SERAPH_V292.DURATION-SERAPH_V292.TURN)
 	if seraph_hits_v292==0 and seraph_age_v292>=SERAPH_V292.RISE_HIT:
 		seraph_hits_v292=1
 		_seraph_strike_v292(item,false)
