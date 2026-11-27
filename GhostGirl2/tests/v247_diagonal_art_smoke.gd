@@ -84,6 +84,20 @@ func _initialize() -> void:
 				else:
 					assert(resolved==fallback)
 	assert(not ART.is_carried_clip("attack_dagger_heavy_front_right"))
+	if ART._load_sheet(ART.REVISED_ACTIONS)!=null:
+		for face in ART.DIRECTIONS:
+			for action in ["pierce","heavy_pierce","light_a","light_b","light_c","heavy"]:
+				var attack: String = "attack_dual_dagger_"+action+"_"+face
+				for frame in range(8):
+					var pair: Array = ART.paired_dagger_attack_spans(attack,frame,50.0)
+					assert(pair.size()==2)
+					for hand in range(2):
+						var wrist: Vector2 = ART.hand_wrist(attack,frame,hand)
+						var span: PackedVector2Array = pair[hand]
+						if wrist==Vector2.INF:
+							assert(span.is_empty())
+						else:
+							assert(span.size()==2 and span[0]==wrist and is_equal_approx(span[0].distance_to(span[1]),50.0))
 	assert(ART.is_painted_bow_carry("moonveil_walk_back_left"))
 	if frames.has_animation("sword_modular_idle_front_right"):
 		assert(ART.armed_clip("sword_modular_idle_front", "front_right", "front", frames) == "sword_modular_idle_front_right")
