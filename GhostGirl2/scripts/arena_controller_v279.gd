@@ -100,7 +100,7 @@ func prompt(id: String) -> String:
 	if busy():
 		return "DUEL IN PROGRESS"
 	if world.inventory.has_collected(victory_key(id)) and not world.inventory.has_collected(reward_key(id)):
-		return "E  CLAIM VICTORY RELIC"
+		return "E  CLAIM RELIC   ·   SHIFT+E  CHAMPION"
 	return "E  REMATCH   ·   SHIFT+E  CHAMPION" if mastery(id)>0 else "E  CHALLENGE"
 
 func interact_boss(id: String, request_champion: bool = false) -> String:
@@ -180,7 +180,7 @@ func _physics_process(delta: float) -> void:
 			hint="GUARDED · FLANK OR BREAK GUARD"
 		var status: String = ("II  ·  " if phase==2 else "")+hint
 		if champion_run and damage_free and int(active_boss.get("damage_taken_contacts"))==0:
-			status+="  ·  FLAWLESS"
+			status+="  ·  NO HIT"
 		detail_label.text=status
 
 func _spawn() -> void:
