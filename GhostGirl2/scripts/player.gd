@@ -208,6 +208,7 @@ var dodge_direction: Vector2 = Vector2.DOWN
 var jump_time_left: float = 0.0
 var jump_duration: float = 0.0
 var jump_direction: Vector2 = Vector2.DOWN
+var jump_strike_direction: Vector2 = Vector2.DOWN
 var jump_origin: Vector2 = Vector2.ZERO
 var jump_attack_active: bool = false
 var jump_attack_triggered: bool = false
@@ -1226,16 +1227,14 @@ func _begin_jump() -> void:
 	jump_attack_active = false
 	jump_attack_triggered = false
 	var movement: Vector2 = _movement_input()
-	if is_instance_valid(lock_target):
-		jump_direction = (lock_target.global_position - global_position).normalized()
-	elif movement.length_squared() > 0.04:
+	if movement.length_squared() > 0.04:
 		jump_direction = movement.normalized()
 	else:
-		jump_direction = facing
+		jump_direction = _free_facing_direction(Vector2.ZERO)
 	if jump_direction.length_squared() < 0.001:
 		jump_direction = Vector2.DOWN
 	jump_direction = jump_direction.normalized()
-	set_facing(jump_direction)
+	set_facing(_free_facing_direction(movement))
 	body_art.speed_scale = 1.0
 	var clip: String = _diagonal_action_clip("jump", _weapon_motion_prefix(true) + facing_name)
 	_play_action_frames(clip, jump_duration)
@@ -1262,7 +1261,7 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	if attack_direction.length_squared() < 0.001:
 		attack_direction = jump_direction
 	set_facing(attack_direction)
-	jump_direction = attack_direction
+	jump_strike_direction = attack_direction
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, "jump_swing", -14.0)
 	var attack_animation: String = ""
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
@@ -1277,7 +1276,24 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	# The physical hit remains the existing single jump-hit event.
 	_play_action_frames(AIR_V203.air_name(attack_animation), maxf(0.26, jump_time_left))
 
+func _refresh_air_facing() -> void:
+	# Ranged draws, casts and committed strikes own their own animation.
+	if jump_attack_active or bow_draw_active or bow_time_left > 0.0 or crossbow_stage != 0:
+		return
+	var before: String = facing_eight_name
+	set_facing(_free_facing_direction(_movement_input()))
+	if before == facing_eight_name:
+		return
+	var clip: String = _diagonal_action_clip("jump", _weapon_motion_prefix(true) + facing_name)
+	if clip == str(body_art.animation) or not body_art.sprite_frames.has_animation(clip):
+		return
+	# Match the current point in the jump instead of restarting it.
+	var phase: float = clampf(1.0 - jump_time_left / maxf(0.01, jump_duration), 0.0, 0.999)
+	_play_action_frames(clip, jump_duration)
+	GENTLE.seek_phase(body_art, phase)
+
 func _advance_jump(delta: float) -> void:
+	_refresh_air_facing()
 	jump_time_left = maxf(0.0, jump_time_left - delta)
 	var progress: float = 1.0 - jump_time_left / maxf(0.01, jump_duration)
 	var speed_scale: float = 0.88 + 0.20 * sin(progress * PI)
@@ -1333,7 +1349,7 @@ func _strike_jump_attack() -> void:
 	var previous_direction: Vector2 = attack_direction
 	heavy_attack = true
 	active_attack_style = _weapon_style()
-	attack_direction = jump_direction if jump_direction.length_squared() > 0.0 else facing
+	attack_direction = jump_strike_direction
 	# Air movement and light camera response happen on commitment, NOT on hit.
 	_emit_air_wake("jump", attack_direction)
 	COMBAT_JUICE.play(get_tree().current_scene, global_position, "jump_swing", -23.0)
