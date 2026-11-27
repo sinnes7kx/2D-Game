@@ -413,12 +413,11 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 	var head: Vector2 = tip - tangent * 17.0
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():
-		MODULAR.draw_grip(self, shaft_base, head, 4.5, look)
+		preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,shaft_base,grip,head,4.5,look)
 		for side in [-1.0, 1.0]:
 			var fork: Vector2 = head + normal * side * 8.0
 			var prong: Vector2 = tip - tangent * 2.0 + normal * side * 7.0
-			var accent: Color = look["accent"]
-			draw_line(head, fork, accent.darkened(0.25), 2.5, true)
+			preload("res://scripts/forged_polearm_v255.gd").draw_fork(self,head,fork,tangent,look)
 			MODULAR.draw_blade(self, fork, prong, 1.8, look)
 		MODULAR.draw_blade(self, head, tip, 2.6, look)
 		return
@@ -447,7 +446,7 @@ func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 	var butt: Vector2 = grip - tangent * 22.0
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():
-		MODULAR.draw_grip(self, butt, root, 3.8, look)
+		preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,butt,grip,root,3.8,look)
 		MODULAR.draw_blade(self, root, tip, 4.5, look)
 		return
 	draw_line(butt, root, Color("322638"), 6.5, true)

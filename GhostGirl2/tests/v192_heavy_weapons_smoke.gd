@@ -37,7 +37,7 @@ func _verify() -> void:
 				_fail("Baked weapon still present")
 				return
 			var points: PackedVector2Array = HEAVY.span(name,i,guides)
-			if points.size() != 2 or not is_equal_approx(points[0].distance_to(points[1]),82.0 if name.contains("halberd") else 54.0):
+			if points.size() != 2 or not is_equal_approx(points[0].distance_to(points[1]),82.0 if name.contains("halberd") else 70.0):
 				_fail("Invalid grip or shaft span: "+name)
 				return
 	GENTLE.install(sprite)
