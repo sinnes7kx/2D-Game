@@ -26,7 +26,7 @@ static func cycle() -> String:
 
 static func strength() -> float:
 	ensure_loaded()
-	return [0.0,0.55,1.0][preset]
+	return float([0.0,0.55,1.0][preset])
 
 static func light_budget() -> int:
 	ensure_loaded()
