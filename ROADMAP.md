@@ -184,6 +184,10 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 - Fix Rose Horns from fixed actor-space roots to actual Ghost sprite-local roots, following animated translation, scale and lean. Inspect original cardinal idle artwork; use corresponding reference roots and measured upper hair silhouette on installed locomotion/diagonal/jump/dodge frames, with bounded result cache and one decoded atlas. Narrower profile spacing and smaller far horn, existing color and bent silhouette preserved. Unreliable attack silhouettes use directional fallback, not invented exact action guides. Other headpieces, seeds, Godlike, equipment stats and saves unchanged. Added head-guide and transform regression assertions. Live Godot visual/runtime review pending.
 
+### v2.69 shared crown and halo alignment (source implementation; runtime review pending)
+
+- Extend v2.68 measured head geometry to Moonlit Tiara, Starfall Diadem, Crescent Halo and seeded charm halos. Accessory-local draw transform tracks actual body translation, rotation and scale, with profile-aware width, crown/horn clearance and paired halo effect anchors. Preserve existing seeded halo variants, colors and cosmetic data; original round crescent silhouette retained. Crown band follows upper hair instead of a fixed high arch. Harden optional atlas reads against compressed textures and missing clips. Masks and original eyes unchanged. Add transform/clearance assertions, runtime and visual verification pending.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

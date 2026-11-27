@@ -20,7 +20,9 @@ static func fallback_roots(face: String) -> PackedVector2Array:
 	match face:
 		"left": return PackedVector2Array([Vector2(106,35),Vector2(143,34)])
 		"right": return PackedVector2Array([Vector2(111,34),Vector2(147,35)])
-		"back": return PackedVector2Array([Vector2(104,35),Vector2(151,35)])
+		"back", "back_left", "back_right": return PackedVector2Array([Vector2(104,35),Vector2(151,35)])
+		"front_left": return PackedVector2Array([Vector2(105,35),Vector2(147,35)])
+		"front_right": return PackedVector2Array([Vector2(110,35),Vector2(152,35)])
 		_: return PackedVector2Array([Vector2(110,35),Vector2(160,35)])
 
 static func _longest_run(img: Image, y: int) -> Vector2i:
@@ -39,6 +41,8 @@ static func _longest_run(img: Image, y: int) -> Vector2i:
 
 static func measure(img: Image, face: String) -> PackedVector2Array:
 	if img==null or img.get_size()!=CELL:
+		return PackedVector2Array()
+	if img.is_compressed() and img.decompress()!=OK:
 		return PackedVector2Array()
 	var top: int = -1
 	for y in range(0,76):
@@ -71,6 +75,9 @@ func _frame_image(texture: Texture2D) -> Image:
 			cached_image=frame.atlas.get_image()
 		if cached_image==null:
 			return null
+		if cached_image.is_compressed() and cached_image.decompress()!=OK:
+			cached_image=null
+			return null
 		var region: Rect2i = Rect2i(frame.region)
 		if not Rect2i(Vector2i.ZERO,cached_image.get_size()).encloses(region):
 			return null
@@ -83,6 +90,8 @@ func frame_roots(sprite: AnimatedSprite2D, face: String) -> PackedVector2Array:
 	if sprite==null or sprite.sprite_frames==null:
 		return fallback_roots(face)
 	var clip: String = str(sprite.animation)
+	if not sprite.sprite_frames.has_animation(clip) or sprite.sprite_frames.get_frame_count(clip)<=sprite.frame:
+		return fallback_roots(face)
 	var texture: Texture2D = sprite.sprite_frames.get_frame_texture(clip,sprite.frame)
 	if texture==null:
 		return fallback_roots(face)
@@ -115,3 +124,22 @@ static func far_side(face: String) -> int:
 	if face.ends_with("right"):
 		return 1
 	return -1
+
+# Drawing units preserve the existing accessory scale, while a shared
+# transform applies the animated body's real translation, lean and stretch.
+const ART_SCALE: float = 0.52
+
+static func head_center(roots: PackedVector2Array,sprite: AnimatedSprite2D) -> Vector2:
+	if roots.size()!=2 or sprite==null:
+		return Vector2.ZERO
+	return pixel_to_local((roots[0]+roots[1])*0.5,sprite)*ART_SCALE
+
+static func crown_width(roots: PackedVector2Array) -> float:
+	return clampf(roots[0].distance_to(roots[1])*ART_SCALE*0.67,13.0,23.0) if roots.size()==2 else 17.0
+
+static func halo_lift(crown: bool,horns: bool) -> float:
+	return 35.0 if horns else (25.0 if crown else 16.0)
+
+static func accessory_transform(sprite: AnimatedSprite2D,layer: Node2D) -> Transform2D:
+	var unscale: Transform2D = Transform2D(Vector2(1.0/ART_SCALE,0),Vector2(0,1.0/ART_SCALE),Vector2.ZERO)
+	return layer.global_transform.affine_inverse()*sprite.global_transform*unscale
