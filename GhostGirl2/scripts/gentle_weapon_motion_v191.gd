@@ -13,6 +13,10 @@ static func install(body: AnimatedSprite2D) -> void:
 		return
 	for value in frames.get_animation_names():
 		var name: String = str(value)
+		# Each diagonal cell has its own wrist; freezing it to frame zero
+		# would move the weapon guide while the actual hand stays still.
+		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(name).is_empty():
+			continue
 		if not modular_idle(name) or not frames.get_animation_loop(name) or frames.get_frame_count(name) == 0:
 			continue
 		# The old modular idle cycles jump among attack-ready body poses.

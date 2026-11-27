@@ -30,6 +30,8 @@ static func install(sprite: AnimatedSprite2D) -> void:
         return
     for value in frames.get_animation_names():
         var name: String = str(value)
+        if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(name).is_empty():
+            continue
         if not matches(name) or not frames.get_animation_loop(name) or frames.get_frame_count(name) < STEPS:
             continue
         var neutral: Texture2D = frames.get_frame_texture(name, 0)

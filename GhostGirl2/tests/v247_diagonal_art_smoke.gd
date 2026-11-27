@@ -25,6 +25,48 @@ func _initialize() -> void:
 	assert(ART.resolve("sword_idle_front", "front_right", "front", false, frames) == "sword_idle_front")
 	assert(ART.resolve("attack_front", "front_right", "front", false, frames) == "attack_front")
 	assert(ART.resolve("idle_front", "front", "front", false, frames) == "idle_front")
+	var controller = preload("res://scripts/direction_controller_v245.gd")
+	var inputs: Array[Vector2] = [controller.digital_vector(false,true,true,false),controller.digital_vector(true,false,true,false),controller.digital_vector(false,true,false,true),controller.digital_vector(true,false,false,true)]
+	var names: Array[String] = ["back_right","back_left","front_right","front_left"]
+	for i in range(4):
+		assert(is_equal_approx(inputs[i].length(),1.0))
+		assert(controller.NAMES[controller.octant(inputs[i])]==names[i])
+	assert(controller.digital_vector(true,true,true,true)==Vector2.ZERO)
+	for family in ART.WEAPON_PREFIXES:
+		for direction in ART.DIRECTIONS:
+			var cardinal: String = "back" if direction.begins_with("back") else "front"
+			for motion in ["idle_","walk_"]:
+				var clip: String = family+motion+direction
+				assert(ART.is_carried_clip(clip))
+				if frames.has_animation(clip):
+					assert(ART.armed_clip(family+motion+cardinal,direction,cardinal,frames)==clip)
+					assert(frames.get_frame_count(clip)==8)
+					assert(frames.get_frame_texture(clip,7)==frames.get_frame_texture(motion+direction,7))
+	# Opening a live equipment preview reruns these legacy installers on
+	# shared SpriteFrames; they must never touch a diagonal alias.
+	if ART.available() and frames.has_animation("scythe_idle_front_right"):
+		var fixture: AnimatedSprite2D = AnimatedSprite2D.new()
+		fixture.sprite_frames=frames
+		for face in ["front","back","left","right"]:
+			var source: String = "attack_unarmed_light_"+face
+			frames.add_animation(source)
+			for i in range(8):
+				frames.add_frame(source,GradientTexture2D.new())
+		var expected_textures: Dictionary = {}
+		for clip in frames.get_animation_names():
+			if ART.is_carried_clip(str(clip)):
+				expected_textures[clip]=frames.get_frame_texture(clip,7)
+		preload("res://scripts/v175_hookfree_weapon_body.gd").install(fixture)
+		preload("res://scripts/scythe_art_v190.gd").install(fixture)
+		preload("res://scripts/heavy_weapon_art_v192.gd").install(fixture)
+		preload("res://scripts/gentle_weapon_motion_v191.gd").install(fixture)
+		preload("res://scripts/steady_weapon_idles_v195.gd").install(fixture)
+		for clip in expected_textures:
+			assert(frames.get_frame_count(clip)==8)
+			assert(frames.get_frame_texture(clip,7)==expected_textures[clip])
+		fixture.free()
+	assert(not ART.is_carried_clip("attack_dagger_heavy_front_right"))
+	assert(ART.is_painted_bow_carry("moonveil_walk_back_left"))
 	if frames.has_animation("sword_modular_idle_front_right"):
 		assert(ART.armed_clip("sword_modular_idle_front", "front_right", "front", frames) == "sword_modular_idle_front_right")
 	assert(ART.wrist("sword_modular_idle_front_right",0) != Vector2.INF)

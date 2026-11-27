@@ -23,6 +23,10 @@ static func install(sprite: AnimatedSprite2D) -> void:
 		return
 	for value in frames.get_animation_names():
 		var name: String = str(value)
+		# A later equipment preview may share these SpriteFrames. Never
+		# overwrite a diagonal body alias with a cardinal source.
+		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(name).is_empty():
+			continue
 		if not matches(name):
 			continue
 		var face: String = name.get_slice("_", name.get_slice_count("_") - 1)

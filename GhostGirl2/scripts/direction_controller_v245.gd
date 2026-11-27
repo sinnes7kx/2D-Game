@@ -23,6 +23,17 @@ static func heading(index: int) -> Vector2:
 static func pose_name(index: int) -> String:
 	return ART_FALLBACK[posmod(index, 8)]
 
+# Simultaneous key state. Opposite keys cancel; diagonal speed is normalized.
+static func digital_vector(left: bool,right: bool,up: bool,down: bool) -> Vector2:
+	return Vector2(float(int(right)-int(left)),float(int(down)-int(up))).limit_length(1.0)
+
+static func keyboard_vector() -> Vector2:
+	return digital_vector(
+		Input.is_action_pressed("left") or Input.is_physical_key_pressed(KEY_A),
+		Input.is_action_pressed("right") or Input.is_physical_key_pressed(KEY_D),
+		Input.is_action_pressed("up") or Input.is_physical_key_pressed(KEY_W),
+		Input.is_action_pressed("down") or Input.is_physical_key_pressed(KEY_S))
+
 static func movement(keyboard: Vector2, touch: Vector2, pad: Vector2 = Vector2.ZERO) -> Vector2:
 	if touch.length_squared() > 0.0064:
 		return touch.limit_length(1.0)
