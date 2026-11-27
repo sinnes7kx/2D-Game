@@ -20,9 +20,9 @@ func _verify() -> void:
 					assert(not points[0].is_equal_approx(points[-1]))
 					assert(Geometry2D.triangulate_polygon(points).size()==42)
 					samples+=1
-	assert(ARSENAL.PROFILES.size()==44)
-	assert(SPECIAL.SPECIALS.size()==12)
-	assert(INNATE.POWERS.size()==38)
+	assert(ARSENAL.PROFILES.size()==29)
+	assert(SPECIAL.SPECIALS.size()==6)
+	assert(INNATE.POWERS.size()==59)
 	var inventory: Node = INVENTORY.new()
 	# Detached inventory, persist=false: never touch the user's live save.
 	var result: Dictionary = inventory.call("deliver_relic_samples_v282",false)
@@ -31,7 +31,7 @@ func _verify() -> void:
 	assert(inventory.get("contents").is_empty())
 	for item in inventory.get("vault"):
 		assert(item.quality=="unique")
-		assert(not SPECIAL.label(item).is_empty())
+		assert(not SPECIAL.label(item).is_empty() or not preload("res://scripts/unique_innate_v274.gd").label(item).is_empty())
 	var again: Dictionary = inventory.call("deliver_relic_samples_v282",false)
 	assert(int(again["vault"])==0 and int(again["backpack"])==0)
 	assert(inventory.get("vault").size()==28)

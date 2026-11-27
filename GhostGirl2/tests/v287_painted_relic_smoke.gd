@@ -29,7 +29,7 @@ func _verify() -> void:
 		else:
 			assert(data.icon!=null)
 		var item: GhostItemInstance = GhostItemGenerator.create(data,287101,"unique")
-		assert(not SPECIAL.label(item).is_empty())
+		assert(not SPECIAL.label(item).is_empty() or not preload("res://scripts/unique_innate_v274.gd").label(item).is_empty())
 	assert(present==0 or present==4)
 	print("v2.87 painted relic resources and fallback checked. Installed: %d / 4"%present)
 	quit(0)

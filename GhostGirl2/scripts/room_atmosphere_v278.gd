@@ -28,7 +28,7 @@ static func profile(key: String) -> Dictionary:
 	if key=="colosseum":
 		return {"ink":Color("9e91b0"),"far":0.053,"near":0.019,"drift":3.5}
 	if key=="lanternhaven":
-		return {"ink":Color("b29aa2"),"far":0.092,"near":0.045,"drift":3.8}
+		return {"ink":Color("ad9298"),"far":0.060,"near":0.024,"drift":2.6}
 	if key in WARM_ROOMS:
 		return {"ink":Color("a68b8d"),"far":0.066,"near":0.029,"drift":3.0}
 	if key in ["garden","garden_bridge","garden_arbor","glasshouse"]:
@@ -83,6 +83,10 @@ func _ready() -> void:
 		details.name="LanternhavenLivingAirV290"
 		details.set("ambience",self)
 		add_child(details)
+		var cozy: Node2D = preload("res://scripts/lanternhaven_cozy_v291.gd").new()
+		cozy.name="LanternhavenCozyV291"
+		cozy.set("ambience",self)
+		add_child(cozy)
 
 func _room_bounds() -> Rect2:
 	var painted: Sprite2D = room_root.get_node_or_null("PaintedRoom") as Sprite2D
@@ -128,6 +132,10 @@ func _collect_anchors() -> void:
 				offset=Vector2(0,-32) if hearth else Vector2.ZERO
 				diameter=610.0 if hearth else 350.0
 				energy=0.46 if hearth else 0.36
+				if room_key=="lanternhaven":
+					tint=Color("ffbb79") if hearth else Color("ffd2a0")
+					diameter=720.0 if hearth else 405.0
+					energy=0.57 if hearth else 0.43
 			"moor_lantern.gd":
 				offset=Vector2(19,-47)
 				tint=source.get("lamp_color")

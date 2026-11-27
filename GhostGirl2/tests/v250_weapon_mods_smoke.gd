@@ -25,7 +25,7 @@ func _initialize() -> void:
 		assert(item.active_weapon_mod(true) == item.debug_weapon_mod)
 	assert(item.weapon_mod == genuine)
 	var innate = preload("res://scripts/unique_innate_v274.gd")
-	assert(innate.POWERS.size()==38)
+	assert(innate.POWERS.size()==59)
 	var resources: Array[String] = []
 	_collect_equipment_paths_v274("res://items",resources)
 	var covered: int = 0
@@ -84,10 +84,10 @@ func _initialize() -> void:
 	var spear: GhostItemInstance = GhostItemGenerator.create(preload("res://items/moonwarden_spear_v169.tres"),123,"unique")
 	assert(specials.kind(spear) == "heavens_reach")
 	assert(specials.kind(GhostItemGenerator.create(preload("res://items/moonwarden_spear_v169.tres"),123,"normal")) == "")
-	assert(specials.count("drowned_fork") == 3)
-	assert(specials.count("roseglass_fan")==3 and specials.is_dagger_throw("vespers_return"))
-	assert(specials.kind(GhostItemGenerator.create(preload("res://items/cinderveil_dirk_v238.tres"),2721,"unique"))=="ember_return")
-	assert(specials.kind(GhostItemGenerator.create(preload("res://items/roseglass_dagger_v169.tres"),2722,"unique"))=="roseglass_fan")
+	assert(not specials.is_throw("drowned_fork"))
+	assert(not specials.is_throw("roseglass_fan") and specials.is_dagger_throw("vespers_return"))
+	assert(specials.kind(GhostItemGenerator.create(preload("res://items/cinderveil_dirk_v238.tres"),2721,"unique"))=="")
+	assert(specials.kind(GhostItemGenerator.create(preload("res://items/roseglass_dagger_v169.tres"),2722,"unique"))=="")
 	assert(specials.kind(GhostItemGenerator.create(preload("res://items/rose_reaper_scythe.tres"),2723,"unique"))=="reverie_wave")
 	var env = preload("res://scripts/archery_environment_v272.gd")
 	assert(env.segment_intersects_fire(Vector2.ZERO,Vector2(100,0),Vector2(40,5),10.0))

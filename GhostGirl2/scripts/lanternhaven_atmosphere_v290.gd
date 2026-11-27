@@ -80,7 +80,7 @@ func _refresh() -> void:
 			sound.stream=wind_stream()
 		if not sound.playing:
 			sound.play()
-		sound.volume_db=-15.0+linear_to_db(strength)
+		sound.volume_db=-23.0+linear_to_db(strength)
 	elif sound.playing:
 		sound.stop()
 	queue_redraw()
