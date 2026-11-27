@@ -11,7 +11,7 @@ func _initialize() -> void:
 
 func _verify() -> void:
 	assert(ARSENAL.PROFILES.size()==29)
-	assert(SPECIAL.SPECIALS.size()==6)
+	assert(SPECIAL.SPECIALS.size()==7)
 	assert(INNATE.POWERS.size()==59)
 	var throw_count: int = 0
 	for base in SPECIAL.SPECIALS:
