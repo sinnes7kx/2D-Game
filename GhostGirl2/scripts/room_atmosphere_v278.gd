@@ -29,6 +29,8 @@ static func profile(key: String) -> Dictionary:
 		return {"ink":Color("9e91b0"),"far":0.053,"near":0.019,"drift":3.5}
 	if key=="lanternhaven":
 		return {"ink":Color("ad9298"),"far":0.060,"near":0.024,"drift":2.6}
+	if key=="candle_reliquary":
+		return {"ink":Color("9b8995"),"far":0.040,"near":0.015,"drift":2.0}
 	if key in WARM_ROOMS:
 		return {"ink":Color("a68b8d"),"far":0.066,"near":0.029,"drift":3.0}
 	if key in ["garden","garden_bridge","garden_arbor","glasshouse"]:
@@ -126,8 +128,9 @@ func _collect_anchors() -> void:
 	anchors.clear()
 	for node in room_root.find_children("*","Node2D",true,false):
 		var source: Node2D = node as Node2D
-		if source is Marker2D and source.get_parent().name=="AtmosphereV292" and str(source.name).begins_with("MoonPool"):
-			anchors.append({"source":source,"offset":Vector2.ZERO,"color":Color("b8c5ff"),"diameter":440.0,"energy":0.24,"phase":float(anchors.size())*1.713})
+		if source is Marker2D and source.get_parent().name=="AtmosphereV292" and (str(source.name).begins_with("MoonPool") or str(source.name).begins_with("WarmPool")):
+			var warm: bool = str(source.name).begins_with("WarmPool")
+			anchors.append({"source":source,"offset":Vector2.ZERO,"color":Color("ffc88e") if warm else Color("b8c5ff"),"diameter":380.0 if warm else 440.0,"energy":0.18 if warm else 0.24,"phase":float(anchors.size())*1.713})
 			continue
 		var script: Script = source.get_script() as Script
 		if script==null:
