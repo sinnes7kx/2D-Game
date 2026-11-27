@@ -181,6 +181,9 @@ var relic_pulse_v288: float = 0.0
 var relic_channel_worn_v288: bool = false
 var relic_spin_hits_v288: Dictionary = {}
 var relic_cooldowns_v288: Dictionary = {}
+var ivory_guard_left_v289: float = 0.0
+var ivory_guard_item_v289: GhostItemInstance
+var ivory_guard_direction_v289: Vector2 = Vector2.DOWN
 var active_special_v261: String = ""
 var special_weapon_v261: GhostItemInstance = null
 const RELIC_ARSENAL_V277 = preload("res://scripts/relic_arsenal_v277.gd")
@@ -331,6 +334,7 @@ func _physics_process(delta: float) -> void:
 	if world == null:
 		return
 	if world.ui.is_menu_open() or world.ui.has_cursor_item():
+		_clear_ivory_guard_v289()
 		_end_relic_channel_v288()
 		if throw_charge_active_v276:
 			clear_throw_charge_v276()
@@ -376,7 +380,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("target_lock") and healing_time_left <= 0.0:
 		_toggle_lock_target()
-	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty():
+	if Input.is_action_just_pressed("use_dew") and healing_time_left <= 0.0 and attack_time_left <= 0.0 and crossbow_stage == 0 and dodge_time_left <= 0.0 and jump_time_left <= 0.0 and relic_channel_v288.is_empty() and ivory_guard_left_v289<=0.0:
 		_begin_heal()
 	if healing_time_left > 0.0:
 		healing_time_left = maxf(0.0, healing_time_left - delta)
@@ -390,6 +394,9 @@ func _physics_process(delta: float) -> void:
 	rally_time_left = maxf(0.0, rally_time_left - delta)
 	if rally_time_left <= 0.0:
 		rally_pool = 0.0
+	if ivory_guard_left_v289>0.0:
+		_advance_ivory_guard_v289(delta)
+		return
 	if not relic_channel_v288.is_empty():
 		_advance_relic_channel_v288(delta)
 		return
@@ -869,7 +876,10 @@ func _attack_action_cost(heavy: bool) -> float:
 	if thrown_weapon_busy_v273():
 		return INF
 	if heavy and world!=null and (_special_modifier_v272() or (buffered_attack_valid and buffered_special_v261)):
-		if RELIC_MECHANICS_V288.is_channel(UNIQUE_SPECIALS_V261.kind(world.inventory.get_equipped("sword"))):
+		var skill_v289: String = UNIQUE_SPECIALS_V261.kind(world.inventory.get_equipped("sword"))
+		if skill_v289=="ivory_duelist_rapier_v286":
+			return _action_cost(18.0,false)
+		if RELIC_MECHANICS_V288.is_channel(skill_v289):
 			return 5.0
 	if _weapon_style() == "crossbow":
 		return _action_cost(26.0 if heavy else 18.0, false)
@@ -1047,6 +1057,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	_clear_ivory_guard_v289()
 	_end_relic_channel_v288()
 	thrown_lock_v273.clear()
 	clear_throw_charge_v276()
@@ -1104,6 +1115,9 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	# I-frame contacts must not cancel a bow charge or punish valid dodges.
 	if invulnerable_time > 0.0:
 		return
+	if amount>0.0 and _try_ivory_guard_v289(attacker_position):
+		return
+	_clear_ivory_guard_v289()
 	_end_relic_channel_v288()
 	clear_throw_charge_v276()
 	ranged_relic_v277=""
@@ -1391,6 +1405,10 @@ func _begin_weapon_attack(heavy: bool) -> void:
 	if heavy and special_requested_v288:
 		var owner_v288: GhostItemInstance = world.inventory.get_equipped("sword")
 		var id_v288: String = UNIQUE_SPECIALS_V261.kind(owner_v288)
+		if id_v288=="ivory_duelist_rapier_v286":
+			buffered_attack_valid=false
+			_begin_ivory_guard_v289(owner_v288)
+			return
 		if RELIC_MECHANICS_V288.is_channel(id_v288):
 			buffered_attack_valid=false
 			_begin_relic_channel_v288(owner_v288,id_v288)
@@ -1413,6 +1431,70 @@ func _begin_weapon_attack(heavy: bool) -> void:
 	else:
 		_begin_attack(heavy)
 
+
+func _begin_ivory_guard_v289(item: GhostItemInstance) -> void:
+	var cost: float = _action_cost(18.0,false)
+	if item==null or item.is_broken() or stamina<cost or not relic_ready_v288("ivory_duelist_rapier_v286"):
+		return
+	if thrown_weapon_busy_v273() or attack_time_left>0.0 or jump_time_left>0.0 or dodge_time_left>0.0:
+		return
+	stamina-=cost
+	stamina_recovery_left=STAMINA_RECOVERY_WAIT
+	ivory_guard_item_v289=item
+	ivory_guard_left_v289=0.46
+	ivory_guard_direction_v289=_combat_aim_direction().normalized()
+	if ivory_guard_direction_v289.is_zero_approx():
+		ivory_guard_direction_v289=facing
+	set_facing(ivory_guard_direction_v289)
+	velocity=Vector2.ZERO
+	_reset_combo_v239()
+	relic_commit_v288("ivory_duelist_rapier_v286",2.5)
+	_play_if_changed(_weapon_motion_prefix(false)+facing_name)
+	var fx: Node2D = preload("res://scripts/relic_guard_fx_v289.gd").new()
+	fx.set("actor",self)
+	add_child(fx)
+	COMBAT_JUICE.play(get_tree().current_scene,global_position,"rapier_thrust",-21.0)
+	world.ui.set_stamina(stamina,MAX_STAMINA)
+
+func _clear_ivory_guard_v289() -> void:
+	ivory_guard_left_v289=0.0
+	ivory_guard_item_v289=null
+
+func _advance_ivory_guard_v289(delta: float) -> void:
+	if ivory_guard_item_v289==null or ivory_guard_item_v289.is_broken() or world.inventory.get_equipped("sword")!=ivory_guard_item_v289:
+		_clear_ivory_guard_v289()
+	else:
+		ivory_guard_left_v289=maxf(0.0,ivory_guard_left_v289-delta)
+		if ivory_guard_left_v289<=0.0:
+			_clear_ivory_guard_v289()
+	velocity=Vector2.ZERO
+	move_and_slide()
+
+func _try_ivory_guard_v289(attacker_position: Vector2) -> bool:
+	if ivory_guard_left_v289<=0.0 or ivory_guard_item_v289==null or world==null or world.inventory.get_equipped("sword")!=ivory_guard_item_v289 or ivory_guard_item_v289.is_broken():
+		return false
+	if not RELIC_MECHANICS_V288.parry_contact_v289(attacker_position-global_position,ivory_guard_direction_v289):
+		return false
+	# Match a nearby living enemy, rather than granting immunity to hazards.
+	var target: Node2D = null
+	var best: float = 48.0*48.0
+	for candidate in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(candidate) or candidate.is_queued_for_deletion() or not candidate is Node2D or not candidate.has_method("hit"):
+			continue
+		var point: Vector2 = (candidate as Node2D).global_position
+		var distance: float = point.distance_squared_to(attacker_position)
+		if distance<best and RELIC_GROUND_V288.clear_path(self,global_position,point):
+			target=candidate as Node2D
+			best=distance
+	if target==null:
+		return false
+	_clear_ivory_guard_v289()
+	counter_window=0.95
+	_spawn_precision_feedback("ready",global_position+Vector2(0,-31),ivory_guard_direction_v289)
+	COMBAT_JUICE.play(get_tree().current_scene,global_position,"evade",-13.0)
+	world.ui.show_pickup("PARRY · STRIKE NOW")
+	camera_kick=maxf(camera_kick,2.4)
+	return true
 
 func relic_ready_v288(id: String) -> bool:
 	return Time.get_ticks_msec()>=int(relic_cooldowns_v288.get(id,0))
