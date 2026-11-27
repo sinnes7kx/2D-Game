@@ -14,6 +14,8 @@ var hit_ids: Dictionary = {}
 var ring_radius: float = 0.0
 const STEP: float = 0.14
 const FIRST: float = 0.27
+const BELL_FIRST: float = 0.55
+const BELL_STEP: float = 0.42
 const RING_SPEED: float = 420.0
 const RING_MAX: float = 235.0
 
@@ -80,7 +82,12 @@ func configure(actor: CharacterBody2D,mode: String,direction: Vector2,damage: fl
 
 func _ready() -> void:
 	z_index=12
-	if kind=="impale" or kind=="fissure":
+	if kind=="bells":
+		for offset in [Vector2(130,0),Vector2(222,-83),Vector2(222,83)]:
+			var at: Vector2 = global_position+offset.rotated(axis.angle())
+			if clear_path(caster,global_position,at):
+				spots.append(to_local(at))
+	elif kind=="impale" or kind=="fissure":
 		var gap: float = 61.0 if kind=="impale" else 83.0
 		for i in range(6 if kind=="impale" else 4):
 			var at: Vector2 = global_position+axis*(55.0+gap*float(i))
@@ -106,6 +113,17 @@ func _physics_process(delta: float) -> void:
 				caster.set("camera_kick",maxf(float(caster.get("camera_kick")),4.2))
 		if age>=FIRST+RING_MAX/RING_SPEED+0.25:
 			queue_free()
+	elif kind=="bells":
+		while emitted<spots.size() and age>=BELL_FIRST+BELL_STEP*float(emitted):
+			var point: Vector2 = to_global(spots[emitted])
+			var hits: int = hit_disk(caster,point,70.0,power*0.72,2.1,{})
+			AUDIO.play(get_parent(),point,"ground_slam",-14.0)
+			IMPACT.burst(get_parent(),point,"slam",1.25,axis,emitted+289)
+			if hits>0:
+				caster.set("camera_kick",maxf(float(caster.get("camera_kick")),5.0))
+			emitted+=1
+		if age>BELL_FIRST+BELL_STEP*float(spots.size())+0.5:
+			queue_free()
 	else:
 		while emitted<spots.size() and age>=FIRST+STEP*float(emitted):
 			var point: Vector2 = to_global(spots[emitted])
@@ -120,6 +138,25 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	if kind=="bells":
+		for i in range(spots.size()):
+			var p: Vector2 = spots[i]
+			var t: float = age-BELL_FIRST-BELL_STEP*float(i)
+			if t < -0.5 or t>0.42:
+				continue
+			var fade: float = 1.0-clampf(t/0.42,0.0,1.0)
+			var fall: float = clampf((t+0.5)/0.5,0.0,1.0)
+			var center: Vector2 = p+Vector2(0,-190.0*(1.0-fall*fall)-23.0)
+			draw_arc(p,70.0,0.0,TAU,48,Color(ink.r,ink.g,ink.b,0.4*fade),2.0,true)
+			var contour: PackedVector2Array = PackedVector2Array([center+Vector2(-31,19),center+Vector2(-23,5),center+Vector2(-18,-29),center+Vector2(-10,-39),center+Vector2(10,-39),center+Vector2(18,-29),center+Vector2(23,5),center+Vector2(31,19)])
+			draw_colored_polygon(contour,Color(0.35,0.26,0.22,0.88*fade))
+			draw_polyline(contour,Color(ink.r,ink.g,ink.b,fade),2.1,true)
+			draw_line(center+Vector2(-31,19),center+Vector2(31,19),Color(ink.r,ink.g,ink.b,fade),5.0,true)
+			draw_line(center+Vector2(0,-44),center+Vector2(0,-53),Color(ink.r,ink.g,ink.b,fade),4.0,true)
+			draw_circle(center+Vector2(0,24),5.0,Color(ink.r,ink.g,ink.b,fade))
+			if t>=0.0:
+				draw_arc(p,70.0*clampf(t/0.32,0.0,1.0),0.0,TAU,48,Color(ink.r,ink.g,ink.b,fade),4.0,true)
+		return
 	if kind=="ring":
 		var radius: float = ring_radius if age>=FIRST else RING_MAX
 		var alpha: float = 0.65 if age>=FIRST else 0.20
