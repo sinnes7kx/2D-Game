@@ -35,6 +35,7 @@ const ROSE_SLASH_FX: SpriteFrames = preload("res://resources/rose_slash_fx.tres"
 const SPECTACLE: Script = preload("res://scripts/weapon_spectacle.gd")
 const IMPACT_PRESTIGE: Script = preload("res://scripts/impact_prestige_v116.gd")
 const PHYSICAL_FEEL: Script = preload("res://scripts/impact_spawner_v149.gd")
+const FORGE_TACTICS_V286 = preload("res://scripts/forge_tactics_v286.gd")
 const COMBAT_JUICE: Script = preload("res://scripts/combat_juice_v194.gd")
 const SWING_WAKE: Script = preload("res://scripts/swing_wake_v198.gd")
 const TIP_EXTENSION_V198: Script = preload("res://scripts/weapon_tip_extension_v198.gd")
@@ -1804,9 +1805,9 @@ func _begin_attack(heavy: bool) -> void:
 		_:
 			attack_duration = 0.80 if heavy else [0.40, 0.43, 0.51][combo_step]
 			attack_hit_threshold = 0.58
-	if active_attack_style=="axe" and combo_item!=null:
-		var axe_id: String = str(combo_item.definition.item_id)
-		attack_duration*=0.86 if axe_id=="briar_hatchet_v283" else (1.14 if axe_id=="gallows_greataxe_v283" else 1.0)
+	if active_attack_style in ["axe","rapier"] and combo_item!=null:
+		var tuning: Dictionary = FORGE_TACTICS_V286.tuning(str(combo_item.definition.item_id))
+		attack_duration*=float(tuning["time"])
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
 	twinblade_weapon_v272=combo_item if heavy and active_attack_style=="twinblade" and active_special_v261.is_empty() else null
@@ -1832,6 +1833,10 @@ func _begin_attack(heavy: bool) -> void:
 	var swing_cue: String = "scythe_heavy" if heavy and active_attack_style == "scythe" else ("heavy_swing" if heavy else "swing")
 	if active_attack_style == "maul":
 		swing_cue = "blunt_swing"
+	elif active_attack_style=="axe":
+		swing_cue="axe_heavy_swing" if heavy else "axe_swing"
+	elif active_attack_style=="rapier":
+		swing_cue="rapier_thrust"
 	elif active_attack_style in ["dagger", "dual_dagger"] and not heavy:
 		swing_cue = "dagger_swing"
 	elif active_attack_style in ["spear", "halberd"] and not heavy:
@@ -2034,6 +2039,12 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 			attack_arc = -0.10 if heavy_attack else 0.01
 			poise_bonus = 0.85
 	if sword != null:
+		if active_attack_style in ["axe","rapier"]:
+			var tuning: Dictionary = FORGE_TACTICS_V286.tuning(str(sword.definition.item_id))
+			reach*=float(tuning["reach"])
+			poise_bonus*=float(tuning["poise"])
+			if active_attack_style=="axe":
+				attack_arc=clampf(attack_arc+float(tuning["arc"]),-0.25,0.85)
 		power += sword.weapon_damage()
 		match sword.active_weapon_mod(world.room == "lanternhaven"):
 			"long_reach": reach *= 1.20
@@ -2072,6 +2083,8 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 			continue
 		if attack_direction.dot(delta_to.normalized()) < attack_arc:
 			continue
+		if active_attack_style=="rapier" and not FORGE_TACTICS_V286.thrust_contact(delta_to,attack_direction,reach,heavy_attack):
+			continue
 		var ray: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position + Vector2(0, -18), candidate.global_position + Vector2(0, -18))
 		ray.collision_mask = 2
 		ray.exclude = [get_rid()]
@@ -2088,7 +2101,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 			_spawn_blade_blood(candidate.global_position + Vector2(0.0, -32.0), fx_color, fx_accent, fx_impact, fx_tier, sword.visual_seed() if sword != null else 0)
 			# Daggers already have a physical blade and dedicated tip glow;
 			# the large crescent slash contradicted the stabbing motion.
-			if active_attack_style != "dagger":
+			if active_attack_style not in ["dagger","rapier","spear"]:
 				_spawn_rose_slash(candidate.global_position + Vector2(0.0, -28.0))
 		_spawn_spectacle("strike", candidate.global_position + Vector2(0.0, -27.0), fx_color, fx_motif, fx_tier, fx_accent, fx_trail)
 		if counter_hit and not counter_shown:
@@ -2104,6 +2117,8 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 			finisher_shown = true
 		struck = true
 		camera_kick = maxf(camera_kick, 8.3 if jump_attack_active else (3.9 if heavy_attack else 2.1))
+		if active_attack_style=="axe" and heavy_attack:
+			camera_kick=maxf(camera_kick,5.8)
 		camera_push = attack_direction * (6.5 if jump_attack_active else (3.5 if heavy_attack else 1.8))
 	# Heavy and plunging attacks physically interact with ordinary wooden
 	# barricades, not progression locks. Each prop is hit once per strike.
@@ -2147,9 +2162,16 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 		# Only confirmed creature or world contact holds the active frame;
 		# misses never incur hitstop or resource gain.
 		hitstop_left = (0.105 if counter_hit and struck else (0.089 if jump_attack_active else (0.065 if heavy_attack else 0.040)))
+		if struck and active_attack_style=="axe":
+			hitstop_left=maxf(hitstop_left,0.090 if heavy_attack else 0.050)
 		body_art.pause()
 		_play_action_sfx(RIPOSTE_SFX if counter_hit and struck else HIT_SFX)
 		var contact_cue: String = "parry" if counter_hit and struck else ("blunt_hit" if active_attack_style == "maul" else ("blade_hit" if sword != null and struck else "hit"))
+		if struck and not counter_hit:
+			if active_attack_style=="axe":
+				contact_cue="axe_impact"
+			elif active_attack_style=="rapier":
+				contact_cue="rapier_impact"
 		COMBAT_JUICE.play(get_tree().current_scene, global_position, contact_cue, -14.0 if counter_hit and struck else -16.5)
 		if struck_world and not struck:
 			camera_kick = maxf(camera_kick, 4.5 if jump_attack_active else 3.0)
