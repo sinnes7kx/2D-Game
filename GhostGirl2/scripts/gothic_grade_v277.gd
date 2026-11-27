@@ -22,7 +22,6 @@ func _ready() -> void:
 	screen_rect=ColorRect.new()
 	screen_rect.name="WorldColorGrade"
 	screen_rect.mouse_filter=Control.MOUSE_FILTER_IGNORE
-	screen_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	grade_material=ShaderMaterial.new()
 	grade_material.shader=GRADE
 	screen_rect.material=grade_material
