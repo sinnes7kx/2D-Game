@@ -130,17 +130,25 @@ func _physics_process(delta: float) -> void:
 		var attack: String = str(active_boss.get("attack"))
 		var phase: int = int(active_boss.get("phase"))
 		var hint: String = "PHASE %d"%phase
-		if state==BOSS.STAGGER:
-			hint="STAGGERED · STRIKE"
-		elif state==BOSS.RECOVER:
-			hint="RECOVERY · STRIKE"
-		elif state==BOSS.TELL and attack=="bell_pulse":
-			hint="GROUND PULSE · JUMP"
+		var opening: String = str(active_boss.get("opening"))
+		var remaining: Array = active_boss.get("followups")
+		if state==BOSS.STAGGER or state==BOSS.RECOVER:
+			hint=opening if not opening.is_empty() else "RECOVERY · STRIKE"
+		elif state==BOSS.INTERVAL:
+			hint="COMBO CONTINUES · %d STRIKES LEFT"%remaining.size()
+		elif state==BOSS.WAVE:
+			hint="SHOCKWAVE · JUMP AS THE RING REACHES YOU"
+		elif state==BOSS.CHARGE or (state==BOSS.TELL and attack=="iron_charge"):
+			hint="SHIELD CHARGE · SIDESTEP"
+		elif state==BOSS.TELL and attack=="bell_wave":
+			hint="BELL RISING · WATCH THE RING"
 		elif state==BOSS.TELL and attack=="astral_beam":
 			hint="CHANNEL EXPOSED · Q HOOK OR EVADE"
+		elif state==BOSS.TELL and attack=="astral_seal":
+			hint="ASTRAL SEAL · KEEP MOVING"
 		elif str(active_boss.get("boss_id"))=="iron":
 			hint="GUARDED · FLANK OR BREAK GUARD"
-		detail_label.text=hint
+		detail_label.text="II  ·  "+hint if phase==2 else hint
 
 func _spawn() -> void:
 	var id: String = pending_id
