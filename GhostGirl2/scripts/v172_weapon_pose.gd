@@ -234,6 +234,13 @@ func _is_equipped(animation_name: String) -> bool:
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident in ["moonwarden_spear_v169","bellthorn_lance_v276"] and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
 
 func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2Array:
+	var span: PackedVector2Array = _base_weapon_span_v288(animation_name,frame_index)
+	if span.size()==2 and player!=null and animation_name.contains("twinblade") and not str(player.get("relic_channel_v288")).is_empty():
+		var radius: float = span[0].distance_to(span[1])
+		span[1]=span[0]+Vector2.from_angle(float(player.get("relic_spin_angle_v288")))*radius
+	return span
+
+func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedVector2Array:
 	if _is_equipped(animation_name) and (animation_name.contains("rapier_") or animation_name.contains("axe_")):
 		var diagonal_v283 = preload("res://scripts/ghost_diagonal_art_v247.gd")
 		if not diagonal_v283.diagonal_name(animation_name).is_empty():
