@@ -42,6 +42,29 @@ func _initialize() -> void:
 					assert(ART.armed_clip(family+motion+cardinal,direction,cardinal,frames)==clip)
 					assert(frames.get_frame_count(clip)==8)
 					assert(frames.get_frame_texture(clip,7)==frames.get_frame_texture(motion+direction,7))
+	# Opening a live equipment preview reruns these legacy installers on
+	# shared SpriteFrames; they must never touch a diagonal alias.
+	if ART.available() and frames.has_animation("scythe_idle_front_right"):
+		var fixture: AnimatedSprite2D = AnimatedSprite2D.new()
+		fixture.sprite_frames=frames
+		for face in ["front","back","left","right"]:
+			var source: String = "attack_unarmed_light_"+face
+			frames.add_animation(source)
+			for i in range(8):
+				frames.add_frame(source,GradientTexture2D.new())
+		var expected_textures: Dictionary = {}
+		for clip in frames.get_animation_names():
+			if ART.is_carried_clip(str(clip)):
+				expected_textures[clip]=frames.get_frame_texture(clip,7)
+		preload("res://scripts/v175_hookfree_weapon_body.gd").install(fixture)
+		preload("res://scripts/scythe_art_v190.gd").install(fixture)
+		preload("res://scripts/heavy_weapon_art_v192.gd").install(fixture)
+		preload("res://scripts/gentle_weapon_motion_v191.gd").install(fixture)
+		preload("res://scripts/steady_weapon_idles_v195.gd").install(fixture)
+		for clip in expected_textures:
+			assert(frames.get_frame_count(clip)==8)
+			assert(frames.get_frame_texture(clip,7)==expected_textures[clip])
+		fixture.free()
 	assert(not ART.is_carried_clip("attack_dagger_heavy_front_right"))
 	assert(ART.is_painted_bow_carry("moonveil_walk_back_left"))
 	if frames.has_animation("sword_modular_idle_front_right"):

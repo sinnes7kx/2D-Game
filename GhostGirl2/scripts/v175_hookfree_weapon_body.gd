@@ -8,6 +8,8 @@ static func install(sprite: AnimatedSprite2D) -> void:
 	var frames: SpriteFrames = sprite.sprite_frames
 	for name in frames.get_animation_names():
 		var anim: String = str(name)
+		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(anim).is_empty():
+			continue
 		var dual: bool = anim.begins_with("dual_dagger_") or anim.begins_with("dual_sword_") or anim.begins_with("attack_dual_dagger_") or anim.begins_with("attack_dual_sword_")
 		var newer_attack: bool = anim.begins_with("attack_nocturne_dagger_") or anim.begins_with("attack_briarwake_spear_")
 		# The physical left bow is drawn separately and mirrored from the
