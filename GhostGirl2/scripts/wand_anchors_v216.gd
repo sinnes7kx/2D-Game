@@ -20,9 +20,9 @@ static func is_wand_pose(animation_name: String) -> bool:
 
 static func pose_name(animation_name: String, face: String) -> String:
 	var diagonal: String = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_name)
-	if not diagonal.is_empty() and animation_name.begins_with("wand_"):
+	if not diagonal.is_empty() and is_wand_pose(animation_name):
 		var side: String = "left" if diagonal.ends_with("left") else "right"
-		var action: String = "walk" if animation_name.contains("_walk_") else "idle"
+		var action: String = "cast" if animation_name.contains("_cast_") or animation_name.begins_with("attack_") else ("walk" if animation_name.contains("_walk_") else "idle")
 		return "wand_" + action + "_" + side
 	if animation_name.begins_with("attack_wand_"):
 		return "wand_cast_" + face
@@ -110,8 +110,19 @@ static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2
 	var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, body.frame)
 	if wrist == Vector2.INF:
 		wrist = target_grip(face,animation_name,frame)
-	var angle: float = GENTLE.angle_at(GENTLE.phase_of(body)) if animation_name.begins_with("wand_idle_") else 0.0
-	return transformed_span(points,wrist,angle)
+	return transformed_span(points,wrist,pose_rotation_v294(body,points))
+
+static func pose_rotation_v294(body: AnimatedSprite2D,points: PackedVector2Array) -> float:
+	var clip: String = str(body.animation)
+	if clip.begins_with("wand_idle_"):
+		return GENTLE.angle_at(GENTLE.phase_of(body))
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if points.size()==2 and diagonal.is_modular_combat_v294(clip) and (clip.begins_with("wand_cast_") or clip.begins_with("attack_wand_")):
+		var heading: Vector2 = diagonal.heading_v294(diagonal.diagonal_name(clip))
+		var local_heading: Vector2 = body.to_local(body.global_position+heading)
+		if not local_heading.is_zero_approx() and points[0].distance_squared_to(points[1])>0.01:
+			return (points[1]-points[0]).angle_to(local_heading)
+	return 0.0
 
 # Same transform used by equipment_visuals: scale and rotate about authored
 # grip, then translate that grip to the actual visible wrist.
