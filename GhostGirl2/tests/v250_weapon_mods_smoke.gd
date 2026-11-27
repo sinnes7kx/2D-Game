@@ -24,6 +24,41 @@ func _initialize() -> void:
 	if OS.is_debug_build():
 		assert(item.active_weapon_mod(true) == item.debug_weapon_mod)
 	assert(item.weapon_mod == genuine)
+	var innate = preload("res://scripts/unique_innate_v274.gd")
+	assert(innate.POWERS.size()==72)
+	var resources: Array[String] = []
+	_collect_equipment_paths_v274("res://items",resources)
+	var covered: int = 0
+	var unique_names: Dictionary = {}
+	for path in resources:
+		var template: GhostItemData = load(path) as GhostItemData
+		if template==null or template.item_class!="equipment" or template.equip_slot=="none":
+			continue
+		var candidate: GhostItemInstance = GhostItemGenerator.create(template,27401,"unique")
+		var active_label: String = preload("res://scripts/unique_specials_v261.gd").label(candidate)
+		var passive_label: String = innate.label(candidate)
+		assert(not active_label.is_empty() or not passive_label.is_empty(),"Missing unique power: "+path)
+		assert(active_label.is_empty() or passive_label.is_empty(),"Double unique power: "+path)
+		var label: String = passive_label if active_label.is_empty() else active_label
+		assert(not unique_names.has(label),"Duplicate unique power: "+label)
+		unique_names[label]=true
+		covered+=1
+	assert(covered==80)
+	var fixed_bonus: Dictionary = innate.bonuses(item)
+	assert(fixed_bonus.size()==2)
+	assert(float(item.all_stats()["melee_power_pct"])>=float(fixed_bonus["melee_power_pct"]))
+	assert(innate.bonuses(GhostItemGenerator.create(BOW,123456,"normal")).is_empty())
+	assert(innate.bonuses(GhostItemGenerator.create(preload("res://items/nocturne_stiletto_v171.tres"),123456,"unique")).is_empty())
+	var names: Dictionary = {}
+	for key in innate.POWERS:
+		var profile: Array = innate.POWERS[key]
+		assert(profile.size()==5 and profile[1]!=profile[3])
+		assert(not names.has(profile[0]))
+		names[profile[0]]=true
+	var material = preload("res://scripts/gothic_material_v274.gd")
+	var plate: StyleBoxTexture = material.plate(Color("17111b"),Color("947650"),18,true)
+	assert(plate.texture.get_size()==Vector2(128,96))
+	assert(plate.texture==material.plate(Color("17111b"),Color("947650"),18,true).texture)
 	var guard = preload("res://scripts/thrown_weapon_lock_v273.gd").new()
 	assert(not guard.busy())
 	var stale: Node = Node.new()
@@ -150,3 +185,14 @@ func _initialize() -> void:
 	spell.free()
 	print("v251 weapon mods: deterministic rolls, save roundtrip, legacy defaults and return phase")
 	quit(0)
+
+func _collect_equipment_paths_v274(path: String,out: Array[String]) -> void:
+	var dir: DirAccess = DirAccess.open(path)
+	if dir==null:
+		return
+	for file in dir.get_files():
+		if file.ends_with(".tres"):
+			out.append(path.path_join(file))
+	for folder in dir.get_directories():
+		if not folder.begins_with("."):
+			_collect_equipment_paths_v274(path.path_join(folder),out)

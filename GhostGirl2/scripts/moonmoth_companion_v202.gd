@@ -127,27 +127,47 @@ func _draw_equipped_wisp() -> void:
     var hue: Color = RNG.sample_palette(colors, 0.5 + 0.5 * sin(time_alive * 0.8))
     var accent: Color = RNG.sample_palette(colors, 0.8)
     var core: Vector2 = Vector2(0.0, sin(time_alive * 2.1) * 2.0)
-    # Seeded wing geometry and independent wing color channel. Cosmetic only.
-    var shape_seed: int = wing_shape
+    # A tiny elongated fairy, four articulated translucent wings. Keep
+    # the existing independently rolled colors and wing-shape identity.
     var wing_ink: Color = RNG.sample_palette(wing_colors,0.43)
-    var flap: float = 0.76+0.22*sin(time_alive*5.1)
+    var flap: float = 0.55+0.45*absf(sin(time_alive*11.0))
+    var reach: float = (18.0+wing_shape*1.9)*flap
+    var upper_height: float = 15.0+wing_shape*1.6
+    var tail_height: float = 10.0+wing_shape*1.1
     for side in [-1.0,1.0]:
-        var root: Vector2 = core+Vector2(side*2.0,0)
-        var upper: Vector2 = core+Vector2(side*(10.0+shape_seed*1.6)*flap,-8.0-shape_seed*1.2)
-        var outer: Vector2 = core+Vector2(side*(14.0+shape_seed)*flap,-1.0)
-        var lower: Vector2 = core+Vector2(side*(7.0+shape_seed*1.4)*flap,6.0+shape_seed)
-        draw_colored_polygon(PackedVector2Array([root,upper,outer,lower]),Color(wing_ink.r,wing_ink.g,wing_ink.b,0.46))
-        draw_polyline(PackedVector2Array([root,upper,outer,lower,root]),wing_ink.lightened(0.28),0.85,true)
-        draw_line(root,outer,wing_ink.darkened(0.24),0.65,true)
-        if shape_seed>=2:
-            draw_line(outer,lower+Vector2(side*2.0,5.0),wing_ink.lightened(0.2),0.9,true)
-    draw_circle(core, 4.0, hue.lerp(Color.WHITE, 0.28))
-    draw_circle(core + Vector2(-1, -1), 1.6, Color("fff5ff"))
+        var root: Vector2 = core+Vector2(side*1.5,-1)
+        var upper: PackedVector2Array = PackedVector2Array([root])
+        var lower: PackedVector2Array = PackedVector2Array([root])
+        # Tapered curved petals, not solid polygonal triangles.
+        for j in range(1,17):
+            var t: float = float(j)/16.0
+            var bulge: float = pow(maxf(0.0,sin(t*PI)),0.84)
+            upper.append(root+Vector2(side*reach*bulge,-upper_height*sin(t*PI)*sin(t*PI*0.5)-3.0*sin(t*TAU)))
+            lower.append(root+Vector2(side*reach*0.64*bulge,tail_height*bulge+3.0*sin(t*TAU)))
+        draw_colored_polygon(upper,Color(wing_ink.r,wing_ink.g,wing_ink.b,0.40))
+        draw_colored_polygon(lower,Color(wing_ink.r,wing_ink.g,wing_ink.b,0.31))
+        var edge: Color = wing_ink.lerp(Color.WHITE,0.58)
+        edge.a=0.76
+        draw_polyline(upper,edge,0.85,true)
+        edge.a=0.54
+        draw_polyline(lower,edge,0.75,true)
+        for vein in [5,8,11]:
+            draw_line(root,upper[vein],Color(edge.r,edge.g,edge.b,0.24),0.65,true)
+        draw_line(root,lower[8],Color(edge.r,edge.g,edge.b,0.28),0.65,true)
+    # Head, slender body and pointed trailing dress. No large central orb.
+    var light: Color = hue.lerp(Color.WHITE,0.54)
+    draw_colored_polygon(PackedVector2Array([core+Vector2(-2.2,-2.0),core+Vector2(2.2,-2.0),core+Vector2(3.0,3.8),core+Vector2(0,7.5),core+Vector2(-3.0,3.8)]),light)
+    draw_circle(core+Vector2(0,-4),2.1,hue.lerp(Color.WHITE,0.72))
+    draw_line(core+Vector2(0,-1),core+Vector2(0,6),Color("fff3e9"),0.8,true)
     if FX.intensity <= 0.0:
         return
     if tier<6:
         _draw_seeded_layers_v273(core,hue,accent,tier)
-    draw_circle(core, 13.0 + tier, Color(hue.r, hue.g, hue.b, FX.alpha(0.12)))
+        # Very local body bloom; the wings remain the dominant silhouette.
+        draw_circle(core,5.5,Color(hue.r,hue.g,hue.b,FX.alpha(0.11)))
+        return
+    # Retain the protected top-tier decorative identity.
+    draw_circle(core,13.0+tier,Color(hue.r,hue.g,hue.b,FX.alpha(0.12)))
     var count: int = 2+mini(tier,4)
     for i in range(count):
         var t: float = float(i) / float(count)
@@ -183,32 +203,23 @@ func _draw_seeded_layers_v273(core: Vector2,hue: Color,accent: Color,tier: int) 
     var radius: float = 12.0+float(tier)*1.5
     var phase: float = time_alive*0.45
     var shape: int = int(fx_profile.get("aura",0))
-    match shape:
-        0:
-            draw_circle(core,radius,Color(aura.r,aura.g,aura.b,strength*0.14*pulse))
-            draw_arc(core,radius,phase,phase+PI*1.35,28,Color(aura.r,aura.g,aura.b,strength*0.48),1.0,true)
-        1:
-            for j in range(2):
-                draw_arc(core,radius+float(j)*4.0,phase+float(j)*PI,phase+PI*1.25+float(j)*PI,24,Color(aura.r,aura.g,aura.b,strength*0.35),1.0,true)
-        2:
-            var points: PackedVector2Array = PackedVector2Array()
-            for j in range(7):
-                points.append(core+Vector2.from_angle(phase+float(j)*TAU/6.0)*radius)
-            draw_polyline(points,Color(aura.r,aura.g,aura.b,strength*0.43),1.0,true)
-        3:
-            draw_arc(core+Vector2(3,0),radius,phase,phase+PI*1.45,24,Color(aura.r,aura.g,aura.b,strength*0.7),2.2,true)
-        4:
-            for j in range(3):
-                var p: Vector2 = core+Vector2.from_angle(phase+float(j)*TAU/3.0)*radius
-                draw_line(p-Vector2(0,3),p+Vector2(0,3),Color(aura.r,aura.g,aura.b,strength),1.0,true)
-        _:
-            draw_circle(core,radius*pulse,Color(aura.r,aura.g,aura.b,strength*0.09))
-            draw_circle(core,radius*0.65,Color(aura.r,aura.g,aura.b,strength*0.18))
+    # All lower-tier effects are small wing-edge accents or drifting dust,
+    # never a large enclosing orb/ring. Seed still selects the motif.
+    for side in [-1.0,1.0]:
+        var at: Vector2 = core+Vector2(side*(10.0+shape*1.4),-5.0+sin(time_alive*2.0+side)*2.0)
+        var ink: Color = Color(aura.r,aura.g,aura.b,strength*pulse)
+        match shape:
+            0,1: draw_circle(at,1.5,ink)
+            2,3:
+                draw_line(at-Vector2(2,0),at+Vector2(2,0),ink,0.9,true)
+                draw_line(at-Vector2(0,2),at+Vector2(0,2),ink,0.9,true)
+            4: draw_arc(at,2.4,phase,phase+PI,10,ink,1.0,true)
+            _: draw_line(at,at+Vector2(side*3,-4),ink,1.0,true)
     var orbit: int = int(fx_profile.get("orbit",0))
     var motif: int = int(fx_profile.get("motif",0))
     for j in range(2+mini(tier,3)):
         var a: float = phase*(1.0+float(orbit)*0.15)+float(j)*TAU/float(2+mini(tier,3))
-        var p: Vector2 = core+Vector2(cos(a)*radius,sin(a*(2.0 if orbit==2 else 1.0))*radius*(0.54+orbit*0.07))
+        var p: Vector2 = core+Vector2(cos(a)*radius*0.78,8.0+absf(sin(a*(2.0 if orbit==2 else 1.0)))*radius*0.95)
         var c: Color = RNG.sample_palette(colors,float(j)*0.23+0.1)
         c.a=strength*pulse
         match motif:

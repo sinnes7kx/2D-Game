@@ -12,24 +12,28 @@ static func plate(bg: Color,edge: Color,border: int=1,pad: int=7) -> StyleBoxFla
 	style.content_margin_bottom=pad
 	return style
 
+const MATERIAL = preload("res://scripts/gothic_material_v274.gd")
+
 static func apply(target: Control) -> void:
 	var t: Theme = Theme.new()
+	if target is PanelContainer:
+		target.add_theme_stylebox_override("panel",MATERIAL.plate(Color("17111b"),Color("947650"),18,true))
 	t.default_font_size=14
 	for kind in ["Button","OptionButton","CheckButton"]:
-		t.set_stylebox("normal",kind,plate(Color("231b26"),Color("665043")))
-		t.set_stylebox("hover",kind,plate(Color("392638"),Color("c7a477")))
-		t.set_stylebox("pressed",kind,plate(Color("422b39"),Color("e0bd88")))
-		t.set_stylebox("disabled",kind,plate(Color("1a171e"),Color("3b3038")))
+		t.set_stylebox("normal",kind,MATERIAL.plate(Color("251b26"),Color("8b6a48"),7))
+		t.set_stylebox("hover",kind,MATERIAL.plate(Color("3a2634"),Color("c7a477"),7))
+		t.set_stylebox("pressed",kind,MATERIAL.plate(Color("34202c"),Color("d4ae79"),7))
+		t.set_stylebox("disabled",kind,MATERIAL.plate(Color("19151c"),Color("50443e"),7))
 		t.set_stylebox("focus",kind,plate(Color(0,0,0,0),Color("bc9776")))
 		t.set_color("font_color",kind,Color("d9c7bc"))
 		t.set_color("font_hover_color",kind,Color("fff0d3"))
 		t.set_color("font_disabled_color",kind,Color("786d78"))
-	t.set_stylebox("normal","LineEdit",plate(Color("100e15"),Color("65503f")))
+	t.set_stylebox("normal","LineEdit",MATERIAL.plate(Color("100d14"),Color("806446"),8,true))
 	t.set_stylebox("focus","LineEdit",plate(Color("17111b"),Color("c0a078")))
 	t.set_color("font_color","LineEdit",Color("ead8cd"))
-	t.set_stylebox("panel","ItemList",plate(Color("100d14"),Color("665043"),1,5))
-	t.set_stylebox("selected","ItemList",plate(Color("44303e"),Color("ae875f"),1,4))
-	t.set_stylebox("selected_focus","ItemList",plate(Color("44303e"),Color("dfbd88"),1,4))
+	t.set_stylebox("panel","ItemList",MATERIAL.plate(Color("100d14"),Color("806446"),9,true))
+	t.set_stylebox("selected","ItemList",MATERIAL.plate(Color("3b2836"),Color("a8865f"),5))
+	t.set_stylebox("selected_focus","ItemList",MATERIAL.plate(Color("49303d"),Color("dfbd88"),5))
 	t.set_constant("v_separation","ItemList",7)
 	t.set_constant("h_separation","ItemList",12)
 	t.set_color("font_selected_color","ItemList",Color("f4d8ac"))

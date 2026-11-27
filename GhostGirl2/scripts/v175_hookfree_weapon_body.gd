@@ -44,6 +44,9 @@ static func install(sprite: AnimatedSprite2D) -> void:
 			select_frames = [0, 0, 1, 0, 0, 1, 0, 0]
 		elif walk:
 			select_frames = [0, 1, 2, 1, 0, 1, 2, 1]
+		elif anim.begins_with("attack_dual_sword_heavy_") or anim.begins_with("attack_dual_sword_riposte_"):
+			# Exact shared source mapping; omit the baked crescent frame 4.
+			select_frames = preload("res://scripts/dagger_thrust_v186.gd").sequence(false)
 		var textures: Array[Texture2D] = []
 		var source_count: int = frames.get_frame_count(source)
 		for i in range(maxi(1, original_count)):

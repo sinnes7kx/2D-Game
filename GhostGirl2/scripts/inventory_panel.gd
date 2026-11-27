@@ -42,6 +42,9 @@ var test_mythic: OptionButton
 
 func _ready() -> void:
 	preload("res://scripts/gothic_ui_v273.gd").apply(self)
+	var material = preload("res://scripts/gothic_material_v274.gd")
+	for well in [$Layout/SlotsWell,$Layout/DetailsWell]:
+		well.add_theme_stylebox_override("panel",material.plate(Color("100e15"),Color("6d553c"),12,true))
 	var trim: Control = preload("res://scripts/gothic_frame_v241.gd").new()
 	trim.name = "GothicEngraving"
 	trim.top_level = true

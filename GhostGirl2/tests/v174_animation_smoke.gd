@@ -1,5 +1,6 @@
 extends SceneTree
 const DUAL_SWORD_POSES = preload("res://scripts/v174_dual_swords.gd")
+const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 ## v1.74 actual Godot engine smoke check (not only regex source assertions).
 ## Instantiate approved Ghost Girl player and verify ALL directional clips.
 func _initialize() -> void:
@@ -46,6 +47,13 @@ func _verify() -> void:
 	if art.get_node_or_null("DualDaggersV173") == null:
 		push_error("v1.74: previous dual-dagger rig missing")
 		errors += 1
+	for face in ["front","back","left","right"]:
+		for action in ["heavy","riposte"]:
+			var clip: String = "attack_dual_sword_"+action+"_"+face
+			for i in range(8):
+				if frames.get_frame_texture(clip,i)!=frames.get_frame_texture("attack_unarmed_light_"+face,HAND.sequence(false)[i]):
+					push_error("v2.74: heavy source mapping changed: "+clip)
+					errors+=1
 	# Verify geometry, not only animation names. This catches flipped side
 	# facings, invisible tips, crossed blade failures and off-atlas drawings.
 	var pose_count: int = 0
@@ -59,6 +67,17 @@ func _verify() -> void:
 					continue
 				for hand in range(2):
 					var span: PackedVector2Array = pair[hand]
+					if action in ["heavy","riposte"]:
+						var expected: Vector2 = HAND.hand_anchor(face,HAND.sequence(false)[n],hand)
+						if expected==Vector2.INF:
+							if not span.is_empty():
+								push_error("v2.74: hidden wrist draws a detached blade")
+								errors+=1
+							continue
+						if span.size()!=2 or not span[0].is_equal_approx(expected):
+							push_error("v2.74: heavy/riposte hilt disagrees with visible wrist")
+							errors+=1
+							continue
 					if span.size() != 2:
 						push_error("v1.74.1: missing hand span")
 						errors += 1

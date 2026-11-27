@@ -129,7 +129,20 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	if item.ethereal:
 		out.append("[font_size=13][color=#c1d8e4]ETHEREAL · %s[/color][/font_size]" % ("BROKEN" if item.is_broken() else "%d/%d durability" % [item.durability, item.max_durability]))
 		out.append(_label("Cannot be repaired · " + ("Display only" if item.is_broken() else "Enhanced power")))
+	var innate = preload("res://scripts/unique_innate_v274.gd")
+	var innate_stats: Dictionary = innate.bonuses(item)
+	var innate_label: String = innate.label(item)
 	var stats: Dictionary = item.all_stats()
+	if not innate_label.is_empty():
+		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
+		out.append("[font_size=12][color=#d4ae76]◆  UNIQUE PASSIVE[/color][/font_size]")
+		out.append("[font_size=18][color=#f0d2a0][b]%s[/b][/color][/font_size]" % escape(innate_label))
+		for key in innate_stats:
+			out.append("[font_size=14][color=#a9d8d3]+%.0f%% %s[/color][/font_size]" % [innate_stats[key],escape(GhostPaletteLibrary.stat_label(str(key)))])
+			stats[key]=float(stats.get(key,0.0))-float(innate_stats[key])
+			if absf(float(stats[key]))<0.001:
+				stats.erase(key)
+		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
 	if not stats.is_empty():
 		var ids: Array = stats.keys()
 		ids.sort()

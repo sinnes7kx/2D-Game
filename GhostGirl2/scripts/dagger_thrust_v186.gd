@@ -2,7 +2,12 @@ extends RefCounted
 ## Eight-frame dagger thrusts use intact, original character poses.
 ## No frame four's baked slash arc, no head reconstruction or mirrored body.
 static func sequence(heavy: bool) -> Array[int]:
-	return [0, 2, 2, 3, 3, 5, 6, 7] if heavy else [0, 1, 2, 3, 3, 5, 6, 7]
+	# Explicit typed array construction avoids Godot 4.7's ternary Array
+	# coercion problem when this mapping is assigned to another typed array.
+	var frames: Array[int] = [0, 1, 2, 3, 3, 5, 6, 7]
+	if heavy:
+		frames[1]=2
+	return frames
 
 static func install(sprite: AnimatedSprite2D) -> void:
 	var frames: SpriteFrames = sprite.sprite_frames
