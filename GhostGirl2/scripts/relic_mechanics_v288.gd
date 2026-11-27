@@ -13,7 +13,8 @@ const AREAS: Dictionary = {
 const GROUND_SKILLS: Dictionary = {
 	"drowned_fork":"impale",
 	"ossuary_poleaxe_v286":"fissure",
-	"gallows_greataxe_v283":"ring"
+	"gallows_greataxe_v283":"ring",
+	"hollowbell_maul_v277":"bells"
 }
 static func is_channel(id: String) -> bool:
 	return CHANNELS.has(id)
@@ -29,6 +30,8 @@ static func cooldown(id: String) -> float:
 			"moonfall": return 6.2
 			"astral": return 7.8
 			"roses": return 7.1
+	if id=="hollowbell_maul_v277":
+		return 5.0
 	if GROUND_SKILLS.has(id):
 		return 2.4
 	return 0.0
