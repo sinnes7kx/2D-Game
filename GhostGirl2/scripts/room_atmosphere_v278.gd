@@ -27,6 +27,8 @@ static func profile(key: String) -> Dictionary:
 		return {"ink":Color("85899f"),"far":0.115,"near":0.062,"drift":8.0}
 	if key=="colosseum":
 		return {"ink":Color("9e91b0"),"far":0.053,"near":0.019,"drift":3.5}
+	if key=="lanternhaven":
+		return {"ink":Color("b29aa2"),"far":0.092,"near":0.045,"drift":3.8}
 	if key in WARM_ROOMS:
 		return {"ink":Color("a68b8d"),"far":0.066,"near":0.029,"drift":3.0}
 	if key in ["garden","garden_bridge","garden_arbor","glasshouse"]:
@@ -76,6 +78,11 @@ func _ready() -> void:
 		halos.append(halo)
 	initialized=true
 	_refresh()
+	if room_key=="lanternhaven":
+		var details: Node2D = preload("res://scripts/lanternhaven_atmosphere_v290.gd").new()
+		details.name="LanternhavenLivingAirV290"
+		details.set("ambience",self)
+		add_child(details)
 
 func _room_bounds() -> Rect2:
 	var painted: Sprite2D = room_root.get_node_or_null("PaintedRoom") as Sprite2D
@@ -193,9 +200,9 @@ func _refresh() -> void:
 		lamp.global_position=entry["at"]
 		lamp.texture_scale=float(entry["diameter"])/128.0
 		lamp.color=entry["color"]
-		lamp.energy=float(entry["energy"])*strength*flicker
+		lamp.energy=float(entry["energy"])*strength*flicker*(1.12 if room_key=="lanternhaven" else 1.0)
 		# Small emissive bloom at the source, not a full-screen glow pass.
 		halo.global_position=entry["at"]
 		halo.scale=Vector2.ONE*(float(entry["diameter"])*0.46/64.0)
 		var tint: Color = entry["color"]
-		halo.modulate=Color(tint.r,tint.g,tint.b,0.12*strength*flicker)
+		halo.modulate=Color(tint.r,tint.g,tint.b,(0.17 if room_key=="lanternhaven" else 0.12)*strength*flicker)
