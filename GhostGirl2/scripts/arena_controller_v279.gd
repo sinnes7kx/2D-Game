@@ -88,11 +88,13 @@ func interact_boss(id: String) -> String:
 		return ""
 	if world.inventory.has_collected(victory_key(id)) and not world.inventory.has_collected(reward_key(id)):
 		var data: GhostItemData = load(str(BOSS.DATA[id]["reward"])) as GhostItemData
+		# Save the successful claim in the same inventory write as the item.
+		# A full backpack does not consume the reward.
+		world.inventory.collected_pickups[reward_key(id)]=true
 		var reward: GhostItemInstance = world.inventory.add_loot(data,279100+ORDER.find(id),"unique","colosseum")
 		if reward==null:
+			world.inventory.collected_pickups.erase(reward_key(id))
 			return "RELIC RESERVED · "+world.inventory.last_add_failure
-		world.inventory.collected_pickups[reward_key(id)]=true
-		world.inventory.save_game()
 		return "VICTORY RELIC · "+reward.display_name()
 	if world.player.carrying!=null:
 		return "PUT DOWN THE OBJECT BEFORE CHALLENGING"
