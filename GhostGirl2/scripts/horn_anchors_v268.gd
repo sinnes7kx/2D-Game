@@ -97,7 +97,7 @@ func frame_roots(sprite: AnimatedSprite2D, face: String) -> PackedVector2Array:
 		return fallback_roots(face)
 	# Body art with large baked attack arcs is not a reliable silhouette
 	# scan. Retain the directional reference for those clips.
-	if not (clip.contains("idle_") or clip.contains("walk_") or clip.begins_with("blink_") or clip.begins_with("dodge_") or clip.begins_with("jump_")):
+	if not (clip.contains("idle_") or clip.contains("walk_") or clip.begins_with("blink_") or clip.begins_with("dodge_") or clip.begins_with("jump_") or clip.contains("_dodge_") or clip.contains("_jump_")):
 		return fallback_roots(face)
 	var key: String = "%d:%s" % [texture.get_instance_id(),face]
 	if not roots_cache.has(key):

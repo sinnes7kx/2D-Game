@@ -51,6 +51,26 @@ const FAR_WRISTS: Dictionary = {
 # source image when the import is unavailable, and cache validated sheets.
 static var _validated_sheets: Dictionary = {}
 
+# Approximate hand centers sampled against the actual 2048x1760 repair
+# action atlas. Full-cell pixel coordinates, one sample per authored pose.
+const ACTION_WRISTS_V271: Dictionary = {
+	"dodge_front_right": [[125,134],[129,134],[111,128],[115,118],[110,116],[113,115],[125,137],[119,130]],
+	"dodge_front_left": [[144,130],[143,130],[134,130],[150,126],[143,105],[146,109],[140,126],[143,129]],
+	"dodge_back_left": [[79,132],[86,132],[77,126],[72,124],[68,129],[77,128],[78,131],[78,133]],
+	"dodge_back_right": [[182,130],[180,142],[195,130],[203,120],[203,131],[194,126],[190,140],[185,133]],
+	"jump_front_right": [[127,164],[114,150],[116,117],[125,114],[115,113],[113,120],[121,148],[128,155]],
+	"jump_front_left": [[126,157],[147,149],[143,116],[137,112],[143,110],[137,136],[135,151],[126,156]],
+	"jump_back_left": [[78,133],[83,127],[80,114],[66,109],[70,134],[82,135],[88,134],[80,132]],
+	"jump_back_right": [[180,145],[185,142],[199,119],[200,129],[197,132],[196,124],[184,144],[182,145]]
+}
+
+const ACTION_FAR_WRISTS_V271: Dictionary = {
+	"dodge_front_right": [[183,132],[184,134],[188,129],[195,124],[196,128],[191,134],[181,139],[]],
+	"dodge_front_left": [[80,132],[75,134],[69,140],[63,130],[54,135],[69,147],[74,132],[75,128]],
+	"jump_front_right": [[],[181,151],[193,130],[188,129],[191,130],[193,127],[181,149],[183,147]],
+	"jump_front_left": [[80,156],[69,148],[60,128],[58,130],[53,129],[62,137],[75,156],[]]
+}
+
 static func _valid_dimensions(texture: Texture2D) -> bool:
 	return texture != null and texture.get_size()==Vector2(2048,1760)
 
@@ -160,19 +180,24 @@ static func _install_actions(frames: SpriteFrames) -> void:
 			frames.add_frame(clip, cell)
 
 static func _install_armed_aliases(frames: SpriteFrames) -> void:
-	for source in WRISTS:
+	var sources: Array = WRISTS.keys()
+	# Older action art has different silhouettes; only the revised action
+	# atlas has measured action wrist guides.
+	if _load_sheet(REVISED_ACTIONS)!=null:
+		sources.append_array(ACTION_WRISTS_V271.keys())
+	for source in sources:
 		if not frames.has_animation(source):
 			continue
-		if str(source).contains("back_") and not _revised_available():
+		if str(source).contains("back_") and not _revised_available() and not ACTION_WRISTS_V271.has(source):
 			continue
 		for prefix in WEAPON_PREFIXES:
-			if prefix in ["dual_dagger_", "dual_sword_", "crossbow_"] and not _revised_available():
+			if prefix in ["dual_dagger_", "dual_sword_", "crossbow_"] and not _revised_available() and not ACTION_WRISTS_V271.has(source):
 				continue
 			var clip: String = prefix + str(source)
 			if frames.has_animation(clip):
 				frames.remove_animation(clip)
 			frames.add_animation(clip)
-			frames.set_animation_loop(clip,true)
+			frames.set_animation_loop(clip,frames.get_animation_loop(source))
 			frames.set_animation_speed(clip,frames.get_animation_speed(source))
 			for i in range(frames.get_frame_count(source)):
 				frames.add_frame(clip,frames.get_frame_texture(source,i),frames.get_frame_duration(source,i))
@@ -183,6 +208,11 @@ static func wrist(clip: String, frame: int) -> Vector2:
 		if key.begins_with(prefix):
 			key = key.trim_prefix(prefix)
 			break
+	if ACTION_WRISTS_V271.has(key):
+		if _load_sheet(REVISED_ACTIONS)==null:
+			return Vector2.INF
+		var sample: Array = ACTION_WRISTS_V271[key][clampi(frame,0,7)]
+		return Vector2(float(sample[0])-128.0,float(sample[1])-110.0)
 	if key.contains("back_") and not _revised_available():
 		return Vector2.INF
 	var table: Dictionary = WRISTS if _revised_available() else LEGACY_WRISTS
@@ -241,13 +271,22 @@ static func near_hand(clip: String) -> int:
 	return 0 if diagonal_name(clip).ends_with("left") else 1
 
 static func far_wrist(clip: String, frame: int) -> Vector2:
-	if not _revised_available():
-		return Vector2.INF
 	var direction: String = diagonal_name(clip)
 	if direction.is_empty() or direction.begins_with("back"):
 		return Vector2.INF
-	var action: String = "walk_" if clip.contains("_walk_") else "idle_"
-	var samples: Array = FAR_WRISTS.get(action+direction,[])
+	var action: String = "idle_"
+	for name in ["walk_","jump_","dodge_"]:
+		if clip.contains("_"+name) or clip.begins_with(name):
+			action=name
+			break
+	var table: Dictionary = FAR_WRISTS
+	if action in ["jump_","dodge_"]:
+		if _load_sheet(REVISED_ACTIONS)==null:
+			return Vector2.INF
+		table=ACTION_FAR_WRISTS_V271
+	elif not _revised_available():
+		return Vector2.INF
+	var samples: Array = table.get(action+direction,[])
 	if samples.size()!=8:
 		return Vector2.INF
 	var sample: Array = samples[clampi(frame,0,7)]
@@ -299,8 +338,9 @@ static func is_carried_clip(clip: String) -> bool:
 	if diagonal_name(clip).is_empty():
 		return false
 	for family in WEAPON_PREFIXES:
-		if clip.begins_with(family+"idle_") or clip.begins_with(family+"walk_"):
-			return true
+		for motion in ["idle_","walk_","jump_","dodge_"]:
+			if clip.begins_with(family+motion):
+				return true
 	return false
 
 static func is_painted_bow_carry(clip: String) -> bool:
@@ -317,3 +357,15 @@ static func hand_local(body: AnimatedSprite2D) -> Vector2:
 	if body.flip_v:
 		point.y=-point.y
 	return point+body.offset
+
+# Action aliases keep the actual jump/dodge body pose and use its own
+# wrist samples. A missing atlas must preserve the older safe fallback.
+static func armed_action_clip(action: String, carry_prefix: String, direction: String, fallback: String, frames: SpriteFrames) -> String:
+	if frames==null or direction not in DIRECTIONS or action not in ["jump","dodge"]:
+		return fallback
+	for family in WEAPON_PREFIXES:
+		if carry_prefix==family+"walk_" or carry_prefix==family+"idle_":
+			var clip: String = family+action+"_"+direction
+			if frames.has_animation(clip):
+				return clip
+	return fallback
