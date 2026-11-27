@@ -30,6 +30,8 @@ var grid_mode: bool = false
 var grid_toggle: Button
 var grid_tools: HBoxContainer
 var grid_note: Label
+var stash_tab_picker_v285: OptionButton
+var stash_tab_name_v285: LineEdit
 var filter_row: HBoxContainer
 var advanced_row: HBoxContainer
 var action_row: HBoxContainer
@@ -156,6 +158,18 @@ func _ready() -> void:
 	layout.add_child(grid_tools)
 	physical_grid=preload("res://scripts/stash_grid_v284.gd").new()
 	layout.add_child(physical_grid)
+	stash_tab_picker_v285=OptionButton.new()
+	stash_tab_picker_v285.custom_minimum_size.x=125
+	grid_tools.add_child(stash_tab_picker_v285)
+	stash_tab_picker_v285.item_selected.connect(func(i: int): physical_grid.call("choose_stash_v285",i))
+	stash_tab_name_v285=LineEdit.new()
+	stash_tab_name_v285.placeholder_text="Rename tab"
+	stash_tab_name_v285.max_length=22
+	stash_tab_name_v285.custom_minimum_size.x=110
+	grid_tools.add_child(stash_tab_name_v285)
+	stash_tab_name_v285.text_submitted.connect(func(_value: String): _rename_tab_v285())
+	_button(grid_tools,"Rename",_rename_tab_v285)
+	physical_grid.connect("page_changed_v285",Callable(self,"_refresh_tabs_v285"))
 	_button(grid_tools,"◀ Stash",func(): physical_grid.call("step_page",true,-1))
 	_button(grid_tools,"Stash ▶",func(): physical_grid.call("step_page",true,1))
 	_button(grid_tools,"◀ Bag",func(): physical_grid.call("step_page",false,-1))
@@ -184,8 +198,28 @@ func _set_grid_mode(value: bool) -> void:
 	grid_toggle.text="Collection list" if grid_mode else "Item grids"
 	if grid_mode and inventory!=null:
 		physical_grid.call("setup",inventory,transfer_access)
+		_refresh_tabs_v285()
 	elif inventory!=null:
 		refresh()
+
+func _refresh_tabs_v285() -> void:
+	if inventory==null or stash_tab_picker_v285==null:
+		return
+	var current: int = int(physical_grid.get("stash_page"))
+	stash_tab_picker_v285.clear()
+	for i in range(inventory.STASH_PAGES):
+		stash_tab_picker_v285.add_item(inventory.stash_name_v285(i))
+	stash_tab_picker_v285.select(current)
+	stash_tab_name_v285.text=inventory.stash_name_v285(current)
+
+func _rename_tab_v285() -> void:
+	if inventory==null or not _can_transfer():
+		return
+	if inventory.rename_stash_v285(int(physical_grid.get("stash_page")),stash_tab_name_v285.text):
+		_refresh_tabs_v285()
+		physical_grid.queue_redraw()
+	else:
+		grid_note.text="Could not save tab name."
 
 func _button(parent: HBoxContainer, label_text: String, callback: Callable) -> Button:
 	var b: Button = Button.new()
