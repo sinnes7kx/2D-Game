@@ -49,7 +49,7 @@ static func launch(actor: CharacterBody2D,item: GhostItemInstance,axis: Vector2,
 	else:
 		var effect: Node2D = GROUND.new()
 		var power: float = (18.0+item.weapon_damage())*1.65*(1.0+float(actor.call("_stat","melee_power_pct"))/100.0)
-		effect.position=root.to_local(actor.global_position) if root is Node2D else actor.global_position
+		effect.position=(root as Node2D).to_local(actor.global_position) if root is Node2D else actor.global_position
 		effect.call("configure",actor,str(GROUND_SKILLS[id]),axis,power,Color("d9bce2") if id=="drowned_fork" else Color("e4c59d"))
 		root.add_child(effect)
 		world.call("track_room_effect",effect)
