@@ -94,7 +94,7 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		shot.set("special_id",id)
 		shot.set("throw_charge_v276",charge)
 		shot.set("direction",heading.rotated(deg_to_rad((float(i)-float(n-1)*0.5)*12.0)))
-		shot.set("speed",(470.0 if id in ["last_toll","reverie_wave"] else 780.0) * (lerpf(0.88,1.18,charge) if is_throw(id) else 1.0))
+		shot.set("speed",(470.0 if id in ["last_toll","reverie_wave"] else 780.0) * (lerpf(0.88,1.18,charge) if is_throw(id) else 1.0)*0.88)
 		shot.set("damage",power*1.10/float(n))
 		shot.set("range_left",(310.0 if id in ["last_toll","reverie_wave"] else 560.0) * (lerpf(0.85,1.15,charge) if is_throw(id) else 1.0))
 		shot.set("caster",actor)

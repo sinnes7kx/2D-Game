@@ -11,6 +11,7 @@ var ambience: Node2D
 var hearth: Node2D
 var fire: AudioStreamPlayer2D
 var shade: CanvasModulate
+var bench_shadows: Array[Sprite2D] = []
 var clock: float = 0.0
 var pending: float = 0.0
 var revision: int = -1
@@ -80,11 +81,31 @@ func _ready() -> void:
 		fire.attenuation=1.65
 		add_child(fire)
 		fire.global_position=hearth.global_position
+	var room: Node2D = ambience.get("room_root") as Node2D
+	if room!=null:
+		for bench_name in ["HearthBenchWest","HearthBenchEast"]:
+			var bench: Node2D = room.get_node_or_null("Gameplay/"+bench_name) as Node2D
+			if bench==null:
+				continue
+			var shadow: Sprite2D = Sprite2D.new()
+			shadow.texture=TEXTURES.shadow()
+			shadow.z_as_relative=false
+			shadow.z_index=-43
+			var shadow_mat: CanvasItemMaterial = CanvasItemMaterial.new()
+			shadow_mat.light_mode=CanvasItemMaterial.LIGHT_MODE_UNSHADED
+			shadow.material=shadow_mat
+			shadow.scale=Vector2(2.9,0.92)
+			add_child(shadow)
+			shadow.global_position=bench.global_position+Vector2(0,10)
+			bench_shadows.append(shadow)
 	_refresh()
 
 func _refresh() -> void:
 	revision=SETTINGS.revision
 	var strength: float = SETTINGS.strength()
+	for shadow in bench_shadows:
+		shadow.visible=strength>0.0
+		shadow.modulate=Color(0.13,0.08,0.12,0.30*strength)
 	if is_instance_valid(shade):
 		shade.color=ambient_color(strength)
 		shade.visible=strength>0.0

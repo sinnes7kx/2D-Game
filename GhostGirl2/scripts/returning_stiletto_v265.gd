@@ -74,7 +74,7 @@ func _physics_process(delta: float) -> void:
 	if not is_instance_valid(caster) or not caster.is_inside_tree() or caster.is_queued_for_deletion():
 		queue_free()
 		return
-	var speed: float = RETURN_SPEED if returning else OUT_SPEED*lerpf(0.88,1.18,throw_charge_v276)
+	var speed: float = (RETURN_SPEED if returning else OUT_SPEED*lerpf(0.88,1.18,throw_charge_v276))*0.88
 	var travel: float = minf(remaining,speed*delta)
 	var caught: bool = false
 	if returning:

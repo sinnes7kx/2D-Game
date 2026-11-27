@@ -254,3 +254,20 @@ strike_damage = 7.0
 loot_template = ExtResource("itemrelic")
 loot_seed = 815414
 loot_quality = "random"
+
+[node name="AtmosphereV292" type="Node2D" parent="."]
+
+[node name="MoonPoolStainedGlass" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1150, 475)
+
+[node name="WarmPoolWest" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(560, 620)
+
+[node name="WarmPoolEast" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1790, 590)
+
+[node name="DustWest" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(510, 500)
+
+[node name="DustEast" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1840, 470)
