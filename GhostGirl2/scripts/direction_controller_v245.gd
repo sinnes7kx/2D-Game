@@ -64,14 +64,16 @@ static func stick(x_axis: int, y_axis: int) -> Vector2:
 static func install_controller() -> void:
 	if not InputMap.has_action("parry"):
 		InputMap.add_action("parry")
-	var parry_key: InputEventKey = InputEventKey.new()
-	parry_key.physical_keycode = KEY_P
-	if not InputMap.action_has_event("parry",parry_key):
-		InputMap.action_add_event("parry",parry_key)
-	var parry_mouse: InputEventMouseButton = InputEventMouseButton.new()
-	parry_mouse.button_index = MOUSE_BUTTON_MIDDLE
-	if not InputMap.action_has_event("parry",parry_mouse):
-		InputMap.action_add_event("parry",parry_mouse)
+	for code in [KEY_F,KEY_P]:
+		var parry_key: InputEventKey = InputEventKey.new()
+		parry_key.physical_keycode = code
+		if not InputMap.action_has_event("parry",parry_key):
+			InputMap.action_add_event("parry",parry_key)
+	for button in [MOUSE_BUTTON_XBUTTON1,MOUSE_BUTTON_MIDDLE]:
+		var parry_mouse: InputEventMouseButton = InputEventMouseButton.new()
+		parry_mouse.button_index = button
+		if not InputMap.action_has_event("parry",parry_mouse):
+			InputMap.action_add_event("parry",parry_mouse)
 	# Explicit modifier-aware binding: don't depend on the serialized mouse
 	# device ID or on polling a Shift modifier after the button was pressed.
 	for shifted in [false,true]:
