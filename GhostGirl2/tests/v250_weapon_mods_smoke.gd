@@ -43,7 +43,7 @@ func _initialize() -> void:
 		assert(not unique_names.has(label),"Duplicate unique power: "+label)
 		unique_names[label]=true
 		covered+=1
-	assert(covered==94)
+	assert(covered==95)
 	var passive_item: GhostItemInstance = GhostItemGenerator.create(preload("res://items/bloodrose_falchion.tres"),123456,"unique")
 	var fixed_bonus: Dictionary = innate.bonuses(passive_item)
 	assert(fixed_bonus.size()==2)
