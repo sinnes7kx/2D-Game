@@ -129,6 +129,14 @@ var attack_direction: Vector2 = Vector2.DOWN
 var buffered_attack_direction: Vector2 = Vector2.ZERO
 var buffered_attack_valid: bool = false
 var buffered_special_v261: bool = false
+var special_mouse_frame_v272: int = -100
+var twinblade_weapon_v272: GhostItemInstance
+var twinblade_second_v272: bool = false
+var twinblade_reward_v272: bool = false
+var twinblade_wear_v272: bool = false
+const TWINBLADE_HIT_POWER_V272: float = 0.65
+const TWINBLADE_FIRST_GATE_V272: float = 0.66
+const TWINBLADE_SECOND_GATE_V272: float = 0.30
 var active_special_v261: String = ""
 var special_weapon_v261: GhostItemInstance = null
 const UNIQUE_SPECIALS_V261 = preload("res://scripts/unique_specials_v261.gd")
@@ -866,12 +874,17 @@ func set_facing(direction: Vector2) -> void:
 var controller_active_v260: bool = false
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and event.pressed:
+		special_mouse_frame_v272=Engine.get_physics_frames() if event.shift_pressed else -100
 	if event is InputEventJoypadButton and event.pressed:
 		controller_active_v260 = true
 	elif event is InputEventJoypadMotion and absf(event.axis_value) > 0.30:
 		controller_active_v260 = true
 	elif event is InputEventKey and event.pressed or event is InputEventMouseButton and event.pressed or event is InputEventMouseMotion and event.relative.length_squared() > 4.0:
 		controller_active_v260 = false
+
+func _special_modifier_v272() -> bool:
+	return Input.is_key_pressed(KEY_SHIFT) or Input.is_physical_key_pressed(KEY_SHIFT) or Engine.get_physics_frames()-special_mouse_frame_v272<=2
 
 func _movement_input() -> Vector2:
 	var keyboard: Vector2 = DIRECTIONS_V245.keyboard_vector()
@@ -967,6 +980,9 @@ func reset_action_state() -> void:
 	active_special_v261 = ""
 	special_weapon_v261 = null
 	buffered_special_v261 = false
+	special_mouse_frame_v272=-100
+	twinblade_weapon_v272=null
+	twinblade_second_v272=false
 	_reset_combo_v239()
 	_clear_crossbow()
 	spell_is_moonfall = false
@@ -1013,6 +1029,10 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	if invulnerable_time > 0.0:
 		return
 	_clear_eclipse_dance_v262()
+	twinblade_second_v272=false
+	twinblade_weapon_v272=null
+	active_special_v261=""
+	special_weapon_v261=null
 	_reset_combo_v239()
 	# Interrupted reload must not allow instant repeat shots. Keep reload
 	# stage after a fired bolt; cancel an unfired wind-up.
@@ -1598,7 +1618,7 @@ func _begin_attack(heavy: bool) -> void:
 	if carrying != null or stamina < _melee_cost(heavy):
 		return
 	var combo_item: GhostItemInstance = world.inventory.get_equipped("sword")
-	var special_requested: bool = buffered_special_v261 if buffered_attack_valid else Input.is_physical_key_pressed(KEY_SHIFT)
+	var special_requested: bool = buffered_special_v261 if buffered_attack_valid else _special_modifier_v272()
 	active_special_v261 = UNIQUE_SPECIALS_V261.kind(combo_item) if heavy and special_requested else ""
 	special_weapon_v261 = combo_item if not active_special_v261.is_empty() else null
 	if combo_grace <= 0.0 or combo_item != finisher_weapon:
@@ -1660,13 +1680,19 @@ func _begin_attack(heavy: bool) -> void:
 			attack_hit_threshold = 0.58
 	attack_duration /= 1.0 + _stat("attack_speed_pct") / 100.0
 	attack_time_left = attack_duration
-	if active_special_v261 == "vespers_return":
+	twinblade_weapon_v272=combo_item if heavy and active_attack_style=="twinblade" and active_special_v261.is_empty() else null
+	twinblade_second_v272=twinblade_weapon_v272!=null
+	twinblade_reward_v272=false
+	twinblade_wear_v272=false
+	if twinblade_second_v272:
+		attack_hit_threshold=TWINBLADE_FIRST_GATE_V272
+	if UNIQUE_SPECIALS_V261.is_dagger_throw(active_special_v261):
 		attack_duration = 0.56 / (1.0+_stat("attack_speed_pct")/100.0)
 		attack_time_left = attack_duration
 		attack_hit_threshold = 0.48
 		active_lunge = false
 		active_finisher = false
-	dagger_charge_active = heavy and active_attack_style == "dagger" and active_special_v261 != "vespers_return"
+	dagger_charge_active = heavy and active_attack_style == "dagger" and not UNIQUE_SPECIALS_V261.is_dagger_throw(active_special_v261)
 	dagger_charge_time = 0.0
 	# Actual moving-air sound, without the old bright WAV transient on swords.
 	var swing_cue: String = "scythe_heavy" if heavy and active_attack_style == "scythe" else ("heavy_swing" if heavy else "swing")
@@ -1740,7 +1766,7 @@ func _queue_combat(action: String) -> void:
 	queue_time_left = INPUT_BUFFER
 	if action == "light" or action == "heavy":
 		buffered_attack_direction = _combat_aim_direction()
-		buffered_special_v261 = action == "heavy" and Input.is_physical_key_pressed(KEY_SHIFT)
+		buffered_special_v261 = action == "heavy" and _special_modifier_v272()
 		buffered_attack_valid = true
 	else:
 		buffered_attack_valid = false
@@ -1772,15 +1798,27 @@ func _advance_attack(delta: float) -> void:
 			if world.inventory.get_equipped("sword") == special_weapon_v261:
 				UNIQUE_SPECIALS_V261.launch(self,special_weapon_v261,attack_direction,active_special_v261)
 		else:
-			_strike_nearby_enemies(1.25 if active_finisher else 1.0)
+			if twinblade_weapon_v272==null:
+				_strike_nearby_enemies(1.25 if active_finisher else 1.0)
+			elif world.inventory.get_equipped("sword")==twinblade_weapon_v272 and not twinblade_weapon_v272.is_broken():
+				_strike_nearby_enemies((1.25 if active_finisher else 1.0)*TWINBLADE_HIT_POWER_V272,true,false)
+	# Second blade passes the forward arc later in the same committed spin.
+	# Re-check range, obstruction and equipment; no automatic follow-up damage.
+	if twinblade_second_v272 and attack_time_left<=attack_duration*TWINBLADE_SECOND_GATE_V272:
+		twinblade_second_v272=false
+		if world.inventory.get_equipped("sword")==twinblade_weapon_v272 and not twinblade_weapon_v272.is_broken():
+			COMBAT_JUICE.play(get_tree().current_scene,global_position,"swing",-24.0)
+			_strike_nearby_enemies((1.25 if active_finisher else 1.0)*TWINBLADE_HIT_POWER_V272,true,true)
 	if attack_time_left <= 0.0:
+		twinblade_weapon_v272=null
+		twinblade_second_v272=false
 		active_special_v261 = ""
 		special_weapon_v261 = null
 		active_finisher = false
 		active_lunge = false
 		combo_grace = 0.48 if not heavy_attack else 0.0
 
-func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
+func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = false, second_edge: bool = false) -> void:
 	var sword: GhostItemInstance = world.inventory.get_equipped("sword") if world.inventory != null else null
 	var reach: float = (174.0 if heavy_attack else 144.0) if sword != null else (128.0 if heavy_attack else 106.0)
 	var power: float = 34.0 if heavy_attack else [16.0, 19.0, 24.0][combo_step]
@@ -1825,7 +1863,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 			attack_arc = 0.04 if heavy_attack else 0.23
 			poise_bonus = 1.65
 		"twinblade":
-			# Quick circular sweeps, but not free extra hit checks.
+			# Each committed heavy spin has two separately timed physical cuts.
 			reach = 206.0 if heavy_attack else 168.0
 			power *= 1.05 if heavy_attack else 0.87
 			attack_arc = -0.10 if heavy_attack else 0.01
@@ -1874,7 +1912,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		ray.exclude = [get_rid()]
 		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
 			continue
-		candidate.call("hit", power, poise_bonus * (1.0 + _stat("poise_power_pct") / 100.0))
+		candidate.call("hit", power, poise_bonus * (0.65 if twin_edge else 1.0) * (1.0 + _stat("poise_power_pct") / 100.0))
 		if sword != null and sword.active_weapon_mod(world.room == "lanternhaven") == "frostbite" and is_instance_valid(candidate) and not candidate.is_queued_for_deletion() and candidate.has_method("apply_frost_slow"):
 			candidate.call("apply_frost_slow", 1.5, 0.78)
 			_spawn_spectacle("strike", candidate.global_position + Vector2(0,-27), Color("9ed5f6"), fx_motif, fx_tier, Color("c9e8ff"), fx_trail)
@@ -1891,7 +1929,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		if counter_hit and not counter_shown:
 			_spawn_precision_feedback("riposte", candidate.global_position + Vector2(0.0, -30.0), attack_direction)
 			counter_shown = true
-		if active_finisher and not jump_attack_active and not finisher_shown:
+		if active_finisher and not jump_attack_active and not finisher_shown and not second_edge:
 			var burst: Node2D = Node2D.new()
 			burst.set_script(IMPACT_PRESTIGE)
 			get_tree().current_scene.add_child(burst)
@@ -1904,7 +1942,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		camera_push = attack_direction * (6.5 if jump_attack_active else (3.5 if heavy_attack else 1.8))
 	# Heavy and plunging attacks physically interact with ordinary wooden
 	# barricades, not progression locks. Each prop is hit once per strike.
-	if heavy_attack or sword != null:
+	if (heavy_attack or sword != null) and not second_edge:
 		var broken_attempts: int = 0
 		for object in get_tree().get_nodes_in_group("breakable_cover"):
 			if not is_instance_valid(object) or not object is Node2D or not object.has_method("receive_damage") or bool(object.get("broken")):
@@ -1955,7 +1993,9 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 			camera_kick = maxf(camera_kick, 7.0)
 			counter_window = 0.0
 	# Resource gains are once per attack, not once per enemy or scenery hit.
-	if struck and sword != null:
+	if struck and sword != null and (not twin_edge or not twinblade_reward_v272):
+		if twin_edge:
+			twinblade_reward_v272=true
 		if sword.active_weapon_mod(world.room == "lanternhaven") == "soul_siphon":
 			health = minf(maximum_health(), health + 2.0)
 			world.ui.set_health(health, maximum_health())
@@ -1968,7 +2008,9 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		health = minf(maximum_health(), health + gained)
 		world.ui.set_health(health, maximum_health())
 
-	if (struck or struck_world) and sword != null and sword.ethereal:
+	if (struck or struck_world) and sword != null and sword.ethereal and (not twin_edge or not twinblade_wear_v272):
+		if twin_edge:
+			twinblade_wear_v272=true
 		if world.inventory.wear_ethereal(sword):
 			world.ui.show_pickup("ETHEREAL WEAPON BROKEN · " + sword.definition.display_name, Color("d9b6cf"))
 		elif sword.durability == 10:
@@ -2233,7 +2275,7 @@ func _advance_eclipse_dance_v262(delta: float) -> void:
 		attack_time_left = 0.0
 		velocity = Vector2.ZERO
 		return
-	if dance_stage_v262 == 1 and DANCE_V262.can_chain(dance_elapsed_v262) and Input.is_action_just_pressed("attack_heavy") and Input.is_physical_key_pressed(KEY_SHIFT):
+	if dance_stage_v262 == 1 and DANCE_V262.can_chain(dance_elapsed_v262) and Input.is_action_just_pressed("attack_heavy") and _special_modifier_v272():
 		if not dance_follow_v262 and stamina >= _action_cost(DANCE_V262.FOLLOW_COST,false):
 			dance_follow_v262 = true
 			COMBAT_JUICE.play(get_tree().current_scene,global_position,"evade",-23.0)

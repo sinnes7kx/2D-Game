@@ -21,7 +21,7 @@ func _ready() -> void:
     z_index = 28
     position = Vector2(-47.0, -121.0)
     subdued = actor == null or bool(actor.get("equipment_preview_only"))
-    visible = not subdued
+    visible = false # No equipped familiar means no active companion.
     set_process(actor != null)
 
 func _process(delta: float) -> void:
@@ -30,7 +30,7 @@ func _process(delta: float) -> void:
     var world: Node = actor.get("world") as Node
     var inv: Node = world.get("inventory") as Node if world != null else null
     familiar = inv.get_equipped("companion") if inv != null else null
-    visible = not subdued or familiar != null
+    visible = familiar != null
     if not visible:
         return
     if familiar != null:
@@ -105,14 +105,30 @@ func _draw_equipped_wisp() -> void:
     var hue: Color = RNG.sample_palette(colors, 0.5 + 0.5 * sin(time_alive * 0.8))
     var accent: Color = RNG.sample_palette(colors, 0.8)
     var core: Vector2 = Vector2(0.0, sin(time_alive * 2.1) * 2.0)
+    # Seeded wing geometry and independent wing color channel. Cosmetic only.
+    var shape_seed: int = posmod(hash(familiar.cosmetic_uid+"|familiar-wing-v272"),4)
+    var wings: Array[Color] = RNG.gradient_for_channel(familiar.cosmetic_uid,familiar.visual_seed(),"familiar-wings-v272",familiar.gradient_version)
+    var wing_ink: Color = RNG.sample_palette(wings,0.43)
+    var flap: float = 0.76+0.22*sin(time_alive*5.1)
+    for side in [-1.0,1.0]:
+        var root: Vector2 = core+Vector2(side*2.0,0)
+        var upper: Vector2 = core+Vector2(side*(10.0+shape_seed*1.6)*flap,-8.0-shape_seed*1.2)
+        var outer: Vector2 = core+Vector2(side*(14.0+shape_seed)*flap,-1.0)
+        var lower: Vector2 = core+Vector2(side*(7.0+shape_seed*1.4)*flap,6.0+shape_seed)
+        draw_colored_polygon(PackedVector2Array([root,upper,outer,lower]),Color(wing_ink.r,wing_ink.g,wing_ink.b,0.46))
+        draw_polyline(PackedVector2Array([root,upper,outer,lower,root]),wing_ink.lightened(0.28),0.85,true)
+        draw_line(root,outer,wing_ink.darkened(0.24),0.65,true)
+        if shape_seed>=2:
+            draw_line(outer,lower+Vector2(side*2.0,5.0),wing_ink.lightened(0.2),0.9,true)
     draw_circle(core, 4.0, hue.lerp(Color.WHITE, 0.28))
     draw_circle(core + Vector2(-1, -1), 1.6, Color("fff5ff"))
     if FX.intensity <= 0.0:
         return
     draw_circle(core, 13.0 + tier, Color(hue.r, hue.g, hue.b, FX.alpha(0.12)))
-    for i in range(4 + tier):
-        var t: float = float(i) / float(4 + tier)
-        var a: float = time_alive * (2.5 + tier * 0.25) + TAU * t
+    var count: int = 2+mini(tier,4)
+    for i in range(count):
+        var t: float = float(i) / float(count)
+        var a: float = time_alive * (0.65 + tier * 0.08) + TAU * t
         var p: Vector2 = core + Vector2(cos(a) * (10.0 + tier), sin(a) * (6.0 + tier))
         var ink: Color = Color(accent.r, accent.g, accent.b, FX.alpha(0.62))
         if motif % 3 == 0:
@@ -122,9 +138,13 @@ func _draw_equipped_wisp() -> void:
             draw_line(p - Vector2(0, 2), p + Vector2(0, 2), ink, 0.8, true)
         else:
             draw_arc(p, 2.5, a, a + PI, 8, ink, 1.1, true)
+    if tier >= 3:
+        var radius: float = 13.0+float(tier)*1.3
+        var arc: float = time_alive*0.42
+        draw_arc(core,radius,arc,arc+PI*0.84,24,Color(accent.r,accent.g,accent.b,FX.alpha(0.18)),0.9,true)
     if tier >= 4:
-        for i in range(8):
-            var t: float = float(i) / 8.0
-            var a: float = time_alive * 4.0 - t * 2.8
+        for i in range(5):
+            var t: float = float(i) / 5.0
+            var a: float = time_alive * 0.85 - t * 2.8
             var p: Vector2 = core + Vector2(cos(a) * 19.0, sin(a) * 10.0)
             draw_circle(p, 2.4 * (1.0 - t), Color(hue.r, hue.g, hue.b, FX.alpha(0.7 * (1.0 - t))))

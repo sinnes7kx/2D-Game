@@ -13,7 +13,7 @@ var fx_value: Label
 var fx_slider: HSlider
 var eye_edit_button: Button
 var stats_toggle: Button
-const SLOT_NAMES = ["dress", "wings", "helm", "trinket", "charm", "wand", "sword"]
+const SLOT_NAMES = ["dress", "wings", "helm", "trinket", "charm", "wand", "sword", "companion"]
 
 func _display_icon(item: Variant) -> Texture2D:
 	if item == null or item.definition == null or item.definition.icon == null:
@@ -80,7 +80,7 @@ func refresh() -> void:
 		var button: Button = slots.get_node(SLOT_NAMES[i].capitalize()) as Button
 		var item: Variant = inventory.get_equipped(key)
 		button.icon = _display_icon(item) if item != null and item.definition != null else null
-		button.text = ("HEAD ACCESSORY" if key == "wings" else key.to_upper()) if item == null else ""
+		button.text = ("HEAD ACCESSORY" if key == "wings" else ("FAMILIAR" if key=="companion" else key.to_upper())) if item == null else ""
 		button.tooltip_text = ""
 		button.disabled = item == null
 		button.modulate = Color.WHITE

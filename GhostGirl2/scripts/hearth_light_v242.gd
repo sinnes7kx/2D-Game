@@ -8,6 +8,13 @@ const LIGHT = preload("res://assets/animated/candle_glow.png")
 var age: float = 0.0
 var pending: float = 0.0
 
+func _ready() -> void:
+    if not Engine.is_editor_hint():
+        add_to_group("arrow_fire_source_v272")
+
+func arrow_fire_center_v272() -> Vector2:
+    return to_global(Vector2(0,-32) if kind=="hearth" else Vector2.ZERO)
+
 func _process(delta: float) -> void:
     age += delta
     pending += delta
