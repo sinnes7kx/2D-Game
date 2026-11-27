@@ -33,6 +33,7 @@ var hover_alt_down: bool = false
 var tooltip_pinned: bool = false
 var inventory_data: Node
 var cursor_item_index: int = -1
+var cursor_identity_v284: GhostItemInstance
 var drop_click_guard: int = 0
 @onready var held_treasure: PanelContainer = $Overlay/HeldTreasure
 @onready var held_icon: TextureRect = $Overlay/HeldTreasure/HeldIcon
@@ -96,6 +97,10 @@ func _ready() -> void:
 	collection_vault.z_index = 90
 	$Overlay.move_child(collector_lens, -1) # Inspector also owns GUI input above vault.
 	collection_vault.connect("inspect_requested", Callable(self, "_open_collector_lens"))
+	var stash_grid: Control = collection_vault.get("physical_grid")
+	stash_grid.connect("item_hovered",Callable(self,"_show_item_hover"))
+	stash_grid.connect("item_hover_cleared",Callable(self,"_hide_item_hover"))
+	item_compare_popup.z_index=180
 	inventory_panel.connect("vault_requested", Callable(self, "_open_collection_vault"))
 
 func bind_inventory(value: Node) -> void:
@@ -178,6 +183,8 @@ func _process(delta: float) -> void:
 	if drop_click_guard > 0:
 		drop_click_guard -= 1
 	if cursor_item_index >= 0 and inventory_data != null:
+		cursor_item_index=inventory_data.contents.find(cursor_identity_v284)
+		inventory_panel.call("set_cursor_item",cursor_item_index)
 		var carried: Variant = inventory_data.get_item(cursor_item_index)
 		if carried == null:
 			_cancel_cursor_item()
@@ -208,6 +215,7 @@ func _take_cursor_item(index: int) -> void:
 	if item == null:
 		return
 	cursor_item_index = index
+	cursor_identity_v284=item
 	inventory_panel.call("set_cursor_item", index)
 	held_icon.texture = item.definition.icon if item.definition != null else null
 	held_treasure.show()
@@ -215,6 +223,7 @@ func _take_cursor_item(index: int) -> void:
 
 func _cancel_cursor_item() -> void:
 	cursor_item_index = -1
+	cursor_identity_v284=null
 	inventory_panel.call("set_cursor_item", -1)
 	held_treasure.hide()
 	held_icon.texture = null
@@ -227,11 +236,7 @@ func _place_cursor_item(page: int, col: int, row: int) -> void:
 	if item == null:
 		_cancel_cursor_item()
 		return
-	var existing: int = inventory_data.get_grid_index(page, col, row)
-	if existing >= 0 and existing != cursor_item_index:
-		show_pickup("SPACE OCCUPIED — CHOOSE EMPTY CELLS")
-		return
-	if inventory_data.move_item_at(cursor_item_index, page, col, row):
+	if inventory_data.place_or_swap_v284(cursor_item_index,page,col,row):
 		_cancel_cursor_item()
 	else:
 		show_pickup("ITEM WILL NOT FIT THERE")
@@ -255,7 +260,10 @@ func _input(event: InputEvent) -> void:
 		return
 	if is_instance_valid(collection_vault) and collection_vault.visible:
 		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
-			collection_vault.hide()
+			if bool(collection_vault.get("grid_mode")) and collection_vault.get("physical_grid").get("held")!=null:
+				collection_vault.get("physical_grid").call("cancel")
+			else:
+				collection_vault.hide()
 			get_viewport().set_input_as_handled()
 		return
 	if is_menu_open():
@@ -344,6 +352,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.keycode == KEY_TAB or event.physical_keycode in [KEY_I, KEY_B]:
 			# A single Diablo-like view contains equipment and backpack together.
 			var opening: bool = not (inventory_panel.visible and equipment_panel.visible)
+			if not opening:
+				_cancel_cursor_item()
 			inventory_panel.visible = opening
 			equipment_panel.visible = opening
 			if opening:
@@ -371,7 +381,7 @@ func _show_item_hover(item: Variant, equipped: Variant) -> void:
 	hovered_equipped = equipped if item != null and equipped != null and equipped != item and item.get_slot() == equipped.get_slot() else null
 	hover_ctrl_down = Input.is_key_pressed(KEY_CTRL)
 	hover_alt_down = Input.is_key_pressed(KEY_ALT)
-	if is_menu_open() and cursor_item_index < 0:
+	if (is_menu_open() or (is_instance_valid(collection_vault) and collection_vault.visible)) and cursor_item_index < 0:
 		tooltip_pinned = hover_alt_down
 		item_compare_popup.call("set_pinned", tooltip_pinned)
 		item_compare_popup.call("display_item", item, hovered_equipped if hover_ctrl_down else null, hover_alt_down)
