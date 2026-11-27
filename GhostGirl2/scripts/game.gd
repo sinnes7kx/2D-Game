@@ -538,7 +538,7 @@ func _process(_delta: float) -> void:
 	elif current_target.is_in_group("treasure_chest"):
 		ui.set_prompt("E  OPEN")
 	elif current_target.is_in_group("collectible"):
-		ui.set_prompt("E  TAKE")
+		ui.set_prompt("E  BEFRIEND FAMILIAR" if current_target.is_in_group("wild_familiar_v261") else "E  TAKE")
 	elif current_target.is_in_group("carryable"):
 		ui.set_prompt("E  PICK UP  ·  Q  PULL" if player.carrying == null else "")
 	elif current_target.is_in_group("room_portal"):
@@ -695,7 +695,7 @@ func interact() -> void:
 			target.remove_from_group("interactable")
 			target.queue_free()
 		else:
-			ui.show_pickup("BACKPACK FULL")
+			ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING BACKPACK SPACE")
 		return
 	if target.is_in_group("weapon_rack"):
 		var id: String = str(target.get("pickup_id"))
@@ -704,7 +704,7 @@ func interact() -> void:
 		var template: GhostItemData = target.get("item_data") as GhostItemData
 		var acquired: GhostItemInstance = inventory.add_loot(template, int(target.get("item_seed")), str(target.get("guaranteed_quality")), room)
 		if acquired == null:
-			ui.show_pickup("BACKPACK FULL")
+			ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING BACKPACK SPACE")
 			return
 		inventory.collected_pickups[id] = true
 		inventory.save_game()
@@ -724,16 +724,18 @@ func interact() -> void:
 				target.remove_from_group("interactable")
 				_announce_discovery(rolled, "%s  ·  %s" % [rolled.quality.to_upper(), rolled.display_name()])
 			else:
-				ui.show_pickup("BACKPACK FULL")
+				ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING BACKPACK SPACE")
 		return
 	if target.is_in_group("collectible"):
 		var data: Resource = target.get("item_data") as Resource
 		var found: GhostItemInstance = inventory.add_pickup(data as GhostItemData, str(target.get("pickup_id")), int(target.get("item_seed")), room)
 		if found != null:
-			ui.show_pickup(found.display_name())
+			ui.show_pickup(("FAMILIAR CAUGHT · " if target.is_in_group("wild_familiar_v261") else "") + found.display_name())
+			if target.is_in_group("wild_familiar_v261") and inventory.get_equipped("companion") == null:
+				inventory.equip_at(inventory.contents.find(found))
 			target.queue_free()
 		else:
-			ui.show_pickup("INVENTORY FULL")
+			ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING BACKPACK SPACE")
 		return
 	if target.is_in_group("carryable"):
 		if player.carrying == null:
@@ -1026,7 +1028,7 @@ func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: Stri
 	if reward != null:
 		_announce_discovery(reward, "%s  ·  %s" % [reward.quality.to_upper(), reward.display_name()])
 	else:
-		ui.show_pickup("BACKPACK FULL")
+		ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING BACKPACK SPACE")
 
 func _give_weapon_test_samples() -> void:
 	# Optional testing action; existing saves remain intact and no duplicates
@@ -1061,7 +1063,7 @@ func _give_luminous_lance_trial() -> void:
 	var wand_template: GhostItemData = load("res://items/briar_wand.tres") as GhostItemData
 	var trial: GhostItemInstance = inventory.add_loot(wand_template, 117171, "rare") if wand_template != null else null
 	if trial == null:
-		ui.show_pickup("BACKPACK FULL · MAKE ROOM FOR THE LANCE WAND")
+		ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING SPACE FOR THE LANCE WAND")
 		return
 	inventory.collected_pickups["v117_luminous_lance_trial"] = true
 	inventory.save_game()
@@ -1310,7 +1312,7 @@ func _give_ethereal_trial() -> void:
 	if inventory.add_existing_item(sample) != null:
 		ui.show_pickup("ETHEREAL TEST TWINBLADE · 3 USES · OPEN I", Color("c1d8e4"))
 	else:
-		ui.show_pickup("BACKPACK FULL")
+		ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING BACKPACK SPACE")
 
 func _announce_discovery(item: GhostItemInstance, ordinary: String, natural: bool = true) -> void:
 	var label_text: String = item.discovery_label() if natural else ""

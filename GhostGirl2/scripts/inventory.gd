@@ -11,7 +11,9 @@ const LEGACY_SAVE_FILE: String = "user://ghost_girl_treasures_v1.json"
 const GRID_COLUMNS: int = 10
 const GRID_ROWS: int = 6
 const GRID_PAGES: int = 8
-@export_range(6, 160, 1) var capacity: int = 72
+## Retained for old scene compatibility; the actual capacity is spatial.
+@export_range(6, 480, 1) var capacity: int = 480
+var last_add_failure: String = ""
 const SPECIAL_JEWEL_MALADY: GhostItemData = preload("res://items/malady_jewel.tres")
 const SPECIAL_JEWEL_DELIRIUM: GhostItemData = preload("res://items/delirium_jewel.tres")
 const SPECIAL_JEWEL_EXILE: GhostItemData = preload("res://items/exile_jewel.tres")
@@ -89,6 +91,7 @@ func _first_open(item: GhostItemInstance) -> Vector2i:
 
 func add_pickup(template: GhostItemData, pickup_id: String, item_seed: int, origin: String = "") -> GhostItemInstance:
 	if pickup_id.is_empty() or collected_pickups.has(pickup_id):
+		last_add_failure = "ALREADY COLLECTED" if not pickup_id.is_empty() else "INVALID PICKUP"
 		return null
 	var item: GhostItemInstance = add_loot(template, item_seed, "", origin)
 	if item != null:
@@ -112,14 +115,18 @@ func _resolve_socketable_loot_template(template: GhostItemData, seed_value: int)
 	return template
 
 func add_loot(template: GhostItemData, seed_value: int, forced_quality: String = "", origin: String = "") -> GhostItemInstance:
-	if template == null or contents.size() >= capacity:
+	last_add_failure = ""
+	if template == null:
+		last_add_failure = "ITEM UNAVAILABLE"
 		return null
 	template = _resolve_socketable_loot_template(template, seed_value)
 	if template.unique and has_item(template.item_id):
+		last_add_failure = "UNIQUE ITEM ALREADY OWNED"
 		return null
 	var item: GhostItemInstance = generate_find(template, seed_value, forced_quality, origin)
 	var pos: Vector2i = _first_open(item)
 	if pos.x < 0:
+		last_add_failure = "NO FITTING SPACE · TRY SORT OR STASH"
 		return null
 	contents.append(item)
 	grid_positions.append(pos)
@@ -242,10 +249,13 @@ func take_item_at(index: int) -> GhostItemInstance:
 	return item
 
 func add_existing_item(item: GhostItemInstance) -> GhostItemInstance:
-	if item == null or item.definition == null or contents.size() >= capacity:
+	last_add_failure = ""
+	if item == null or item.definition == null:
+		last_add_failure = "ITEM UNAVAILABLE"
 		return null
 	var pos: Vector2i = _first_open(item)
 	if pos.x < 0:
+		last_add_failure = "NO FITTING SPACE · TRY SORT OR STASH"
 		return null
 	contents.append(item)
 	grid_positions.append(pos)
@@ -444,9 +454,7 @@ func _restore_save_data(data: Dictionary) -> bool:
 	var saved_grid_rows: int = maxi(1, int(data.get("grid_rows", 4)))
 	for saved_index in range(saved_items.size()):
 		var saved: Dictionary = saved_items[saved_index]
-		var item: GhostItemInstance = null
-		if contents.size() < capacity:
-			item = _deserialize_item(saved)
+		var item: GhostItemInstance = _deserialize_item(saved)
 		if item != null:
 			item.exhibition_slot = -1
 			var wanted: Vector2i = Vector2i(int(saved.get("grid_x", -1)), int(saved.get("grid_y", -1)))
@@ -464,9 +472,7 @@ func _restore_save_data(data: Dictionary) -> bool:
 	# Retry records from earlier launches after normal backpack items. Never
 	# evict a live item or auto-equip a previously inaccessible weapon.
 	for saved in data.get("unresolved_backpack", []):
-		var item: GhostItemInstance = null
-		if contents.size() < capacity:
-			item = _deserialize_item(saved)
+		var item: GhostItemInstance = _deserialize_item(saved)
 		if item != null:
 			var pos: Vector2i = _first_open(item)
 			if pos.x >= 0:
@@ -614,7 +620,7 @@ func vault_store(index: int, persist: bool = true) -> bool:
 	return true
 
 func vault_withdraw(index: int, persist: bool = true) -> bool:
-	if index < 0 or index >= vault.size() or contents.size() >= capacity:
+	if index < 0 or index >= vault.size():
 		return false
 	var item: GhostItemInstance = vault[index]
 	var pos: Vector2i = _first_open(item)

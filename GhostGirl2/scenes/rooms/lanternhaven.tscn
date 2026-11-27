@@ -23,6 +23,9 @@
 
 [ext_resource type="Script" path="res://scripts/training_dummy_v260.gd" id="v260_dummy"]
 
+[ext_resource type="Script" path="res://scripts/wild_familiar_v261.gd" id="v261_familiar"]
+[ext_resource type="Resource" path="res://items/moonwisp_companion_v239.tres" id="v261_pet"]
+
 [sub_resource type="CircleShape2D" id="V243TreeRoots"]
 radius = 46.0
 
@@ -556,3 +559,19 @@ script = ExtResource("v260_dummy")
 [node name="Practice03" type="StaticBody2D" parent="Gameplay/PracticeDummiesV260"]
 position = Vector2(2430, 1570)
 script = ExtResource("v260_dummy")
+
+[node name="Collectibles" type="Node2D" parent="Gameplay"]
+
+[node name="WildMoonwisp01" type="Node2D" parent="Gameplay/Collectibles"]
+position = Vector2(1250, 1440)
+script = ExtResource("v261_familiar")
+item_data = ExtResource("v261_pet")
+pickup_id = "v261_lanternhaven_moonwisp_01"
+item_seed = 261137
+
+[node name="WildMoonwisp02" type="Node2D" parent="Gameplay/Collectibles"]
+position = Vector2(2480, 1080)
+script = ExtResource("v261_familiar")
+item_data = ExtResource("v261_pet")
+pickup_id = "v261_lanternhaven_moonwisp_02"
+item_seed = 261291

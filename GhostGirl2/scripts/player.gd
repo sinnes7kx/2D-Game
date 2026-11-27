@@ -128,6 +128,10 @@ var attack_hit_threshold: float = 0.58
 var attack_direction: Vector2 = Vector2.DOWN
 var buffered_attack_direction: Vector2 = Vector2.ZERO
 var buffered_attack_valid: bool = false
+var buffered_special_v261: bool = false
+var active_special_v261: String = ""
+var special_weapon_v261: GhostItemInstance = null
+const UNIQUE_SPECIALS_V261 = preload("res://scripts/unique_specials_v261.gd")
 var dodge_time_left: float = 0.0
 var dodge_direction: Vector2 = Vector2.DOWN
 var jump_time_left: float = 0.0
@@ -937,6 +941,9 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	active_special_v261 = ""
+	special_weapon_v261 = null
+	buffered_special_v261 = false
 	_reset_combo_v239()
 	_clear_crossbow()
 	spell_is_moonfall = false
@@ -1567,6 +1574,9 @@ func _begin_attack(heavy: bool) -> void:
 	if carrying != null or stamina < _melee_cost(heavy):
 		return
 	var combo_item: GhostItemInstance = world.inventory.get_equipped("sword")
+	var special_requested: bool = buffered_special_v261 if buffered_attack_valid else Input.is_physical_key_pressed(KEY_SHIFT)
+	active_special_v261 = UNIQUE_SPECIALS_V261.kind(combo_item) if heavy and special_requested else ""
+	special_weapon_v261 = combo_item if not active_special_v261.is_empty() else null
 	if combo_grace <= 0.0 or combo_item != finisher_weapon:
 		finisher_lights = 0
 	active_finisher = heavy and combo_item != null and finisher_lights == 2
@@ -1697,6 +1707,7 @@ func _queue_combat(action: String) -> void:
 	queue_time_left = INPUT_BUFFER
 	if action == "light" or action == "heavy":
 		buffered_attack_direction = _combat_aim_direction()
+		buffered_special_v261 = action == "heavy" and Input.is_physical_key_pressed(KEY_SHIFT)
 		buffered_attack_valid = true
 	else:
 		buffered_attack_valid = false
@@ -1724,8 +1735,14 @@ func _advance_attack(delta: float) -> void:
 			COMBAT_JUICE.play(get_tree().current_scene, global_position, "swing", -24.0)
 			camera_kick = maxf(camera_kick, 1.9)
 			camera_push = attack_direction * 1.4
-		_strike_nearby_enemies(1.25 if active_finisher else 1.0)
+		if not active_special_v261.is_empty():
+			if world.inventory.get_equipped("sword") == special_weapon_v261:
+				UNIQUE_SPECIALS_V261.launch(self,special_weapon_v261,attack_direction,active_special_v261)
+		else:
+			_strike_nearby_enemies(1.25 if active_finisher else 1.0)
 	if attack_time_left <= 0.0:
+		active_special_v261 = ""
+		special_weapon_v261 = null
 		active_finisher = false
 		active_lunge = false
 		combo_grace = 0.48 if not heavy_attack else 0.0
