@@ -245,8 +245,9 @@ func _draw_horns(color: Color, face: String) -> void:
     # their existing layout. Includes the real bob, scale, lean and air pose.
     draw_set_transform_matrix(global_transform.affine_inverse()*sprite.global_transform)
     var far: int = HORN_ANCHORS.far_side(actual_face)
-    var order: Array[int] = [1,0] if far==1 else [0,1]
-    for i in order:
+    # Avoid an untyped Array from a ternary expression (Godot 4.7).
+    for step in range(2):
+        var i: int = HORN_ANCHORS.horn_index(step,far)
         var side: float = -1.0 if i==0 else 1.0
         if sprite.flip_h:
             side=-side
