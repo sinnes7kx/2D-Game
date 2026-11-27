@@ -328,7 +328,7 @@ func _build_controls_window() -> void:
 	scroll.add_child(rows)
 	var sections: Array=[
 		["MOVEMENT", [["WASD / Arrows","Move independently of cursor"],["Mouse","Aim / face cursor"],["Shift","Sprint"],["Space","Backstep away from aim"],["C","Jump"],["L / Wheel","Target lock / cycle"]]],
-		["COMBAT", [["Mouse1","Light attack"],["Mouse2","Heavy attack / hold charge where supported"],["F / Mouse4 / P / Mouse3","Parry · time incoming melee contact"],["Shift + Mouse2","Equipped unique skill"],["WASD + held charge","Backpedal or strafe at 45% walking speed"],["Space during grounded charge","Cancel supported charge into dodge"],["X","Wand quick cast"],["N","Heal"]]],
+		["COMBAT", [["Mouse1","Light attack"],["Mouse2","Heavy attack / hold charge where supported"],["F / Mouse4 / P / Mouse3","Parry · time incoming melee contact"],["Shift + Mouse2","Equipped unique skill"],["WASD + held charge","Backpedal or strafe at 45% walking speed"],["Space during grounded charge","Cancel supported charge into dodge"],["Mouse1 / Mouse2 (wand)","Normal / strong weapon shot"],["N","Heal"]]],
 		["COMBOS", [["Mouse1 × 3","Light chain"],["Mouse1 × 2 → Mouse2","Heavy finisher"],["Backstep → Mouse2","Lunge in follow-up window"],["Successful parry → Attack","Counter window"],["Jump → Mouse2","Aerial attack"]]],
 		["EXPLORATION", [["E","Interact / collect"],["Q / R","Pull item / grapple"],["G / Y","Drop / throw object"]]],
 		["INVENTORY & CODEX", [["B / I / Tab","Inventory and equipment"],["P / Shift + Mouse2 (inventory)","Collector Lens"],["Ctrl / Alt (hover)","Compare / advanced details"],["Bottom-left icons","Menu · Effects · Codex · Reliquary"]]],
