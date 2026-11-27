@@ -834,8 +834,10 @@ func _resolve_skin_clip(animation_name: String) -> String:
 	var armed: bool = world == null or world.inventory == null
 	if not armed:
 		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
-	if SKIN_V246.current() == SKIN_V246.NOCTURNE:
+	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not (armed and _weapon_style() == "bow"):
 		return SKIN_V246.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
+	# Nocturne has no authored armed rows. Bows keep the approved original
+	# equipped diagonal clips rather than silently reverting to cardinal art.
 	if armed:
 		return DIAGONAL_ART_V247.armed_clip(animation_name, facing_eight_name, facing_name, body_art.sprite_frames)
 	return DIAGONAL_ART_V247.resolve(animation_name, facing_eight_name, facing_name, false, body_art.sprite_frames)
