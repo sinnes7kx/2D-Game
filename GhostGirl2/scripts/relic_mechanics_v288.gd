@@ -5,11 +5,37 @@ const CHANNELS: Dictionary = {
 	"rosemirror_twinblade_v170":{"mode":"hybrid","drain":21.0,"move":0.80,"radius":111.0,"pulse":0.23,"power":0.34,"outer_radius":132.0,"outer_power":0.25},
 	"cathedral_thorn_twinblade_v231":{"mode":"cyclone","drain":25.0,"move":0.92,"radius":145.0,"pulse":0.26,"power":0.39}
 }
-const AREAS: Dictionary = {
-	"frostveil_bow_v277":"moonfall",
-	"lunar_vigil_halberd":"astral",
-	"rosehook_bearded_axe_v286":"roses"
+# The previous area-spell specials are retired. Preserve item IDs and the
+# compatibility symbol, not the old spell routes.
+const AREAS: Dictionary = {}
+const PHYSICAL: Dictionary = {
+	"lunar_vigil_halberd":{"range":176.0,"dot":0.74,"power":1.75,"poise":2.5,"cooldown":3.8},
+	"rosehook_bearded_axe_v286":{"range":128.0,"dot":0.34,"power":1.55,"poise":3.0,"cooldown":3.2}
 }
+const VOLLEY: Dictionary = {"frostveil_bow_v277":4.0}
+
+static func physical_contact(offset: Vector2, axis: Vector2, reach: float, cone: float) -> bool:
+	return offset.length_squared()>4.0 and offset.length_squared()<=reach*reach and not axis.is_zero_approx() and offset.normalized().dot(axis.normalized())>=cone
+
+static func _physical_strike(actor: CharacterBody2D,item: GhostItemInstance,axis: Vector2,id: String,root: Node) -> void:
+	var profile: Dictionary = PHYSICAL[id]
+	var damage: float = item.weapon_damage()*float(profile["power"])*(1.0+float(actor.call("_stat","melee_power_pct"))/100.0)
+	var hits: int=0
+	for other in actor.get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(other) or other.is_queued_for_deletion() or not other is Node2D or not other.has_method("hit"):
+			continue
+		var point: Vector2=(other as Node2D).global_position
+		if not physical_contact(point-actor.global_position,axis,float(profile["range"]),float(profile["dot"])) or not GROUND.clear_path(actor,actor.global_position,point):
+			continue
+		other.call("hit",damage,float(profile["poise"]))
+		preload("res://scripts/impact_spawner_v149.gd").burst(root,point,"slam",0.6,axis,item.visual_seed())
+		hits+=1
+	if hits>0:
+		AUDIO.play(root,actor.global_position,"ground_slam",-15.0)
+		actor.set("camera_kick",maxf(float(actor.get("camera_kick")),3.7))
+		if item.ethereal:
+			actor.get("world").inventory.wear_ethereal(item)
+	actor.call("relic_commit_v288",id,cooldown(id))
 const GROUND_SKILLS: Dictionary = {
 	"drowned_fork":"impale",
 	"ossuary_poleaxe_v286":"fissure",
@@ -33,11 +59,10 @@ static func cooldown(id: String) -> float:
 		return 4.0
 	if id=="ivory_duelist_rapier_v286":
 		return 2.5
-	if AREAS.has(id):
-		match AREAS[id]:
-			"moonfall": return 6.2
-			"astral": return 7.8
-			"roses": return 7.1
+	if PHYSICAL.has(id):
+		return float(PHYSICAL[id]["cooldown"])
+	if VOLLEY.has(id):
+		return float(VOLLEY[id])
 	if id=="hollowbell_maul_v277":
 		return 5.0
 	if GROUND_SKILLS.has(id):
@@ -45,7 +70,7 @@ static func cooldown(id: String) -> float:
 	return 0.0
 
 static func launch(actor: CharacterBody2D,item: GhostItemInstance,axis: Vector2,id: String) -> bool:
-	if not AREAS.has(id) and not GROUND_SKILLS.has(id):
+	if not PHYSICAL.has(id) and not GROUND_SKILLS.has(id):
 		return false
 	var world: Node = actor.get("world")
 	var root: Node = actor.get_tree().current_scene
@@ -53,15 +78,9 @@ static func launch(actor: CharacterBody2D,item: GhostItemInstance,axis: Vector2,
 		return false
 	if not actor.call("relic_ready_v288",id):
 		return false
-	if AREAS.has(id):
-		var target: Vector2 = actor.global_position+axis.normalized()*350.0
-		if not bool(actor.get("controller_active_v260")):
-			target=actor.get_global_mouse_position()
-		var lock: Node2D = actor.get("lock_target")
-		if is_instance_valid(lock):
-			target=lock.global_position
-		if not bool(world.call("cast_relic_area_v288",str(AREAS[id]),item,target)):
-			return false
+	if PHYSICAL.has(id):
+		_physical_strike(actor,item,axis,id,root)
+		return true
 	else:
 		var effect: Node2D = GROUND.new()
 		var power: float = (18.0+item.weapon_damage())*1.65*(1.0+float(actor.call("_stat","melee_power_pct"))/100.0)
