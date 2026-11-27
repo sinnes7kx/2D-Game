@@ -25,7 +25,7 @@ func _initialize() -> void:
 		assert(item.active_weapon_mod(true) == item.debug_weapon_mod)
 	assert(item.weapon_mod == genuine)
 	var innate = preload("res://scripts/unique_innate_v274.gd")
-	assert(innate.POWERS.size()==72)
+	assert(innate.POWERS.size()==70)
 	var resources: Array[String] = []
 	_collect_equipment_paths_v274("res://items",resources)
 	var covered: int = 0
