@@ -1,0 +1,154 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/arena_v279/colosseum.svg" id="1_bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="2_portal"]
+[ext_resource type="Script" path="res://scripts/arena_controller_v279.gd" id="3_controller"]
+[ext_resource type="Script" path="res://scripts/arena_challenge_v279.gd" id="4_plaque"]
+[ext_resource type="Script" path="res://scripts/moor_lantern.gd" id="5_lamp"]
+
+[sub_resource type="RectangleShape2D" id="horizontal"]
+size = Vector2(1800, 100)
+
+[sub_resource type="RectangleShape2D" id="vertical"]
+size = Vector2(100, 1250)
+
+[node name="Colosseum" type="Node2D"]
+y_sort_enabled = true
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+z_index = -50
+texture = ExtResource("1_bg")
+centered = false
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(900, 1100)
+
+[node name="From_lanternhaven" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(900, 1100)
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="North" type="StaticBody2D" parent="Collision"]
+position = Vector2(900, 145)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/North"]
+shape = SubResource("horizontal")
+
+[node name="South" type="StaticBody2D" parent="Collision"]
+position = Vector2(900, 1230)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/South"]
+shape = SubResource("horizontal")
+
+[node name="West" type="StaticBody2D" parent="Collision"]
+position = Vector2(90, 625)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/West"]
+shape = SubResource("vertical")
+
+[node name="East" type="StaticBody2D" parent="Collision"]
+position = Vector2(1710, 625)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collision/East"]
+shape = SubResource("vertical")
+
+[node name="Gameplay" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="Challenges" type="Node2D" parent="Gameplay"]
+
+[node name="lanternhaven" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(900, 1170)
+script = ExtResource("2_portal")
+destination = "lanternhaven"
+interaction_name = "Return to Lanternhaven"
+opened = true
+
+[node name="ArenaController" type="Node2D" parent="Gameplay"]
+y_sort_enabled = true
+script = ExtResource("3_controller")
+
+[node name="iron" type="Node2D" parent="Gameplay/Challenges"]
+position = Vector2(590, 1000)
+script = ExtResource("4_plaque")
+boss_id = "iron"
+
+[node name="bell" type="Node2D" parent="Gameplay/Challenges"]
+position = Vector2(900, 1000)
+script = ExtResource("4_plaque")
+boss_id = "bell"
+
+[node name="astral" type="Node2D" parent="Gameplay/Challenges"]
+position = Vector2(1210, 1000)
+script = ExtResource("4_plaque")
+boss_id = "astral"
+
+[node name="ArenaLantern0" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(250, 375)
+script = ExtResource("5_lamp")
+lamp_color = Color(0.94, 0.69, 0.43, 1)
+glow_strength = 1.05
+
+[node name="ArenaLantern1" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1550, 375)
+script = ExtResource("5_lamp")
+lamp_color = Color(0.94, 0.69, 0.43, 1)
+glow_strength = 1.05
+
+[node name="ArenaLantern2" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(250, 860)
+script = ExtResource("5_lamp")
+lamp_color = Color(0.94, 0.69, 0.43, 1)
+glow_strength = 1.05
+
+[node name="ArenaLantern3" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1550, 860)
+script = ExtResource("5_lamp")
+lamp_color = Color(0.94, 0.69, 0.43, 1)
+glow_strength = 1.05
+
+[node name="ArenaLantern4" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(740, 1120)
+script = ExtResource("5_lamp")
+lamp_color = Color(0.94, 0.69, 0.43, 1)
+glow_strength = 1.05
+
+[node name="ArenaLantern5" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(1060, 1120)
+script = ExtResource("5_lamp")
+lamp_color = Color(0.94, 0.69, 0.43, 1)
+glow_strength = 1.05
+
+[node name="ArenaTitle" type="Label" parent="."]
+z_index = -42
+offset_left = 520.0
+offset_top = 250.0
+offset_right = 1280.0
+offset_bottom = 290.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.73, 0.64, 0.66, 0.76)
+theme_override_font_sizes/font_size = 27
+text = "THE COLOSSEUM OF VOWS"
+horizontal_alignment = 1
