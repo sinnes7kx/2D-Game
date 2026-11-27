@@ -49,7 +49,7 @@ const PROFILES: Dictionary = {
 	"v203_rosequartz_morningstar": {"name":"Dawn Sorrow","description":"Six radial waves restore stamina on contact","pattern":"radial","count":6,"spread":60.0,"power":1.8,"speed":465.0,"range":190.0,"stagger":1.2,"effect":"stamina","ink":"e5a4be"},
 	"frostveil_bow_v277": {"name":"Winter's Choir","description":"Full draw summons Moonfall Blizzard at the aimed location; 6.2s recharge","pattern":"fan","count":5,"spread":11.0,"power":1.85,"speed":1040.0,"range":680.0,"stagger":0.95,"effect":"frost","ink":"9adfe9"},
 	"mourning_star_crossbow_v277": {"name":"Astral Sentence","description":"A long-range returning piercing bolt","pattern":"single","count":1,"spread":0.0,"power":2.1,"speed":1540.0,"range":960.0,"stagger":1.35,"effect":"return_pierce","ink":"c7a8ff"},
-	"hollowbell_maul_v277": {"name":"Hollow Cathedral","description":"Three seismic waves burst on enemy contact","pattern":"wave","count":3,"spread":18.0,"power":2.1,"speed":420.0,"range":290.0,"stagger":2,"effect":"burst","ink":"e0bb83"}
+	"hollowbell_maul_v277": {"name":"Hollow Cathedral","description":"Three giant bells descend onto marked ground and crush enemies; 5s recharge","pattern":"wave","count":3,"spread":18.0,"power":2.1,"speed":420.0,"range":290.0,"stagger":2,"effect":"burst","ink":"e0bb83"}
 }
 
 static func has_skill(id: String) -> bool:
