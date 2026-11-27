@@ -288,6 +288,8 @@ static func far_wrist(clip: String, frame: int) -> Vector2:
 	if direction.is_empty() or direction.begins_with("back"):
 		return Vector2.INF
 	var action: String = "idle_"
+	if is_modular_combat_v294(clip):
+		action=combat_body_source_v294(clip).trim_suffix(direction)
 	for name in ["walk_","jump_","dodge_"]:
 		if clip.contains("_"+name) or clip.begins_with(name):
 			action=name
@@ -332,6 +334,10 @@ static func crossbow_span(clip: String, frame: int) -> PackedVector2Array:
 		return PackedVector2Array()
 	var direction: String = diagonal_name(clip)
 	var axis: Vector2 = Vector2(-0.88 if direction.ends_with("left") else 0.88,-0.36 if direction.begins_with("back") else 0.47).normalized()
+	if clip.begins_with("attack_"):
+		axis=heading_v294(direction)
+		if clip.contains("_reload_"):
+			axis=axis.rotated((-1.0 if direction.ends_with("right") else 1.0)*sin(PI*float(clampi(frame,0,7))/7.0)*0.75)
 	return PackedVector2Array([anchor,anchor+axis*32.0])
 
 # Diagonal spear carry uses the visible wrist and existing 74px attack span.
@@ -419,7 +425,10 @@ static func missing_combat_clips_v293(frames: SpriteFrames) -> PackedStringArray
 const MODULAR_COMBAT_V294: Array[String] = [
 	"attack_rapier_pierce_", "attack_rapier_heavy_pierce_",
 	"attack_axe_light_", "attack_axe_heavy_",
-	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_"
+	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
+	"attack_forge_bow_light_", "attack_forge_bow_heavy_",
+	"attack_crossbow_fire_", "attack_crossbow_reload_",
+	"attack_forge_dagger_pierce_", "attack_forge_dagger_heavy_pierce_"
 ]
 
 static func is_modular_combat_v294(clip: String) -> bool:
@@ -431,7 +440,10 @@ static func is_modular_combat_v294(clip: String) -> bool:
 	return false
 
 static func combat_body_source_v294(clip: String) -> String:
-	return ("jump_" if clip.contains("_air_") else "dodge_")+diagonal_name(clip)
+	var action: String = "jump_" if clip.contains("_air_") else "dodge_"
+	if not clip.contains("_air_") and (clip.contains("forge_bow_") or clip.contains("crossbow_")):
+		action="idle_"
+	return action+diagonal_name(clip)
 
 static func _install_modular_combat_v294(frames: SpriteFrames) -> void:
 	if _load_sheet(REVISED_ACTIONS)==null:
