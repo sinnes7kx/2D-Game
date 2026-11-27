@@ -999,10 +999,10 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 			removed_room_items.append(extra)
 	_wear_cast_wand(wand)
 
-func cast_moonfall(target_position: Vector2,owner: GhostItemInstance = null) -> bool:
-	if not _relic_area_owner_v288(owner,"frostveil_bow_v277"):
+func cast_moonfall(target_position: Vector2,relic_owner: GhostItemInstance = null) -> bool:
+	if not _relic_area_owner_v288(relic_owner,"frostveil_bow_v277"):
 		return false
-	var wand: GhostItemInstance = owner
+	var wand: GhostItemInstance = relic_owner
 	# Target is intentionally cursor/lock-aimed, with line of sight checked so
 	# players cannot conjure frost through stone or destructible cover.
 	var start: Vector2 = player.global_position + Vector2(0.0, -28.0)
@@ -1017,7 +1017,7 @@ func cast_moonfall(target_position: Vector2,owner: GhostItemInstance = null) -> 
 		point = obstruction.get("position", point)
 	var storm: Node2D = MOONFALL_SCENE.instantiate() as Node2D
 	storm.set("appearance_seed", wand.visual_seed())
-	storm.set("damage_per_pulse", (5.0+owner.weapon_damage()*0.16) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if owner.ethereal else 1.0))
+	storm.set("damage_per_pulse", (5.0+relic_owner.weapon_damage()*0.16) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if relic_owner.ethereal else 1.0))
 	storm.set("style_index", GhostWeaponFXLibrary.moonfall_style(wand.visual_seed(), wand.quality))
 	var signature: Dictionary = wand.effect_rolls()
 	storm.set("main_color", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("b9dfff"), 0.58))
@@ -1026,8 +1026,8 @@ func cast_moonfall(target_position: Vector2,owner: GhostItemInstance = null) -> 
 	removed_room_items.append(storm)
 	storm.global_position = point
 
-	if owner.ethereal:
-		inventory.wear_ethereal(owner)
+	if relic_owner.ethereal:
+		inventory.wear_ethereal(relic_owner)
 	return true
 
 func _v127_aimed_area_point(target_position: Vector2) -> Vector2:
@@ -1040,10 +1040,10 @@ func _v127_aimed_area_point(target_position: Vector2) -> Vector2:
 	var wall: Dictionary = get_world_2d().direct_space_state.intersect_ray(query)
 	return wall.get("position", endpoint) if not wall.is_empty() else endpoint
 
-func _v127_spawn_area(scene: PackedScene, target_position: Vector2, is_astral: bool,owner: GhostItemInstance) -> bool:
-	if not _relic_area_owner_v288(owner,"lunar_vigil_halberd" if is_astral else "rosehook_bearded_axe_v286"):
+func _v127_spawn_area(scene: PackedScene, target_position: Vector2, is_astral: bool,relic_owner: GhostItemInstance) -> bool:
+	if not _relic_area_owner_v288(relic_owner,"lunar_vigil_halberd" if is_astral else "rosehook_bearded_axe_v286"):
 		return false
-	var wand: GhostItemInstance = owner
+	var wand: GhostItemInstance = relic_owner
 	var effect: Node2D = scene.instantiate() as Node2D
 	if effect == null:
 		return false
@@ -1053,31 +1053,31 @@ func _v127_spawn_area(scene: PackedScene, target_position: Vector2, is_astral: b
 	effect.set("primary", GhostWeaponFXLibrary.color(int(signature["color"])).lerp(Color("d6b9ed"), 0.48))
 	effect.set("secondary", GhostWeaponFXLibrary.color(int(signature["accent"])).lerp(Color("efd1eb"), 0.38))
 	if is_astral:
-		effect.set("pulse_damage", (6.0+owner.weapon_damage()*0.20) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if owner.ethereal else 1.0))
+		effect.set("pulse_damage", (6.0+relic_owner.weapon_damage()*0.20) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if relic_owner.ethereal else 1.0))
 	else:
-		effect.set("one_hit_damage", (9.0+owner.weapon_damage()*0.36) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if owner.ethereal else 1.0))
+		effect.set("one_hit_damage", (9.0+relic_owner.weapon_damage()*0.36) * (1.0 + inventory.get_stat_total("melee_power_pct") / 100.0) * (1.25 if relic_owner.ethereal else 1.0))
 	add_child(effect)
 	removed_room_items.append(effect)
 	effect.global_position = _v127_aimed_area_point(target_position)
 
-	if owner.ethereal:
-		inventory.wear_ethereal(owner)
+	if relic_owner.ethereal:
+		inventory.wear_ethereal(relic_owner)
 	return true
 
-func _relic_area_owner_v288(owner: GhostItemInstance,id: String) -> bool:
-	return owner!=null and owner.definition!=null and not owner.is_broken() and inventory.get_equipped("sword")==owner and str(owner.definition.item_id)==id and (owner.quality=="unique" or owner.definition.unique)
+func _relic_area_owner_v288(relic_owner: GhostItemInstance,id: String) -> bool:
+	return relic_owner!=null and relic_owner.definition!=null and not relic_owner.is_broken() and inventory.get_equipped("sword")==relic_owner and str(relic_owner.definition.item_id)==id and (relic_owner.quality=="unique" or relic_owner.definition.unique)
 
-func cast_astral_rain(target_position: Vector2,owner: GhostItemInstance = null) -> bool:
-	return _v127_spawn_area(ASTRAL_SCENE,target_position,true,owner)
+func cast_astral_rain(target_position: Vector2,relic_owner: GhostItemInstance = null) -> bool:
+	return _v127_spawn_area(ASTRAL_SCENE,target_position,true,relic_owner)
 
-func cast_grasping_roses(target_position: Vector2,owner: GhostItemInstance = null) -> bool:
-	return _v127_spawn_area(ROSES_SCENE,target_position,false,owner)
+func cast_grasping_roses(target_position: Vector2,relic_owner: GhostItemInstance = null) -> bool:
+	return _v127_spawn_area(ROSES_SCENE,target_position,false,relic_owner)
 
-func cast_relic_area_v288(kind: String,owner: GhostItemInstance,target_position: Vector2) -> bool:
+func cast_relic_area_v288(kind: String,relic_owner: GhostItemInstance,target_position: Vector2) -> bool:
 	match kind:
-		"moonfall": return cast_moonfall(target_position,owner)
-		"astral": return cast_astral_rain(target_position,owner)
-		"roses": return cast_grasping_roses(target_position,owner)
+		"moonfall": return cast_moonfall(target_position,relic_owner)
+		"astral": return cast_astral_rain(target_position,relic_owner)
+		"roses": return cast_grasping_roses(target_position,relic_owner)
 	return false
 
 func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: String) -> void:
