@@ -316,6 +316,12 @@ func _physics_process(delta: float) -> void:
 	if world == null:
 		return
 	if world.ui.is_menu_open() or world.ui.has_cursor_item():
+		if throw_charge_active_v276:
+			clear_throw_charge_v276()
+			attack_time_left=0.0
+			active_special_v261=""
+			special_weapon_v261=null
+			_play_if_changed(_weapon_motion_prefix(false)+facing_name)
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
@@ -2328,6 +2334,8 @@ func _play_action_sfx(stream: AudioStream) -> void:
 func _diagonal_action_clip(action: String, fallback: String) -> String:
 	if world == null or world.inventory == null:
 		return fallback
+	if thrown_weapon_busy_v273():
+		return DIAGONAL_ART_V247.action_clip(action,facing_eight_name,fallback,body_art.sprite_frames)
 	if SKIN_V246.current() != SKIN_V246.ORIGINAL and _weapon_style() != "bow":
 		return fallback
 	if world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null:
