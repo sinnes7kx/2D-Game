@@ -1804,7 +1804,7 @@ func _advance_attack(delta: float) -> void:
 				_strike_nearby_enemies((1.25 if active_finisher else 1.0)*TWINBLADE_HIT_POWER_V272,true,false)
 	# Second blade passes the forward arc later in the same committed spin.
 	# Re-check range, obstruction and equipment; no automatic follow-up damage.
-	if twinblade_second_v272 and attack_time_left<=attack_duration*TWINBLADE_SECOND_GATE_V272:
+	if twinblade_second_due_v272(twinblade_second_v272,attack_time_left,attack_duration):
 		twinblade_second_v272=false
 		if world.inventory.get_equipped("sword")==twinblade_weapon_v272 and not twinblade_weapon_v272.is_broken():
 			COMBAT_JUICE.play(get_tree().current_scene,global_position,"swing",-24.0)
@@ -2372,3 +2372,6 @@ func _eclipse_dance_hit_v262(multiplier: float) -> void:
 			if item.ethereal and world.inventory.wear_ethereal(item):
 				world.ui.show_pickup("ETHEREAL WEAPON BROKEN",Color("d9b6cf"))
 				_clear_eclipse_dance_v262()
+
+static func twinblade_second_due_v272(pending: bool,remaining: float,duration: float) -> bool:
+	return pending and duration>0.0 and remaining<=duration*TWINBLADE_SECOND_GATE_V272

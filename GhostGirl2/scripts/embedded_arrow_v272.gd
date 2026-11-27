@@ -34,7 +34,10 @@ func _process(delta: float) -> void:
 			queue_free()
 			return
 		global_position=attached.to_global(local_anchor)
-		direction=(attached.to_global(local_anchor+local_axis)-global_position).normalized()
+		var axis: Vector2 = (attached.to_global(local_anchor+local_axis)-global_position).normalized()
+		if not direction.is_equal_approx(axis):
+			direction=axis
+			queue_redraw()
 	if burning or age>ENV.EMBED_SECONDS-2.0:
 		queue_redraw()
 

@@ -14,6 +14,8 @@ const FX = preload("res://scripts/fx_intensity_v1924.gd")
 var look_key: String = ""
 var look: Dictionary = {}
 var colors: Array[Color] = []
+var wing_colors: Array[Color] = []
+var wing_shape: int = 0
 var familiar: GhostItemInstance = null
 
 func _ready() -> void:
@@ -39,6 +41,8 @@ func _process(delta: float) -> void:
             look_key = key
             look = ROLLS.roll(familiar.cosmetic_uid, familiar.visual_seed(), familiar.gradient_version)
             colors = RNG.gradient_for_channel(familiar.cosmetic_uid, familiar.visual_seed(), "companion-v239", familiar.gradient_version)
+            wing_colors=RNG.gradient_for_channel(familiar.cosmetic_uid,familiar.visual_seed(),"familiar-wings-v272",familiar.gradient_version)
+            wing_shape=posmod(hash("%s|%d|familiar-wing-v272" % [familiar.cosmetic_uid,familiar.visual_seed()]),4)
     time_alive += delta
     var facing: String = str(actor.get("facing_name"))
     var side: float = 1.0 if facing == "left" else -1.0
@@ -106,9 +110,8 @@ func _draw_equipped_wisp() -> void:
     var accent: Color = RNG.sample_palette(colors, 0.8)
     var core: Vector2 = Vector2(0.0, sin(time_alive * 2.1) * 2.0)
     # Seeded wing geometry and independent wing color channel. Cosmetic only.
-    var shape_seed: int = posmod(hash(familiar.cosmetic_uid+"|familiar-wing-v272"),4)
-    var wings: Array[Color] = RNG.gradient_for_channel(familiar.cosmetic_uid,familiar.visual_seed(),"familiar-wings-v272",familiar.gradient_version)
-    var wing_ink: Color = RNG.sample_palette(wings,0.43)
+    var shape_seed: int = wing_shape
+    var wing_ink: Color = RNG.sample_palette(wing_colors,0.43)
     var flap: float = 0.76+0.22*sin(time_alive*5.1)
     for side in [-1.0,1.0]:
         var root: Vector2 = core+Vector2(side*2.0,0)

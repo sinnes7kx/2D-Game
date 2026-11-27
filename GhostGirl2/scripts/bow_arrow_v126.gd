@@ -83,9 +83,9 @@ func _physics_process(delta: float) -> void:
 		wall_query.exclude = [caster_rid]
 	var wall: Dictionary = state.intersect_ray(wall_query)
 	var end: Vector2 = wall.get("position", destination) if not wall.is_empty() else destination
-	# Check the actual wall-clipped sweep, not the unbounded aim line.
-	if physical_archery and not ignited_v272 and ARCHERY_ENV.crosses_fire(self,start,end):
-		ignited_v272=true
+	# Track potential ignition at the end of the clipped segment without
+	# prematurely giving a nearer enemy the fire damage bonus.
+	var end_ignited: bool = _fire_at_v272(start,end)
 	# v1.39: environmental objects share this same swept segment, so visual
 	# echo arrows never create multiple activations or hitboxes.
 	# Light reveals nearby world secrets as its one physical arrow passes,
@@ -100,7 +100,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if not is_crossbow_bolt and not returning and not secondary_projectile and _check_moon_targets(start, end):
 		return
-	if not is_crossbow_bolt and not returning and not secondary_projectile and ARCHERY_ENV.effective_element(element_index,ignited_v272) == 2 and _freeze_water_on_sweep(start, end):
+	if not is_crossbow_bolt and not returning and not secondary_projectile and ARCHERY_ENV.effective_element(element_index,end_ignited) == 2 and _freeze_water_on_sweep(start, end):
 		_impact(end, "water")
 		queue_free()
 		return
@@ -127,6 +127,7 @@ func _physics_process(delta: float) -> void:
 			if hit_ids.has(target_id):
 				continue
 			hit_ids[target_id] = true
+			ignited_v272=_fire_at_v272(start,point)
 			var material: String = ARROW_AUDIO.material_for(target, "flesh")
 			target.call("hit", ARCHERY_ENV.impact_power(damage,ignited_v272), 1.3 if charged else 0.85)
 			if ARCHERY_ENV.effective_element(element_index,ignited_v272) == 2 and target.has_method("apply_frost_slow") and is_instance_valid(target) and not target.is_queued_for_deletion():
@@ -142,6 +143,7 @@ func _physics_process(delta: float) -> void:
 			if returning:
 				queue_free()
 				return
+	ignited_v272=end_ignited
 	if not wall.is_empty():
 		var cover: Object = wall.get("collider")
 		var material: String = ARROW_AUDIO.material_for(cover, "stone")
@@ -207,7 +209,9 @@ func _check_world_elements(start: Vector2, end: Vector2) -> bool:
 		var radius: float = float(candidate.get("trigger_radius"))
 		if contact.distance_squared_to(candidate.global_position) <= radius * radius:
 			var material: String = ARROW_AUDIO.material_for(candidate, "magic")
-			if bool(candidate.call("on_elemental_arrow_hit", ARCHERY_ENV.effective_element(element_index,ignited_v272), formation_index, charged, launched_in_air)):
+			var contact_ignited: bool = _fire_at_v272(start,contact)
+			if bool(candidate.call("on_elemental_arrow_hit", ARCHERY_ENV.effective_element(element_index,contact_ignited), formation_index, charged, launched_in_air)):
+				ignited_v272=contact_ignited
 				_impact(contact, material)
 				queue_free()
 				return true
@@ -230,7 +234,9 @@ func _check_elemental_targets(start: Vector2, end: Vector2) -> bool:
 		var hit_point: Vector2 = start + segment * projection
 		var radius: float = float(target.get("trigger_radius"))
 		if hit_point.distance_squared_to(target.global_position) <= radius * radius:
-			if bool(target.call("on_elemental_arrow_hit", ARCHERY_ENV.effective_element(element_index,ignited_v272), formation_index, charged, launched_in_air)):
+			var contact_ignited: bool = _fire_at_v272(start,hit_point)
+			if bool(target.call("on_elemental_arrow_hit", ARCHERY_ENV.effective_element(element_index,contact_ignited), formation_index, charged, launched_in_air)):
+				ignited_v272=contact_ignited
 				_impact(hit_point, "magic")
 				queue_free()
 				return true
@@ -394,3 +400,6 @@ func _draw_fire_v272() -> void:
 	draw_circle(tip,6.0+pulse*2.0,Color(1.0,0.29,0.09,0.23))
 	draw_colored_polygon(PackedVector2Array([tip+direction*3.0,tip+n*3.3,tip-direction*(23.0+4.0*pulse),tip-n*3.3]),Color(1.0,0.42,0.12,0.56))
 	draw_line(tip,tip-direction*12.0,Color(1.0,0.84,0.44,0.86),1.7,true)
+
+func _fire_at_v272(start: Vector2,end: Vector2) -> bool:
+	return ignited_v272 or (physical_archery and ARCHERY_ENV.crosses_fire(self,start,end))

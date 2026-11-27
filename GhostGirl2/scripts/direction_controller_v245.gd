@@ -56,6 +56,15 @@ static func stick(x_axis: int, y_axis: int) -> Vector2:
 	return best
 
 static func install_controller() -> void:
+	# Explicit modifier-aware binding: don't depend on the serialized mouse
+	# device ID or on polling a Shift modifier after the button was pressed.
+	for shifted in [false,true]:
+		var mouse: InputEventMouseButton = InputEventMouseButton.new()
+		mouse.device=-1
+		mouse.button_index=MOUSE_BUTTON_RIGHT
+		mouse.shift_pressed=shifted
+		if InputMap.has_action("attack_heavy") and not InputMap.action_has_event("attack_heavy",mouse):
+			InputMap.action_add_event("attack_heavy",mouse)
 	var buttons: Dictionary = {
 		"left": JOY_BUTTON_DPAD_LEFT, "right": JOY_BUTTON_DPAD_RIGHT,
 		"up": JOY_BUTTON_DPAD_UP, "down": JOY_BUTTON_DPAD_DOWN,
