@@ -41,6 +41,7 @@ var test_mythic: OptionButton
 @onready var page_number: Label = $Layout/Header/PageNumber
 
 func _ready() -> void:
+	preload("res://scripts/gothic_ui_v273.gd").apply(self)
 	var trim: Control = preload("res://scripts/gothic_frame_v241.gd").new()
 	trim.name = "GothicEngraving"
 	trim.top_level = true

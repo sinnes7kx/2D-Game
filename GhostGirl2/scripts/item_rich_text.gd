@@ -109,6 +109,18 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		category = "BLUNT WEAPON"
 	var unique_socketable: bool = item.definition.unique and item_class in ["gem", "rune"]
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
+	var ability: String = preload("res://scripts/unique_specials_v261.gd").label(item)
+	if not ability.is_empty():
+		var parts: PackedStringArray = ability.split(" · ",true,1)
+		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
+		out.append("[font_size=12][color=#d4ae76]◆  UNIQUE SKILL[/color][/font_size]")
+		out.append("[font_size=19][color=#f0d2a0][b]%s[/b][/color][/font_size]" % escape(parts[0]))
+		if parts.size()>1:
+			out.append("[font_size=14][color=#e4cfde]%s[/color][/font_size]" % escape(parts[1]))
+		out.append("[font_size=13][color=#a9d8d3][b]SHIFT + MOUSE2[/b][/color][/font_size]")
+		if preload("res://scripts/unique_specials_v261.gd").kind(item)=="eclipse_dance":
+			out.append(_label("Repeat during dance · retreat combo"))
+		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
 	if slot == "sword":
 		out.append("[font_size=15][color=%s]%.1f Damage[/color][color=%s]   ·   %.0f Reach[/color][/font_size]" % [GOLD, item.weapon_damage(), MUTED, item.weapon_reach()])
 	if item.ethereal:
@@ -122,12 +134,6 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			var value: float = float(stats[id])
 			var ink: String = BLUE if value >= 0.0 else RED
 			out.append("[font_size=15][color=%s]%+.1f%% %s[/color][/font_size]" % [ink, value, escape(GhostPaletteLibrary.stat_label(str(id)))])
-	var ability: String = preload("res://scripts/unique_specials_v261.gd").label(item)
-	if not ability.is_empty():
-		out.append("[font_size=14][color=%s]%s[/color][/font_size]" % [GOLD,escape(ability)])
-		out.append("[font_size=12][color=#9cb9de]SHIFT + MOUSE2 · SPECIAL ATTACK[/color][/font_size]")
-		if preload("res://scripts/unique_specials_v261.gd").kind(item) == "eclipse_dance":
-			out.append("[font_size=12][color=#9cb9de]REPEAT DURING DANCE · RETREAT COMBO[/color][/font_size]")
 	if not item.weapon_mod.is_empty():
 		var special: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.weapon_mod, ""))
 		if not special.is_empty():

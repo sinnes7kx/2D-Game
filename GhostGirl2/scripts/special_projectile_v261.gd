@@ -1,8 +1,27 @@
 extends "res://scripts/bow_arrow_v126.gd"
 ## Reuses swept collision and return-hit deduplication; no archery puzzles.
 var special_id: String = ""
+const FX_V273 = preload("res://scripts/fx_intensity_v1924.gd")
+
+func _draw_trail_v273() -> void:
+	var alpha: float = clampf(visual_glow_scale,0.0,1.0)*clampf(FX_V273.intensity*0.85,0.0,1.0)
+	if alpha<=0.0:
+		return
+	var points: PackedVector2Array = PackedVector2Array([Vector2.ZERO])
+	for point in trail_points:
+		points.append(to_local(point))
+	for i in range(points.size()-1):
+		var u: float = float(i)/float(maxi(1,points.size()-1))
+		var fade: float = pow(1.0-u,1.6)*alpha
+		var tint: Color = GhostCosmeticRNGV152.sample_palette(full_palette,distance_travelled*0.003-u*0.42,true) if not full_palette.is_empty() else Color("c5c6e7")
+		var bright: Color = tint.lerp(Color.WHITE,0.48)
+		var width: float = lerpf(1.0,11.0 if returning else 8.0,1.0-u)
+		draw_line(points[i],points[i+1],Color(tint.r,tint.g,tint.b,fade*0.15),width*2.0,true)
+		draw_line(points[i],points[i+1],Color(tint.r,tint.g,tint.b,fade*0.62),width*0.7,true)
+		draw_line(points[i],points[i+1],Color(bright.r,bright.g,bright.b,fade*0.88),maxf(0.7,width*0.23),true)
 
 func _draw() -> void:
+	_draw_trail_v273()
 	var axis: Vector2 = direction.normalized()
 	var n: Vector2 = axis.orthogonal()
 	var tint: Color = full_palette[0] if not full_palette.is_empty() else Color("c5c6e7")
