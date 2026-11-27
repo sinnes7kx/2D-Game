@@ -241,6 +241,9 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 	# One fifth of ordinary sword selections choose a new base. Existing
 	# saved items load their original resource path, not this selector.
 	if posmod(sword_seed, 5) == 0:
+		if posmod(int(sword_seed / 5), 13)==0:
+			var forge_bases: Array[GhostItemData] = [preload("res://items/cathedral_rapier_v283.tres"), preload("res://items/moonneedle_rapier_v283.tres"), preload("res://items/briar_hatchet_v283.tres"), preload("res://items/gravecleaver_axe_v283.tres"), preload("res://items/gallows_greataxe_v283.tres")]
+			return forge_bases[posmod(int(sword_seed / 65),forge_bases.size())]
 		if posmod(int(sword_seed / 5), 7) == 0:
 			return SINGLE_SWORDS_V235[posmod(int(sword_seed / 35), SINGLE_SWORDS_V235.size())] as GhostItemData
 		# Share the existing variant lane, without increasing sword frequency.
