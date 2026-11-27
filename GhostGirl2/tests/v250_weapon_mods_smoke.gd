@@ -37,6 +37,16 @@ func _initialize() -> void:
 	assert(dance.motion(1,0.5)>0.0 and dance.motion(2,0.55)<0.0)
 	assert(dance.can_chain(0.6) and not dance.can_chain(0.1))
 	assert(dance.spin(1,dance.FIRST)>TAU)
+	var faces: Dictionary = {}
+	for i in range(80):
+		var t: float = dance.FIRST*float(i)/80.0
+		faces[dance.facing_at(Vector2.RIGHT,1,t)] = true
+		assert(dance.frame_at(1,t,8) in range(8))
+		assert(is_equal_approx(dance.blade_axis(Vector2.RIGHT,1,t).length(),1.0))
+	assert(faces.size()==4)
+	assert(dance.blade_axis(Vector2.RIGHT,1,dance.FIRST).is_equal_approx(dance.blade_axis(Vector2.RIGHT,2,0.0)))
+	assert(dance.chain_remaining(0.6)>dance.chain_remaining(1.0))
+	assert(dance.chain_remaining(0.1)==0.0)
 	var total: float = 0.0
 	for stage in [1,2]:
 		for i in range(dance.timings(stage).size()):

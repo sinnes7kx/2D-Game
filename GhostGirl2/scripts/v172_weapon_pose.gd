@@ -280,15 +280,13 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 				"back": anchor = Vector2(27, 15)
 			var original_tip: Vector2 = anchor + Vector2(-40 if facing == "left" else 40, -55)
 			# Match the longer double-ended blade scale, even without authored axes.
-			return PackedVector2Array([anchor, anchor + (original_tip - anchor).normalized() * 76.0])
+			return PackedVector2Array([anchor, anchor + _eclipse_axis_v263(animation_name,(original_tip-anchor).normalized()) * 76.0])
 		var guide: Array = guides[clampi(frame_index, 0, guides.size() - 1)]
 		var grip: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 		var tip: Vector2 = Vector2(float(guide[2]), float(guide[3]))
 		# Drawing-only extension; all twinblade damage and collision remain fixed.
 		var axis: Vector2 = (tip-grip).normalized()
-		if player != null and player.has_method("eclipse_spin_v262") and animation_name.begins_with("attack_twinblade_"):
-			axis = axis.rotated(float(player.call("eclipse_spin_v262")))
-		return PackedVector2Array([grip,grip+axis*76.0])
+		return PackedVector2Array([grip,grip+_eclipse_axis_v263(animation_name,axis)*76.0])
 	var spear: bool = animation_name.begins_with("attack_briarwake_spear_")
 	var heavy: bool = animation_name.contains("_heavy_")
 	var face: String = "front"
@@ -529,3 +527,11 @@ func _draw_v176_razor(root: Vector2, tip: Vector2, rose: bool) -> void:
 	draw_line(root, tip, Color("e2d4ef"), 0.65, true)
 	# Small crossguard separates the sword from the short leather grip.
 	draw_line(root - normal * 6.0, root + normal * 6.0, Color("a993b5"), 1.7, true)
+
+func _eclipse_axis_v263(clip: String, fallback: Vector2) -> Vector2:
+	if player != null and player.has_method("eclipse_axis_v263") and clip.begins_with("attack_twinblade_"):
+		var axis: Vector2 = player.call("eclipse_axis_v263")
+		if not axis.is_zero_approx():
+			# Convert world heading through the body transform, including lean.
+			return (body.to_local(body.global_position+axis)-body.to_local(body.global_position)).normalized()
+	return fallback
