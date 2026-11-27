@@ -328,6 +328,30 @@ static func paired_spans(clip: String, frame: int, length: float) -> Array:
 		result.append(PackedVector2Array([anchor,anchor+axis*length]))
 	return result
 
+# Preserve separate left/right slots and never invent an occluded wrist.
+static func paired_dagger_attack_spans(clip: String, frame: int, length: float) -> Array:
+	var result: Array = []
+	var direction: String = diagonal_name(clip)
+	var forward: Vector2 = heading_v294(direction)
+	var near: int = near_hand(clip)
+	var n: int = clampi(frame,0,7)
+	var thrust: bool = clip.contains("_pierce_")
+	var lead: int = 0 if clip.contains("_light_a_") else (1 if clip.contains("_light_b_") else near)
+	var both: bool = clip.contains("_light_c_") or (clip.contains("_heavy_") and not thrust)
+	var swing: Array[float] = [-1.25,-1.55,-0.75,0.0,0.34,1.05,0.64,-0.38]
+	var stab: Array[float] = [-0.65,-0.85,-0.42,0.0,0.0,0.10,-0.38,-0.65]
+	for hand in range(2):
+		var anchor: Vector2 = hand_wrist(clip,frame,hand)
+		if anchor==Vector2.INF or forward.is_zero_approx():
+			result.append(PackedVector2Array())
+			continue
+		var side: float = -1.0 if hand==0 else 1.0
+		var angle: float = (stab[n] if thrust else swing[n])*side
+		if not both and hand!=lead:
+			angle = side*0.95
+		result.append(PackedVector2Array([anchor,anchor+forward.rotated(angle)*length]))
+	return result
+
 static func crossbow_span(clip: String, frame: int) -> PackedVector2Array:
 	var anchor: Vector2 = wrist(clip,frame)
 	if anchor==Vector2.INF:
@@ -430,6 +454,8 @@ const MODULAR_COMBAT_V294: Array[String] = [
 	"attack_briarwake_spear_pierce_", "attack_briarwake_spear_heavy_pierce_",
 	"attack_dagger_pierce_", "attack_dagger_heavy_pierce_",
 	"attack_nocturne_dagger_pierce_", "attack_nocturne_dagger_heavy_pierce_",
+	"attack_dual_dagger_pierce_", "attack_dual_dagger_heavy_pierce_",
+	"attack_dual_dagger_light_a_", "attack_dual_dagger_light_b_", "attack_dual_dagger_light_c_", "attack_dual_dagger_heavy_",
 	"attack_rapier_pierce_", "attack_rapier_heavy_pierce_",
 	"attack_axe_light_", "attack_axe_heavy_",
 	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
