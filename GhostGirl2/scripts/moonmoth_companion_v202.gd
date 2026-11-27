@@ -136,21 +136,20 @@ func _draw_equipped_wisp() -> void:
     var tail_height: float = 10.0+wing_shape*1.1
     for side in [-1.0,1.0]:
         var root: Vector2 = core+Vector2(side*1.5,-1)
-        var upper: PackedVector2Array = PackedVector2Array([root])
-        var lower: PackedVector2Array = PackedVector2Array([root])
-        # Tapered curved petals, not solid polygonal triangles.
-        for j in range(1,17):
-            var t: float = float(j)/16.0
-            var bulge: float = pow(maxf(0.0,sin(t*PI)),0.84)
-            upper.append(root+Vector2(side*reach*bulge,-upper_height*sin(t*PI)*sin(t*PI*0.5)-3.0*sin(t*TAU)))
-            lower.append(root+Vector2(side*reach*0.64*bulge,tail_height*bulge+3.0*sin(t*TAU)))
-        draw_colored_polygon(upper,Color(wing_ink.r,wing_ink.g,wing_ink.b,0.40))
-        draw_colored_polygon(lower,Color(wing_ink.r,wing_ink.g,wing_ink.b,0.31))
+        var upper: PackedVector2Array = wing_outline_v282(root,side,reach,upper_height,true)
+        var lower: PackedVector2Array = wing_outline_v282(root,side,reach*0.64,tail_height,false)
+        # Unique endpoints and a simple contour prevent Godot triangulation spam.
+        _draw_valid_wing_v282(upper,Color(wing_ink.r,wing_ink.g,wing_ink.b,0.40))
+        _draw_valid_wing_v282(lower,Color(wing_ink.r,wing_ink.g,wing_ink.b,0.31))
         var edge: Color = wing_ink.lerp(Color.WHITE,0.58)
         edge.a=0.76
-        draw_polyline(upper,edge,0.85,true)
+        var upper_edge: PackedVector2Array = upper.duplicate()
+        upper_edge.append(root)
+        draw_polyline(upper_edge,edge,0.85,true)
         edge.a=0.54
-        draw_polyline(lower,edge,0.75,true)
+        var lower_edge: PackedVector2Array = lower.duplicate()
+        lower_edge.append(root)
+        draw_polyline(lower_edge,edge,0.75,true)
         for vein in [5,8,11]:
             draw_line(root,upper[vein],Color(edge.r,edge.g,edge.b,0.24),0.65,true)
         draw_line(root,lower[8],Color(edge.r,edge.g,edge.b,0.28),0.65,true)
@@ -191,6 +190,29 @@ func _draw_equipped_wisp() -> void:
             var a: float = time_alive * 0.85 - t * 2.8
             var p: Vector2 = core + Vector2(cos(a) * 19.0, sin(a) * 10.0)
             draw_circle(p, 2.4 * (1.0 - t), Color(hue.r, hue.g, hue.b, FX.alpha(0.7 * (1.0 - t))))
+
+# Two monotonic boundaries meet only at root and tip. Never append a
+# repeated closing vertex to a filled polygon.
+static func wing_outline_v282(root: Vector2,side: float,reach: float,height: float,upper: bool) -> PackedVector2Array:
+    var points: PackedVector2Array = PackedVector2Array([root])
+    var sign_y: float = -1.0 if upper else 1.0
+    var w: float = maxf(0.5,reach)
+    var h: float = maxf(0.5,height)
+    for i in range(1,9):
+        var t: float = float(i)/8.0
+        points.append(root+Vector2(side*w*t,sign_y*h*(t*0.75+0.38*sin(PI*t))))
+    for i in range(7,0,-1):
+        var t: float = float(i)/8.0
+        points.append(root+Vector2(side*w*t,sign_y*h*(t*0.75-0.31*sin(PI*t))))
+    return points
+
+func _draw_valid_wing_v282(points: PackedVector2Array,ink: Color) -> void:
+    if points.size()<3:
+        return
+    var triangles: PackedInt32Array = Geometry2D.triangulate_polygon(points)
+    if triangles.is_empty():
+        return
+    draw_colored_polygon(points,ink)
 
 static func profile_v273(uid: String,seed: int) -> Dictionary:
     var key: String = "%s|%d|familiar-v273" % [uid,seed]

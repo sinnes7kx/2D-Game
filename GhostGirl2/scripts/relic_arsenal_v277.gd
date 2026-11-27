@@ -5,6 +5,18 @@ const SHOT = preload("res://scripts/relic_skill_projectile_v277.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const IMPACT = preload("res://scripts/impact_spawner_v149.gd")
 const PROFILES: Dictionary = {
+	"mourning_longsword": {"name":"Grief's Edge","description":"Two sweeping spectral crescents","pattern":"blade","count":2,"spread":22,"power":1.9,"speed":610,"range":285,"stagger":1.2,"effect":"none","ink":"c39cc3"},
+	"moonveil_grandblade": {"name":"Hollow Moon","description":"A broad crescent bursts on contact","pattern":"blade","count":1,"spread":0,"power":2.25,"speed":490,"range":320,"stagger":1.8,"effect":"burst","ink":"c4c6f7"},
+	"vesper_rapier": {"name":"Heart's Silence","description":"A precise piercing thrust","pattern":"single","count":1,"spread":0,"power":2,"speed":1260,"range":410,"stagger":1,"effect":"pierce","ink":"e7c2d5"},
+	"lunar_vigil_halberd": {"name":"Endless Vigil","description":"A long-reaching staggering crescent","pattern":"blade","count":1,"spread":0,"power":2.2,"speed":680,"range":440,"stagger":2.7,"effect":"none","ink":"dad2ab"},
+	"moonlace_dual_daggers_v173": {"name":"Moon's Teeth","description":"Twin piercing frost needles","pattern":"fan","count":2,"spread":9,"power":1.8,"speed":1150,"range":360,"stagger":0.9,"effect":"frost_pierce","ink":"b3d8fb"},
+	"mourninglace_dual_daggers_v231": {"name":"Weeping Sisters","description":"Two spectral blades restore stamina on contact","pattern":"fan","count":2,"spread":15,"power":1.7,"speed":1000,"range":310,"stagger":0.9,"effect":"stamina","ink":"c4a4b9"},
+	"gloamrose_dual_swords_v174": {"name":"Bride and Widow","description":"Two returning spectral blades","pattern":"blade","count":2,"spread":14,"power":1.9,"speed":790,"range":350,"stagger":1.2,"effect":"return","ink":"e6a8c1"},
+	"cathedral_dual_swords_v233": {"name":"Broken Vows","description":"Twin crushing crescents","pattern":"blade","count":2,"spread":9,"power":2.15,"speed":650,"range":290,"stagger":2.35,"effect":"none","ink":"d7b78d"},
+	"vesperthorn_dual_swords_v231": {"name":"Sorrow and Solace","description":"Twin rose blades restore 3 life per first contact","pattern":"blade","count":2,"spread":18,"power":1.75,"speed":740,"range":290,"stagger":1.05,"effect":"heal","ink":"df8da9"},
+	"rosemirror_twinblade_v170": {"name":"Rose Reflection","description":"Four spectral crescents circle outward","pattern":"radial","count":4,"spread":90,"power":2,"speed":520,"range":230,"stagger":1.15,"effect":"none","ink":"e7b5ca"},
+	"cathedral_thorn_twinblade_v231": {"name":"Martyr Crown","description":"Six radial stagger crescents","pattern":"radial","count":6,"spread":60,"power":2.25,"speed":480,"range":215,"stagger":2,"effect":"none","ink":"d2b58c"},
+	"widowglass_twinblade_v231": {"name":"Widow Embrace","description":"Three piercing frost crescents","pattern":"blade","count":3,"spread":24,"power":1.9,"speed":680,"range":285,"stagger":1.1,"effect":"frost_pierce","ink":"b4b1f1"},
 	"blackthorn_bow_v234": {"name":"Widow's Volley","description":"Five narrow arrows fan outward","pattern":"fan","count":5,"spread":8.0,"power":1.65,"speed":1030.0,"range":660.0,"stagger":0.9,"effect":"none","ink":"b989c5"},
 	"moonveil_bow": {"name":"Lunar Needle","description":"A piercing frost arrow slows up to two enemies","pattern":"single","count":1,"spread":0.0,"power":1.8,"speed":1200.0,"range":880.0,"stagger":0.9,"effect":"frost_pierce","ink":"a7d9fb"},
 	"thornrose_bow": {"name":"Briar's Mercy","description":"A wide triple volley restores stamina on first contact per arrow","pattern":"fan","count":3,"spread":16.0,"power":1.5,"speed":930.0,"range":620.0,"stagger":0.8,"effect":"stamina","ink":"d898a9"},

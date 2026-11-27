@@ -195,6 +195,8 @@ func _ready() -> void:
 	_update_camera_limits()
 	player.snap_render_after_teleport()
 	ui.set_dew(player.dew_charges, player.MAX_DEW)
+	if OS.is_debug_build():
+		call_deferred("_deliver_relic_samples_v282")
 
 
 # Give one starter blade to both new and migrated saves; leave it unequipped
@@ -1073,6 +1075,15 @@ func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: Stri
 		_announce_discovery(reward, "%s  ·  %s" % [reward.quality.to_upper(), reward.display_name()])
 	else:
 		ui.show_pickup(inventory.last_add_failure if not inventory.last_add_failure.is_empty() else "NO FITTING BACKPACK SPACE")
+
+func _deliver_relic_samples_v282() -> void:
+	var result: Dictionary = inventory.deliver_relic_samples_v282()
+	if not bool(result["saved"]):
+		ui.show_pickup("RELIC DELIVERY RESERVED · SAVE UNAVAILABLE")
+	elif int(result["vault"])+int(result["backpack"])>0:
+		ui.show_pickup("UNIQUE RELICS · %d STASH / %d BACKPACK"%[result["vault"],result["backpack"]],Color("f1d29a"))
+	elif int(result["pending"])>0:
+		ui.show_pickup("RELIC DELIVERY RESERVED · FREE STASH SPACE")
 
 func _give_weapon_test_samples() -> void:
 	# Optional testing action; existing saves remain intact and no duplicates

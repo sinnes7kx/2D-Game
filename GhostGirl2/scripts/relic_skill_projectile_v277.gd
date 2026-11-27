@@ -68,6 +68,13 @@ func _draw() -> void:
 			var end: Vector2 = to_local(trail_points[i+1])
 			draw_line(start,end,Color(ink.r,ink.g,ink.b,a*0.18),9.0*(1.0-u)+1.0,true)
 			draw_line(start,end,Color(ink.r,ink.g,ink.b,a*0.65),2.0,true)
+	if pattern=="blade":
+		var length: float = 25.0
+		draw_arc(Vector2.ZERO,length,axis.angle()-1.12,axis.angle()+1.12,28,ink.lightened(0.35),2.8,true)
+		draw_arc(Vector2.ZERO,length-5.0,axis.angle()-0.95,axis.angle()+0.95,24,Color(ink.r,ink.g,ink.b,0.65),1.2,true)
+		if alpha>0.0:
+			draw_arc(Vector2.ZERO,length+2.0,axis.angle()-1.15,axis.angle()+1.15,28,Color(ink.r,ink.g,ink.b,alpha*0.25),6.0,true)
+		return
 	if wave:
 		draw_arc(Vector2.ZERO,20.0 if pattern=="radial" else 29.0,axis.angle()-0.95,axis.angle()+0.95,20,ink,2.2,true)
 		if alpha>0.0:
