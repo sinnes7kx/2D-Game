@@ -64,6 +64,23 @@ func _initialize() -> void:
 			var cross: PackedVector2Array = ART.crossbow_span("crossbow_walk_"+direction,frame)
 			if not cross.is_empty():
 				assert(is_equal_approx(cross[0].distance_to(cross[1]),32.0))
+	for prefix in ["spear_", "briarwake_spear_", "nocturne_dagger_"]:
+		for direction in ART.DIRECTIONS:
+			var clip: String = prefix+"walk_"+direction
+			var cardinal: String = "back" if direction.begins_with("back") else "front"
+			for i in range(8):
+				if prefix != "nocturne_dagger_":
+					var shaft: PackedVector2Array = ART.spear_span(clip,i)
+					var wrist: Vector2 = ART.wrist(clip,i)
+					if wrist == Vector2.INF:
+						assert(shaft.is_empty())
+					else:
+						assert(shaft.size()==2 and shaft[0]==wrist)
+						assert(is_equal_approx(shaft[0].distance_to(shaft[1]),74.0))
+			var fallback: String = prefix+"walk_"+cardinal
+			var expected: String = clip if frames.has_animation(clip) else fallback
+			assert(ART.armed_jump_carry(fallback,direction,cardinal,frames)==expected)
+			assert(ART.armed_jump_carry("dodge_"+cardinal,direction,cardinal,frames)=="dodge_"+cardinal)
 	var wand = preload("res://scripts/wand_anchors_v216.gd")
 	var result: PackedVector2Array = wand.transformed_span(PackedVector2Array([Vector2(12,5),Vector2(32,-10)]),Vector2(-20,30),0.17)
 	assert(result[0]==Vector2(-20,30))

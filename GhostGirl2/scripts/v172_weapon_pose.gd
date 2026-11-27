@@ -215,6 +215,12 @@ func _is_equipped(animation_name: String) -> bool:
 		return animation_name.begins_with("sword_modular_") or animation_name.begins_with("attack_sword_modular_")
 	if equipped.weapon_style() == "twinblade" and animation_name.contains("twinblade")  :
 		return true
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if not diagonal.diagonal_name(animation_name).is_empty():
+		if equipped.weapon_style() == "spear" and (animation_name.begins_with("spear_") or animation_name.begins_with("briarwake_spear_")):
+			return true
+		if ident == STILETTO and animation_name.begins_with("nocturne_dagger_"):
+			return true
 	if equipped.weapon_style() == "dagger" and animation_name.contains("_pierce_"):
 		return true
 	return (ident == STILETTO and animation_name.begins_with("attack_nocturne_dagger_")) or (ident == TRIDENT and animation_name.begins_with("attack_briarwake_spear_")) or (ident == "moonwarden_spear_v169" and animation_name.begins_with("attack_spear_") and animation_name.contains("_pierce_"))
@@ -224,8 +230,10 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
 		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
 			return diagonal.crossbow_span(animation_name,frame_index)
+		if not diagonal.diagonal_name(animation_name).is_empty() and (animation_name.begins_with("spear_") or animation_name.begins_with("briarwake_spear_")):
+			return diagonal.spear_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and not animation_name.begins_with("wand_"):
-			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (39.0 if animation_name.begins_with("forge_dagger_") else (76.0 if animation_name.contains("twinblade") else 67.0))
+			var length: float = 32.0 if animation_name.begins_with("forge_bow_") else (39.0 if (animation_name.begins_with("forge_dagger_") or animation_name.begins_with("nocturne_dagger_")) else (76.0 if animation_name.contains("twinblade") else 67.0))
 			var carried: PackedVector2Array = diagonal.carried_span(animation_name,frame_index,length)
 			if carried.size() == 2:
 				return GENTLE.smooth(body,animation_name,carried) if GENTLE.modular_idle(animation_name) else carried
@@ -382,9 +390,9 @@ func _draw() -> void:
 			MODULAR.draw_blade(self, root, tip, 4.2, look)
 	elif animation_name.contains("twinblade"):
 		_draw_v176_twinblade(grip, tip, animation_name.contains("rosemirror"))
-	elif animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_"):
+	elif animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_") or animation_name.begins_with("nocturne_dagger_"):
 		_draw_nightglass_stiletto(grip, tip, tangent, normal)
-	elif animation_name.begins_with("attack_spear_"):
+	elif animation_name.begins_with("attack_spear_") or animation_name.begins_with("spear_"):
 		_draw_moonwarden_spear(grip, tip, tangent, normal)
 	else:
 		_draw_briarwake_trident(grip, tip, tangent, normal)

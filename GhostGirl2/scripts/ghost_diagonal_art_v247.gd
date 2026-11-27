@@ -7,7 +7,7 @@ const CELL: Vector2i = Vector2i(256, 220)
 const ACTION_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v248.png"
 const REVISED_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_v249.png"
 const REVISED_ACTIONS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v249.png"
-const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_"]
+const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_", "spear_", "briarwake_spear_", "nocturne_dagger_"]
 # Approximate visible wrist guides, visually sampled from the normalized atlas.
 # Approximate initial per-frame wrist guides in full atlas-cell pixels.
 const WRISTS: Dictionary = {
@@ -223,3 +223,15 @@ static func crossbow_span(clip: String, frame: int) -> PackedVector2Array:
 	var direction: String = diagonal_name(clip)
 	var axis: Vector2 = Vector2(-0.88 if direction.ends_with("left") else 0.88,-0.36 if direction.begins_with("back") else 0.47).normalized()
 	return PackedVector2Array([anchor,anchor+axis*32.0])
+
+# Diagonal spear carry uses the visible wrist and existing 74px attack span.
+static func spear_span(clip: String, frame: int) -> PackedVector2Array:
+	if not (clip.begins_with("spear_") or clip.begins_with("briarwake_spear_")):
+		return PackedVector2Array()
+	return carried_span(clip,frame,74.0,true)
+
+static func armed_jump_carry(requested: String, direction: String, cardinal: String, frames: SpriteFrames) -> String:
+	# The existing armed jump uses a locomotion clip. Preserve that policy.
+	if not requested.contains("_walk_"):
+		return requested
+	return armed_clip(requested,direction,cardinal,frames)
