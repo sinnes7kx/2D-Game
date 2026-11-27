@@ -164,6 +164,9 @@ var last_shrine_room: String = "lanternhaven"
 var last_shrine_point: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
+	var grade: CanvasLayer = preload("res://scripts/gothic_grade_v277.gd").new()
+	grade.name="GothicGradeV277"
+	add_child(grade)
 	player.world = self
 	preload("res://scripts/direction_controller_v245.gd").install_controller()
 	reticle.player = player
