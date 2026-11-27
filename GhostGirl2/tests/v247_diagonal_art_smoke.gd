@@ -67,6 +67,22 @@ func _initialize() -> void:
 			assert(frames.get_frame_count(clip)==8)
 			assert(frames.get_frame_texture(clip,7)==expected_textures[clip])
 		fixture.free()
+	for action in ["jump","dodge"]:
+		for direction in ART.DIRECTIONS:
+			for family in ART.WEAPON_PREFIXES:
+				var clip: String = family+action+"_"+direction
+				var fallback: String = action+"_front"
+				var resolved: String = ART.armed_action_clip(action,family+"walk_",direction,fallback,frames)
+				if frames.has_animation(clip):
+					assert(resolved==clip)
+					assert(ART.is_carried_clip(clip))
+					assert(not frames.get_animation_loop(clip))
+					for frame in range(8):
+						assert(frames.get_frame_texture(clip,frame)==frames.get_frame_texture(action+"_"+direction,frame))
+						assert(ART.wrist(clip,frame)!=Vector2.INF)
+						assert(ART.carried_span(clip,frame,67.0)[0]==ART.wrist(clip,frame))
+				else:
+					assert(resolved==fallback)
 	assert(not ART.is_carried_clip("attack_dagger_heavy_front_right"))
 	assert(ART.is_painted_bow_carry("moonveil_walk_back_left"))
 	if frames.has_animation("sword_modular_idle_front_right"):
