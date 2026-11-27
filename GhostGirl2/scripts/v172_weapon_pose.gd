@@ -402,8 +402,8 @@ func _draw() -> void:
 			var face: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
 			var off: PackedVector2Array = CROSSBOW_V236.offhand_span(animation_name, face, body.frame, tangent)
 			if off.size() == 2:
-				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed)
-		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed)
+				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
+		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
 	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
