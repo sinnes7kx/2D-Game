@@ -190,7 +190,7 @@ func _process(_delta: float) -> void:
 	if animation_now != last_animation or body.frame != last_frame:
 		last_animation = animation_now
 		last_frame = body.frame
-		var rear_bow: bool = (animation_now.begins_with("attack_rapier_") or animation_now.begins_with("attack_axe_") or animation_now.begins_with("attack_seraph_scythe_") or animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_") or animation_now.begins_with("seraph_scythe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
+		var rear_bow: bool = (animation_now.begins_with("attack_forge_bow_") or animation_now.begins_with("attack_crossbow_") or animation_now.begins_with("attack_forge_dagger_") or animation_now.begins_with("attack_rapier_") or animation_now.begins_with("attack_axe_") or animation_now.begins_with("attack_seraph_scythe_") or animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_") or animation_now.begins_with("seraph_scythe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
 		z_index = -1 if animation_now.ends_with("back") or rear_bow else 5 # Keep rear bow behind the body.
 		queue_redraw()
 
@@ -275,6 +275,14 @@ func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedV
 		return MODELS_V283.span(animation_name,animation_name.get_slice("_",animation_name.get_slice_count("_")-1),frame_index)
 	if _is_equipped(animation_name):
 		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+		if diagonal.is_modular_combat_v294(animation_name):
+			if animation_name.contains("forge_bow_"):
+				return FORGE_V238.bow_span(body,animation_name,diagonal.cardinal_for_clip(animation_name),frame_index,player.get("bow_firing_direction"))
+			if animation_name.contains("crossbow_"):
+				var aimed: PackedVector2Array = diagonal.crossbow_span(animation_name,frame_index)
+				return CROSSBOW_V236.aimed_span(body,aimed,player.get("crossbow_heading")) if animation_name.contains("_fire_") else aimed
+			if animation_name.contains("forge_dagger_"):
+				return FORGE_V238.span(animation_name,diagonal.cardinal_for_clip(animation_name),frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and animation_name.begins_with("crossbow_"):
 			return diagonal.crossbow_span(animation_name,frame_index)
 		if not diagonal.diagonal_name(animation_name).is_empty() and (animation_name.begins_with("spear_") or animation_name.begins_with("briarwake_spear_")):
