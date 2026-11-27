@@ -26,6 +26,9 @@ var run_seed: int = 0
 var hit_count: int = 0
 var previous_health: float = -1.0
 var hud_delay: float = 0.0
+var awakened_seals: int = 0
+const REQUIRED_SEALS: int = 2
+var pending_wells: Array[int] = []
 
 static func recipe(level: int, round_index: int) -> Array[String]:
 	match clampi(round_index,1,3):
@@ -53,9 +56,17 @@ func _ready() -> void:
 func _game() -> Node:
 	return get_tree().current_scene
 
+func can_awaken_seal() -> bool:
+	return phase == WAITING and awakened_seals < REQUIRED_SEALS
+
+func on_seal_awakened() -> void:
+	if can_awaken_seal():
+		awakened_seals += 1
+		queue_redraw()
+
 func prompt_text() -> String:
 	match phase:
-		WAITING: return "E  AWAKEN THE SEPULCHRE"
+		WAITING: return "E  AWAKEN THE SEPULCHRE" if awakened_seals >= REQUIRED_SEALS else "FIND THE RITUAL SEALS · %d / %d" % [awakened_seals, REQUIRED_SEALS]
 		WARNING: return "THE BELLS AWAKEN"
 		BATTLE: return "DEFEAT THE GUARDIANS"
 		CLEARED: return "E  CLAIM DEPTH REWARD" if not reward_claimed else "DEPTH CLEARED · DESCEND OR RETURN"
@@ -69,6 +80,8 @@ func interact() -> String:
 		return _claim_reward(game)
 	if phase != WAITING:
 		return ""
+	if awakened_seals < REQUIRED_SEALS:
+		return "AWAKEN BOTH RITUAL SEALS FIRST"
 	run_seed = randi_range(100000,2147000000)
 	wave = 0
 	elapsed = 0.0
@@ -76,6 +89,7 @@ func interact() -> String:
 	previous_health = float(game.player.health)
 	phase = WARNING
 	warning = 1.75
+	_prepare_wave()
 	set_process(true)
 	queue_redraw()
 	return "DEPTH %d · THREE WAVES" % depth
@@ -116,21 +130,38 @@ func _process(delta: float) -> void:
 			game.ui.set_stamina(game.player.stamina,game.player.MAX_STAMINA)
 			phase = WARNING
 			warning = 2.0
+			_prepare_wave()
 			game.ui.show_pickup("THE NEXT BELL · TWO SECONDS",Color("bfb2d0"))
 	queue_redraw()
+
+# Sample distinct wells without replacement. Preview and actual spawns use
+# the identical deterministic selection for the entire warning interval.
+static func well_order(seed_value: int, count: int, needed: int) -> Array[int]:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var pool: Array[int] = []
+	for i in range(count):
+		pool.append(i)
+	var chosen: Array[int] = []
+	for i in range(mini(needed,count)):
+		var index: int = rng.randi_range(0,pool.size()-1)
+		chosen.append(pool[index])
+		pool.remove_at(index)
+	return chosen
+
+func _prepare_wave() -> void:
+	var markers: Node = get_node("../SpawnWells")
+	pending_wells = well_order(run_seed+depth*100+wave+1,markers.get_child_count(),recipe(depth,wave+1).size())
 
 func _spawn_wave(game: Node) -> void:
 	wave += 1
 	var lineup: Array[String] = recipe(depth,wave)
 	var markers: Node = get_node("../SpawnWells")
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
-	rng.seed = run_seed+depth*100+wave
-	var offset: int = rng.randi_range(0,markers.get_child_count()-1)
-	for i in range(lineup.size()):
+	for i in range(mini(lineup.size(),pending_wells.size())):
 		var kind: String = lineup[i]
 		var enemy: Node2D = (WRAITH if kind=="wraith" else HUNTER).instantiate() as Node2D
 		var elite: bool = kind.begins_with("elite_")
-		var point: Vector2 = (markers.get_child((i+offset)%markers.get_child_count()) as Marker2D).global_position
+		var point: Vector2 = (markers.get_child(pending_wells[i]) as Marker2D).global_position
 		if kind=="wraith":
 			enemy.set("max_health",25.0+float(depth)*8.0)
 			enemy.set("move_speed",88.0+depth*7.0)
@@ -152,6 +183,7 @@ func _spawn_wave(game: Node) -> void:
 			enemy.set("home_position",point)
 		enemy.add_to_group("sepulchre_enemy_v266")
 		enemies.append(enemy)
+	pending_wells.clear()
 	phase = BATTLE
 	game.ui.show_pickup(("GUARDIAN AWAKENS" if wave==3 else "WAVE %d / 3" % wave),Color("d4b8c5"))
 
@@ -173,6 +205,15 @@ func _claim_reward(game: Node) -> String:
 	return item.quality.to_upper()+" · "+item.display_name()
 
 func _draw() -> void:
+	if phase == WARNING:
+		var markers: Node = get_node_or_null("../SpawnWells")
+		if markers != null:
+			var pulse: float = 0.5 + 0.5*sin(warning*7.0)
+			for index in pending_wells:
+				var point: Vector2 = to_local((markers.get_child(index) as Marker2D).global_position)
+				draw_circle(point,29.0,Color(0.55,0.19,0.22,0.10+0.12*pulse))
+				draw_arc(point,29.0,0.0,TAU,32,Color(0.88,0.52,0.43,0.55+0.30*pulse),2.0,true)
+				draw_arc(point,18.0,0.0,TAU,24,Color(0.88,0.52,0.43,0.28),1.0,true)
 	var ink: Color = Color("c7ab82") if phase==CLEARED else Color("887b9a")
 	draw_circle(Vector2.ZERO,35.0,Color(0.06,0.045,0.08,0.65))
 	draw_arc(Vector2.ZERO,35.0,0.0,TAU,48,ink,1.8,true)
