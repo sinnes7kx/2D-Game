@@ -381,7 +381,8 @@ func _draw() -> void:
 		if held.uses_forge_bow():
 			var amount: float = clampf(float(player.get("bow_draw_time")) / 0.46, 0.0, 1.0) if bool(player.get("bow_draw_active")) else 0.0
 			var glow: float = FORGE_CHOICES.effect_scale(held) * FORGE_FX.intensity if FORGE_CHOICES.bow_body_visible(held) else 0.0
-			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, glow)
+			var string_glow: float = FORGE_CHOICES.effect_scale(held)*FORGE_FX.intensity if FORGE_CHOICES.bow_string_visible(held) else 0.0
+			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, glow, string_glow, FORGE_CHOICES.bow_mode(held)==3)
 		else:
 			FORGE_V238.draw_dagger(self, span, profile)
 	elif animation_name.contains("crossbow_"):
