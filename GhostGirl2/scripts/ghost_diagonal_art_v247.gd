@@ -83,8 +83,19 @@ static func _load_sheet(path: String) -> Texture2D:
 		texture=ResourceLoader.load(path,"Texture2D") as Texture2D
 	if not _valid_dimensions(texture) and FileAccess.file_exists(path):
 		var raw: Image = Image.new()
-		if raw.load(path)==OK and raw.get_size()==Vector2i(2048,1760):
-			texture=ImageTexture.create_from_image(raw)
+		if raw.load(path)==OK:
+			if raw.get_size()==Vector2i(1024,880):
+				# Recover the original half-resolution sheet cell by cell.
+				var restored: Image = Image.create(2048,1760,false,Image.FORMAT_RGBA8)
+				for row in range(8):
+					for col in range(8):
+						var cell: Image = raw.get_region(Rect2i(col*128,row*110,128,110))
+						cell.convert(Image.FORMAT_RGBA8)
+						cell.resize(256,220,Image.INTERPOLATE_LANCZOS)
+						restored.blit_rect(cell,Rect2i(0,0,256,220),Vector2i(col*256,row*220))
+				raw=restored
+			if raw.get_size()==Vector2i(2048,1760):
+				texture=ImageTexture.create_from_image(raw)
 	if not _valid_dimensions(texture):
 		return null
 	_validated_sheets[path]=texture
