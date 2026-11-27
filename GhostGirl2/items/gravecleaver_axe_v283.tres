@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/ui/weapons_v283/gravecleaver_axe_v283.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "gravecleaver_axe_v283"
+display_name = "Gravecleaver Axe"
+description = "A silver-edged execution axe with a long dark haft."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+weapon_style = "axe"
+stat_id = "poise_power_pct"
+min_stat = 6.0
+max_stat = 13.0
+max_sockets = 3
+item_level = 17
+min_weapon_damage = 19.0
+max_weapon_damage = 26.0
+inventory_width = 2
+inventory_height = 3
