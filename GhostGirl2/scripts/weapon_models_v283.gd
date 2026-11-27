@@ -1,6 +1,10 @@
 extends RefCounted
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const MODELS: Dictionary = {
+	"ivory_duelist_rapier_v286":preload("res://assets/ui/weapons_v286/ivory_duelist_rapier_v286.svg"),
+	"nightglass_rapier_v286":preload("res://assets/ui/weapons_v286/nightglass_rapier_v286.svg"),
+	"rosehook_bearded_axe_v286":preload("res://assets/ui/weapons_v286/rosehook_bearded_axe_v286.svg"),
+	"ossuary_poleaxe_v286":preload("res://assets/ui/weapons_v286/ossuary_poleaxe_v286.svg"),
 	"blackthorn_crossbow_v236":preload("res://assets/ui/weapons_v283/blackthorn_crossbow_v236.svg"),
 	"silver_reliquary_crossbow_v236":preload("res://assets/ui/weapons_v283/silver_reliquary_crossbow_v236.svg"),
 	"vesper_latch_crossbow_v237":preload("res://assets/ui/weapons_v283/vesper_latch_crossbow_v237.svg"),
@@ -22,6 +26,8 @@ static func sequence(clip: String, face: String) -> Array[int]:
 		return [neutral,1,2,1,neutral,1,2,1]
 	if clip.contains("rapier_"):
 		return HAND.sequence(clip.contains("_heavy_"))
+	if clip.contains("_heavy_"):
+		return [neutral,2,2,3,3,5,6,neutral]
 	return [neutral,1,2,3,5,6,7,neutral]
 
 static func install(frames: SpriteFrames) -> void:
@@ -58,6 +64,8 @@ static func span(clip: String, face: String, frame: int) -> PackedVector2Array:
 	var axis: Vector2 = HAND.direction(face)
 	if clip.begins_with("attack_"):
 		var angles: Array[float] = [-1.22,-1.55,-0.98,-0.20,0.65,1.10,0.45,-0.55]
+		if clip.contains("_heavy_"):
+			angles.assign([-1.35,-1.90,-1.90,-1.05,0.0,1.25,0.80,-0.55])
 		axis=axis.rotated(angles[n]*(-1.0 if face=="left" else 1.0))
 	else:
 		axis=Vector2(-0.45 if face=="left" else 0.45,-0.89).normalized()
@@ -75,6 +83,10 @@ static func draw_melee(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, 
 		var ink: Color = Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.46)
 		if rapier:
 			canvas.draw_line(Vector2(12,0),Vector2(83,0),ink,2.4,true)
+		elif id=="rosehook_bearded_axe_v286":
+			canvas.draw_polyline(PackedVector2Array([Vector2(67,-25),Vector2(74,-20),Vector2(76,-13),Vector2(70,-4),Vector2(58,12)]),ink,2.4,true)
+		elif id=="ossuary_poleaxe_v286":
+			canvas.draw_polyline(PackedVector2Array([Vector2(74,-28),Vector2(84,-23),Vector2(88,-15),Vector2(88,-8),Vector2(76,-2)]),ink,2.6,true)
 		else:
 			var length: float = 53.0 if id.begins_with("briar_") else (82.0 if id.begins_with("gallows_") else 68.0)
 			var width: float = 19.0 if length==53.0 else (29.0 if length==82.0 else 24.0)
