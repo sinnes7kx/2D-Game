@@ -8,13 +8,7 @@ const SPECIALS: Dictionary = {
 	"gravebell_maul_v170": "last_toll",
 	"eclipse_twinblade_v170": "eclipse_dance",
 	"nocturne_stiletto_v171": "vespers_return",
-	"cinderveil_dirk_v238": "ember_return",
-	"roseglass_dagger_v169": "roseglass_fan",
 	"rose_reaper_scythe": "reverie_wave",
-	"silkglass_dirk_v276": "winter_return",
-	"bellthorn_lance_v276": "bellthorn_judgment",
-	"ivory_misericorde_v233": "ivory_return",
-	"reliquary_knife_v238": "reliquary_fan"
 }
 const NAMES: Dictionary = {
 	"heavens_reach": "Heaven's Reach · Returning spear throw",
@@ -22,13 +16,7 @@ const NAMES: Dictionary = {
 	"last_toll": "Last Toll · Traveling shockwave",
 	"eclipse_dance": "Crimson Eclipse · Advancing blade dance and optional retreat",
 	"vespers_return": "Vesper’s Return · Piercing throw, hits again on return",
-	"ember_return": "Ember’s Promise · Burning returning dagger",
-	"roseglass_fan": "Rose’s Secret · Three spectral needles",
 	"reverie_wave": "Death’s Reverie · Traveling crescent",
-	"winter_return": "Winterglass · Returning blade slows enemies",
-	"bellthorn_judgment": "Bellthorn Judgment · Returning lance with crushing stagger",
-	"ivory_return": "Ivory Absolution · Returning blade restores 3 life on first hit",
-	"reliquary_fan": "Reliquary Seal · Three slowing spectral needles"
 }
 
 static func kind(item: Variant) -> String:
@@ -43,19 +31,19 @@ static func label(item: Variant) -> String:
 	return ARSENAL.label(id) if ARSENAL.has_skill(id) else str(NAMES.get(id,""))
 
 static func count(id: String) -> int:
-	return 3 if id in ["drowned_fork","roseglass_fan","reliquary_fan"] else 1
+	return 1
 
 static func is_dagger_throw(id: String) -> bool:
-	return id in ["vespers_return","ember_return","roseglass_fan","winter_return","ivory_return","reliquary_fan"]
+	return id == "vespers_return"
 
 static func is_throw(id: String) -> bool:
-	return is_dagger_throw(id) or id in ["heavens_reach","bellthorn_judgment"]
+	return is_dagger_throw(id) or id == "heavens_reach"
 
 static func charge_power(charge: float) -> float:
 	return lerpf(0.75,1.35,clampf(charge,0.0,1.0))
 
 static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vector2, id: String, charge: float = 0.0) -> void:
-	if kind(item) != id or heading.is_zero_approx() or id == "eclipse_dance" or actor.call("thrown_weapon_busy_v273"):
+	if id.is_empty() or kind(item) != id or heading.is_zero_approx() or id == "eclipse_dance" or actor.call("thrown_weapon_busy_v273"):
 		return
 	var world: Node = actor.get("world")
 	var root: Node = actor.get_tree().current_scene
