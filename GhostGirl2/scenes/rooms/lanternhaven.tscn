@@ -591,3 +591,31 @@ position = Vector2(1450, 1810)
 
 [node name="From_sepulchre_crownless" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(1450, 1810)
+
+[node name="From_colosseum" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(3070, 1200)
+
+[node name="colosseum" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(3210, 1200)
+script = ExtResource("2_portal")
+destination = "colosseum"
+interaction_name = "Enter the Colosseum of Vows"
+opened = true
+
+[node name="ColosseumSign" type="Label" parent="."]
+z_index = -42
+offset_left = 2990.0
+offset_top = 1105.0
+offset_right = 3430.0
+offset_bottom = 1140.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.82, 0.69, 0.60, 0.9)
+theme_override_font_sizes/font_size = 22
+text = "COLOSSEUM OF VOWS"
+horizontal_alignment = 1
+
+[node name="ColosseumLantern" type="Node2D" parent="Gameplay/Effects"]
+position = Vector2(3140, 1140)
+script = ExtResource("v242_light")
+kind = "lantern"
+light_seed = 279

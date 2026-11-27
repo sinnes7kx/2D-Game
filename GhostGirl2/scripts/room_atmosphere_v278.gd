@@ -25,6 +25,8 @@ var initialized: bool = false
 static func profile(key: String) -> Dictionary:
 	if key in WET_ROOMS:
 		return {"ink":Color("85899f"),"far":0.115,"near":0.062,"drift":8.0}
+	if key=="colosseum":
+		return {"ink":Color("9e91b0"),"far":0.053,"near":0.019,"drift":3.5}
 	if key in WARM_ROOMS:
 		return {"ink":Color("a68b8d"),"far":0.066,"near":0.029,"drift":3.0}
 	if key in ["garden","garden_bridge","garden_arbor","glasshouse"]:
