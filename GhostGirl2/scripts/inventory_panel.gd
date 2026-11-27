@@ -2,6 +2,7 @@ extends PanelContainer
 signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal cursor_pick_requested(index: int)
+signal socket_cursor_requested_v285(index: int)
 signal inspect_requested(item: GhostItemInstance)
 signal vault_requested(item: GhostItemInstance)
 signal cursor_place_requested(page: int, col: int, row: int)
@@ -233,6 +234,10 @@ func _on_slot_pressed(index: int) -> void:
 
 func _on_activate_item(index: int) -> void:
 	if inventory == null:
+		return
+	var component: GhostItemInstance = inventory.get_item(index)
+	if component!=null and component.definition!=null and component.definition.item_class in ["gem","rune"]:
+		socket_cursor_requested_v285.emit(index)
 		return
 	_on_slot_pressed(index)
 	var item: Variant = inventory.get_item(index)

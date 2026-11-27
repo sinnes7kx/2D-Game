@@ -34,6 +34,7 @@ var tooltip_pinned: bool = false
 var inventory_data: Node
 var cursor_item_index: int = -1
 var cursor_identity_v284: GhostItemInstance
+var socket_cursor_v285: bool = false
 var drop_click_guard: int = 0
 @onready var held_treasure: PanelContainer = $Overlay/HeldTreasure
 @onready var held_icon: TextureRect = $Overlay/HeldTreasure/HeldIcon
@@ -60,6 +61,8 @@ func _ready() -> void:
 	equipment_panel.connect("item_hover_cleared", Callable(self, "_hide_item_hover"))
 	equipment_panel.connect("edit_eyes_requested", Callable(self, "_open_eye_editor"))
 	inventory_panel.connect("cursor_pick_requested", Callable(self, "_take_cursor_item"))
+	inventory_panel.connect("socket_cursor_requested_v285",Callable(self,"_take_socket_cursor_v285"))
+	equipment_panel.connect("slot_clicked_v285",Callable(self,"_equipment_click_v285"))
 	inventory_panel.connect("cursor_place_requested", Callable(self, "_place_cursor_item"))
 	inventory_panel.connect("cursor_cancel_requested", Callable(self, "_cancel_cursor_item"))
 	inventory_panel.connect("cursor_drop_requested", Callable(self, "_drop_selected_item"))
@@ -221,7 +224,48 @@ func _take_cursor_item(index: int) -> void:
 	held_treasure.show()
 	_hide_item_hover()
 
+func _take_socket_cursor_v285(index: int) -> void:
+	if cursor_item_index>=0 or inventory_data==null:
+		return
+	var item: GhostItemInstance = inventory_data.get_item(index)
+	if item==null or item.collector_locked:
+		show_pickup("PROTECTED COMPONENT")
+		return
+	_take_cursor_item(index)
+	socket_cursor_v285=cursor_item_index>=0
+	if socket_cursor_v285:
+		show_pickup("SOCKET MODE · LEFT-CLICK GEAR · RIGHT-CLICK CANCEL")
+
+func _socket_target_v285(index: int) -> void:
+	if index>=0 and inventory_data.socket_at(index,cursor_item_index):
+		_cancel_cursor_item()
+		show_pickup("COMPONENT SOCKETED")
+	else:
+		show_pickup("NO FREE SOCKET OR SAVE UNAVAILABLE")
+
+func _equipment_click_v285(slot: String) -> void:
+	if inventory_data==null:
+		return
+	if socket_cursor_v285:
+		_socket_target_v285(inventory_data.equipped_index(slot))
+		return
+	if cursor_item_index<0:
+		var lifted: int = inventory_data.lift_equipment_v285(slot)
+		if lifted>=0:
+			_take_cursor_item(lifted)
+		return
+	var current: int = inventory_data.contents.find(cursor_identity_v284)
+	var result: Dictionary = inventory_data.equip_cursor_v285(current,slot)
+	if not bool(result.get("ok",false)):
+		show_pickup("WRONG SLOT, BROKEN ITEM OR SAVE UNAVAILABLE")
+		return
+	var displaced: int = int(result["next"])
+	_cancel_cursor_item()
+	if displaced>=0:
+		_take_cursor_item(displaced)
+
 func _cancel_cursor_item() -> void:
+	socket_cursor_v285=false
 	cursor_item_index = -1
 	cursor_identity_v284=null
 	inventory_panel.call("set_cursor_item", -1)
@@ -236,8 +280,15 @@ func _place_cursor_item(page: int, col: int, row: int) -> void:
 	if item == null:
 		_cancel_cursor_item()
 		return
-	if inventory_data.place_or_swap_v284(cursor_item_index,page,col,row):
+	if socket_cursor_v285:
+		_socket_target_v285(inventory_data.get_grid_index(page,col,row))
+		return
+	var plan: Dictionary = inventory_data.placement_v284(cursor_item_index,page,col,row)
+	if bool(plan.get("ok",false)) and inventory_data.place_or_swap_v284(cursor_item_index,page,col,row):
+		var displaced: int = int(plan["swap"])
 		_cancel_cursor_item()
+		if displaced>=0:
+			_take_cursor_item(displaced)
 	else:
 		show_pickup("ITEM WILL NOT FIT THERE")
 
@@ -297,7 +348,10 @@ func _input(event: InputEvent) -> void:
 		# world space (outside both windows) may release a carried treasure.
 		if inventory_panel.get_global_rect().has_point(mouse_event.position) or equipment_panel.get_global_rect().has_point(mouse_event.position):
 			return
-	_drop_selected_item(cursor_item_index)
+	if socket_cursor_v285:
+		_cancel_cursor_item()
+	else:
+		_drop_selected_item(cursor_item_index)
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:

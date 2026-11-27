@@ -2,6 +2,7 @@ extends PanelContainer
 signal item_hovered(item: Variant, equipped: Variant)
 signal item_hover_cleared
 signal edit_eyes_requested(item: GhostItemInstance)
+signal slot_clicked_v285(slot: String)
 ## Eight equipment slots (legacy wings key remains head accessories); sword and wand are mutually exclusive.
 var inventory
 @onready var slots: Control = $Layout/EquipmentSlots
@@ -83,7 +84,7 @@ func refresh() -> void:
 		button.icon = _display_icon(item) if item != null and item.definition != null else null
 		button.text = ("HEAD ACCESSORY" if key == "wings" else ("FAMILIAR" if key=="companion" else key.to_upper())) if item == null else ""
 		button.tooltip_text = ""
-		button.disabled = item == null
+		button.disabled = false
 		button.modulate = Color.WHITE
 		# Full item details use the HUD's cursor-following tooltip. Prevent a
 		# second Godot-native button tooltip from overlapping it.
@@ -114,7 +115,7 @@ func refresh() -> void:
 	summary.text = "\n".join(lines)
 
 func _on_slot_pressed(slot: String) -> void:
-	inventory.unequip(slot)
+	slot_clicked_v285.emit(slot)
 
 func _on_slot_hovered(slot: String) -> void:
 	if inventory == null:

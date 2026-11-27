@@ -1,6 +1,7 @@
 extends Control
 signal item_hovered(item: Variant,equipped: Variant)
 signal item_hover_cleared
+signal page_changed_v285
 ## Two physical grids; the cursor reserves its source until a valid drop.
 const CELL: float = 32.0
 const STASH_ORIGIN: Vector2 = Vector2(0,30)
@@ -40,11 +41,19 @@ func cancel() -> void:
 	item_hover_cleared.emit()
 	queue_redraw()
 
+func choose_stash_v285(index: int) -> void:
+	if inventory==null:
+		return
+	stash_page=clampi(index,0,inventory.STASH_PAGES-1)
+	page_changed_v285.emit()
+	queue_redraw()
+
 func step_page(stash: bool,step: int) -> void:
 	if stash:
 		stash_page=clampi(stash_page+step,0,inventory.STASH_PAGES-1)
 	else:
 		bag_page=clampi(bag_page+step,0,inventory.GRID_PAGES-1)
+	page_changed_v285.emit()
 	queue_redraw()
 
 func _zone(at: Vector2) -> Dictionary:
@@ -69,11 +78,13 @@ func _valid(zone: Dictionary) -> bool:
 		return false
 	var stash: bool = zone["stash"]
 	if stash:
-		if not held_stash and (inventory.equipment.values().has(inventory.contents.find(held)) or held.definition.item_class=="quest" or inventory.vault.size()+inventory.unresolved_vault.size()>=inventory.VAULT_CAPACITY):
+		if not held_stash and (inventory.equipment.values().has(inventory.contents.find(held)) or held.definition.item_class=="quest"):
 			return false
-		return bool(inventory.stash_placement_v284(held,zone["pos"]).get("ok",false)) if held_stash else inventory.stash_fits_v284(held,zone["pos"])
+		if held_stash:
+			return bool(inventory.stash_placement_v284(held,zone["pos"]).get("ok",false))
+		return (inventory.vault.size()+inventory.unresolved_vault.size()<inventory.VAULT_CAPACITY and inventory.stash_fits_v284(held,zone["pos"])) or bool(inventory.cross_swap_plan_v285(held,true,zone["pos"]).get("ok",false))
 	if held_stash:
-		return inventory._fits(held,zone["pos"])
+		return inventory._fits(held,zone["pos"]) or bool(inventory.cross_swap_plan_v285(held,false,zone["pos"]).get("ok",false))
 	return bool(inventory.placement_v284(inventory.contents.find(held),zone["page"],zone["cell"].x,zone["cell"].y).get("ok",false))
 
 func _say(message: String) -> void:
@@ -119,15 +130,31 @@ func _gui_input(event: InputEvent) -> void:
 			return
 		var target_stash: bool = z["stash"]
 		var ok: bool = false
+		var displaced: GhostItemInstance = null
 		if target_stash!=held_stash:
-			ok=inventory.transfer_grid_v284(held,target_stash,z["pos"])
+			var cross: Dictionary = inventory.cross_swap_plan_v285(held,target_stash,z["pos"])
+			if bool(cross.get("ok",false)):
+				displaced=inventory.cross_swap_v285(held,target_stash,z["pos"])
+				ok=displaced!=null
+			else:
+				ok=inventory.transfer_grid_v284(held,target_stash,z["pos"])
 		elif target_stash:
+			var plan: Dictionary = inventory.stash_placement_v284(held,z["pos"])
+			displaced=plan.get("swap")
 			ok=inventory.move_stash_v284(held,z["pos"])
 		else:
+			var plan: Dictionary = inventory.placement_v284(inventory.contents.find(held),z["page"],z["cell"].x,z["cell"].y)
+			displaced=inventory.get_item(int(plan.get("swap",-1)))
 			ok=inventory.place_or_swap_v284(inventory.contents.find(held),z["page"],z["cell"].x,z["cell"].y)
 		if ok:
+			var source_stash: bool = held_stash
 			cancel()
-			_say("Item placed.")
+			if displaced!=null:
+				held=displaced
+				held_stash=source_stash
+				_say(displaced.display_name()+" · choose destination")
+			else:
+				_say("Item placed.")
 		else:
 			_say("Transfer failed; original item preserved.")
 		return
@@ -153,7 +180,7 @@ func _draw() -> void:
 	if inventory==null:
 		return
 	var font: Font = get_theme_default_font()
-	draw_string(font,Vector2(0,20),"STASH   %d / %d"%[stash_page+1,inventory.STASH_PAGES],HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("d9bd90"))
+	draw_string(font,Vector2(0,20),"%s   ·   %d / %d"%[inventory.stash_name_v285(stash_page),stash_page+1,inventory.STASH_PAGES],HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("d9bd90"))
 	draw_string(font,Vector2(410,20),"BACKPACK   %d / %d"%[bag_page+1,inventory.GRID_PAGES],HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("d9bd90"))
 	for stash in [true,false]:
 		var origin: Vector2 = STASH_ORIGIN if stash else BAG_ORIGIN
