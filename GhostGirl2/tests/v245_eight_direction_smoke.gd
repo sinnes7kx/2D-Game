@@ -59,6 +59,13 @@ func _verify() -> void:
 	assert(DIR.cursor_heading(precise, Vector2.DOWN).is_equal_approx(precise.normalized()))
 	assert(DIR.cursor_heading(Vector2.ZERO, Vector2.LEFT) == Vector2.LEFT)
 	assert(DIR.movement(Vector2.LEFT, Vector2.ZERO) == Vector2.LEFT)
+	# Held charge travel preserves analogue strength and caps diagonal speed.
+	for i in range(8):
+		var heading: Vector2 = DIR.heading(i)
+		assert(PLAYER_SCRIPT.charge_target_velocity(heading,200.0).is_equal_approx(heading*90.0))
+	assert(is_equal_approx(PLAYER_SCRIPT.charge_target_velocity(Vector2(1,1),200.0).length(),90.0))
+	assert(PLAYER_SCRIPT.charge_target_velocity(Vector2.ZERO,200.0)==Vector2.ZERO)
+	assert(PLAYER_SCRIPT.charge_target_velocity(Vector2.LEFT*0.5,200.0)==Vector2.LEFT*45.0)
 	# All octants use the same timed frontal contact rules.
 	for i in range(8):
 		var aim: Vector2 = DIR.heading(i)
