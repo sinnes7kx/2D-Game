@@ -932,6 +932,9 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 		release_fx.global_position = bolt.global_position
 		release_fx.call("configure", bolt.effect_color, bolt.accent_color, bolt.gradient_c, wand.visual_seed(), charged, wand.visual_signature(), wand.mythic_layer_variant())
 
+	if wand != null and wand.weapon_mod == "returning_projectiles":
+		bolt.can_return = true
+		bolt.damage *= 0.85
 	if wand != null and wand.weapon_mod == "extra_projectiles":
 		var mod = preload("res://scripts/weapon_mods_v250.gd")
 		var original_heading: Vector2 = bolt.direction

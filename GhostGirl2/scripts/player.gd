@@ -1762,6 +1762,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		match sword.weapon_mod:
 			"long_reach": reach *= 1.20
 			"crushing": poise_bonus *= 1.35
+			"cleaving": attack_arc = cos(minf(PI, acos(clampf(attack_arc, -1.0, 1.0)) * 1.25))
 			"execution":
 				if heavy_attack: power *= 1.25
 			"finisher":
@@ -1788,7 +1789,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 	var finisher_shown: bool = false
 	var struck_world: bool = false
 	for candidate in get_tree().get_nodes_in_group("enemies"):
-		if not is_instance_valid(candidate) or not candidate is Node2D or not candidate.has_method("hit"):
+		if not is_instance_valid(candidate) or not candidate is Node2D or candidate.is_queued_for_deletion() or not candidate.has_method("hit"):
 			continue
 		var delta_to: Vector2 = candidate.global_position - global_position
 		if delta_to.length() > reach or delta_to.length_squared() < 20.0:
@@ -1801,6 +1802,9 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
 			continue
 		candidate.call("hit", power, poise_bonus * (1.0 + _stat("poise_power_pct") / 100.0))
+		if sword != null and sword.weapon_mod == "frostbite" and is_instance_valid(candidate) and not candidate.is_queued_for_deletion() and candidate.has_method("apply_frost_slow"):
+			candidate.call("apply_frost_slow", 1.5, 0.78)
+			_spawn_spectacle("strike", candidate.global_position + Vector2(0,-27), Color("9ed5f6"), fx_motif, fx_tier, Color("c9e8ff"), fx_trail)
 		var blunt_contact: bool = sword != null and sword.physical_damage_kind() == "blunt"
 		if jump_attack_active or blunt_contact:
 			PHYSICAL_FEEL.burst(get_tree().current_scene, candidate.global_position + Vector2(0, -14), "slam", 1.40 if jump_attack_active else 0.92, attack_direction, sword.visual_seed() if sword != null else 1)
@@ -1876,6 +1880,14 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0) -> void:
 		if counter_hit and struck:
 			camera_kick = maxf(camera_kick, 7.0)
 			counter_window = 0.0
+	# Resource gains are once per attack, not once per enemy or scenery hit.
+	if struck and sword != null:
+		if sword.weapon_mod == "soul_siphon":
+			health = minf(maximum_health(), health + 2.0)
+			world.ui.set_health(health, maximum_health())
+		elif sword.weapon_mod == "vigor":
+			stamina = minf(MAX_STAMINA, stamina + 5.0)
+			world.ui.set_stamina(stamina, MAX_STAMINA)
 	if struck and rally_pool > 0.0 and rally_time_left > 0.0:
 		var gained: float = minf(rally_pool, power * 0.38 * (1.0 + _stat("rally_power_pct") / 100.0))
 		rally_pool -= gained

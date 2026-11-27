@@ -102,6 +102,18 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Independent deterministic combat-mod roll on newly generated rare weapons (10%) and unique weapons (guaranteed). Explicit optional saved `weapon_mod_v250` field, legacy absence means no mod, cosmetics cannot reroll it. Fixed unique equipment display names by base resource; no stat or seed changes to old items. Existing stat affix generation unchanged.
 - +2 actual projectiles for bows, crossbows and wands: 150% original total volley budget, spread; regular bow central puzzle/scoring projectile, extras cannot activate bow puzzle targets. Returning arrows/bolts have 85% outbound damage, return after hitting a creature or reaching range, wall stops flight, one new return target at 60% outbound damage, no repeat hits on the same target. Returning not rolled on wands because beam forms have no return path. Special area spells unchanged. Melee mods: reach +20%, stagger +35%, heavy damage +25%, combo finisher +25%, counter damage +35%. Display in ordinary tooltip/Lens. New smoke assertions registered; actual projectile collisions, save roundtrip and F5 remain unverified.
 
+### v2.51 expanded combat modifiers (source implementation; runtime review pending)
+
+- Returning Projectiles now supports wands, including an outward beam that retains its ordinary visual fade before becoming a single returning orb. 85% outbound and 60% of outbound damage on return; original target IDs excluded, one new return hit, no wall bypass, bounded return range. Special area spells unchanged. New rolls use expanded pools; already saved intrinsic modifiers stay fixed.
+- Four additional melee mods: +2 life or +5 stamina once per confirmed creature-hitting attack, frost slow for supported enemies (1.5s, existing elite resistance), and +25% cone half-angle. No resource gain from scenery or misses, no extra hit calls from decorative effects. Save roundtrip, legacy missing-field behavior and return state added to smoke script; engine execution remains pending.
+
+### v2.52 weapon presentation and first blunt realism pass (source implementation; runtime review pending)
+
+- Give hovered weapon name its own full-width wrapped row; impact tag above, independent Anomalous line below. Shared cool indigo/steel-blue color drift and intermittent 8.5-second glint in tooltip and Lens. Debug status remains in advanced roll details and rarity test controls. Do not alter genuine rarity.
+- Retain eight particle motifs but reduce speed and density, soften angular paths, use translucent layered wisps, keep existing weapon bloom. No cosmetic seed or gameplay changes from the visual pass.
+- Refine existing shared procedural mace/morningstar/flail/warmaul geometry: reinforced shaft collars, leather winding, thicker links, muted forged-metal surfaces, recessed sockets, rivets and restrained edge wear. Existing pose guides and glow outlines retained. First renderer pass only; painted inventory icons and full asset replacement remain pending.
+- Recover late v2.51 modifier changes from #102 using unchanged main blob checks. Register palette/path regression. Engine, UI layout and art F5 review pending.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

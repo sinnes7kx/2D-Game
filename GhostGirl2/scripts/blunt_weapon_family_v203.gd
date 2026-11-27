@@ -45,22 +45,29 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
         return
     var axis: Vector2 = (head - grip).normalized()
     var n: Vector2 = axis.orthogonal()
-    var steel: Color = SURFACE.surface_color(profile, 0.65, 0.62, time).lerp(Color("59606a"), 0.42)
-    var shade: Color = steel.darkened(0.48)
-    var edge: Color = steel.lightened(0.38)
+    var steel: Color = SURFACE.surface_color(profile, 0.65, 0.62, time).lerp(Color("646971"), 0.53)
+    var shade: Color = steel.darkened(0.58)
+    var edge: Color = steel.lightened(0.26)
     var ornament: Color = profile["ornament_ink"]
     var trim: Color = ornament.lerp(steel, 0.45)
     var shaft_tip: Vector2 = grip.lerp(head, 0.55) if kind == "flail" else head - axis * 5.0
     var heel: Vector2 = grip - axis * 18.0
-    canvas.draw_line(heel, shaft_tip, Color("211d27"), 4.4, true)
-    canvas.draw_line(heel, shaft_tip, profile["grip"], 2.9, true)
+    canvas.draw_line(heel, shaft_tip, Color("201b20"), 5.4, true)
+    canvas.draw_line(heel, shaft_tip, Color(profile["grip"]).lerp(Color("594239"), 0.38), 3.9, true)
+    canvas.draw_line(grip - axis * 12.0, grip + axis * 13.0, Color("2c2429"), 4.6, true)
+    for i in range(10):
+        var wrap: Vector2 = grip - axis * 11.0 + axis * float(i) * 2.5
+        canvas.draw_line(wrap - n * 1.8, wrap + n * 1.8 + axis * 0.9, Color("78665e"), 0.55, true)
+    canvas.draw_line(heel - n * 2.7, heel + n * 2.7, shade, 2.1, true)
+    canvas.draw_line(shaft_tip - axis * 4.0, shaft_tip + axis * 3.0, shade, 6.0, true)
+    canvas.draw_line(shaft_tip - axis * 3.0 + n * 2.2, shaft_tip + axis * 2.0 + n * 2.2, edge, 0.7, true)
     canvas.draw_line(heel + n * 0.9, shaft_tip + n * 0.9, steel.darkened(0.15), 0.65, true)
     for i in range(4):
         var at: Vector2 = grip - axis * 7.0 + axis * float(i) * 4.0
         canvas.draw_line(at-n*1.6, at+n*1.6+axis, trim, 0.65, true)
     var center: Vector2 = head
     if kind == "flail":
-        center += n * sin(time * 7.3) * 4.0
+        center += n * sin(time * 2.5) * 2.2
         var chain_axis: Vector2 = (center - shaft_tip).normalized()
         var chain_n: Vector2 = chain_axis.orthogonal()
         for i in range(6):
@@ -69,8 +76,9 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
             for j in range(9):
                 var angle: float = TAU * float(j) / 8.0
                 link.append(at + chain_axis * cos(angle) * 2.8 + chain_n * sin(angle) * (1.4 if i % 2 == 0 else 0.7))
-            canvas.draw_polyline(link, shade, 1.9, true)
-            canvas.draw_polyline(link, edge, 0.7, true)
+            canvas.draw_polyline(link, Color("201e23"), 2.8, true)
+            canvas.draw_polyline(link, steel, 1.7, true)
+            canvas.draw_polyline(link, edge, 0.55, true)
     var outline: PackedVector2Array = head_outline(center, axis, kind)
     canvas.draw_colored_polygon(outline, shade)
     # Triangular bevel facets provide forged-metal planes rather than a
@@ -82,13 +90,22 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
         canvas.draw_colored_polygon(PackedVector2Array([center, a, b]), shade.lerp(steel, lit))
     var closed: PackedVector2Array = outline.duplicate()
     closed.append(closed[0])
-    canvas.draw_polyline(closed, edge, 0.75, true)
+    canvas.draw_polyline(closed, shade.darkened(0.2), 1.1, true)
+    # Sparse worn edges, rivets and recessed forged surfaces.
+    for i in range(outline.size()):
+        var a: Vector2 = outline[i]
+        var b: Vector2 = outline[(i + 1) % outline.size()]
+        if (a - center).dot(n) < 0.0:
+            canvas.draw_line(a.lerp(b, 0.12), a.lerp(b, 0.76), edge, 0.65, true)
     if kind == "mace":
         for side in [-1.0, 1.0]:
             canvas.draw_line(center-axis*8.0+n*side*4.4, center+axis*8.0+n*side*4.4, edge, 1.0, true)
         canvas.draw_line(center-axis*10.0, center+axis*11.0, trim, 0.7, true)
     else:
-        canvas.draw_line(center-axis*4.0, center+axis*4.0, trim, 0.85, true)
+        canvas.draw_circle(center, 4.0, shade)
+        canvas.draw_arc(center, 3.7, PI, TAU, 14, edge, 0.7, true)
+        for side in [-1.0, 1.0]:
+            canvas.draw_circle(center + n * side * 4.3, 0.9, trim.darkened(0.12))
     if glow and FX_LEVEL.intensity > 0.0:
         _rim(canvas, outline, gradient, look, time, 0.65)
         FX.draw_signature(canvas, outline, gradient, look, time)

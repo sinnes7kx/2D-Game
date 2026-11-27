@@ -5,6 +5,7 @@ const MODEL = preload("res://scripts/collector_lens_model_v179.gd")
 const ROLL_CODE = preload("res://scripts/collector_roll_code_v1931.gd")
 const SCYTHE_GLOW = preload("res://scripts/scythe_glow_layer_v211.gd")
 const MARKUP = preload("res://scripts/item_rich_text.gd")
+const ANOMALY_TITLE = preload("res://scripts/anomalous_title_v252.gd")
 const SHARE_CARD = preload("res://scripts/v209_collector_share_card.gd")
 var model: Node2D
 var stage: Control
@@ -69,10 +70,8 @@ func _ready() -> void:
 	anomaly_title = Label.new()
 	anomaly_title.text = "Anomalous"
 	anomaly_title.add_theme_font_size_override("font_size", 22)
-	anomaly_title.add_theme_color_override("font_color", Color("e8d0ac"))
-	anomaly_title.add_theme_color_override("font_shadow_color", Color("63477d"))
-	anomaly_title.add_theme_constant_override("shadow_outline_size", 2)
-	header.add_child(anomaly_title)
+	ANOMALY_TITLE.apply(anomaly_title, 3.0)
+	layout.add_child(anomaly_title)
 	anomaly_title.hide()
 	var columns: HBoxContainer = HBoxContainer.new()
 	columns.add_theme_constant_override("separation", 16)
@@ -162,7 +161,8 @@ func open_item(value: GhostItemInstance) -> void:
 	var appearance: Dictionary = value.collector_appearance()
 	var is_anomaly: bool = maxi(int(appearance.get("material", 0)), int(appearance.get("particle_tier", 0))) == 6
 	anomaly_title.visible = is_anomaly
-	anomaly_title.text = "Anomalous · Test" if ROLL_CODE.debug_active(value) else "Anomalous"
+	anomaly_title.text = "Anomalous"
+	anomaly_title.tooltip_text = "Test appearance — genuine roll unchanged" if ROLL_CODE.debug_active(value) else ""
 	heading.add_theme_color_override("font_color", value.quality_color())
 	advanced_info = Input.is_key_pressed(KEY_ALT)
 	_refresh_info()
@@ -241,8 +241,7 @@ func _process(delta: float) -> void:
 	if not visible:
 		return
 	if anomaly_title.visible:
-		var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.0014)
-		anomaly_title.modulate = Color(1.0, 0.90 + pulse * 0.10, 0.82 + pulse * 0.18, 0.78 + pulse * 0.22)
+		ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001)
 	var alt: bool = Input.is_key_pressed(KEY_ALT)
 	if alt != advanced_info:
 		advanced_info = alt
