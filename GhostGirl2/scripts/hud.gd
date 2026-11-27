@@ -97,6 +97,10 @@ func _ready() -> void:
 	collection_vault.z_index = 90
 	$Overlay.move_child(collector_lens, -1) # Inspector also owns GUI input above vault.
 	collection_vault.connect("inspect_requested", Callable(self, "_open_collector_lens"))
+	var stash_grid: Control = collection_vault.get("physical_grid")
+	stash_grid.connect("item_hovered",Callable(self,"_show_item_hover"))
+	stash_grid.connect("item_hover_cleared",Callable(self,"_hide_item_hover"))
+	item_compare_popup.z_index=180
 	inventory_panel.connect("vault_requested", Callable(self, "_open_collection_vault"))
 
 func bind_inventory(value: Node) -> void:
@@ -377,7 +381,7 @@ func _show_item_hover(item: Variant, equipped: Variant) -> void:
 	hovered_equipped = equipped if item != null and equipped != null and equipped != item and item.get_slot() == equipped.get_slot() else null
 	hover_ctrl_down = Input.is_key_pressed(KEY_CTRL)
 	hover_alt_down = Input.is_key_pressed(KEY_ALT)
-	if is_menu_open() and cursor_item_index < 0:
+	if (is_menu_open() or (is_instance_valid(collection_vault) and collection_vault.visible)) and cursor_item_index < 0:
 		tooltip_pinned = hover_alt_down
 		item_compare_popup.call("set_pinned", tooltip_pinned)
 		item_compare_popup.call("display_item", item, hovered_equipped if hover_ctrl_down else null, hover_alt_down)
