@@ -3,6 +3,10 @@ extends Node2D
 ## No arrow puzzles, no damage from visual trails, no changes to other returns.
 const AUDIO = preload("res://scripts/arrow_impact_audio_v233.gd")
 const COMBAT_AUDIO = preload("res://scripts/combat_juice_v194.gd")
+const FX = preload("res://scripts/fx_intensity_v1924.gd")
+const IMPACT = preload("res://scripts/stiletto_fx_v267.gd")
+const TRAIL_LIMIT: int = 18
+const TRAIL_STEP: float = 9.0
 const OUT_SPEED: float = 860.0
 const RETURN_SPEED: float = 1040.0
 const OUT_RANGE: float = 390.0
@@ -21,6 +25,7 @@ var outbound_hits: Dictionary = {}
 var return_hits: Dictionary = {}
 var traveled: float = 0.0
 var trail: Array[Vector2] = []
+var trail_carry: float = 0.0
 var _shape: CircleShape2D = CircleShape2D.new()
 
 func _ready() -> void:
@@ -41,7 +46,10 @@ func begin_return() -> void:
 	returning = true
 	remaining = RETURN_RANGE
 	trail.clear()
+	trail_carry = 0.0
 	if is_inside_tree():
+		trail.append(global_position)
+		_emit_fx("turn",global_position,-direction)
 		COMBAT_AUDIO.play(get_tree().current_scene,global_position,"dagger_swing",-23.0)
 
 func damage_now() -> float:
@@ -68,6 +76,7 @@ func _physics_process(delta: float) -> void:
 		var toward: Vector2 = _catch_point()-global_position
 		var distance: float = toward.length()
 		if distance <= 6.0:
+			_emit_fx("catch",_catch_point(),direction)
 			queue_free()
 			return
 		direction = toward/distance
@@ -115,20 +124,21 @@ func _physics_process(delta: float) -> void:
 			var material: String = AUDIO.material_for(target,"flesh")
 			target.call("hit",damage_now(),0.55)
 			AUDIO.play(get_tree().current_scene,point,material,false)
+			_emit_fx("return_hit" if returning else "hit",point,direction)
 	global_position = end
 	remaining -= travel
 	traveled += start.distance_to(end)
-	trail.push_front(global_position)
-	if trail.size()>9:
-		trail.pop_back()
+	_record_trail(start,end)
 	queue_redraw()
 	if not wall.is_empty():
 		AUDIO.play(get_tree().current_scene,end,AUDIO.material_for(wall.get("collider"),"stone"),false)
+		_emit_fx("wall",end,wall.get("normal",-direction))
 		if returning:
 			queue_free()
 		else:
 			begin_return()
 	elif returning and caught:
+		_emit_fx("catch",end,direction)
 		queue_free()
 	elif remaining<=0.0:
 		if returning:
@@ -136,14 +146,76 @@ func _physics_process(delta: float) -> void:
 		else:
 			begin_return()
 
+# Distance-sampled history, bounded independently of frame rate.
+func _record_trail(start: Vector2,end: Vector2) -> void:
+	if trail.is_empty():
+		trail.push_front(start)
+	var distance: float = start.distance_to(end)
+	if distance <= 0.001:
+		return
+	var at: float = TRAIL_STEP-trail_carry
+	while at <= distance:
+		trail.push_front(start.lerp(end,at/distance))
+		if trail.size()>TRAIL_LIMIT:
+			trail.pop_back()
+		at += TRAIL_STEP
+	trail_carry = fposmod(trail_carry+distance,TRAIL_STEP)
+
+func _palette_at(u: float) -> Color:
+	return GhostCosmeticRNGV152.sample_palette(palette,u,true) if not palette.is_empty() else Color("b7a3d8")
+
+func _emit_fx(kind: String,where: Vector2,axis: Vector2) -> void:
+	if glow<=0.0 or FX.intensity<=0.0 or not is_inside_tree():
+		return
+	var root: Node = get_tree().current_scene
+	if root==null:
+		return
+	var burst = IMPACT.new()
+	burst.event_kind = kind
+	burst.heading = axis
+	burst.ink = _palette_at(traveled*0.003)
+	burst.accent = _palette_at(traveled*0.003+0.29)
+	burst.strength = glow
+	root.add_child(burst)
+	burst.global_position = where
+	if root.has_method("track_room_effect"):
+		root.call("track_room_effect",burst)
+
+func _draw_ribbon() -> void:
+	var alpha: float = clampf(glow,0.0,1.0)*clampf(FX.intensity*0.70,0.0,1.0)
+	if alpha<=0.0 or trail.is_empty():
+		return
+	var points: PackedVector2Array = PackedVector2Array([Vector2.ZERO])
+	for p in trail:
+		points.append(to_local(p))
+	for i in range(points.size()-1):
+		var u: float = float(i)/float(points.size()-1)
+		var fade: float = pow(1.0-u,1.8)*alpha
+		var width: float = lerpf(1.0,8.0 if returning else 5.2,1.0-u)
+		var ink: Color = _palette_at(traveled*0.003-u*0.36)
+		var edge: Color = ink.lerp(Color.WHITE,0.32)
+		draw_line(points[i],points[i+1],Color(ink.r,ink.g,ink.b,fade*0.11),width*1.65,true)
+		draw_line(points[i],points[i+1],Color(ink.r,ink.g,ink.b,fade*(0.46 if returning else 0.31)),width*0.68,true)
+		draw_line(points[i],points[i+1],Color(edge.r,edge.g,edge.b,fade*(0.70 if returning else 0.47)),maxf(0.65,width*0.20),true)
+	if returning and points.size()>6:
+		for j in range(2):
+			var idx: int = 3+j*3
+			if idx+2>=points.size():
+				continue
+			var p: Vector2 = points[idx]
+			var axis: Vector2 = (points[idx-1]-p).normalized()
+			var n: Vector2 = axis.orthogonal()*(-1.0 if j==0 else 1.0)
+			var ink: Color = _palette_at(traveled*0.003+float(j)*0.21)
+			var wisp: PackedVector2Array = PackedVector2Array([p,p-axis*5.0+n*2.6,points[idx+2]+n*4.0])
+			draw_polyline(wisp,Color(ink.r,ink.g,ink.b,alpha*0.14),2.8,true)
+			draw_polyline(wisp,Color(ink.r,ink.g,ink.b,alpha*0.32),0.85,true)
+
 func _draw() -> void:
 	var axis: Vector2 = direction
 	var n: Vector2 = axis.orthogonal()
 	var tint: Color = GhostCosmeticRNGV152.sample_palette(palette,traveled*0.003,true) if not palette.is_empty() else Color("b7a3d8")
-	var fade: float = clampf(glow,0.0,1.0)
-	for i in range(1,trail.size()):
-		var alpha: float = (1.0-float(i)/float(trail.size()))*fade*(0.38 if returning else 0.24)
-		draw_line(to_local(trail[i-1]),to_local(trail[i]),Color(tint.r,tint.g,tint.b,alpha),2.2,true)
+	var fade: float = clampf(glow,0.0,1.0)*clampf(FX.intensity*0.70,0.0,1.0)
+	_draw_ribbon()
 	var grip: Vector2 = -axis*12.0
 	var guard: Vector2 = -axis*3.0
 	var tip: Vector2 = axis*19.0
