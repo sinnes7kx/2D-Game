@@ -183,14 +183,14 @@ func _process(_delta: float) -> void:
 			if forge_fx_revision != FORGE_FX.revision:
 				forge_fx_revision = FORGE_FX.revision
 				queue_redraw()
-	if animation_now.contains("rapier_") or animation_now.contains("axe_") or animation_now.contains("forge_bow_") or animation_now.contains("twinblade") or animation_now.contains("crossbow_") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
+	if animation_now.contains("rapier_") or animation_now.contains("axe_") or animation_now.contains("seraph_scythe_") or animation_now.contains("forge_bow_") or animation_now.contains("twinblade") or animation_now.contains("crossbow_") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
 	if animation_now != last_animation or body.frame != last_frame:
 		last_animation = animation_now
 		last_frame = body.frame
-		var rear_bow: bool = (animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
+		var rear_bow: bool = (animation_now.begins_with("forge_bow_") or animation_now.begins_with("crossbow_") or animation_now.begins_with("rapier_") or animation_now.begins_with("axe_") or animation_now.begins_with("seraph_scythe_")) and preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation_now).begins_with("back")
 		z_index = -1 if animation_now.ends_with("back") or rear_bow else 5 # Keep rear bow behind the body.
 		queue_redraw()
 
@@ -207,6 +207,8 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
+	if ident=="seraph_reaper_v292":
+		return animation_name.begins_with("seraph_scythe_") or animation_name.begins_with("attack_seraph_scythe_")
 	if equipped.weapon_style() in ["rapier","axe"]:
 		return animation_name.begins_with(equipped.weapon_style()+"_") or animation_name.begins_with("attack_"+equipped.weapon_style()+"_")
 	if equipped.uses_forge_bow():
@@ -241,7 +243,7 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 	return span
 
 func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedVector2Array:
-	if _is_equipped(animation_name) and (animation_name.contains("rapier_") or animation_name.contains("axe_")):
+	if _is_equipped(animation_name) and (animation_name.contains("rapier_") or animation_name.contains("axe_") or animation_name.contains("seraph_scythe_")):
 		var diagonal_v283 = preload("res://scripts/ghost_diagonal_art_v247.gd")
 		if not diagonal_v283.diagonal_name(animation_name).is_empty():
 			return diagonal_v283.carried_span(animation_name,frame_index,84.0 if animation_name.contains("rapier_") else 68.0,true)
@@ -372,7 +374,7 @@ func _draw() -> void:
 		return
 	var tangent: Vector2 = axis.normalized()
 	var normal: Vector2 = Vector2(-tangent.y, tangent.x)
-	if animation_name.contains("rapier_") or animation_name.contains("axe_"):
+	if animation_name.contains("rapier_") or animation_name.contains("axe_") or animation_name.contains("seraph_scythe_"):
 		var world_v283: Node = player.get("world") as Node
 		var inventory_v283: Node = world_v283.get("inventory") as Node if world_v283!=null else null
 		var item_v283: GhostItemInstance = inventory_v283.get_equipped("sword") if inventory_v283!=null else null
