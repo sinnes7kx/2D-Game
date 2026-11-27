@@ -260,7 +260,46 @@ static func _render_arrow(kind: String) -> AudioStreamWAV:
     stream.data = pcm
     return stream
 
+# Original charge shimmer, explosive air release and deep confirmed-hit foley.
+static func _render_throw_v276(kind: String) -> AudioStreamWAV:
+    var duration: float = 0.62 if kind=="throw_charge" else (0.25 if kind=="throw_ready" else (0.32 if kind=="throw_release" else 0.24))
+    var count: int = roundi(duration*RATE)
+    var pcm: PackedByteArray = PackedByteArray()
+    pcm.resize(count*2)
+    var state: int = posmod(kind.hash()+71297,2147483646)+1
+    var low: float = 0.0
+    var mid: float = 0.0
+    var phase: float = 0.0
+    for i in range(count):
+        var t: float = float(i)/float(count)
+        state=(state*16807)%2147483647
+        var white: float = float(state%65535)/32767.5-1.0
+        low=lerpf(low,white,0.025)
+        mid=lerpf(mid,white,0.22)
+        var sample: float = 0.0
+        if kind=="throw_charge" or kind=="throw_ready":
+            phase+=TAU*lerpf(160.0,430.0,t)/RATE if kind=="throw_charge" else TAU*610.0/RATE
+            var envelope: float = pow(sin(PI*t),1.2) if kind=="throw_charge" else minf(1.0,t*50.0)*exp(-6.0*t)
+            sample=((mid-low)*0.46+sin(phase)*0.15+sin(phase*2.03)*0.04)*envelope
+        else:
+            phase+=TAU*lerpf(155.0,46.0,t)/RATE
+            var attack: float = minf(1.0,t*90.0)
+            var thump: float = sin(phase)*exp(-9.0*t)*0.55
+            var air: float = (mid-low)*exp(-6.0*t)*(1.12 if kind=="throw_release" else 0.8)
+            sample=(thump+air+low*exp(-7.0*t)*0.7)*attack
+        var packed: int = clampi(roundi(sample*26000.0),-32768,32767)&0xffff
+        pcm[i*2]=packed&255
+        pcm[i*2+1]=(packed>>8)&255
+    var stream: AudioStreamWAV = AudioStreamWAV.new()
+    stream.format=AudioStreamWAV.FORMAT_16_BITS
+    stream.mix_rate=RATE
+    stream.stereo=false
+    stream.data=pcm
+    return stream
+
 static func _render(kind: String) -> AudioStreamWAV:
+    if kind in ["throw_charge","throw_ready","throw_release","throw_impact"]:
+        return _render_throw_v276(kind)
     if kind in ["blunt_hit", "blade_hit", "crossbow_fire", "crossbow_reload", "bow_release", "ground_slam", "combo_finisher", "evade"]:
         return _render_foley(kind)
     if kind.begins_with("surface_"):

@@ -231,6 +231,8 @@ func _roll_sword_drop(original: GhostItemData, seed_value: int) -> GhostItemData
 		if posmod(int(sword_seed / 5), 7) == 0:
 			return SINGLE_SWORDS_V235[posmod(int(sword_seed / 35), SINGLE_SWORDS_V235.size())] as GhostItemData
 		# Share the existing variant lane, without increasing sword frequency.
+		if posmod(int(sword_seed / 5), 11) == 0:
+			return preload("res://items/silkglass_dirk_v276.tres") if posmod(int(sword_seed / 55),2)==0 else preload("res://items/bellthorn_lance_v276.tres")
 		if posmod(int(sword_seed / 5), 3) == 0:
 			return BLADE_VARIANTS_V233[posmod(int(sword_seed / 15), BLADE_VARIANTS_V233.size())] as GhostItemData
 		return VARIANT_LOOT_V231[posmod(int(sword_seed / 5), VARIANT_LOOT_V231.size())] as GhostItemData

@@ -304,7 +304,8 @@ static func apply_equipped_opacity(canvas: Node2D, body: AnimatedSprite2D) -> vo
 	var world: Node = player.get("world") as Node if player != null else null
 	var inventory: Node = world.get("inventory") as Node if world != null else null
 	var item: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
-	canvas.self_modulate.a = item.weapon_opacity() if item != null else 1.0
+	var away: bool = player != null and player.has_method("thrown_weapon_busy_v273") and bool(player.call("thrown_weapon_busy_v273"))
+	canvas.self_modulate.a = 0.0 if away else (item.weapon_opacity() if item != null else 1.0)
 
 # Only request animated surface redraws for the actual equipped weapon layer.
 # Cached profiles are reused; no new rolls or per-frame hashing.

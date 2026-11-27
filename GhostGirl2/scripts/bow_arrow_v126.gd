@@ -60,6 +60,12 @@ func _ready() -> void:
 	add_child(lantern)
 	queue_redraw()
 
+func contact_stagger_v276() -> float:
+	return 1.3 if charged else 0.85
+
+func confirmed_contact_v276(_target: Node, _point: Vector2) -> void:
+	pass
+
 func _physics_process(delta: float) -> void:
 	if returning:
 		if not is_instance_valid(caster) or not caster.is_inside_tree():
@@ -129,7 +135,8 @@ func _physics_process(delta: float) -> void:
 			hit_ids[target_id] = true
 			ignited_v272=_fire_at_v272(start,point)
 			var material: String = ARROW_AUDIO.material_for(target, "flesh")
-			target.call("hit", ARCHERY_ENV.impact_power(damage,ignited_v272), 1.3 if charged else 0.85)
+			target.call("hit", ARCHERY_ENV.impact_power(damage,ignited_v272), contact_stagger_v276())
+			confirmed_contact_v276(target,point)
 			if ARCHERY_ENV.effective_element(element_index,ignited_v272) == 2 and target.has_method("apply_frost_slow") and is_instance_valid(target) and not target.is_queued_for_deletion():
 				target.call("apply_frost_slow", 1.35, 0.78)
 			_impact(point, material)

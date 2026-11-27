@@ -472,6 +472,8 @@ func _gradient_at(t: float) -> Color:
 # v1.54 -- soft bloom sampled around the approved weapon silhouette.
 # Round, feathered light replaces the old large square-ended 26px line strips.
 func _draw() -> void:
+	if player != null and player.has_method("thrown_weapon_busy_v273") and bool(player.call("thrown_weapon_busy_v273")):
+		return
 	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0 or FX_LEVEL.intensity <= 0.0:
 		return
 	# Crossbow geometry owns its restrained physical finish; bolt glow is independent.

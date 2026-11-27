@@ -15,6 +15,9 @@ const OUT_POWER: float = 0.72
 const RETURN_POWER: float = 0.65
 const MAX_TARGETS_PER_LEG: int = 4
 var ember_v272: bool = false
+var special_id_v276: String = ""
+var throw_charge_v276: float = 0.0
+var healed_v276: bool = false
 var caster: CharacterBody2D
 var direction: Vector2 = Vector2.RIGHT
 var power: float = 20.0
@@ -33,6 +36,7 @@ func _ready() -> void:
 	z_index = 30
 	direction = direction.normalized() if not direction.is_zero_approx() else Vector2.RIGHT
 	_shape.radius = 6.0
+	remaining=OUT_RANGE*lerpf(0.85,1.15,throw_charge_v276)
 
 func register_contact(id: int) -> bool:
 	var ledger: Dictionary = return_hits if returning else outbound_hits
@@ -70,7 +74,7 @@ func _physics_process(delta: float) -> void:
 	if not is_instance_valid(caster) or not caster.is_inside_tree() or caster.is_queued_for_deletion():
 		queue_free()
 		return
-	var speed: float = RETURN_SPEED if returning else OUT_SPEED
+	var speed: float = RETURN_SPEED if returning else OUT_SPEED*lerpf(0.88,1.18,throw_charge_v276)
 	var travel: float = minf(remaining,speed*delta)
 	var caught: bool = false
 	if returning:
@@ -123,7 +127,17 @@ func _physics_process(delta: float) -> void:
 			if not register_contact(target.get_instance_id()):
 				continue
 			var material: String = AUDIO.material_for(target,"flesh")
-			target.call("hit",damage_now(),0.55)
+			target.call("hit",damage_now(),lerpf(0.55,0.95,throw_charge_v276))
+			if special_id_v276=="winter_return" and is_instance_valid(target) and not target.is_queued_for_deletion() and target.has_method("apply_frost_slow"):
+				target.call("apply_frost_slow",1.8,0.65)
+			if special_id_v276=="ivory_return" and not healed_v276:
+				healed_v276=true
+				caster.set("health",minf(float(caster.call("maximum_health")),float(caster.get("health"))+3.0))
+				var world: Node = caster.get("world")
+				if world!=null and world.get("ui")!=null:
+					world.get("ui").call("set_health",caster.get("health"),caster.call("maximum_health"))
+			if caster.has_method("thrown_impact_v276"):
+				caster.call("thrown_impact_v276",point,direction,throw_charge_v276)
 			AUDIO.play(get_tree().current_scene,point,material,false)
 			_emit_fx("return_hit" if returning else "hit",point,direction)
 	global_position = end
@@ -167,6 +181,10 @@ func _record_trail(start: Vector2,end: Vector2) -> void:
 
 func _palette_at(u: float) -> Color:
 	var color: Color = GhostCosmeticRNGV152.sample_palette(palette,u,true) if not palette.is_empty() else Color("b7a3d8")
+	if special_id_v276=="winter_return":
+		return color.lerp(Color("9be9f5"),0.48)
+	if special_id_v276=="ivory_return":
+		return color.lerp(Color("f5e1b5"),0.48)
 	return color.lerp(Color("ee8a49"),0.66) if ember_v272 else color
 
 func _emit_fx(kind: String,where: Vector2,axis: Vector2) -> void:

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GhostItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/ui/weapons_v171/nocturne_dagger.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+item_id = "silkglass_dirk_v276"
+display_name = "Silkglass Dirk"
+description = "A translucent needle of winter glass, bound in silver thread."
+icon = ExtResource("2_icon")
+equip_slot = "sword"
+weapon_style = "dagger"
+stat_id = "attack_speed_pct"
+min_stat = 4.0
+max_stat = 8.0
+max_sockets = 2
+item_level = 11
+min_weapon_damage = 8.0
+max_weapon_damage = 11.0
+inventory_width = 1
+inventory_height = 3

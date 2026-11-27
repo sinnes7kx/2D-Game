@@ -129,10 +129,34 @@ var attack_direction: Vector2 = Vector2.DOWN
 var buffered_attack_direction: Vector2 = Vector2.ZERO
 var buffered_attack_valid: bool = false
 var buffered_special_v261: bool = false
+const THROW_MIN_V276: float = 0.16
+const THROW_MAX_V276: float = 0.90
+var throw_charge_active_v276: bool = false
+var throw_charge_time_v276: float = 0.0
+var throw_charge_ready_v276: bool = false
 var thrown_lock_v273 = preload("res://scripts/thrown_weapon_lock_v273.gd").new()
 
 func thrown_weapon_busy_v273() -> bool:
 	return thrown_lock_v273.busy()
+
+func throw_charge_ratio_v276() -> float:
+	return clampf((throw_charge_time_v276-THROW_MIN_V276)/(THROW_MAX_V276-THROW_MIN_V276),0.0,1.0)
+
+func clear_throw_charge_v276() -> void:
+	throw_charge_active_v276=false
+	throw_charge_time_v276=0.0
+	throw_charge_ready_v276=false
+	dagger_charge_active=false
+
+func thrown_impact_v276(where: Vector2, heading: Vector2, charge: float) -> void:
+	camera_kick=maxf(camera_kick,lerpf(3.2,7.2,charge))
+	camera_push=heading*lerpf(2.0,4.0,charge)
+	COMBAT_JUICE.play(get_tree().current_scene,where,"throw_impact",-15.0)
+	PHYSICAL_FEEL.burst(get_tree().current_scene,where,"slam",lerpf(0.45,0.95,charge),heading,roundi(visual_time*97.0))
+	# Never pause a different action or locomotion on a distant projectile hit.
+	if attack_time_left>0.0 and attack_hit_done and not active_special_v261.is_empty():
+		hitstop_left=maxf(hitstop_left,lerpf(0.025,0.065,charge))
+		body_art.pause()
 
 func register_thrown_weapon_v273(shot: Node) -> void:
 	thrown_lock_v273.register(shot)
@@ -224,6 +248,7 @@ func _ready() -> void:
 	for child in get_children():
 		child.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	EXTRA_ANIMATIONS.install(body_art)
+	_install_empty_throw_carry_v276()
 	# Replace only two malformed baked-weapon ATTACKS with the untouched, approved
 	# body action frames; the v172 pose layer supplies the weapon per frame.
 	V172_POSE_SCRIPT.install_attack_frames(body_art)
@@ -291,6 +316,12 @@ func _physics_process(delta: float) -> void:
 	if world == null:
 		return
 	if world.ui.is_menu_open() or world.ui.has_cursor_item():
+		if throw_charge_active_v276:
+			clear_throw_charge_v276()
+			attack_time_left=0.0
+			active_special_v261=""
+			special_weapon_v261=null
+			_play_if_changed(_weapon_motion_prefix(false)+facing_name)
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
@@ -441,6 +472,10 @@ func _physics_process(delta: float) -> void:
 			elif Input.is_action_just_pressed("attack_light"):
 				_queue_combat("light")
 		_advance_attack(delta)
+		if throw_charge_active_v276:
+			velocity=Vector2.ZERO
+			move_and_slide()
+			return
 		if queued_action == "dodge" and attack_hit_done and attack_time_left <= 0.16 and stamina >= _action_cost(DODGE_COST, true):
 			attack_time_left = 0.0
 			queued_action = ""
@@ -622,7 +657,7 @@ func _process(delta: float) -> void:
 		cam.offset = (Vector2(sin(visual_time * 74.0), cos(visual_time * 59.0)) * camera_kick * 0.72 + camera_push) * COMBAT_JUICE.shake_level
 	# CanvasItem retains draw commands; don't rebuild an empty canvas at
 	# render FPS when no target/charge/dodge/jump indicator is present.
-	var needs_draw: bool = dance_stage_v262 == 1 or bow_draw_active or is_instance_valid(lock_target) or counter_window > 0.0 or dodge_time_left > 0.0 or jump_time_left > 0.0
+	var needs_draw: bool = throw_charge_active_v276 or dance_stage_v262 == 1 or bow_draw_active or is_instance_valid(lock_target) or counter_window > 0.0 or dodge_time_left > 0.0 or jump_time_left > 0.0
 	if needs_draw or had_player_draw:
 		queue_redraw()
 	had_player_draw = needs_draw
@@ -787,7 +822,26 @@ func _weapon_art_style() -> String:
 		"briarwake_trident_v171": return "briarwake_spear"
 	return weapon.weapon_style()
 
+func _install_empty_throw_carry_v276() -> void:
+	var frames: SpriteFrames = body_art.sprite_frames
+	for face in ["front","back","left","right"]:
+		var source: String = "attack_unarmed_light_"+face
+		if not frames.has_animation(source) or frames.get_frame_count(source)<8:
+			continue
+		for motion in ["idle","walk"]:
+			var clip: String = "throw_empty_"+motion+"_"+face
+			if frames.has_animation(clip):
+				continue
+			frames.add_animation(clip)
+			frames.set_animation_loop(clip,true)
+			frames.set_animation_speed(clip,8.0)
+			var sequence: Array[int] = [0,0,0,0,0,0,0,0] if motion=="idle" else [0,1,2,1,0,1,2,1]
+			for i in sequence:
+				frames.add_frame(clip,frames.get_frame_texture(source,i))
+
 func _weapon_motion_prefix(moving: bool) -> String:
+	if thrown_weapon_busy_v273():
+		return "throw_empty_walk_" if moving else "throw_empty_idle_"
 	if _weapon_style() == "crossbow":
 		return "crossbow_walk_" if moving else "crossbow_idle_"
 	if _weapon_style() == "bow":
@@ -831,6 +885,10 @@ func _attack_action_cost(heavy: bool) -> float:
 	return _melee_cost(heavy)
 
 func _resolve_skin_clip(animation_name: String) -> String:
+	if animation_name.begins_with("throw_empty_"):
+		var requested: String = animation_name.trim_prefix("throw_empty_")
+		var diagonal: String = DIAGONAL_ART_V247.resolve(requested,facing_eight_name,facing_name,false,body_art.sprite_frames)
+		return diagonal if diagonal!=requested else animation_name
 	var armed: bool = world == null or world.inventory == null
 	if not armed:
 		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
@@ -992,6 +1050,7 @@ func _advance_spell(delta: float) -> void:
 
 func reset_action_state() -> void:
 	thrown_lock_v273.clear()
+	clear_throw_charge_v276()
 	_clear_eclipse_dance_v262()
 	active_special_v261 = ""
 	special_weapon_v261 = null
@@ -1044,6 +1103,7 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	# I-frame contacts must not cancel a bow charge or punish valid dodges.
 	if invulnerable_time > 0.0:
 		return
+	clear_throw_charge_v276()
 	_clear_eclipse_dance_v262()
 	twinblade_second_v272=false
 	twinblade_weapon_v272=null
@@ -1702,6 +1762,11 @@ func _begin_attack(heavy: bool) -> void:
 	twinblade_wear_v272=false
 	if twinblade_second_v272:
 		attack_hit_threshold=TWINBLADE_FIRST_GATE_V272
+	clear_throw_charge_v276()
+	throw_charge_active_v276 = UNIQUE_SPECIALS_V261.is_throw(active_special_v261)
+	if throw_charge_active_v276:
+		active_lunge=false
+		active_finisher=false
 	if UNIQUE_SPECIALS_V261.is_dagger_throw(active_special_v261):
 		attack_duration = 0.56 / (1.0+_stat("attack_speed_pct")/100.0)
 		attack_time_left = attack_duration
@@ -1718,7 +1783,7 @@ func _begin_attack(heavy: bool) -> void:
 		swing_cue = "dagger_swing"
 	elif active_attack_style in ["spear", "halberd"] and not heavy:
 		swing_cue = "polearm_swing"
-	COMBAT_JUICE.play(get_tree().current_scene, global_position, swing_cue, -15.0 if swing_cue == "scythe_heavy" else (-16.5 if heavy else -18.5))
+	COMBAT_JUICE.play(get_tree().current_scene, global_position, "throw_charge" if throw_charge_active_v276 else swing_cue, -15.0 if throw_charge_active_v276 or swing_cue == "scythe_heavy" else (-16.5 if heavy else -18.5))
 	attack_hit_done = false
 	heavy_attack = heavy
 	# The empty-hand branch must always play visible unarmed attack frames.
@@ -1790,6 +1855,25 @@ func _queue_combat(action: String) -> void:
 		buffered_attack_valid = false
 
 func _advance_attack(delta: float) -> void:
+	if throw_charge_active_v276:
+		if world.inventory.get_equipped("sword")!=special_weapon_v261 or UNIQUE_SPECIALS_V261.kind(special_weapon_v261)!=active_special_v261:
+			clear_throw_charge_v276()
+			attack_time_left=0.0
+			active_special_v261=""
+			special_weapon_v261=null
+			return
+		throw_charge_time_v276=minf(THROW_MAX_V276,throw_charge_time_v276+delta)
+		if throw_charge_time_v276>=THROW_MAX_V276 and not throw_charge_ready_v276:
+			throw_charge_ready_v276=true
+			COMBAT_JUICE.play(get_tree().current_scene,global_position,"throw_ready",-17.0)
+		if throw_charge_time_v276<THROW_MIN_V276 or Input.is_action_pressed("attack_heavy"):
+			if body_art.frame>=2:
+				body_art.set_frame_and_progress(2,0.0)
+				body_art.pause()
+			return
+		throw_charge_active_v276=false
+		_resume_timed_action()
+		attack_time_left=attack_duration*maxf(0.67,attack_hit_threshold+0.12)
 	# The heavy dagger recoils first, then releases exactly one physical stab.
 	# Do not reach the hit threshold while the player is charging.
 	if dagger_charge_active:
@@ -1814,7 +1898,7 @@ func _advance_attack(delta: float) -> void:
 			camera_push = attack_direction * 1.4
 		if not active_special_v261.is_empty():
 			if world.inventory.get_equipped("sword") == special_weapon_v261:
-				UNIQUE_SPECIALS_V261.launch(self,special_weapon_v261,attack_direction,active_special_v261)
+				UNIQUE_SPECIALS_V261.launch(self,special_weapon_v261,attack_direction,active_special_v261,throw_charge_ratio_v276())
 		else:
 			if twinblade_weapon_v272==null:
 				_strike_nearby_enemies(1.25 if active_finisher else 1.0)
@@ -2090,6 +2174,21 @@ func _spawn_rose_slash(where: Vector2) -> void:
 	effect.play()
 
 func _draw() -> void:
+	if throw_charge_active_v276:
+		var ratio: float = throw_charge_ratio_v276()
+		var at: Vector2 = Vector2(0,-39)+attack_direction*18.0
+		var rig: Node = body_art.get_node_or_null("WeaponPoseV172")
+		if rig!=null:
+			var span: PackedVector2Array = rig.call("get_weapon_span",str(body_art.animation),body_art.frame)
+			if span.size()==2:
+				at=to_local(body_art.to_global(span[0]))
+		var ink: Color = Color("f6ddae") if throw_charge_ready_v276 else Color("cdb1ed")
+		var opacity: float = 0.3+ratio*0.55
+		draw_arc(at,17.0-ratio*6.0,-PI*0.5,-PI*0.5+TAU*maxf(0.05,ratio),32,Color(ink.r,ink.g,ink.b,opacity),1.5,true)
+		for i in range(5):
+			var axis: Vector2 = Vector2.from_angle(visual_time*3.0+float(i)*TAU/5.0)
+			var p: Vector2 = at+axis*(20.0-ratio*11.0)
+			draw_line(p,p+axis*(3.0+ratio*3.0),Color(ink.r,ink.g,ink.b,opacity*0.7),1.1,true)
 	if dance_stage_v262 == 1 and (DANCE_V262.can_chain(dance_elapsed_v262) or dance_follow_v262):
 		var ratio: float = DANCE_V262.chain_remaining(dance_elapsed_v262)
 		var enough: bool = stamina >= _action_cost(DANCE_V262.FOLLOW_COST,false)
@@ -2235,6 +2334,8 @@ func _play_action_sfx(stream: AudioStream) -> void:
 func _diagonal_action_clip(action: String, fallback: String) -> String:
 	if world == null or world.inventory == null:
 		return fallback
+	if thrown_weapon_busy_v273():
+		return DIAGONAL_ART_V247.action_clip(action,facing_eight_name,fallback,body_art.sprite_frames)
 	if SKIN_V246.current() != SKIN_V246.ORIGINAL and _weapon_style() != "bow":
 		return fallback
 	if world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null:
