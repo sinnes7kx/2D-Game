@@ -27,6 +27,7 @@ const STASH_COLS: int = 12
 const STASH_ROWS: int = 12
 const STASH_PAGES: int = 32
 var stash_positions_v284: Dictionary = {}
+var stash_names_v285: Dictionary = {}
 const EXHIBITION_CAPACITY: int = 6
 var vault: Array[GhostItemInstance] = []
 var unresolved_vault: Array[Dictionary] = []
@@ -155,6 +156,58 @@ func equipped_index(slot: String) -> int:
 
 func get_equipped(slot: String) -> GhostItemInstance:
 	return get_item(equipped_index(slot))
+
+func equip_cursor_v285(index: int,slot: String,persist: bool=true) -> Dictionary:
+	var item: GhostItemInstance = get_item(index)
+	if item==null or item.is_broken() or not equipment.has(slot) or item.get_slot()!=slot:
+		return {"ok":false}
+	var previous: int = equipped_index(slot)
+	if previous==index:
+		return {"ok":true,"next":-1}
+	if previous<0 and slot in ["sword","wand"]:
+		previous=equipped_index("wand" if slot=="sword" else "sword")
+	var before: Dictionary = equipment.duplicate()
+	if slot=="sword":
+		equipment["wand"]=-1
+	elif slot=="wand":
+		equipment["sword"]=-1
+	equipment[slot]=index
+	if persist and not save_game():
+		equipment=before
+		return {"ok":false}
+	equipment_changed.emit()
+	contents_changed.emit()
+	return {"ok":true,"next":previous}
+
+func lift_equipment_v285(slot: String,persist: bool=true) -> int:
+	var index: int = equipped_index(slot)
+	if index<0:
+		return -1
+	equipment[slot]=-1
+	if persist and not save_game():
+		equipment[slot]=index
+		return -1
+	equipment_changed.emit()
+	contents_changed.emit()
+	return index
+
+func stash_name_v285(page: int) -> String:
+	return str(stash_names_v285.get(str(page),"Tab %d"%(page+1)))
+
+func rename_stash_v285(page: int,label: String,persist: bool=true) -> bool:
+	if page<0 or page>=STASH_PAGES:
+		return false
+	var key: String = str(page)
+	var before: Dictionary = stash_names_v285.duplicate()
+	var clean: String = label.strip_edges().replace("\n"," ").replace("\r"," ").substr(0,22)
+	if clean.is_empty():
+		stash_names_v285.erase(key)
+	else:
+		stash_names_v285[key]=clean
+	if persist and not save_game():
+		stash_names_v285=before
+		return false
+	return true
 
 func equip_at(index: int) -> bool:
 	var item: GhostItemInstance = get_item(index)
@@ -446,7 +499,7 @@ func destroy_item_at(index: int) -> bool:
 	save_game()
 	return true
 
-func socket_at(gear_index: int, component_index: int) -> bool:
+func socket_at(gear_index: int, component_index: int, persist: bool=true) -> bool:
 	var gear: GhostItemInstance = get_item(gear_index)
 	var component: GhostItemInstance = get_item(component_index)
 	if gear == null or component == null or gear_index == component_index:
@@ -455,14 +508,21 @@ func socket_at(gear_index: int, component_index: int) -> bool:
 		return false
 	if component.definition == null or component.collector_locked or component.definition.item_class not in ["gem", "rune"]:
 		return false
+	var prior_position: Vector2i = grid_positions[component_index]
+	var prior_equipment: Dictionary = equipment.duplicate()
 	gear.socketed.append({
 		"id": component.definition.item_id, "name": component.definition.display_name,
 		"stat": component.definition.socket_bonus_id, "value": component.definition.socket_bonus_value
 	})
 	_remove_item_at(component_index)
+	if persist and not save_game():
+		gear.socketed.pop_back()
+		contents.insert(component_index,component)
+		grid_positions.insert(component_index,prior_position)
+		equipment=prior_equipment
+		return false
 	contents_changed.emit()
 	equipment_changed.emit()
-	save_game()
 	return true
 
 func _remove_item_at(index: int) -> void:
@@ -492,7 +552,7 @@ func _build_save_data() -> Dictionary:
 	var saved_vault: Array[Dictionary] = unresolved_vault.duplicate(true)
 	for item in vault:
 		saved_vault.append(_serialize_item(item, stash_position_v284(item)))
-	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "unresolved_backpack": unresolved_backpack.duplicate(true)}
+	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "stash_names_v285":stash_names_v285.duplicate(), "unresolved_backpack": unresolved_backpack.duplicate(true)}
 
 func save_game() -> bool:
 	if not save_block_reason.is_empty():
@@ -648,6 +708,12 @@ func _restore_save_data(data: Dictionary) -> bool:
 		unresolved_backpack.append(saved.duplicate(true))
 	vault.clear()
 	stash_positions_v284.clear()
+	stash_names_v285.clear()
+	var labels: Variant = data.get("stash_names_v285",{})
+	if labels is Dictionary:
+		for page in range(STASH_PAGES):
+			if labels.has(str(page)):
+				rename_stash_v285(page,str(labels[str(page)]),false)
 	unresolved_vault.clear()
 	for saved in data.get("vault", []):
 		var stored: GhostItemInstance = _deserialize_item(saved)
