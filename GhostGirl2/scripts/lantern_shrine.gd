@@ -1,5 +1,7 @@
 @tool
 extends Node2D
+const ATMOSPHERE = preload("res://scripts/atmosphere_settings_v278.gd")
+const SOFT_TEXTURES = preload("res://scripts/atmosphere_textures_v278.gd")
 ## Editable restful checkpoint. E heals, replenishes dew, and stores the
 ## current room/position for a safe return on defeat. No dialogue required.
 @export var interaction_name: String = "Rest at the ember shrine"
@@ -20,7 +22,10 @@ func _draw() -> void:
 	var stone: Color = Color("353238")
 	var iron: Color = Color("85787a")
 	var warmth: Color = Color("b59a79") if not activated else Color("d9bca1")
-	draw_circle(Vector2(0, 13), 39, Color(0.04, 0.035, 0.04, 0.49))
+	if Engine.is_editor_hint() or ATMOSPHERE.strength()<=0.0:
+		draw_circle(Vector2(0,13),39,Color(0.04,0.035,0.04,0.49))
+	else:
+		draw_texture_rect(SOFT_TEXTURES.shadow(),Rect2(-56,-10,112,46),false,Color(0.035,0.025,0.055,0.62))
 	draw_rect(Rect2(-25, -19, 50, 31), stone, true)
 	draw_rect(Rect2(-25, -19, 50, 31), iron, false, 2.0)
 	draw_line(Vector2(-17,-19), Vector2(-9,-40), iron, 3.0, true)
