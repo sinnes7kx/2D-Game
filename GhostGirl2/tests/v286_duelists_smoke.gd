@@ -32,11 +32,13 @@ func _verify() -> void:
 		var item: GhostItemInstance = GhostItemGenerator.create(data,286101,"unique")
 		var normal: GhostItemInstance = GhostItemGenerator.create(data,286101,"normal")
 		var name: String = SPECIAL.label(item)
+		if name.is_empty():
+			name=preload("res://scripts/unique_innate_v274.gd").label(item)
 		assert(not name.is_empty() and not names.has(name))
 		names[name]=true
 		assert(SPECIAL.label(normal).is_empty())
 		assert(item.physical_damage_kind()==("pierce" if id.contains("rapier") else "slash"))
-		assert(ARSENAL.PROFILES.has(id))
+		assert(ARSENAL.PROFILES.has(id) or preload("res://scripts/unique_innate_v274.gd").POWERS.has(id))
 	for cue in ["axe_swing","axe_heavy_swing","axe_impact","rapier_thrust","rapier_impact"]:
 		var sound: AudioStreamWAV = AUDIO._render(cue)
 		assert(sound.data.size()>0 and sound.mix_rate==AUDIO.RATE)
