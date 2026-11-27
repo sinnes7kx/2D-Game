@@ -2218,9 +2218,8 @@ func _diagonal_action_clip(action: String, fallback: String) -> String:
 	if SKIN_V246.current() != SKIN_V246.ORIGINAL or world == null or world.inventory == null:
 		return fallback
 	if world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null:
-		if action == "jump":
-			return DIAGONAL_ART_V247.armed_jump_carry(fallback,facing_eight_name,facing_name,body_art.sprite_frames)
-		return fallback
+		var safe: String = DIAGONAL_ART_V247.armed_jump_carry(fallback,facing_eight_name,facing_name,body_art.sprite_frames) if action=="jump" else fallback
+		return DIAGONAL_ART_V247.armed_action_clip(action,_weapon_motion_prefix(true),facing_eight_name,safe,body_art.sprite_frames)
 	return DIAGONAL_ART_V247.action_clip(action, facing_eight_name, fallback, body_art.sprite_frames)
 
 func _start_eclipse_dance_v262() -> void:
