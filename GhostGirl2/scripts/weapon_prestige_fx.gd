@@ -259,6 +259,8 @@ func _axial_span() -> PackedVector2Array:
 				var second_sword: PackedVector2Array = sword_spans[1]
 				if second_sword.size() == 2:
 					return second_sword
+		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation).is_empty():
+			return empty
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 67.0)])
 	if style == "dual_dagger":
 		var paired: Node = player.get_node_or_null("Ghost/DualDaggersV173") if player != null else null
@@ -271,6 +273,8 @@ func _axial_span() -> PackedVector2Array:
 				var second: PackedVector2Array = spans[1]
 				if second.size() == 2:
 					return second
+		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation).is_empty():
+			return empty
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 35.0)])
 	if style == "twinblade":
 		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
@@ -294,7 +298,7 @@ func _axial_span() -> PackedVector2Array:
 			var authored: Variant = pose_node.call("get_weapon_span", animation, pose_frame)
 			if authored is PackedVector2Array and authored.size() == 2:
 				return authored
-			if item.uses_forge_dagger() or (style == "spear" and animation.begins_with("attack_")):
+			if item.uses_forge_dagger() or (style in ["spear", "dagger"] and (animation.begins_with("attack_") or not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation).is_empty())):
 				return empty # Occluded physical grip: no detached fallback light.
 		var fresh: Array = new_weapon_axes_by_animation.get(animation, [])
 		if not fresh.is_empty():

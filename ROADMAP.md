@@ -145,6 +145,11 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 
 - Extend revised v249-only diagonal idle/walk aliases to dual swords, dual daggers and crossbows. Sample far-wrist guides from the existing front-facing diagonal body cells; near and far spans use fixed hand slots, approximate per-frame pixel anchors and existing blade lengths. Hide genuinely obscured far hands in rear views and selected front walk frames rather than invent a floating wrist. Layer visible near blades above the body and far blades behind; physical and prestige drawing read the same spans. Twin Blackthorn crossbows use the far hand guide when visible. No new sprites; old atlas and armed action clips retain cardinal fallbacks. Combat, hitboxes, item seeds and saves unchanged. Added span/occlusion regression assertions; engine and F5 visual review pending.
 
+### v2.59 spear/trident diagonal carry and armed jump continuity (source implementation; runtime review pending)
+
+- Extend original-skin diagonal idle/walk aliases to Moonwarden Spear, Briarwake Trident and Nocturne Stiletto. Existing per-frame visible wrist guides drive modular physical weapon geometry and matching prestige effect span. Spear/trident carry uses existing 74-pixel thrust-span length, no fabricated second wrist. Cardinal baked and attack poses remain unchanged.
+- Armed jumps already used a locomotion carry clip; select the matching diagonal carry alias where available instead of dropping to cardinal. This is not dedicated armed jump art. Armed dodge, attack and cast art still require measured action-frame wrists. Suppress unsupported paired diagonal fallback glow if physical spans are missing. No combat/rarity/save changes; registered regression assertions added, runtime and visual checks pending.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.
