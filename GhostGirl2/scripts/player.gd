@@ -179,6 +179,7 @@ var relic_channel_age_v288: float = 0.0
 var relic_spin_angle_v288: float = 0.0
 var relic_pulse_v288: float = 0.0
 var relic_channel_worn_v288: bool = false
+var relic_spin_hits_v288: Dictionary = {}
 var relic_cooldowns_v288: Dictionary = {}
 var active_special_v261: String = ""
 var special_weapon_v261: GhostItemInstance = null
@@ -1431,6 +1432,7 @@ func _begin_relic_channel_v288(item: GhostItemInstance,id: String) -> void:
 	relic_spin_angle_v288=0.0
 	relic_pulse_v288=0.16
 	relic_channel_worn_v288=false
+	relic_spin_hits_v288.clear()
 	stamina-=5.0
 	stamina_recovery_left=STAMINA_RECOVERY_WAIT
 	queued_action=""
@@ -1449,6 +1451,7 @@ func _end_relic_channel_v288() -> void:
 		return
 	relic_channel_v288=""
 	relic_channel_owner_v288=null
+	relic_spin_hits_v288.clear()
 	stamina_recovery_left=maxf(stamina_recovery_left,STAMINA_RECOVERY_WAIT)
 	velocity=Vector2.ZERO
 
@@ -1474,7 +1477,9 @@ func _advance_relic_channel_v288(delta: float) -> void:
 		return
 	relic_channel_age_v288+=delta
 	var ramp: float = clampf(relic_channel_age_v288/0.85,0.0,1.0)
-	relic_spin_angle_v288=wrapf(relic_spin_angle_v288+delta*(15.0 if relic_channel_v288=="spin" else lerpf(19.0,35.0,ramp)),0.0,TAU)
+	var previous_angle: float = relic_spin_angle_v288
+	var travel: float = delta*(15.0 if relic_channel_v288=="spin" else lerpf(19.0,35.0,ramp))
+	relic_spin_angle_v288=wrapf(previous_angle+travel,0.0,TAU)
 	var direction: Vector2 = _movement_input()
 	var moving: bool = direction.length_squared()>0.01
 	var speed: float = WALK_SPEED*float(profile["move"])*(1.0+_stat("move_speed_pct")/100.0)
@@ -1487,20 +1492,25 @@ func _advance_relic_channel_v288(delta: float) -> void:
 	_play_if_changed(_weapon_motion_prefix(moving)+facing_name)
 	body_art.speed_scale=1.0
 	move_and_slide()
+	var radius: float = float(profile["radius"])*(lerpf(0.65,1.0,ramp) if relic_channel_v288=="cyclone" else 1.0)
+	var power: float = (15.0+item.weapon_damage())*float(profile["power"])*(1.0+_stat("melee_power_pct")/100.0)
+	var hits: int = 0
 	relic_pulse_v288-=delta
+	if relic_channel_v288=="spin":
+		if relic_channel_age_v288>=0.16:
+			hits=RELIC_GROUND_V288.hit_spin(self,previous_angle,travel,radius,power,relic_channel_age_v288,relic_spin_hits_v288,float(profile["pulse"]))
 	if relic_pulse_v288<=0.0:
 		relic_pulse_v288+=float(profile["pulse"])
-		var radius: float = float(profile["radius"])*(lerpf(0.65,1.0,ramp) if relic_channel_v288=="cyclone" else 1.0)
-		var power: float = (15.0+item.weapon_damage())*float(profile["power"])*(1.0+_stat("melee_power_pct")/100.0)
-		var hits: int = RELIC_GROUND_V288.hit_disk(self,global_position,radius,power,0.40,{},false)
+		if relic_channel_v288=="cyclone":
+			hits=RELIC_GROUND_V288.hit_disk(self,global_position,radius,power,0.40,{},false)
 		COMBAT_JUICE.play(get_tree().current_scene,global_position,"swing",-24.0)
-		if hits>0:
-			camera_kick=maxf(camera_kick,1.6)
-			if not relic_channel_worn_v288 and item.ethereal:
-				relic_channel_worn_v288=true
-				world.inventory.wear_ethereal(item)
-				if item.is_broken():
-					_end_relic_channel_v288()
+	if hits>0:
+		camera_kick=maxf(camera_kick,1.6)
+		if not relic_channel_worn_v288 and item.ethereal:
+			relic_channel_worn_v288=true
+			world.inventory.wear_ethereal(item)
+			if item.is_broken():
+				_end_relic_channel_v288()
 
 func _capture_ranged_relic_v277(item: GhostItemInstance, heavy: bool) -> void:
 	ranged_relic_v277=""
