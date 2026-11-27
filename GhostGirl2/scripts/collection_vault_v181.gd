@@ -53,13 +53,14 @@ func _ready() -> void:
 	layout.add_theme_constant_override("separation",10)
 	panel.add_child(layout)
 	var trim: Control = preload("res://scripts/gothic_frame_v241.gd").new()
-	panel.add_child(trim)
-	trim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	trim.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	trim.top_level=true
-	panel.item_rect_changed.connect(func() -> void:
+	trim.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	panel.add_child(trim)
+	var sync_trim: Callable = func() -> void:
 		trim.global_position=panel.global_position
-		trim.size=panel.size)
+		trim.size=panel.size
+	panel.item_rect_changed.connect(sync_trim)
+	sync_trim.call_deferred()
 	var title: Label = Label.new()
 	header_title = title
 	title.text = "❦  THE COLLECTION VAULT"

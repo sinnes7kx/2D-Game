@@ -118,7 +118,10 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		if parts.size()>1:
 			out.append("[font_size=14][color=#e4cfde]%s[/color][/font_size]" % escape(parts[1]))
 		out.append("[font_size=13][color=#a9d8d3][b]SHIFT + MOUSE2[/b][/color][/font_size]")
-		if preload("res://scripts/unique_specials_v261.gd").kind(item)=="eclipse_dance":
+		var ability_kind: String = preload("res://scripts/unique_specials_v261.gd").kind(item)
+		if ability_kind in ["heavens_reach","drowned_fork","roseglass_fan","vespers_return","ember_return"]:
+			out.append(_label("Attacks resume when the throw ends"))
+		if ability_kind=="eclipse_dance":
 			out.append(_label("Repeat during dance · retreat combo"))
 		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
 	if slot == "sword":

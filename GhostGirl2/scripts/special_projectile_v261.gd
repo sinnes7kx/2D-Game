@@ -3,6 +3,10 @@ extends "res://scripts/bow_arrow_v126.gd"
 var special_id: String = ""
 const FX_V273 = preload("res://scripts/fx_intensity_v1924.gd")
 
+func _ready() -> void:
+	physical_archery=false
+	super._ready()
+
 func _draw_trail_v273() -> void:
 	var alpha: float = clampf(visual_glow_scale,0.0,1.0)*clampf(FX_V273.intensity*0.85,0.0,1.0)
 	if alpha<=0.0:
