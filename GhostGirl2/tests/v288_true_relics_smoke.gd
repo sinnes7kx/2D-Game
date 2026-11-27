@@ -21,10 +21,15 @@ func _verify() -> void:
 	assert(MECHANICS.cooldown("hollowbell_maul_v277")==5.0)
 	var spin: Dictionary = MECHANICS.CHANNELS["rosemirror_twinblade_v170"]
 	var cyclone: Dictionary = MECHANICS.CHANNELS["cathedral_thorn_twinblade_v231"]
-	assert(spin["mode"]=="spin" and cyclone["mode"]=="cyclone")
+	assert(spin["mode"]=="hybrid" and cyclone["mode"]=="cyclone")
 	assert(float(cyclone["drain"])>float(spin["drain"]))
 	assert(float(cyclone["radius"])>float(spin["radius"]))
 	assert(float(spin["move"])>0.0 and float(cyclone["move"])>0.0)
+	assert(MECHANICS.bloom_v290(0.0)==0.0)
+	assert(MECHANICS.bloom_v290(1.15)==1.0)
+	assert(MECHANICS.hybrid_radius_v290(0.0)==111.0)
+	assert(MECHANICS.hybrid_radius_v290(1.15)==132.0)
+	assert(MECHANICS.hybrid_radius_v290(1.15)<float(cyclone["radius"]))
 	assert(GROUND.blade_sweep_contact(Vector2(90,0),0.0,0.2,111.0,18.0))
 	assert(GROUND.blade_sweep_contact(Vector2(-90,0),0.0,0.2,111.0,18.0))
 	assert(not GROUND.blade_sweep_contact(Vector2(0,90),0.0,0.2,111.0,18.0))
