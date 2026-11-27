@@ -1,4 +1,6 @@
 extends Control
+signal item_hovered(item: Variant,equipped: Variant)
+signal item_hover_cleared
 ## Two physical grids; the cursor reserves its source until a valid drop.
 const CELL: float = 32.0
 const STASH_ORIGIN: Vector2 = Vector2(0,30)
@@ -9,6 +11,7 @@ var stash_page: int = 0
 var bag_page: int = 0
 var held: GhostItemInstance
 var held_stash: bool = false
+var hovered: GhostItemInstance
 var mouse: Vector2 = Vector2(-100,-100)
 var note: Label
 var tabs: Label
@@ -18,6 +21,8 @@ func _ready() -> void:
 	mouse_filter=Control.MOUSE_FILTER_STOP
 	mouse_exited.connect(func():
 		mouse=Vector2(-100,-100)
+		hovered=null
+		item_hover_cleared.emit()
 		queue_redraw())
 
 func setup(source: Node,gate: Callable) -> void:
@@ -31,6 +36,8 @@ func allowed() -> bool:
 
 func cancel() -> void:
 	held=null
+	hovered=null
+	item_hover_cleared.emit()
 	queue_redraw()
 
 func step_page(stash: bool,step: int) -> void:
@@ -78,6 +85,14 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseMotion:
 		mouse=event.position
+		var zone: Dictionary = _zone(mouse)
+		var next: GhostItemInstance = _item(zone) if held==null and not zone.is_empty() else null
+		if next!=hovered:
+			hovered=next
+			if next==null:
+				item_hover_cleared.emit()
+			else:
+				item_hovered.emit(next,inventory.get_equipped(next.get_slot()))
 		queue_redraw()
 	if not event is InputEventMouseButton or not event.pressed:
 		return
@@ -128,6 +143,8 @@ func _gui_input(event: InputEvent) -> void:
 			_say("No fitting space, equipped item or save unavailable.")
 	else:
 		held=item
+		hovered=null
+		item_hover_cleared.emit()
 		held_stash=bool(z["stash"])
 		_say(item.display_name()+" · choose destination")
 	queue_redraw()
