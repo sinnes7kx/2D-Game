@@ -545,22 +545,26 @@ func _draw_v176_twinblade(grip: Vector2, tip: Vector2, rose: bool) -> void:
 		var width: float = MODULAR.twinblade_width(rose)
 		MODULAR.draw_blade(self, front_root, tip, width, look)
 		MODULAR.draw_blade(self, rear_root, rear, width, look)
-		# Render light in the very same draw pass as both physical blades.
-		# Independent of the separate prestige overlay's readiness/visibility.
+		# Use the same edge paths, bloom and seeded detail as Collector's Lens.
+		# Keep both metal heads separate and never illuminate the central grip.
 		var world: Node = player.get("world") as Node if player != null else null
 		var inventory: Node = world.get("inventory") as Node if world != null else null
 		var equipped: GhostItemInstance = inventory.get_equipped("sword") if inventory != null else null
-		if equipped != null:
-			var key: String = "%s:%s:%s:%s:%s:%s:%s" % [equipped.get_instance_id(), equipped.cosmetic_uid, equipped.visual_seed(), equipped.debug_collector_tier, equipped.debug_color_mode * 10 + equipped.debug_glow_motif, equipped.visual_signature(), equipped.mythic_layer_variant()]
+		if equipped != null and FORGE_CHOICES.effect_scale(equipped) > 0.0 and FORGE_FX.intensity > 0.0:
+			var key: String = "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [equipped.get_instance_id(), equipped.cosmetic_uid, equipped.visual_seed(), equipped.debug_collector_tier, equipped.debug_color_mode * 10 + equipped.debug_glow_motif, equipped.visual_signature(), equipped.mythic_layer_variant(), equipped.effect_palette_channel(), equipped.origin_room, equipped.regional_rank]
 			if str(get_meta("v180_fx_key", "")) != key:
 				set_meta("v180_fx_key", key)
-				set_meta("v180_fx_look", equipped.collector_appearance())
+				var fx_profile: Dictionary = equipped.collector_appearance()
+				fx_profile.merge(equipped.effect_palette_motion(), true)
+				set_meta("v180_fx_look", fx_profile)
 				set_meta("v180_fx_colors", equipped.glow_gradient_colors())
 			var fx_look: Dictionary = get_meta("v180_fx_look")
 			var colors: Array[Color] = get_meta("v180_fx_colors")
-			for side in [-1.0, 1.0]:
-				ANOMALOUS.draw_edge(self, MODULAR.edge_points(front_root, tip, width, look, side), colors, fx_look, v180_elapsed, 0.78, side > 0.0)
-				ANOMALOUS.draw_edge(self, MODULAR.edge_points(rear_root, rear, width, look, side), colors, fx_look, v180_elapsed, 0.78)
+			var paths: Array[PackedVector2Array] = []
+			for blade_span in spans:
+				for side in [-1.0, 1.0]:
+					paths.append(MODULAR.edge_points(blade_span[0], blade_span[1], width, look, side))
+			ANOMALOUS.draw_blade_light(self, paths, colors, fx_look, v180_elapsed, FORGE_CHOICES.effect_scale(equipped))
 		return
 	draw_line(rear_root, front_root, Color("271e30"), 5.0, true)
 	draw_line(rear_root, front_root, Color("78596d"), 3.0, true)

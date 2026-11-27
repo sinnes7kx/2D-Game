@@ -132,6 +132,30 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 
 	draw_signature(canvas, path, colors, look, time)
 
+# Shared Collector's Lens / held weapon illumination. Paths are in the
+# caller's local weapon coordinates, not the character's world coordinates.
+static func blade_light_strength(look: Dictionary, scale: float) -> float:
+	return maxf(0.0, float(look.get("glow_strength", 1.0)) * scale)
+
+static func draw_blade_light(canvas: Node2D, paths: Array[PackedVector2Array], colors: Array[Color], look: Dictionary, time: float, scale: float) -> void:
+	if scale <= 0.0 or FX_LEVEL.intensity <= 0.0:
+		return
+	var strength: float = blade_light_strength(look, scale)
+	if strength <= 0.0:
+		return
+	for i in range(paths.size()):
+		var path: PackedVector2Array = paths[i]
+		if path.size() < 2:
+			continue
+		draw_edge(canvas, path, colors, look, time, strength, i % 2 == 0)
+		for j in range(10):
+			var u: float = 0.12 + 0.8 * float(j) / 9.0
+			var at: Vector2 = point_on_path(path, u)
+			var ink: Color = color_at(colors, look, u, time).lerp(Color.WHITE, 0.25)
+			canvas.draw_circle(at, 6.0, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.055 * scale)))
+			canvas.draw_circle(at, 2.5, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.19 * scale)))
+			canvas.draw_circle(at, 0.9, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.48 * scale)))
+
 static func point_on_path(path: PackedVector2Array, u: float) -> Vector2:
 	if path.size() < 2:
 		return path[0] if not path.is_empty() else Vector2.ZERO
