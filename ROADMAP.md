@@ -114,6 +114,16 @@ This is an order of **product goals**, not permission to ship crashes or cut bas
 - Refine existing shared procedural mace/morningstar/flail/warmaul geometry: reinforced shaft collars, leather winding, thicker links, muted forged-metal surfaces, recessed sockets, rivets and restrained edge wear. Existing pose guides and glow outlines retained. First renderer pass only; painted inventory icons and full asset replacement remain pending.
 - Recover late v2.51 modifier changes from #102 using unchanged main blob checks. Register palette/path regression. Engine, UI layout and art F5 review pending.
 
+### v2.53 seeded Anomalous title families (source implementation; runtime review pending)
+
+- Replace the shared blue title with a deterministic monochromatic family derived from the existing cosmetic UID, or legacy visual seed. Seven families, neighboring hue variations, muted readable shades and an intermittent 8.5-second glint with independent per-look phase. Tooltip and Collector's Lens use the same palette and clock. Cache derived palette per visible label/identity, including when a look changes. Existing item names, rarity odds, seeds, saved looks, debug rarity state and combat affixes are unchanged; no new saved fields or asset downloads.
+- Extend the registered v252 smoke test with UID/legacy determinism, hue-family bounds, readability, diversity and cache invalidation assertions. Godot headless and F5 visual review remain pending.
+
+### v2.54 forged blade and grip refinement (source implementation; runtime review pending)
+
+- Extend v2.52's grounded blunt rendering pass to the shared modular blade renderer used by independently rendered daggers, swords, dual blades, twinblades and applicable polearm components in gameplay and the Collector's Lens. Introduce narrow beveled metal strips, restrained broken cutting-edge highlights, recessed relief marks, rounded grip shading, leather seam detail and more substantial metal collars/guards. Smooth seeded surface pigment with interpolated vertex colors, preserving all seven surface families and rarity/seed identity. Existing authored hand positions, endpoints, weapon lengths, damage, stats, saves and FX rules unchanged. No claim of new painted inventory icons or replacement baked sprite sheets.
+- Extend the existing modular blade smoke test with bevel containment/tip assertions. No Godot executable available in this connector pass; engine import, live alignment and visual assessment remain release gates. This change is included in #104 alongside v2.53; merge the latest head only.
+
 ## 1. Current project baseline — verify before planning implementation
 
 The active Godot project is **`GhostGirl2/`**, not the repository root. File names, test names, and source features below were observed in the repository on 2026-11-24, but they are **not a claim that live gameplay is fully tested**. Some metadata and historical README text remain from older releases; look at current scripts, scenes, and tests rather than assuming a version string proves completeness.

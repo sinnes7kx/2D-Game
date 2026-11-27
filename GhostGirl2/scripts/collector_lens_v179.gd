@@ -161,6 +161,7 @@ func open_item(value: GhostItemInstance) -> void:
 	var appearance: Dictionary = value.collector_appearance()
 	var is_anomaly: bool = maxi(int(appearance.get("material", 0)), int(appearance.get("particle_tier", 0))) == 6
 	anomaly_title.visible = is_anomaly
+	ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001, value)
 	anomaly_title.text = "Anomalous"
 	anomaly_title.tooltip_text = "Test appearance — genuine roll unchanged" if ROLL_CODE.debug_active(value) else ""
 	heading.add_theme_color_override("font_color", value.quality_color())
@@ -241,7 +242,7 @@ func _process(delta: float) -> void:
 	if not visible:
 		return
 	if anomaly_title.visible:
-		ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001)
+		ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001, inspected)
 	var alt: bool = Input.is_key_pressed(KEY_ALT)
 	if alt != advanced_info:
 		advanced_info = alt
