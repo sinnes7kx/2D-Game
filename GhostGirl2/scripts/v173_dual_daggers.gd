@@ -77,6 +77,15 @@ func is_active(animation_name: String) -> bool:
 	return _equipped() and (animation_name.begins_with("dual_dagger_") or animation_name.begins_with("attack_dual_dagger_"))
 
 func get_blade_spans(animation_name: String, frame_index: int) -> Array:
+	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if not diagonal.diagonal_name(animation_name).is_empty():
+		if not is_active(animation_name):
+			return []
+		var carried: Array = diagonal.paired_spans(animation_name,frame_index,BLADE_LENGTH)
+		if GENTLE.modular_idle(animation_name):
+			for hand in range(carried.size()):
+				carried[hand] = GENTLE.smooth(body,animation_name,carried[hand],hand)
+		return carried
 	var idle: bool = GENTLE.modular_idle(animation_name)
 	var spans: Array = _authored_blade_spans(animation_name, 0 if idle else frame_index)
 	if idle:

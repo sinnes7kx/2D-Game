@@ -7,7 +7,7 @@ const CELL: Vector2i = Vector2i(256, 220)
 const ACTION_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v248.png"
 const REVISED_ATLAS: String = "res://assets/ghost/skins/ghost_diagonal_v249.png"
 const REVISED_ACTIONS: String = "res://assets/ghost/skins/ghost_diagonal_actions_v249.png"
-const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_"]
+const WEAPON_PREFIXES: Array[String] = ["sword_modular_", "wand_", "forge_dagger_", "twinblade_", "rosemirror_twinblade_", "scythe_", "halberd_", "maul_", "ashglass_maul_", "forge_bow_", "dual_dagger_", "dual_sword_", "crossbow_"]
 # Approximate visible wrist guides, visually sampled from the normalized atlas.
 # Approximate initial per-frame wrist guides in full atlas-cell pixels.
 const WRISTS: Dictionary = {
@@ -19,6 +19,16 @@ const WRISTS: Dictionary = {
 	"walk_back_left": [[79,142],[80,136],[73,124],[79,125],[78,143],[76,142],[78,137],[79,143]],
 	"idle_back_right": [[162,150],[161,148],[167,144],[166,146],[163,146],[164,146],[164,147],[162,150]],
 	"walk_back_right": [[174,150],[172,146],[183,142],[188,147],[199,157],[185,150],[190,150],[177,149]]
+}
+
+# Frame-specific far hand positions sampled from the actual v249 cells.
+# Empty entries are genuinely obscured; rear views deliberately have no
+# invented second wrist. Older v247 art retains its paired cardinal fallback.
+const FAR_WRISTS: Dictionary = {
+	"idle_front_right": [[166,143],[166,143],[165,143],[166,144],[165,144],[164,144],[165,143],[166,143]],
+	"idle_front_left": [[98,136],[98,136],[99,136],[99,137],[98,137],[98,137],[98,136],[98,136]],
+	"walk_front_right": [[160,142],[160,142],[],[],[],[159,143],[160,143],[161,142]],
+	"walk_front_left": [[100,144],[99,144],[96,143],[96,142],[92,144],[97,144],[99,143],[100,143]]
 }
 
 static func available() -> bool:
@@ -99,6 +109,8 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 		if str(source).contains("back_") and not ResourceLoader.exists(REVISED_ATLAS, "Texture2D"):
 			continue
 		for prefix in WEAPON_PREFIXES:
+			if prefix in ["dual_dagger_", "dual_sword_", "crossbow_"] and not ResourceLoader.exists(REVISED_ATLAS, "Texture2D"):
+				continue
 			var clip: String = prefix + str(source)
 			if frames.has_animation(clip):
 				continue
@@ -166,3 +178,48 @@ static func carried_span(clip: String, frame: int, length: float, upright: bool 
 	if clip.begins_with("forge_bow_"):
 		axis = Vector2(sign_x * 0.70, -0.45 if rear else 0.45).normalized()
 	return PackedVector2Array([anchor,anchor+axis*length])
+
+static func near_hand(clip: String) -> int:
+	return 0 if diagonal_name(clip).ends_with("left") else 1
+
+static func far_wrist(clip: String, frame: int) -> Vector2:
+	if not ResourceLoader.exists(REVISED_ATLAS,"Texture2D"):
+		return Vector2.INF
+	var direction: String = diagonal_name(clip)
+	if direction.is_empty() or direction.begins_with("back"):
+		return Vector2.INF
+	var action: String = "walk_" if clip.contains("_walk_") else "idle_"
+	var samples: Array = FAR_WRISTS.get(action+direction,[])
+	if samples.size()!=8:
+		return Vector2.INF
+	var sample: Array = samples[clampi(frame,0,7)]
+	if sample.size()!=2:
+		return Vector2.INF
+	return Vector2(float(sample[0])-128.0,float(sample[1])-110.0)
+
+static func hand_wrist(clip: String, frame: int, hand: int) -> Vector2:
+	return wrist(clip,frame) if hand==near_hand(clip) else far_wrist(clip,frame)
+
+# Keep the two hand slots even if one is hidden, so independent item
+# colors and glow layers never switch hands as the character turns.
+static func paired_spans(clip: String, frame: int, length: float) -> Array:
+	var result: Array = []
+	var direction: String = diagonal_name(clip)
+	var facing_x: float = -1.0 if direction.ends_with("left") else 1.0
+	for hand in range(2):
+		var anchor: Vector2 = hand_wrist(clip,frame,hand)
+		if anchor==Vector2.INF:
+			result.append(PackedVector2Array())
+			continue
+		var lateral: float = -facing_x if hand==near_hand(clip) else facing_x
+		var axis: Vector2 = Vector2(lateral*0.49,0.87).normalized()
+		result.append(PackedVector2Array([anchor,anchor+axis*length]))
+	return result
+
+static func crossbow_span(clip: String, frame: int) -> PackedVector2Array:
+	var anchor: Vector2 = wrist(clip,frame)
+	if anchor==Vector2.INF:
+		return PackedVector2Array()
+	var direction: String = diagonal_name(clip)
+	var axis: Vector2 = Vector2(-0.88 if direction.ends_with("left") else 0.88,-0.36 if direction.begins_with("back") else 0.47).normalized()
+	return PackedVector2Array([anchor,anchor+axis*32.0])

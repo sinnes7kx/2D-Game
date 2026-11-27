@@ -34,6 +34,10 @@ func _process(_delta: float) -> void:
 		var right: bool = animation_name.ends_with("right")
 		# Far hand goes behind her dress when side-facing.
 		z_index = -2 if back or (left and blade_index == 1) or (right and blade_index == 0) else 6
+		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+		if not diagonal.diagonal_name(animation_name).is_empty():
+			z_index = 6 if blade_index==diagonal.near_hand(animation_name) else -2
+
 		queue_redraw()
 
 func _draw() -> void:

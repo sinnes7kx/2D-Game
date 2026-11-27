@@ -47,6 +47,23 @@ func _initialize() -> void:
 			assert(is_equal_approx(points[0].distance_to(points[1]),70.0))
 		if frames.has_animation(clip):
 			assert(ART.armed_clip(prefix+"walk_front","front_right","front",frames)==clip)
+	for direction in ART.DIRECTIONS:
+		for frame in range(8):
+			var clip: String = "dual_sword_walk_"+direction
+			var pair: Array = ART.paired_spans(clip,frame,70.0)
+			assert(pair.size()==2)
+			for hand in range(2):
+				var span: PackedVector2Array = pair[hand]
+				var wrist: Vector2 = ART.hand_wrist(clip,frame,hand)
+				if wrist==Vector2.INF:
+					assert(span.is_empty())
+				else:
+					assert(span.size()==2 and span[0]==wrist and is_equal_approx(span[0].distance_to(span[1]),70.0))
+			if direction.begins_with("back"):
+				assert(pair[1-ART.near_hand(clip)].is_empty())
+			var cross: PackedVector2Array = ART.crossbow_span("crossbow_walk_"+direction,frame)
+			if not cross.is_empty():
+				assert(is_equal_approx(cross[0].distance_to(cross[1]),32.0))
 	var wand = preload("res://scripts/wand_anchors_v216.gd")
 	var result: PackedVector2Array = wand.transformed_span(PackedVector2Array([Vector2(12,5),Vector2(32,-10)]),Vector2(-20,30),0.17)
 	assert(result[0]==Vector2(-20,30))

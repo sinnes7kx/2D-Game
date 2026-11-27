@@ -256,6 +256,9 @@ func _axial_span() -> PackedVector2Array:
 				var first_sword: PackedVector2Array = sword_spans[0]
 				if first_sword.size() == 2:
 					return first_sword
+				var second_sword: PackedVector2Array = sword_spans[1]
+				if second_sword.size() == 2:
+					return second_sword
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 67.0)])
 	if style == "dual_dagger":
 		var paired: Node = player.get_node_or_null("Ghost/DualDaggersV173") if player != null else null
