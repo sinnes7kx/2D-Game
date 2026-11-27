@@ -48,7 +48,7 @@ func _ready() -> void:
 	style.content_margin_right = 18
 	style.content_margin_top = 16
 	style.content_margin_bottom = 16
-	panel.add_theme_stylebox_override("panel", style)
+	panel.add_theme_stylebox_override("panel", preload("res://scripts/gothic_material_v274.gd").plate(Color("1b131f"),Color("a08056"),18,true))
 	var layout: VBoxContainer = VBoxContainer.new()
 	layout.add_theme_constant_override("separation",10)
 	panel.add_child(layout)

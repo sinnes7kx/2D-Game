@@ -261,9 +261,8 @@ func _axial_span() -> PackedVector2Array:
 				var second_sword: PackedVector2Array = sword_spans[1]
 				if second_sword.size() == 2:
 					return second_sword
-		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation).is_empty():
-			return empty
-		return PackedVector2Array([grip, _fallback_tip(grip, face, 67.0)])
+		# The paired rig is authoritative even when both wrists are hidden.
+		return empty
 	if style == "dual_dagger":
 		var paired: Node = player.get_node_or_null("Ghost/DualDaggersV173") if player != null else null
 		if paired != null and paired.has_method("get_blade_spans"):

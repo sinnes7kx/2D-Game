@@ -528,6 +528,9 @@ func all_stats() -> Dictionary:
 		var stat: String = str(jewel.get("stat", ""))
 		if not stat.is_empty():
 			totals[stat] = float(totals.get(stat, 0.0)) + float(jewel.get("value", 0.0))
+	var innate: Dictionary = preload("res://scripts/unique_innate_v274.gd").bonuses(self)
+	for key in innate:
+		totals[key]=float(totals.get(key,0.0))+float(innate[key])
 	return totals
 
 func stat_label() -> String:

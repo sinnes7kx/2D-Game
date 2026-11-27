@@ -77,7 +77,7 @@ static func install(sprite: AnimatedSprite2D) -> void:
 				(texture as AtlasTexture).filter_clip = true
 		# Core heavy PNGs were corrected in the manifest and editor resource.
 		# Bows have a separate pose-synchronized mask; do not substitute them.
-		if not animation.contains("_heavy_") or animation.contains("_pierce_") or animation.contains("thornrose") or animation.contains("moonveil"):
+		if not animation.contains("_heavy_") or animation.contains("_pierce_") or animation.contains("thornrose") or animation.contains("moonveil") or animation.begins_with("attack_dual_sword_heavy_"):
 			continue
 		if frames.get_frame_count(animation) == 0 or not frames.get_frame_texture(animation, 0) is AtlasTexture:
 			continue

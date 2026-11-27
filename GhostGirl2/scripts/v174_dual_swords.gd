@@ -131,10 +131,14 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 # truth. Only covered/missing wrists use the pose's conservative fallback.
 # This changes art geometry, never weapon reach, collision or item data.
 static func hand_grip(face: String, hand: int, action: String = "idle", frame_index: int = 0) -> Vector2:
-	var source_frame: int = clampi(frame_index, 0, 7) if action in ["a", "b", "c"] else 0
+	var source_frame: int = HAND.sequence(false)[clampi(frame_index,0,7)] if action in ["heavy","riposte"] else (clampi(frame_index,0,7) if action in ["a","b","c"] else 0)
 	var authored: Vector2 = HAND.hand_anchor(face, source_frame, hand)
 	if authored != Vector2.INF:
 		return authored
+	# On heavy/riposte poses, a hidden hand has no trustworthy wrist.
+	# Suppress its blade and glow instead of attaching it to the dress.
+	if action in ["heavy","riposte"]:
+		return Vector2.INF
 	match face:
 		"back": return Vector2(-25, 13) if hand == 0 else Vector2(25, 13)
 		"left": return Vector2(-34, 24) if hand == 0 else Vector2(-7, 25)
@@ -162,6 +166,9 @@ static func authored_blade_spans(face: String, action: String, frame_index: int)
 	for hand_index in range(2):
 		var side: float = -1.0 if hand_index == 0 else 1.0
 		var grip: Vector2 = left_grip if hand_index == 0 else right_grip
+		if grip==Vector2.INF:
+			result.append(PackedVector2Array())
+			continue
 		if action == "walk":
 			grip += forward * (2.5 * sin(float(n) * PI * 0.5 + float(hand_index) * PI))
 			grip += across * side * (1.7 * sin(float(n) * PI * 0.25))
@@ -205,15 +212,14 @@ static func authored_blade_spans(face: String, action: String, frame_index: int)
 			if action in ["a", "b"] and leading:
 				grip += forward * (-0.85 * lead_reach[n])
 				grip += across * (-side * lead_reach[n] * 0.48)
-			elif action in ["c", "heavy"]:
+			elif action == "c":
 				# Pull both hands toward the torso for the crossed finish.
 				# Back-view grips move less to keep them behind the dress.
 				var cross_amount: float = lead_reach[n] * (0.65 if face == "back" else 1.0)
 				grip += across * (-side * cross_amount)
 				grip += forward * (-lead_reach[n] * 0.48)
-			elif action == "riposte":
-				grip += forward * (-lead_reach[n] * 0.86)
-				grip += across * (-side * lead_reach[n] * 0.18)
+			# Heavy/riposte grips are exact displayed source wrists. Do not
+			# add synthetic forward or crossing offsets to measured anchors.
 		var tip: Vector2 = grip + across * lateral + forward * advance
 		# Longer blades read like their Collector's Lens counterparts at
 		# the actual 0.52 world sprite scale; hilts never move off the hand.
