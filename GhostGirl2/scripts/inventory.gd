@@ -23,6 +23,10 @@ var grid_positions: Array[Vector2i] = []  # y = page * GRID_ROWS + local row
 var equipment: Dictionary = {"dress": -1, "wings": -1, "helm": -1, "trinket": -1, "charm": -1, "wand": -1, "sword": -1, "companion": -1}
 var collected_pickups: Dictionary = {}
 const VAULT_CAPACITY: int = 240
+const STASH_COLS: int = 12
+const STASH_ROWS: int = 12
+const STASH_PAGES: int = 32
+var stash_positions_v284: Dictionary = {}
 const EXHIBITION_CAPACITY: int = 6
 var vault: Array[GhostItemInstance] = []
 var unresolved_vault: Array[Dictionary] = []
@@ -174,6 +178,142 @@ func unequip(slot: String) -> void:
 		contents_changed.emit()
 		save_game()
 
+# Reserve the held item in its original slot until an atomic move commits.
+# Single-item swaps exchange footprints; multi-item overlap is never destructive.
+func placement_v284(index: int, page: int, col: int, row: int) -> Dictionary:
+	var item: GhostItemInstance = get_item(index)
+	var pos: Vector2i = Vector2i(col,page*GRID_ROWS+row)
+	if item==null or page<0 or page>=GRID_PAGES or row<0 or row>=GRID_ROWS or not _grid_bounds_v284(item,pos,GRID_COLUMNS,GRID_ROWS,GRID_PAGES):
+		return {"ok":false}
+	var hits: Array[int] = []
+	for i in range(contents.size()):
+		if i!=index and _overlap_v284(item,pos,contents[i],grid_positions[i]):
+			hits.append(i)
+	if hits.is_empty():
+		return {"ok":true,"swap":-1}
+	if hits.size()!=1:
+		return {"ok":false}
+	var other: int = hits[0]
+	var origin: Vector2i = grid_positions[index]
+	if not _grid_bounds_v284(contents[other],origin,GRID_COLUMNS,GRID_ROWS,GRID_PAGES) or _overlap_v284(item,pos,contents[other],origin):
+		return {"ok":false}
+	for i in range(contents.size()):
+		if i!=index and i!=other and _overlap_v284(contents[other],origin,contents[i],grid_positions[i]):
+			return {"ok":false}
+	return {"ok":true,"swap":other}
+
+func place_or_swap_v284(index: int,page: int,col: int,row: int,persist: bool=true) -> bool:
+	var plan: Dictionary = placement_v284(index,page,col,row)
+	if not bool(plan.get("ok",false)):
+		return false
+	var before: Array[Vector2i] = grid_positions.duplicate()
+	var other: int = int(plan["swap"])
+	if other>=0:
+		grid_positions[other]=grid_positions[index]
+	grid_positions[index]=Vector2i(col,page*GRID_ROWS+row)
+	if persist and not save_game():
+		grid_positions=before
+		return false
+	contents_changed.emit()
+	return true
+
+func _grid_bounds_v284(item: GhostItemInstance,pos: Vector2i,cols: int,rows: int,pages: int) -> bool:
+	var footprint: Vector2i = get_item_size(item)
+	return pos.x>=0 and pos.y>=0 and pos.x+footprint.x<=cols and pos.y<rows*pages and posmod(pos.y,rows)+footprint.y<=rows
+
+func _overlap_v284(a: GhostItemInstance,pa: Vector2i,b: GhostItemInstance,pb: Vector2i) -> bool:
+	return Rect2i(pa,get_item_size(a)).intersects(Rect2i(pb,get_item_size(b)))
+
+func stash_position_v284(item: GhostItemInstance) -> Vector2i:
+	return stash_positions_v284.get(item,Vector2i(-1,-1))
+
+func stash_fits_v284(item: GhostItemInstance,pos: Vector2i) -> bool:
+	if not _grid_bounds_v284(item,pos,STASH_COLS,STASH_ROWS,STASH_PAGES):
+		return false
+	for other in stash_positions_v284:
+		if other!=item and _overlap_v284(item,pos,other,stash_positions_v284[other]):
+			return false
+	return true
+
+func stash_open_v284(item: GhostItemInstance,preferred_page: int=-1) -> Vector2i:
+	var first: int = preferred_page if preferred_page>=0 else 0
+	var last: int = first+1 if preferred_page>=0 else STASH_PAGES
+	for page in range(first,last):
+		for y in range(STASH_ROWS):
+			for x in range(STASH_COLS):
+				var pos: Vector2i = Vector2i(x,page*STASH_ROWS+y)
+				if stash_fits_v284(item,pos):
+					return pos
+	return Vector2i(-1,-1)
+
+func sync_stash_v284() -> void:
+	for item in stash_positions_v284.keys():
+		if not vault.has(item):
+			stash_positions_v284.erase(item)
+	for item in vault:
+		if not stash_positions_v284.has(item):
+			var pos: Vector2i = stash_open_v284(item)
+			if pos.x>=0:
+				stash_positions_v284[item]=pos
+
+func stash_at_v284(page: int,col: int,row: int) -> GhostItemInstance:
+	var point: Vector2i = Vector2i(col,page*STASH_ROWS+row)
+	for item in stash_positions_v284:
+		if Rect2i(stash_positions_v284[item],get_item_size(item)).has_point(point):
+			return item
+	return null
+
+func move_stash_v284(item: GhostItemInstance,pos: Vector2i,persist: bool=true) -> bool:
+	sync_stash_v284()
+	if not vault.has(item) or not stash_fits_v284(item,pos):
+		return false
+	var old: Vector2i = stash_position_v284(item)
+	stash_positions_v284[item]=pos
+	if persist and not save_game():
+		stash_positions_v284[item]=old
+		return false
+	contents_changed.emit()
+	return true
+
+func transfer_grid_v284(item: GhostItemInstance,to_stash: bool,pos: Vector2i,persist: bool=true) -> bool:
+	if item==null or item.definition==null:
+		return false
+	sync_stash_v284()
+	var old_contents: Array[GhostItemInstance] = contents.duplicate()
+	var old_grid: Array[Vector2i] = grid_positions.duplicate()
+	var old_vault: Array[GhostItemInstance] = vault.duplicate()
+	var old_stash: Dictionary = stash_positions_v284.duplicate()
+	var old_equipment: Dictionary = equipment.duplicate()
+	var old_display: int = item.exhibition_slot
+	if to_stash:
+		var index: int = contents.find(item)
+		if index<0 or item.definition.item_class=="quest" or vault.size()+unresolved_vault.size()>=VAULT_CAPACITY or not stash_fits_v284(item,pos):
+			return false
+		if equipment.values().has(index):
+			return false
+		_remove_item_at(index)
+		vault.append(item)
+		stash_positions_v284[item]=pos
+	else:
+		if not vault.has(item) or not _fits(item,pos):
+			return false
+		vault.erase(item)
+		stash_positions_v284.erase(item)
+		item.exhibition_slot=-1
+		contents.append(item)
+		grid_positions.append(pos)
+	if persist and not save_game():
+		contents=old_contents
+		grid_positions=old_grid
+		vault=old_vault
+		stash_positions_v284=old_stash
+		equipment=old_equipment
+		item.exhibition_slot=old_display
+		return false
+	contents_changed.emit()
+	equipment_changed.emit()
+	return true
+
 func move_item_at(index: int, page: int, col: int, row: int) -> bool:
 	var item: GhostItemInstance = get_item(index)
 	if item == null or page < 0 or page >= GRID_PAGES:
@@ -324,9 +464,10 @@ func _build_save_data() -> Dictionary:
 			continue
 		var pos: Vector2i = get_position(i)
 		saved_items.append(_serialize_item(item, pos))
+	sync_stash_v284()
 	var saved_vault: Array[Dictionary] = unresolved_vault.duplicate(true)
 	for item in vault:
-		saved_vault.append(_serialize_item(item, Vector2i(-1, -1)))
+		saved_vault.append(_serialize_item(item, stash_position_v284(item)))
 	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "unresolved_backpack": unresolved_backpack.duplicate(true)}
 
 func save_game() -> bool:
@@ -482,6 +623,7 @@ func _restore_save_data(data: Dictionary) -> bool:
 				continue
 		unresolved_backpack.append(saved.duplicate(true))
 	vault.clear()
+	stash_positions_v284.clear()
 	unresolved_vault.clear()
 	for saved in data.get("vault", []):
 		var stored: GhostItemInstance = _deserialize_item(saved)
@@ -489,6 +631,10 @@ func _restore_save_data(data: Dictionary) -> bool:
 			unresolved_vault.append(saved.duplicate(true))
 		else:
 			vault.append(stored)
+			var wanted: Vector2i = Vector2i(int(saved.get("grid_x",-1)),int(saved.get("grid_y",-1)))
+			if stash_fits_v284(stored,wanted):
+				stash_positions_v284[stored]=wanted
+	sync_stash_v284()
 	_normalize_exhibition()
 	collected_pickups.clear()
 	for key in (data.get("collected", {}) as Dictionary).keys():
