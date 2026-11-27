@@ -72,6 +72,7 @@ const MAX_DEW: int = 3
 const HEAL_WINDUP: float = 0.63
 const LOCK_RANGE: float = 620.0
 const INPUT_BUFFER: float = 0.38
+const CHARGE_WALK_FACTOR: float = 0.45
 const PARRY_WINDOW: float = 0.32
 const PARRY_PERFECT_START: float = 0.04
 const PARRY_PERFECT_END: float = 0.15
@@ -449,9 +450,15 @@ func _physics_process(delta: float) -> void:
 			_play_action_frames(AIR_V203.air_name("attack_" + _bow_art_style() + "_heavy_" + facing_name), 0.70)
 			body_art.set_frame_and_progress(keep_frame, 0.0)
 			body_art.pause()
+		if jump_time_left <= 0.0 and Input.is_action_just_pressed("dodge") and stamina >= _action_cost(DODGE_COST,true):
+			_cancel_bow_charge_for_dodge()
+			_begin_dodge()
+			return
 		_advance_bow_draw(delta)
 		if jump_time_left > 0.0:
 			_advance_jump(delta)
+		elif bow_draw_active:
+			_charge_walk(delta)
 		else:
 			velocity = Vector2.ZERO
 		move_and_slide()
@@ -522,9 +529,21 @@ func _physics_process(delta: float) -> void:
 				_queue_combat("heavy")
 			elif Input.is_action_just_pressed("attack_light"):
 				_queue_combat("light")
+		if dagger_charge_active or throw_charge_active_v276:
+			if Input.is_action_just_pressed("dodge") and stamina >= _action_cost(DODGE_COST,true):
+				clear_throw_charge_v276()
+				dagger_charge_active = false
+				attack_time_left = 0.0
+				active_special_v261 = ""
+				special_weapon_v261 = null
+				queued_action = ""
+				buffered_attack_valid = false
+				_begin_dodge()
+				return
+			_refresh_melee_charge_aim()
 		_advance_attack(delta)
-		if throw_charge_active_v276:
-			velocity=Vector2.ZERO
+		if throw_charge_active_v276 or dagger_charge_active:
+			_charge_walk(delta)
 			move_and_slide()
 			return
 		if queued_action == "dodge" and attack_hit_done and attack_time_left <= 0.16 and stamina >= _action_cost(DODGE_COST, true):
@@ -559,10 +578,6 @@ func _physics_process(delta: float) -> void:
 			# A buffered input that failed its stamina check must never aim a
 			# future unrelated click in the old direction.
 			buffered_attack_valid = false
-		# Former learned area spells are intrinsic equipment abilities.
-		if Input.is_action_just_pressed("moonfall_blizzard") or Input.is_action_just_pressed("astral_rain") or Input.is_action_just_pressed("grasping_roses"):
-			world.ui.show_pickup("AREA MAGIC BELONGS TO UNIQUE RELICS · SHIFT + MOUSE2")
-			return
 		if Input.is_action_just_pressed("parry") and carrying == null and stamina >= _action_cost(16.0,false):
 			_begin_parry()
 			return
@@ -578,10 +593,6 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed("attack_light") and stamina >= _attack_action_cost(false):
 			_begin_weapon_attack(false)
 			return
-	# X remains a backward-compatible quick-cast shortcut; mouse buttons are primary.
-	if Input.is_action_just_pressed("cast_spell") and spell_time_left <= 0.0 and spell_cooldown <= 0.0 and hook_gesture_left <= 0.0 and not is_throwing and stamina >= _action_cost(LIGHT_ATTACK_COST, false):
-		if world.inventory.get_equipped("wand") != null and carrying == null:
-			_begin_spell_cast(false)
 	if spell_time_left > 0.0:
 		if spell_time_left < 0.27:
 			if Input.is_action_just_pressed("dodge"):
@@ -1972,15 +1983,63 @@ func _begin_bow_shot(charged: bool, airborne: bool) -> void:
 		_launch_bow_arrow(bow_firing_direction, false)
 	_play_action_sfx(SWING_SFX)
 
+# Charge travel uses normal world collision and water modifiers, without
+# sprinting or resetting the held animation. The actual released strike
+# continues to use its original committed movement.
+static func charge_target_velocity(direction: Vector2, walk_speed: float) -> Vector2:
+	return direction.limit_length(1.0)*maxf(0.0,walk_speed)*CHARGE_WALK_FACTOR
+
+func _charge_walk(delta: float) -> void:
+	var direction: Vector2 = _movement_input()
+	var speed: float = WALK_SPEED*(1.0+_stat("move_speed_pct")/100.0)
+	for water in get_tree().get_nodes_in_group("water_body"):
+		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
+			speed*=float(water.call("movement_multiplier_at",global_position))
+	var target: Vector2 = charge_target_velocity(direction,speed)
+	velocity=velocity.move_toward(target,(MOVE_ACCELERATION if direction.length_squared()>0.01 else MOVE_BRAKE)*delta)
+	velocity=velocity.limit_length(maxf(0.0,speed)*CHARGE_WALK_FACTOR)
+
+func _refresh_melee_charge_aim() -> void:
+	var aim: Vector2 = _combat_aim_direction().normalized()
+	if aim.is_zero_approx():
+		return
+	attack_direction=aim
+	var old_face: String = facing_eight_name
+	set_facing(aim)
+	if old_face==facing_eight_name:
+		return
+	var current: String = str(body_art.animation)
+	var old_suffix: String = DIAGONAL_ART_V247.diagonal_name(current)
+	if old_suffix.is_empty():
+		old_suffix = DIAGONAL_ART_V247.cardinal_for_clip(current)
+	var requested: String = current.trim_suffix(old_suffix)+facing_name
+	var resolved: String = DIAGONAL_ART_V247.combat_clip_v294(requested,facing_eight_name,body_art.sprite_frames)
+	if not body_art.sprite_frames.has_animation(resolved):
+		return
+	var frame: int = body_art.frame
+	var progress: float = body_art.frame_progress
+	var paused: bool = not body_art.is_playing()
+	_play_action_frames(requested,attack_duration)
+	body_art.set_frame_and_progress(mini(frame,body_art.sprite_frames.get_frame_count(resolved)-1),progress)
+	if paused:
+		body_art.pause()
+
+func _cancel_bow_charge_for_dodge() -> void:
+	bow_draw_active=false
+	bow_draw_time=0.0
+	bow_draw_airborne=false
+	bow_release_done=true
+	ranged_relic_v277=""
+	ranged_relic_item_v277=null
+
 func _advance_bow_draw(delta: float) -> void:
 	if _weapon_style() != "bow" or carrying != null:
 		bow_draw_active = false
 		body_art.play()
 		return
-	if not Input.is_action_pressed("attack_heavy"):
-		_release_bow_charge()
-		return
-	bow_draw_time += delta
+	var release_requested: bool = not Input.is_action_pressed("attack_heavy")
+	if not release_requested:
+		bow_draw_time += delta
 	# Cursor aiming remains manual. Draw angle and facing can change while
 	# holding, but the shot won't launch until the physical button releases.
 	var aim: Vector2 = _combat_aim_direction().normalized()
@@ -1994,6 +2053,9 @@ func _advance_bow_draw(delta: float) -> void:
 				name = AIR_V203.air_name(name)
 			_play_action_frames(name, 0.70)
 			body_art.pause()
+	if release_requested:
+		_release_bow_charge()
+		return
 	var fraction: float = clampf(bow_draw_time / BOW_FULL_DRAW_TIME, 0.0, 1.0)
 	var draw_frame: int = mini(5, floori(fraction * 5.0))
 	body_art.set_frame_and_progress(draw_frame, 0.0)

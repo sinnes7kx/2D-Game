@@ -47,6 +47,11 @@ func _verify() -> void:
 		assert(not MODS.allowed("sword",item.weapon_style()).is_empty())
 		if item.weapon_style()!="crossbow":
 			assert(MODELS.cutting_edge(id).size()>=2)
+		if item.weapon_style()=="axe":
+			assert(MODELS.axe_edge(id).size()>=4)
+			assert(MODELS.cutting_edge(id,true)==MODELS.axe_edge(id))
+			for point in MODELS.axe_edge(id):
+				assert(point.x>0.0 and absf(point.y)<=28.0)
 	var frames: SpriteFrames = SpriteFrames.new()
 	var texture: GradientTexture2D = GradientTexture2D.new()
 	texture.gradient=Gradient.new()

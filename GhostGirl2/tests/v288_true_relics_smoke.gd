@@ -11,7 +11,8 @@ func _initialize() -> void:
 
 func _verify() -> void:
 	assert(MECHANICS.CHANNELS.size()==2)
-	assert(MECHANICS.AREAS.size()==3)
+	assert(MECHANICS.AREAS.is_empty())
+	assert(MECHANICS.PHYSICAL.size()==2 and MECHANICS.VOLLEY.size()==1)
 	assert(MECHANICS.GROUND_SKILLS.size()==4)
 	assert(MECHANICS.GROUND_SKILLS["hollowbell_maul_v277"]=="bells")
 	assert(MECHANICS.parry_contact_v289(Vector2(100,20),Vector2.RIGHT))
@@ -37,9 +38,14 @@ func _verify() -> void:
 	assert(GROUND.blade_sweep_contact(Vector2(90,0),TAU-0.1,0.2,111.0,18.0))
 	assert(not SPECIAL.is_throw("drowned_fork"))
 	assert(SPECIAL.is_throw("heavens_reach"))
-	assert(MECHANICS.cooldown("frostveil_bow_v277")==6.2)
-	assert(MECHANICS.cooldown("lunar_vigil_halberd")==7.8)
-	assert(MECHANICS.cooldown("rosehook_bearded_axe_v286")==7.1)
+	assert(MECHANICS.cooldown("frostveil_bow_v277")==4.0)
+	assert(MECHANICS.cooldown("lunar_vigil_halberd")==3.8)
+	assert(MECHANICS.cooldown("rosehook_bearded_axe_v286")==3.2)
+	for i in range(8):
+		var axis: Vector2=Vector2.from_angle(float(i)*PI/4.0)
+		assert(MECHANICS.physical_contact(axis*100.0,axis,128.0,0.34))
+		assert(not MECHANICS.physical_contact(-axis*100.0,axis,128.0,0.34))
+		assert(not MECHANICS.physical_contact(axis*129.0,axis,128.0,0.34))
 	var expected: Dictionary = {
 		"rosemirror_twinblade_v170":"rosemirror_twinblade_v170",
 		"cathedral_thorn_twinblade_v231":"cathedral_thorn_twinblade_v231",
@@ -59,6 +65,6 @@ func _verify() -> void:
 		assert(SPECIAL.kind(normal).is_empty())
 		assert(not SPECIAL.label(unique).is_empty())
 		var id: String = expected[base]
-		assert(MECHANICS.is_channel(id) or MECHANICS.AREAS.has(id) or MECHANICS.GROUND_SKILLS.has(id))
+		assert(MECHANICS.is_channel(id) or MECHANICS.PHYSICAL.has(id) or MECHANICS.VOLLEY.has(id) or MECHANICS.GROUND_SKILLS.has(id))
 	print("v2.88 eight bespoke relic routes, angular blade contact, ownership and cooldown definitions PASS")
 	quit(0)

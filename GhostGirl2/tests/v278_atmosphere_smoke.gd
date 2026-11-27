@@ -19,6 +19,8 @@ func _verify() -> void:
 	assert(SETTINGS.light_budget()==8)
 	assert(ROOM_FX.profile("hollow_veil_moor")["far"]>ROOM_FX.profile("lanternhaven")["far"])
 	assert(ROOM_FX.profile("observatory")["ink"]!=ROOM_FX.profile("lanternhaven")["ink"])
+	assert(ROOM_FX.profile("westwood_road")["far"]>ROOM_FX.profile("colosseum")["far"])
+	assert(ROOM_FX.profile("colosseum")["near"]<0.02)
 	assert(TEXTURES.light()==TEXTURES.light())
 	assert(TEXTURES.shadow()==TEXTURES.shadow())
 	assert(TEXTURES.light().width==128)

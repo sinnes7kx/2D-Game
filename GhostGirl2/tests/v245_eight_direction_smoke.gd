@@ -59,6 +59,13 @@ func _verify() -> void:
 	assert(DIR.cursor_heading(precise, Vector2.DOWN).is_equal_approx(precise.normalized()))
 	assert(DIR.cursor_heading(Vector2.ZERO, Vector2.LEFT) == Vector2.LEFT)
 	assert(DIR.movement(Vector2.LEFT, Vector2.ZERO) == Vector2.LEFT)
+	# Held charge travel preserves analogue strength and caps diagonal speed.
+	for i in range(8):
+		var heading: Vector2 = DIR.heading(i)
+		assert(PLAYER_SCRIPT.charge_target_velocity(heading,200.0).is_equal_approx(heading*90.0))
+	assert(is_equal_approx(PLAYER_SCRIPT.charge_target_velocity(Vector2(1,1),200.0).length(),90.0))
+	assert(PLAYER_SCRIPT.charge_target_velocity(Vector2.ZERO,200.0)==Vector2.ZERO)
+	assert(PLAYER_SCRIPT.charge_target_velocity(Vector2.LEFT*0.5,200.0)==Vector2.LEFT*45.0)
 	# All octants use the same timed frontal contact rules.
 	for i in range(8):
 		var aim: Vector2 = DIR.heading(i)
@@ -68,7 +75,24 @@ func _verify() -> void:
 		assert(PLAYER_SCRIPT.parry_result(0.10,aim,-aim*60.0)==0)
 		assert(PLAYER_SCRIPT.parry_result(0.10,aim,Vector2.ZERO)==0)
 	DIR.install_controller()
-	assert(InputMap.action_get_events("parry").size()==2)
+	assert(InputMap.action_get_events("parry").size()==5)
+	for action in ["cast_spell","moonfall_blizzard","astral_rain","grasping_roses"]:
+		assert(InputMap.action_get_events(action).is_empty())
+	for code in [KEY_F,KEY_P]:
+		var key: InputEventKey=InputEventKey.new()
+		key.physical_keycode=code
+		assert(InputMap.action_has_event("parry",key))
+	for button in [MOUSE_BUTTON_XBUTTON1,MOUSE_BUTTON_MIDDLE]:
+		var mouse: InputEventMouseButton=InputEventMouseButton.new()
+		mouse.button_index=button
+		assert(InputMap.action_has_event("parry",mouse))
+	var grapple_key: InputEventKey=InputEventKey.new()
+	grapple_key.physical_keycode=KEY_R
+	var throw_key: InputEventKey=InputEventKey.new()
+	throw_key.physical_keycode=KEY_Y
+	assert(InputMap.event_is_action(grapple_key,"hook_anchor"))
+	assert(not InputMap.event_is_action(grapple_key,"throw"))
+	assert(InputMap.event_is_action(throw_key,"throw"))
 	var event_count: int = InputMap.action_get_events("attack_light").size()
 	DIR.install_controller()
 	assert(InputMap.action_get_events("attack_light").size()==event_count)

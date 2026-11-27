@@ -5,7 +5,7 @@ const GRADE = preload("res://assets/effects/gothic_grade_v277.gdshader")
 const CONFIG: String = "user://ghost_girl_grade_v277.cfg"
 const NAMES: Array[String] = ["OFF","SOFT","GOTHIC","DEEP GOTHIC"]
 const STRENGTH: Array[float] = [0.0,0.42,0.70,0.94]
-const VIGNETTE: Array[float] = [0.0,0.09,0.17,0.25]
+const VIGNETTE: Array[float] = [0.0,0.07,0.13,0.22]
 var preset: int = 2
 var screen_rect: ColorRect
 var copy: BackBufferCopy
@@ -34,7 +34,7 @@ func _apply() -> void:
 	copy.copy_mode=BackBufferCopy.COPY_MODE_VIEWPORT if preset>0 else BackBufferCopy.COPY_MODE_DISABLED
 	grade_material.set_shader_parameter("strength",STRENGTH[preset])
 	grade_material.set_shader_parameter("vignette",VIGNETTE[preset])
-	grade_material.set_shader_parameter("atmosphere",0.018+float(preset)*0.012)
+	grade_material.set_shader_parameter("atmosphere",0.012+float(preset)*0.009)
 
 func cycle() -> String:
 	preset=(preset+1)%NAMES.size()

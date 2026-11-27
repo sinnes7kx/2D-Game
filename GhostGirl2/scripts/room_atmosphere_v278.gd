@@ -23,12 +23,14 @@ var perf_revision: int = -1
 var initialized: bool = false
 
 static func profile(key: String) -> Dictionary:
-	if key in WET_ROOMS:
+	if key in WET_ROOMS and key!="moonthorn_woods":
 		return {"ink":Color("85899f"),"far":0.115,"near":0.062,"drift":8.0}
 	if key=="colosseum":
-		return {"ink":Color("9e91b0"),"far":0.053,"near":0.019,"drift":3.5}
+		return {"ink":Color("8b90ac"),"far":0.046,"near":0.012,"drift":2.4}
 	if key=="lanternhaven":
-		return {"ink":Color("ad9298"),"far":0.060,"near":0.024,"drift":2.6}
+		return {"ink":Color("a58e93"),"far":0.052,"near":0.014,"drift":1.9}
+	if key in ["westwood_road","moonthorn_woods"]:
+		return {"ink":Color("8393a8"),"far":0.098,"near":0.028,"drift":4.3}
 	if key=="candle_reliquary":
 		return {"ink":Color("9b8995"),"far":0.040,"near":0.015,"drift":2.0}
 	if key in WARM_ROOMS:
@@ -147,9 +149,9 @@ func _collect_anchors() -> void:
 				diameter=610.0 if hearth else 350.0
 				energy=0.46 if hearth else 0.36
 				if room_key=="lanternhaven":
-					tint=Color("ffbb79") if hearth else Color("ffd2a0")
+					tint=Color("ffb77a") if hearth else Color("ffd5a1")
 					diameter=720.0 if hearth else 405.0
-					energy=0.57 if hearth else 0.43
+					energy=0.61 if hearth else 0.45
 			"moor_lantern.gd":
 				offset=Vector2(19,-47)
 				tint=source.get("lamp_color")

@@ -107,7 +107,63 @@ static func diagonal_attack_span(clip: String,frame: int) -> PackedVector2Array:
 	var axis: Vector2 = heading.rotated(angles[i]*(-1.0 if left else 1.0))
 	return PackedVector2Array([anchor,anchor+axis*(84.0 if rapier else 68.0)])
 
+# Ironwood axes use an original shared silhouette, not the inventory icon
+# stretched into a held weapon. All points are wrist-local with +X forward.
+static func axe_edge(id: String) -> PackedVector2Array:
+	match id:
+		"briar_hatchet_v283": return PackedVector2Array([Vector2(45,-15),Vector2(55,-19),Vector2(61,-13),Vector2(62,-5)])
+		"gravecleaver_axe_v283": return PackedVector2Array([Vector2(55,-18),Vector2(65,-24),Vector2(74,-20),Vector2(77,-10),Vector2(74,-4)])
+		"gallows_greataxe_v283": return PackedVector2Array([Vector2(59,-21),Vector2(71,-27),Vector2(83,-23),Vector2(88,-12),Vector2(84,-5)])
+		"rosehook_bearded_axe_v286": return PackedVector2Array([Vector2(51,-19),Vector2(63,-24),Vector2(74,-20),Vector2(78,-10),Vector2(72,-4),Vector2(55,-8)])
+		"ossuary_poleaxe_v286": return PackedVector2Array([Vector2(64,-15),Vector2(75,-22),Vector2(85,-18),Vector2(89,-8)])
+	return PackedVector2Array()
+
+static func _draw_ironwood(canvas: Node2D,id: String,pigment: Color,surface: Color,glow: float,colors: Array[Color],look: Dictionary,phase: float) -> void:
+	var edge: PackedVector2Array = axe_edge(id)
+	if edge.is_empty():
+		return
+	var end: float = edge[edge.size()-1].x
+	var haft_end: float = 55.0 if id.begins_with("briar_") else (82.0 if id.begins_with("gallows_") or id.begins_with("ossuary_") else 70.0)
+	var butt: float = -19.0 if id.begins_with("briar_") else -29.0
+	var wood: Color = Color("503933").lerp(surface,0.22)
+	var steel: Color = Color("777781").lerp(pigment,0.42)
+	var bevel: Color = Color("d0c8c0").lerp(pigment,0.24)
+	canvas.draw_line(Vector2(butt,0),Vector2(haft_end,0),Color("211d24"),5.8,true)
+	canvas.draw_line(Vector2(butt+1,0),Vector2(haft_end,0),wood,3.8,true)
+	canvas.draw_line(Vector2(butt+2,-1),Vector2(haft_end-4,-1),wood.lightened(0.28),0.7,true)
+	for j in range(7):
+		var x: float = -11.0+float(j)*3.2
+		canvas.draw_line(Vector2(x,-2.0),Vector2(x-1.6,2.0),Color("aa8b73"),0.85,true)
+	canvas.draw_line(Vector2(butt,-2.5),Vector2(butt,2.5),steel,2.4,true)
+	var sides: Array[float] = [1.0]
+	if id.begins_with("gallows_"):
+		sides.append(-1.0)
+	for side in sides:
+		var outer: PackedVector2Array = PackedVector2Array()
+		for p in edge:
+			outer.append(Vector2(p.x,p.y*side))
+		var root: Vector2 = Vector2(haft_end-8.0,0.0)
+		var outline: PackedVector2Array = PackedVector2Array([root])
+		outline.append_array(outer)
+		outline.append(Vector2(end,0.0))
+		canvas.draw_colored_polygon(outline,steel.darkened(0.23))
+		for j in range(outer.size()-1):
+			var a: Vector2 = outer[j]
+			var b: Vector2 = outer[j+1]
+			var inner_a: Vector2 = a.lerp(root,0.24)
+			var inner_b: Vector2 = b.lerp(root,0.24)
+			canvas.draw_polygon(PackedVector2Array([a,b,inner_b,inner_a]),PackedColorArray([bevel,bevel,steel,steel]))
+		canvas.draw_polyline(outer,bevel.lightened(0.12),0.85,true)
+		canvas.draw_line(root,outer[outer.size() >> 1],steel.lightened(0.18),0.8,true)
+		if glow>0.0:
+			seeded_edge(canvas,outer,colors,look,phase,glow)
+	canvas.draw_line(Vector2(haft_end-7,-3),Vector2(haft_end+2,-3),steel.lightened(0.25),1.2,true)
+	canvas.draw_circle(Vector2(haft_end-4,0),2.0,Color("b49a7e"))
+
 static func cutting_edge(id: String, painted: bool = false) -> PackedVector2Array:
+	var ironwood: PackedVector2Array = axe_edge(id)
+	if not ironwood.is_empty():
+		return ironwood
 	if id=="seraph_reaper_v292":
 		return PackedVector2Array([Vector2(16,-45),Vector2(35,-46),Vector2(55,-44),Vector2(78,-33),Vector2(86,-16),Vector2(79,0)])
 	if painted:
@@ -135,6 +191,11 @@ static func draw_melee(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, 
 		return
 	var axis: Vector2 = (tip-grip).normalized()
 	if axis.is_zero_approx():
+		return
+	if not axe_edge(id).is_empty():
+		canvas.draw_set_transform(grip,axis.angle(),Vector2(1.0,-1.0 if mirror_blade else 1.0))
+		_draw_ironwood(canvas,id,pigment,surface,glow,colors,look,phase)
+		canvas.draw_set_transform(Vector2.ZERO)
 		return
 	var seraph: bool = id=="seraph_reaper_v292"
 	var rapier: bool = id.contains("rapier")

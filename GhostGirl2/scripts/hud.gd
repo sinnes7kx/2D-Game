@@ -25,6 +25,7 @@ const EMOTIONS: Dictionary = {
 @onready var carrying_label: Label = $Overlay/CarryingHint
 @onready var portrait: TextureRect = $Overlay/ExpressionPortrait
 @onready var help_panel: Label = $Overlay/ControlsGuide
+var controls_window: PanelContainer
 var inventory_panel: PanelContainer
 var equipment_panel: PanelContainer
 var item_compare_popup: Control
@@ -70,6 +71,7 @@ func _ready() -> void:
 	prompt_label.visible = false
 	carrying_label.visible = false
 	help_panel.visible = false
+	_build_controls_window()
 	pickup_toast.visible = false
 	health_meter.visible = false
 	stamina_meter.visible = false
@@ -287,7 +289,79 @@ func _drop_selected_item(index: int) -> void:
 		_cancel_cursor_item()
 		inventory_panel.call("clear_selection")
 
+func _build_controls_window() -> void:
+	controls_window=PanelContainer.new()
+	controls_window.name="ControlsCodex"
+	$Overlay.add_child(controls_window)
+	controls_window.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	controls_window.offset_left=80.0
+	controls_window.offset_right=-80.0
+	controls_window.offset_top=48.0
+	controls_window.offset_bottom=-48.0
+	controls_window.z_index=105
+	var panel: StyleBoxFlat=StyleBoxFlat.new()
+	panel.bg_color=Color("211b25")
+	panel.border_color=Color("9b7d65")
+	panel.set_border_width_all(1)
+	panel.set_content_margin_all(18.0)
+	controls_window.add_theme_stylebox_override("panel",panel)
+	var stack: VBoxContainer=VBoxContainer.new()
+	controls_window.add_child(stack)
+	var top: HBoxContainer=HBoxContainer.new()
+	stack.add_child(top)
+	var heading: Label=Label.new()
+	heading.text="CONTROLS  /  Combat & Exploration"
+	heading.add_theme_font_size_override("font_size",22)
+	heading.add_theme_color_override("font_color",Color("e1c4a0"))
+	heading.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	top.add_child(heading)
+	var close: Button=Button.new()
+	close.text="H / Esc   Close"
+	close.pressed.connect(controls_window.hide)
+	top.add_child(close)
+	var scroll: ScrollContainer=ScrollContainer.new()
+	scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	stack.add_child(scroll)
+	var rows: VBoxContainer=VBoxContainer.new()
+	rows.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	scroll.add_child(rows)
+	var sections: Array=[
+		["MOVEMENT", [["WASD / Arrows","Move independently of cursor"],["Mouse","Aim / face cursor"],["Shift","Sprint"],["Space","Backstep away from aim"],["C","Jump"],["L / Wheel","Target lock / cycle"]]],
+		["COMBAT", [["Mouse1","Light attack"],["Mouse2","Heavy attack / hold charge where supported"],["F / Mouse4 / P / Mouse3","Parry · time incoming melee contact"],["Shift + Mouse2","Equipped unique skill"],["WASD + held charge","Backpedal or strafe at 45% walking speed"],["Space during grounded charge","Cancel supported charge into dodge"],["Mouse1 / Mouse2 (wand)","Normal / strong weapon shot"],["N","Heal"]]],
+		["COMBOS", [["Mouse1 × 3","Light chain"],["Mouse1 × 2 → Mouse2","Heavy finisher"],["Backstep → Mouse2","Lunge in follow-up window"],["Successful parry → Attack","Counter window"],["Jump → Mouse2","Aerial attack"]]],
+		["EXPLORATION", [["E","Interact / collect"],["Q / R","Pull item / grapple"],["G / Y","Drop / throw object"]]],
+		["INVENTORY & CODEX", [["B / I / Tab","Inventory and equipment"],["P / Shift + Mouse2 (inventory)","Collector Lens"],["Ctrl / Alt (hover)","Compare / advanced details"],["Bottom-left icons","Menu · Effects · Codex · Reliquary"]]],
+		["PRESENTATION", [["Shift + F2","FPS display"],["Shift + F3","Graphics profile"],["Shift + F4","Hair and dress motion"],["Shift + F5 / F6","Atmosphere / gothic filter"],["F8 / F9","Camera shake / impact sound"]]]
+	]
+	for section in sections:
+		var label: Label=Label.new()
+		label.text=str(section[0])
+		label.add_theme_font_size_override("font_size",17)
+		label.add_theme_color_override("font_color",Color("d9b990"))
+		rows.add_child(label)
+		for entry in section[1]:
+			var line: HBoxContainer=HBoxContainer.new()
+			rows.add_child(line)
+			var key: Label=Label.new()
+			key.text=str(entry[0])
+			key.custom_minimum_size.x=238.0
+			key.add_theme_color_override("font_color",Color("c4add8"))
+			line.add_child(key)
+			var description: Label=Label.new()
+			description.text=str(entry[1])
+			description.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+			description.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+			line.add_child(description)
+		rows.add_child(HSeparator.new())
+	controls_window.hide()
+
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(controls_window) and controls_window.visible:
+		if event is InputEventKey and event.pressed and not event.echo and (event.physical_keycode==KEY_H or event.keycode==KEY_ESCAPE):
+			controls_window.hide()
+			get_viewport().set_input_as_handled()
+		return
 	if is_instance_valid(codex_panel) and codex_panel.visible:
 		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
 			codex_panel.hide()
@@ -341,6 +415,9 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if is_instance_valid(controls_window) and controls_window.visible:
+		get_viewport().set_input_as_handled()
+		return
 	if is_instance_valid(codex_panel) and codex_panel.visible:
 		get_viewport().set_input_as_handled()
 		return
@@ -413,7 +490,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			_hide_item_hover()
 			get_viewport().set_input_as_handled()
 		elif event.physical_keycode == KEY_H:
-			help_panel.visible = not help_panel.visible
+			if not is_menu_open() and not has_cursor_item():
+				controls_window.show()
 			get_viewport().set_input_as_handled()
 
 func _show_item_hover(item: Variant, equipped: Variant) -> void:
@@ -467,7 +545,7 @@ func set_health(current: float, maximum: float) -> void:
 	health_meter.visible = current < maximum
 
 func is_menu_open() -> bool:
-	return (is_instance_valid(codex_panel) and codex_panel.visible) or inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible) or (is_instance_valid(collection_vault) and collection_vault.visible)
+	return (is_instance_valid(controls_window) and controls_window.visible) or (is_instance_valid(codex_panel) and codex_panel.visible) or inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible) or (is_instance_valid(collection_vault) and collection_vault.visible)
 
 func set_stamina(current: float, maximum: float) -> void:
 	stamina_meter.max_value = maximum
