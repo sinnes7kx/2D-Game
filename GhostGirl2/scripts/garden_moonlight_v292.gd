@@ -69,6 +69,9 @@ func _draw() -> void:
 				draw_set_transform(point+Vector2(-55.0+float(i)*27.0,-105.0),-0.28)
 				draw_texture_rect(SOFT.shadow(),Rect2(-beam*0.5,beam),false,Color(0.76,0.84,1.0,0.045*strength))
 				draw_set_transform(Vector2.ZERO)
+		elif label.begins_with("WarmPool"):
+			var size: Vector2 = Vector2(280,155)
+			draw_texture_rect(SOFT.shadow(),Rect2(point-size*0.5,size),false,Color(1.0,0.72,0.43,0.09*strength))
 		elif label.begins_with("Water"):
 			for i in range(3):
 				var phase: float = fposmod(clock*0.21+float(i)/3.0,1.0)
@@ -76,7 +79,7 @@ func _draw() -> void:
 				draw_set_transform(point,0.0,Vector2(1.0,0.43))
 				draw_arc(Vector2.ZERO,radius,0.2,TAU-0.2,40,Color(0.75,0.88,1.0,sin(phase*PI)*0.18*strength),1.2,true)
 				draw_set_transform(Vector2.ZERO)
-		elif label.begins_with("Bloom"):
+		elif label.begins_with("Bloom") or label.begins_with("Dust"):
 			flowers.append(point)
 	if flowers.is_empty():
 		return
@@ -86,7 +89,7 @@ func _draw() -> void:
 		var cycle: float = fposmod(clock*(0.07+float(i%4)*0.013)+float(i)*0.618,1.0)
 		var fade: float = sin(cycle*PI)
 		var at: Vector2 = origin+Vector2(cos(t+clock*0.22)*(30.0+float(i%7)*13.0),sin(t+clock*0.31)*40.0-60.0*cycle)
-		if i%4==0:
+		if i%4==0 and room_key!="candle_reliquary":
 			# Small drifting petals, not a rain-like full-screen effect.
 			draw_set_transform(at,clock*0.5+t)
 			draw_ellipse_texture(Vector2(5.5,2.4),Color(0.91,0.69,0.80,0.38*fade*strength))
