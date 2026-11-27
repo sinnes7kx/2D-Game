@@ -39,7 +39,12 @@ static func install(frames: SpriteFrames) -> void:
 				if frames.has_animation(name):
 					continue
 				frames.add_animation(name)
-				frames.set_animation_loop(name.begins_with(style+"_"))
+				# Support both the Godot 4.7 loop-mode API and older 4.x builds.
+				var loops: bool = name.begins_with(style+"_")
+				if frames.has_method("set_animation_loop_mode"):
+					frames.call("set_animation_loop_mode",name,1 if loops else 0)
+				else:
+					frames.call("set_animation_loop",name,loops)
 				frames.set_animation_speed(name,16.0 if name.begins_with("attack_") else 8.0)
 				for index in sequence(name,face):
 					frames.add_frame(name,frames.get_frame_texture(source,index))
