@@ -5,6 +5,7 @@ const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 ## No dialogue, lore pop-ups, or runtime construction of puzzle props.
 
 const ROOMS = {
+	"colosseum": preload("res://scenes/rooms/colosseum.tscn"),
 	"sepulchre_ossuary": preload("res://scenes/rooms/sepulchre_ossuary.tscn"),
 	"sepulchre_thorn": preload("res://scenes/rooms/sepulchre_thorn.tscn"),
 	"sepulchre_crownless": preload("res://scenes/rooms/sepulchre_crownless.tscn"),
@@ -254,6 +255,10 @@ func _on_equipment_changed() -> void:
 	ui.set_health(player.health, player.maximum_health())
 
 func _bind_room() -> void:
+	if room=="colosseum":
+		var arena: Node = room_view.get_node_or_null("Gameplay/ArenaController")
+		if arena!=null:
+			arena.call("bind",self)
 	# Room ownership guarantees all pooled lights and mist are freed on exit.
 	if not room_view.has_node("AtmosphereV278"):
 		var ambience: Node2D = preload("res://scripts/room_atmosphere_v278.gd").new()
@@ -480,7 +485,7 @@ func refresh_vigil_hud() -> void:
 
 func _portal_unlocked(destination: String) -> bool:
 	match room:
-		"lanternhaven": return cloister_solved if destination == "sanctum" else destination in ["moonwake_crypt", "westwood_road", "sepulchre_ossuary"]
+		"lanternhaven": return cloister_solved if destination == "sanctum" else destination in ["moonwake_crypt", "westwood_road", "sepulchre_ossuary", "colosseum"]
 		"sepulchre_ossuary", "sepulchre_thorn", "sepulchre_crownless": return destination == "lanternhaven"
 		"moonwake_crypt": return true
 		"garden": return garden_key_used if destination == "chapel" else true
@@ -523,6 +528,8 @@ func _process(_delta: float) -> void:
 		if switch_hint.is_empty() and player.carrying == null:
 			switch_hint = _rose_weight_hint()
 		ui.set_prompt("G  DROP    R  THROW" if player.carrying != null else switch_hint)
+	elif current_target.is_in_group("arena_challenge_v279"):
+		ui.set_prompt(str(current_target.call("prompt_text")))
 	elif current_target.is_in_group("sepulchre_v266"):
 		ui.set_prompt(str(current_target.call("prompt_text")))
 	elif current_target.is_in_group("v202_world_puzzle"):
@@ -637,6 +644,11 @@ func _choose_target():
 func interact() -> void:
 	var target = _choose_target()
 	if target == null:
+		return
+	if target.is_in_group("arena_challenge_v279"):
+		var reply: String = str(target.call("interact"))
+		if not reply.is_empty():
+			ui.show_pickup(reply,Color("e6ccac"))
 		return
 	if target.is_in_group("sepulchre_v266"):
 		var reply: String = str(target.call("interact"))
@@ -1264,9 +1276,10 @@ func _activate_shrine(shrine: Node2D) -> void:
 	ui.show_pickup("EMBER RESTORED")
 
 func return_after_defeat() -> void:
-	var place: String = last_shrine_room if ROOMS.has(last_shrine_room) else "moonwake_crypt"
+	var arena_defeat: bool = room=="colosseum"
+	var place: String = "lanternhaven" if arena_defeat else (last_shrine_room if ROOMS.has(last_shrine_room) else "moonwake_crypt")
 	_enter_room(place)
-	if last_shrine_point != Vector2.ZERO:
+	if not arena_defeat and last_shrine_point != Vector2.ZERO:
 		player.global_position = last_shrine_point + Vector2(0.0, 74.0)
 		player.snap_render_after_teleport()
 	player.health = player.maximum_health()
@@ -1276,7 +1289,7 @@ func return_after_defeat() -> void:
 	player.healing_time_left = 0.0
 	ui.set_health(player.health, player.maximum_health())
 	ui.set_dew(player.dew_charges, player.MAX_DEW)
-	ui.show_pickup("THE EMBER CALLS YOU BACK")
+	ui.show_pickup("DUEL LOST · RETURN WHEN READY" if arena_defeat else "THE EMBER CALLS YOU BACK")
 
 # Persistent world state is intentionally distinct from seeded inventory data.
 # Loading a v0.4 character with no world file starts from the default story state.
