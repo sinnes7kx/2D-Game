@@ -25,6 +25,14 @@ var clear_display: Button
 var source_view: OptionButton
 var transfer_access: Callable
 var header_title: Label
+var physical_grid: Control
+var grid_mode: bool = false
+var grid_toggle: Button
+var grid_tools: HBoxContainer
+var grid_note: Label
+var filter_row: HBoxContainer
+var advanced_row: HBoxContainer
+var action_row: HBoxContainer
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -70,6 +78,7 @@ func _ready() -> void:
 	count_label = Label.new()
 	layout.add_child(count_label)
 	var filters: HBoxContainer = HBoxContainer.new()
+	filter_row=filters
 	layout.add_child(filters)
 	source_view = OptionButton.new()
 	source_view.add_item("Stash")
@@ -88,6 +97,7 @@ func _ready() -> void:
 	filters.add_child(favorites)
 	favorites.toggled.connect(func(_value: bool) -> void: refresh())
 	var advanced: HBoxContainer = HBoxContainer.new()
+	advanced_row=advanced
 	advanced.add_theme_constant_override("separation", 10)
 	layout.add_child(advanced)
 	family_filter = OptionButton.new()
@@ -129,6 +139,7 @@ func _ready() -> void:
 	display_button = _button(exhibition, "Display in Sanctum", _assign_display)
 	clear_display = _button(exhibition, "Remove from display", _remove_display)
 	var actions: HBoxContainer = HBoxContainer.new()
+	action_row=actions
 	layout.add_child(actions)
 	equip = _button(actions,"Equip",_equip_selected_v273)
 	deposit = _button(actions, "Store", _store)
@@ -137,7 +148,44 @@ func _ready() -> void:
 	favorite = _button(actions, "Favorite", _favorite)
 	lock = _button(actions, "Protect", _lock)
 	_button(actions, "Close", hide)
+	grid_toggle=Button.new()
+	grid_toggle.text="Collection list"
+	layout.add_child(grid_toggle)
+	grid_toggle.pressed.connect(func(): _set_grid_mode(not grid_mode))
+	grid_tools=HBoxContainer.new()
+	layout.add_child(grid_tools)
+	physical_grid=preload("res://scripts/stash_grid_v284.gd").new()
+	layout.add_child(physical_grid)
+	_button(grid_tools,"◀ Stash",func(): physical_grid.call("step_page",true,-1))
+	_button(grid_tools,"Stash ▶",func(): physical_grid.call("step_page",true,1))
+	_button(grid_tools,"◀ Bag",func(): physical_grid.call("step_page",false,-1))
+	_button(grid_tools,"Bag ▶",func(): physical_grid.call("step_page",false,1))
+	_button(grid_tools,"Close",hide)
+	grid_note=Label.new()
+	grid_note.text="Click to pick/place · Ctrl-click transfer · right-click cancel"
+	layout.add_child(grid_note)
+	physical_grid.set("note",grid_note)
+	visibility_changed.connect(func():
+		if not visible: physical_grid.call("cancel"))
+	_set_grid_mode(false)
 	hide()
+
+func _set_grid_mode(value: bool) -> void:
+	grid_mode=value and _can_transfer()
+	if physical_grid==null:
+		return
+	physical_grid.call("cancel")
+	physical_grid.visible=grid_mode
+	grid_tools.visible=grid_mode
+	grid_note.visible=grid_mode
+	for control in [filter_row,advanced_row,list,details,exhibition_row,action_row,count_label]:
+		control.visible=not grid_mode
+	grid_toggle.visible=_can_transfer()
+	grid_toggle.text="Collection list" if grid_mode else "Item grids"
+	if grid_mode and inventory!=null:
+		physical_grid.call("setup",inventory,transfer_access)
+	elif inventory!=null:
+		refresh()
 
 func _button(parent: HBoxContainer, label_text: String, callback: Callable) -> Button:
 	var b: Button = Button.new()
@@ -158,12 +206,16 @@ func open_vault(value: Node, candidate: GhostItemInstance, preferred_slot: int =
 	quality_filter.select(0)
 	order_filter.select(0)
 	show()
-	refresh()
+	_set_grid_mode(_can_transfer() and candidate==null and preferred_slot<0)
 	if preferred_slot >= 0 and preferred_slot < display_slot.item_count:
 		display_slot.select(preferred_slot)
 
 func refresh() -> void:
 	if inventory == null:
+		return
+	if grid_mode:
+		inventory.sync_stash_v284()
+		physical_grid.queue_redraw()
 		return
 	list.clear()
 	shown.clear()
