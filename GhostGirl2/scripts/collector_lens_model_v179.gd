@@ -17,6 +17,7 @@ var glow_preview_override: int = -1
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
 const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
+const MODELS_V283 = preload("res://scripts/weapon_models_v283.gd")
 var item: GhostItemInstance
 var look: Dictionary = {}
 var profiles: Array[Dictionary] = []
@@ -89,7 +90,7 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.uses_forge_bow() or item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.uses_forge_bow() or item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul", "axe", "rapier"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
@@ -109,6 +110,9 @@ func _draw() -> void:
 		return
 	var style: String = item.weapon_style()
 	match style:
+		"axe", "rapier":
+			var strength: float = CHOICES_V216.effect_scale(item)*FX_LEVEL.intensity*0.80 if glow_enabled else 0.0
+			MODELS_V283.draw_melee(self,str(item.definition.item_id),Vector2(0,30),Vector2(0,-38),item.weapon_base_color(),strength,gradients,look,elapsed,false,item.weapon_gradient_color())
 		"bow":
 			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, FX_LEVEL.intensity * CHOICES_V216.effect_scale(item) if glow_enabled and CHOICES_V216.bow_body_visible(item) else 0.0)
 		"dagger":
