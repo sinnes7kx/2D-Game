@@ -78,11 +78,13 @@ func _valid(zone: Dictionary) -> bool:
 		return false
 	var stash: bool = zone["stash"]
 	if stash:
-		if not held_stash and (inventory.equipment.values().has(inventory.contents.find(held)) or held.definition.item_class=="quest" or inventory.vault.size()+inventory.unresolved_vault.size()>=inventory.VAULT_CAPACITY):
+		if not held_stash and (inventory.equipment.values().has(inventory.contents.find(held)) or held.definition.item_class=="quest"):
 			return false
-		return bool(inventory.stash_placement_v284(held,zone["pos"]).get("ok",false)) if held_stash else inventory.stash_fits_v284(held,zone["pos"])
+		if held_stash:
+			return bool(inventory.stash_placement_v284(held,zone["pos"]).get("ok",false))
+		return (inventory.vault.size()+inventory.unresolved_vault.size()<inventory.VAULT_CAPACITY and inventory.stash_fits_v284(held,zone["pos"])) or bool(inventory.cross_swap_plan_v285(held,true,zone["pos"]).get("ok",false))
 	if held_stash:
-		return inventory._fits(held,zone["pos"])
+		return inventory._fits(held,zone["pos"]) or bool(inventory.cross_swap_plan_v285(held,false,zone["pos"]).get("ok",false))
 	return bool(inventory.placement_v284(inventory.contents.find(held),zone["page"],zone["cell"].x,zone["cell"].y).get("ok",false))
 
 func _say(message: String) -> void:
@@ -130,7 +132,12 @@ func _gui_input(event: InputEvent) -> void:
 		var ok: bool = false
 		var displaced: GhostItemInstance = null
 		if target_stash!=held_stash:
-			ok=inventory.transfer_grid_v284(held,target_stash,z["pos"])
+			var cross: Dictionary = inventory.cross_swap_plan_v285(held,target_stash,z["pos"])
+			if bool(cross.get("ok",false)):
+				displaced=inventory.cross_swap_v285(held,target_stash,z["pos"])
+				ok=displaced!=null
+			else:
+				ok=inventory.transfer_grid_v284(held,target_stash,z["pos"])
 		elif target_stash:
 			var plan: Dictionary = inventory.stash_placement_v284(held,z["pos"])
 			displaced=plan.get("swap")
@@ -140,10 +147,11 @@ func _gui_input(event: InputEvent) -> void:
 			displaced=inventory.get_item(int(plan.get("swap",-1)))
 			ok=inventory.place_or_swap_v284(inventory.contents.find(held),z["page"],z["cell"].x,z["cell"].y)
 		if ok:
+			var source_stash: bool = held_stash
 			cancel()
 			if displaced!=null:
 				held=displaced
-				held_stash=target_stash
+				held_stash=source_stash
 				_say(displaced.display_name()+" · choose destination")
 			else:
 				_say("Item placed.")
