@@ -88,7 +88,7 @@ static func install_controller() -> void:
 		"up": JOY_BUTTON_DPAD_UP, "down": JOY_BUTTON_DPAD_DOWN,
 		"jump": JOY_BUTTON_A, "dodge": JOY_BUTTON_B,
 		"attack_light": JOY_BUTTON_X, "attack_heavy": JOY_BUTTON_Y,
-		"cast_spell": JOY_BUTTON_RIGHT_SHOULDER, "use_dew": JOY_BUTTON_LEFT_SHOULDER,
+		"parry": JOY_BUTTON_RIGHT_SHOULDER, "use_dew": JOY_BUTTON_LEFT_SHOULDER,
 		"target_lock": JOY_BUTTON_RIGHT_STICK, "sprint": JOY_BUTTON_LEFT_STICK,
 		"inventory": JOY_BUTTON_BACK, "interact": JOY_BUTTON_START
 	}
