@@ -29,6 +29,19 @@ func _initialize() -> void:
 	assert(specials.kind(spear) == "heavens_reach")
 	assert(specials.kind(GhostItemGenerator.create(preload("res://items/moonwarden_spear_v169.tres"),123,"normal")) == "")
 	assert(specials.count("drowned_fork") == 3)
+	var eclipse: GhostItemInstance = GhostItemGenerator.create(preload("res://items/eclipse_twinblade_v170.tres"),262137,"unique")
+	assert(specials.kind(eclipse) == "eclipse_dance")
+	assert(specials.kind(GhostItemGenerator.create(eclipse.definition,262137,"normal")) == "")
+	var dance = preload("res://scripts/eclipse_dance_v262.gd")
+	assert(dance.timings(1).size()==4 and dance.timings(2).size()==2)
+	assert(dance.motion(1,0.5)>0.0 and dance.motion(2,0.55)<0.0)
+	assert(dance.can_chain(0.6) and not dance.can_chain(0.1))
+	assert(dance.spin(1,dance.FIRST)>TAU)
+	var total: float = 0.0
+	for stage in [1,2]:
+		for i in range(dance.timings(stage).size()):
+			total += dance.hit_multiplier(stage,i)
+	assert(is_equal_approx(total,1.75))
 	var inventory: Node = preload("res://scripts/inventory.gd").new()
 	var saved: Dictionary = inventory.call("_serialize_item", item, Vector2i.ZERO)
 	var restored: GhostItemInstance = inventory.call("_deserialize_item", saved)

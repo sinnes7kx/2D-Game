@@ -132,6 +132,14 @@ var buffered_special_v261: bool = false
 var active_special_v261: String = ""
 var special_weapon_v261: GhostItemInstance = null
 const UNIQUE_SPECIALS_V261 = preload("res://scripts/unique_specials_v261.gd")
+const DANCE_V262 = preload("res://scripts/eclipse_dance_v262.gd")
+var dance_stage_v262: int = 0
+var dance_elapsed_v262: float = 0.0
+var dance_hit_index_v262: int = 0
+var dance_follow_v262: bool = false
+var dance_worn_v262: bool = false
+var dance_heading_v262: Vector2 = Vector2.RIGHT
+
 var dodge_time_left: float = 0.0
 var dodge_direction: Vector2 = Vector2.DOWN
 var jump_time_left: float = 0.0
@@ -403,6 +411,9 @@ func _physics_process(delta: float) -> void:
 			precision_evade_registered = false
 		return
 	if attack_time_left > 0.0:
+		if active_special_v261 == DANCE_V262.ID:
+			_advance_eclipse_dance_v262(delta)
+			return
 		# Press during late recovery to flow into a follow-up strike or dodge.
 		if attack_hit_done and attack_time_left <= 0.25:
 			if Input.is_action_just_pressed("dodge"):
@@ -941,6 +952,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	_clear_eclipse_dance_v262()
 	active_special_v261 = ""
 	special_weapon_v261 = null
 	buffered_special_v261 = false
@@ -989,6 +1001,7 @@ func receive_damage(amount: float, attacker_position: Vector2 = Vector2.ZERO) ->
 	# I-frame contacts must not cancel a bow charge or punish valid dodges.
 	if invulnerable_time > 0.0:
 		return
+	_clear_eclipse_dance_v262()
 	_reset_combo_v239()
 	# Interrupted reload must not allow instant repeat shots. Keep reload
 	# stage after a fired bolt; cancel an unfired wind-up.
@@ -1677,6 +1690,9 @@ func _begin_attack(heavy: bool) -> void:
 			attack_animation = ("attack_sword_modular_" if _uses_modular_sword() else "attack_sword_") + ("heavy_" if heavy else "light_") + facing_name
 	else:
 		attack_animation = ("attack_unarmed_heavy_" if heavy else "attack_unarmed_light_") + facing_name
+	if active_special_v261 == DANCE_V262.ID:
+		_start_eclipse_dance_v262()
+		return
 	_play_action_frames(attack_animation, attack_duration)
 	# Repeated same-direction combo attacks are new actions, not resumes.
 	body_art.set_frame_and_progress(0, 0.0)
@@ -2141,3 +2157,127 @@ func _diagonal_action_clip(action: String, fallback: String) -> String:
 			return DIAGONAL_ART_V247.armed_jump_carry(fallback,facing_eight_name,facing_name,body_art.sprite_frames)
 		return fallback
 	return DIAGONAL_ART_V247.action_clip(action, facing_eight_name, fallback, body_art.sprite_frames)
+
+func _start_eclipse_dance_v262() -> void:
+	dance_stage_v262 = 1
+	dance_elapsed_v262 = 0.0
+	dance_hit_index_v262 = 0
+	dance_follow_v262 = false
+	dance_worn_v262 = false
+	dance_heading_v262 = attack_direction
+	active_finisher = false
+	active_lunge = false
+	dagger_charge_active = false
+	counter_window = 0.0
+	queued_action = ""
+	attack_duration = DANCE_V262.FIRST
+	attack_time_left = attack_duration
+	_play_action_frames("attack_twinblade_heavy_"+facing_name,attack_duration)
+	body_art.set_frame_and_progress(0,0.0)
+
+func _clear_eclipse_dance_v262() -> void:
+	dance_stage_v262 = 0
+	dance_elapsed_v262 = 0.0
+	dance_hit_index_v262 = 0
+	dance_follow_v262 = false
+	if active_special_v261 == DANCE_V262.ID:
+		active_special_v261 = ""
+		special_weapon_v261 = null
+
+func eclipse_spin_v262() -> float:
+	return DANCE_V262.spin(dance_stage_v262,dance_elapsed_v262) if dance_stage_v262 > 0 and attack_time_left > 0.0 else 0.0
+
+func _advance_eclipse_dance_v262(delta: float) -> void:
+	if dance_stage_v262 == 0 or world.inventory.get_equipped("sword") != special_weapon_v261 or UNIQUE_SPECIALS_V261.kind(special_weapon_v261) != DANCE_V262.ID:
+		_clear_eclipse_dance_v262()
+		attack_time_left = 0.0
+		velocity = Vector2.ZERO
+		return
+	if dance_stage_v262 == 1 and DANCE_V262.can_chain(dance_elapsed_v262) and Input.is_action_just_pressed("attack_heavy") and Input.is_physical_key_pressed(KEY_SHIFT):
+		dance_follow_v262 = true
+	var previous: float = dance_elapsed_v262
+	dance_elapsed_v262 = minf(attack_duration,dance_elapsed_v262+delta)
+	attack_time_left = maxf(0.0,attack_duration-dance_elapsed_v262)
+	# Real collision movement. Only the optional retreat gets a brief evade.
+	velocity = dance_heading_v262*DANCE_V262.motion(dance_stage_v262,dance_elapsed_v262)
+	if dance_stage_v262 == 2 and previous < 0.36 and dance_elapsed_v262 >= 0.36:
+		invulnerable_time = maxf(invulnerable_time,0.18)
+	move_and_slide()
+	var gates: Array[float] = DANCE_V262.timings(dance_stage_v262)
+	while dance_hit_index_v262 < gates.size() and dance_elapsed_v262 >= gates[dance_hit_index_v262]:
+		_eclipse_dance_hit_v262(DANCE_V262.hit_multiplier(dance_stage_v262,dance_hit_index_v262))
+		dance_hit_index_v262 += 1
+		if dance_stage_v262 == 0:
+			attack_time_left = 0.0
+			return
+	if attack_time_left > 0.0:
+		return
+	var extra_cost: float = _action_cost(DANCE_V262.FOLLOW_COST,false)
+	if dance_stage_v262 == 1 and dance_follow_v262 and stamina >= extra_cost:
+		stamina -= extra_cost
+		stamina_recovery_left = STAMINA_RECOVERY_WAIT
+		dance_stage_v262 = 2
+		dance_elapsed_v262 = 0.0
+		dance_hit_index_v262 = 0
+		attack_duration = DANCE_V262.FOLLOW
+		attack_time_left = attack_duration
+		_play_action_frames("attack_twinblade_heavy_"+facing_name,attack_duration)
+		body_art.set_frame_and_progress(0,0.0)
+		return
+	_clear_eclipse_dance_v262()
+	velocity = Vector2.ZERO
+	combo_grace = 0.0
+
+func _eclipse_dance_hit_v262(multiplier: float) -> void:
+	var item: GhostItemInstance = special_weapon_v261
+	if item == null or item.is_broken():
+		return
+	var damage: float = (34.0*1.05+item.weapon_damage())*multiplier*(1.0+_stat("melee_power_pct")/100.0)*(1.0+_stat("heavy_power_pct")/100.0)
+	var colors: Array[Color] = item.glow_gradient_colors()
+	var tint: Color = colors[0] if not colors.is_empty() else Color("b76c84")
+	var mod: String = item.active_weapon_mod(world.room == "lanternhaven")
+	var reach: float = 184.0 if mod == "long_reach" else 156.0
+	var poise: float = 0.37*(1.0+_stat("poise_power_pct")/100.0)*(1.35 if mod == "crushing" else 1.0)
+	if mod == "execution":
+		damage *= 1.25
+	var contact: bool = false
+	for candidate in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(candidate) or not candidate is Node2D or candidate.is_queued_for_deletion() or not candidate.has_method("hit"):
+			continue
+		var distance: Vector2 = candidate.global_position-global_position
+		if distance.length_squared() > reach*reach:
+			continue
+		var ray: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position+Vector2(0,-18),candidate.global_position+Vector2(0,-18))
+		ray.collision_mask = 2
+		ray.exclude = [get_rid()]
+		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+			continue
+		candidate.call("hit",damage,poise)
+		contact = true
+		if is_instance_valid(candidate) and not candidate.is_queued_for_deletion():
+			if mod == "frostbite" and candidate.has_method("apply_frost_slow"):
+				candidate.call("apply_frost_slow",1.5,0.78)
+			_spawn_spectacle("strike",candidate.global_position+Vector2(0,-27),tint,0,2,tint.lightened(0.2),0)
+	var root: Node = get_tree().current_scene
+	COMBAT_JUICE.play(root,global_position,"blade_hit" if contact else "polearm_swing",-18.0)
+	if root != null:
+		var arc: Node2D = preload("res://scripts/eclipse_dance_arc_v262.gd").new()
+		arc.set("ink",tint)
+		arc.set("heading",dance_heading_v262.angle()+float(dance_hit_index_v262)*1.6)
+		arc.set("strength",preload("res://scripts/visual_choices_v216.gd").effect_scale(item))
+		root.add_child(arc)
+		arc.global_position = global_position+Vector2(0,-28)
+		world.track_room_effect(arc)
+	if contact:
+		camera_kick = maxf(camera_kick,2.1)
+		if not dance_worn_v262:
+			dance_worn_v262 = true
+			if mod == "soul_siphon":
+				health = minf(maximum_health(),health+2.0)
+				world.ui.set_health(health,maximum_health())
+			elif mod == "vigor":
+				stamina = minf(MAX_STAMINA,stamina+5.0)
+				world.ui.set_stamina(stamina,MAX_STAMINA)
+			if item.ethereal and world.inventory.wear_ethereal(item):
+				world.ui.show_pickup("ETHEREAL WEAPON BROKEN",Color("d9b6cf"))
+				_clear_eclipse_dance_v262()

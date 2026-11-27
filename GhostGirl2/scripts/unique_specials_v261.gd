@@ -3,12 +3,14 @@ extends RefCounted
 const SPECIALS: Dictionary = {
 	"moonwarden_spear_v169": "heavens_reach",
 	"briarwake_trident_v171": "drowned_fork",
-	"gravebell_maul_v170": "last_toll"
+	"gravebell_maul_v170": "last_toll",
+	"eclipse_twinblade_v170": "eclipse_dance"
 }
 const NAMES: Dictionary = {
 	"heavens_reach": "Heaven's Reach · Returning spear throw",
 	"drowned_fork": "Drowned Crown · Three spectral spears",
-	"last_toll": "Last Toll · Traveling shockwave"
+	"last_toll": "Last Toll · Traveling shockwave",
+	"eclipse_dance": "Crimson Eclipse · Advancing blade dance and optional retreat"
 }
 
 static func kind(item: Variant) -> String:
@@ -23,7 +25,7 @@ static func count(id: String) -> int:
 	return 3 if id == "drowned_fork" else 1
 
 static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vector2, id: String) -> void:
-	if kind(item) != id or heading.is_zero_approx():
+	if kind(item) != id or heading.is_zero_approx() or id == "eclipse_dance":
 		return
 	var world: Node = actor.get("world")
 	var root: Node = actor.get_tree().current_scene

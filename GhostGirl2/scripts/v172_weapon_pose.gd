@@ -285,7 +285,10 @@ func _authored_weapon_span(animation_name: String, frame_index: int) -> PackedVe
 		var grip: Vector2 = Vector2(float(guide[0]), float(guide[1]))
 		var tip: Vector2 = Vector2(float(guide[2]), float(guide[3]))
 		# Drawing-only extension; all twinblade damage and collision remain fixed.
-		return PackedVector2Array([grip, grip + (tip - grip).normalized() * 76.0])
+		var axis: Vector2 = (tip-grip).normalized()
+		if player != null and player.has_method("eclipse_spin_v262") and animation_name.begins_with("attack_twinblade_"):
+			axis = axis.rotated(float(player.call("eclipse_spin_v262")))
+		return PackedVector2Array([grip,grip+axis*76.0])
 	var spear: bool = animation_name.begins_with("attack_briarwake_spear_")
 	var heavy: bool = animation_name.contains("_heavy_")
 	var face: String = "front"
