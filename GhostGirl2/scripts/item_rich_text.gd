@@ -119,6 +119,11 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			out.append("[font_size=14][color=#e4cfde]%s[/color][/font_size]" % escape(parts[1]))
 		out.append("[font_size=13][color=#a9d8d3][b]SHIFT + MOUSE2[/b][/color][/font_size]")
 		var ability_kind: String = preload("res://scripts/unique_specials_v261.gd").kind(item)
+		if preload("res://scripts/relic_arsenal_v277.gd").has_skill(ability_kind):
+			if item.weapon_style()=="bow":
+				out.append(_label("Hold Shift + Mouse2 to full draw, then release"))
+			elif item.weapon_style()=="crossbow":
+				out.append(_label("Heavy relic shot · normal reload"))
 		if preload("res://scripts/unique_specials_v261.gd").is_throw(ability_kind):
 			out.append(_label("Hold to charge · release Mouse2 to throw"))
 			out.append(_label("Full charge increases power, speed and reach"))
