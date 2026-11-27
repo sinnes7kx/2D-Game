@@ -1078,7 +1078,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F6:
 			_enter_room("hollow_veil_moor")
 		elif event.physical_keycode == KEY_F7:
-			if OS.is_debug_build() and event.shift_pressed:
+			if OS.is_debug_build() and event.ctrl_pressed:
+				_give_eclipse_dance_trial_v262()
+			elif OS.is_debug_build() and event.shift_pressed:
 				_give_ethereal_trial()
 			else:
 				_give_weapon_test_samples()
@@ -1334,3 +1336,16 @@ func can_access_town_stash() -> bool:
 		return false
 	var chest: Node2D = room_view.get_node_or_null("Gameplay/Stashes/TownStash") as Node2D
 	return chest != null and chest.global_position.distance_to(player.global_position) <= 115.0
+
+# Explicit, one-time debug grant; normal drop probabilities stay unchanged.
+func _give_eclipse_dance_trial_v262() -> void:
+	if inventory.has_collected("v262_eclipse_dance_trial"):
+		ui.show_pickup("ECLIPSE TRIAL ALREADY CLAIMED · OPEN I")
+		return
+	var item: GhostItemInstance = inventory.add_loot(preload("res://items/eclipse_twinblade_v170.tres"),262137,"unique")
+	if item == null:
+		ui.show_pickup(inventory.last_add_failure)
+		return
+	inventory.collected_pickups["v262_eclipse_dance_trial"] = true
+	inventory.save_game()
+	ui.show_pickup("ECLIPSE'S HUNGER · EQUIP · SHIFT + MOUSE2",Color("d8b7c8"))

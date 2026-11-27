@@ -126,6 +126,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	if not ability.is_empty():
 		out.append("[font_size=14][color=%s]%s[/color][/font_size]" % [GOLD,escape(ability)])
 		out.append("[font_size=12][color=#9cb9de]SHIFT + MOUSE2 · SPECIAL ATTACK[/color][/font_size]")
+		if preload("res://scripts/unique_specials_v261.gd").kind(item) == "eclipse_dance":
+			out.append("[font_size=12][color=#9cb9de]REPEAT DURING DANCE · RETREAT COMBO[/color][/font_size]")
 	if not item.weapon_mod.is_empty():
 		var special: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.weapon_mod, ""))
 		if not special.is_empty():
