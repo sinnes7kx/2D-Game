@@ -1,10 +1,19 @@
 extends Resource
 class_name GhostItemData
+const PAINTED_V287 = preload("res://scripts/painted_relic_art_v287.gd")
 ## Item definition. Quality, sockets and variable affixes belong to each dropped instance.
 @export var item_id: String = ""
 @export var display_name: String = ""
 @export_multiline var description: String = ""
-@export var icon: Texture2D
+@export var icon: Texture2D:
+	get:
+		# Keep the original SVG as serialized fallback. Runtime inventory,
+		# stash, tooltips and loot can all use the same painted icon.
+		if not Engine.is_editor_hint():
+			var painted: Texture2D = PAINTED_V287.texture(item_id,"icon")
+			if painted!=null:
+				return painted
+		return icon
 @export var unique: bool = false
 @export_enum("none", "dress", "wings", "trinket", "charm", "wand", "sword", "helm", "companion") var equip_slot: String = "none"
 @export_enum("equipment", "gem", "rune", "quest", "material") var item_class: String = "equipment"
