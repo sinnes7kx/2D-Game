@@ -1,4 +1,5 @@
 extends SceneTree
+const JOURNAL = preload("res://scripts/codex_discoveries.gd")
 const CODE = preload("res://scripts/collector_roll_code_v1931.gd")
 const LOOK = preload("res://scripts/collector_appearance_v177.gd")
 const SURFACE = preload("res://scripts/living_metal_v187.gd")
@@ -28,6 +29,11 @@ func _verify() -> void:
 	var item: GhostItemInstance = inv.generate_find(base,193101,"rare","moonwake_crypt")
 	var born: String = item.birth_roll_code_v1
 	var uid: String = item.birth_roll_uid_v1
+	var journal: Array = []
+	JOURNAL.add_find(journal,item)
+	JOURNAL.add_find(journal,item)
+	assert(journal.size()==1 and journal[0]["code"]==born)
+	assert(JOURNAL.rank("09999-----") < JOURNAL.rank("19999-----"))
 	var stats: Dictionary = item.all_stats()
 	var original: Dictionary = item.cosmetic_snapshot()
 	if not CODE.valid_code(born) or CODE.current(item) != born or uid != item.cosmetic_uid or not MARKUP.item_info(item,true).contains(born):
@@ -52,6 +58,9 @@ func _verify() -> void:
 		return
 	item.apply_cosmetic_uid("fedcba9876543210fedcba9876543210")
 	var current: String = CODE.current(item)
+	JOURNAL.add_find(journal,item)
+	assert(journal.size()==1 and journal[0]["code"]==born)
+	assert(JOURNAL.restore(JSON.parse_string(JSON.stringify(journal)))==journal)
 	if not CODE.valid_code(current) or item.birth_roll_code_v1 != born or item.birth_roll_uid_v1 != uid or item.all_stats() != stats:
 		_fail("Reroll changed original code or combat stats")
 		return

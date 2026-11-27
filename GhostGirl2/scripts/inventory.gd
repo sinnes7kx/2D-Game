@@ -5,6 +5,8 @@ extends Node
 signal contents_changed
 signal equipment_changed
 
+const CODEX = preload("res://scripts/codex_discoveries.gd")
+var codex_discoveries: Array = []
 const ROLL_CODE_V1931 = preload("res://scripts/collector_roll_code_v1931.gd")
 const SAVE_FILE: String = "user://ghost_girl_treasures_v2.json"
 const LEGACY_SAVE_FILE: String = "user://ghost_girl_treasures_v1.json"
@@ -134,6 +136,7 @@ func add_loot(template: GhostItemData, seed_value: int, forced_quality: String =
 		return null
 	contents.append(item)
 	grid_positions.append(pos)
+	CODEX.add_find(codex_discoveries,item)
 	contents_changed.emit()
 	save_game()
 	return item
@@ -423,6 +426,7 @@ func add_existing_item(item: GhostItemInstance) -> GhostItemInstance:
 		return null
 	contents.append(item)
 	grid_positions.append(pos)
+	CODEX.add_find(codex_discoveries,item)
 	contents_changed.emit()
 	equipment_changed.emit()
 	save_game()
@@ -492,7 +496,7 @@ func _build_save_data() -> Dictionary:
 	var saved_vault: Array[Dictionary] = unresolved_vault.duplicate(true)
 	for item in vault:
 		saved_vault.append(_serialize_item(item, stash_position_v284(item)))
-	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "unresolved_backpack": unresolved_backpack.duplicate(true)}
+	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "unresolved_backpack": unresolved_backpack.duplicate(true), "codex_discoveries": codex_discoveries.duplicate(true)}
 
 func save_game() -> bool:
 	if not save_block_reason.is_empty():
@@ -611,6 +615,7 @@ func _restore_save_data(data: Dictionary) -> bool:
 	for key in ["equipment", "collected"]:
 		if not data.get(key, {}) is Dictionary:
 			return false
+	codex_discoveries = CODEX.restore(data.get("codex_discoveries", []))
 	contents.clear()
 	grid_positions.clear()
 	unresolved_backpack.clear()

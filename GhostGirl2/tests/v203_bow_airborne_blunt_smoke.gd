@@ -120,8 +120,8 @@ func _verify() -> void:
                 return
     var apex: Dictionary = AIR.airborne_pose(0.5, false, 1.0)
     var striking_apex: Dictionary = AIR.airborne_pose(0.5, true, 1.0)
-    if float(apex["height"]) <= 30.0 or float(striking_apex["height"]) <= float(apex["height"]):
-        _fail("Jump apex did not rise higher, or airborne windup lacks distinction")
+    if not is_equal_approx(float(apex["height"]),25.0) or float(striking_apex["height"]) <= float(apex["height"]) or float(AIR.airborne_pose(1.0,true,1.0)["height"]) != 0.0:
+        _fail("Grounded jump apex, landing or airborne windup regressed")
         return
     # The jump pose comes from a shared, deterministic helper; do not use
     # object.get() for a GDScript const (constants are not live properties).

@@ -4,6 +4,8 @@ const COMBAT_JUICE = preload("res://scripts/combat_juice_v194.gd")
 const SILK_V226 = preload("res://scripts/silk_motion_v226.gd")
 const PERF_V230 = preload("res://scripts/performance_profiles_v230.gd")
 var collector_lens: Control
+const CODEX_PANEL = preload("res://scripts/codex_panel.gd")
+var codex_panel: Control
 const COLLECTION_VAULT = preload("res://scripts/collection_vault_v181.gd")
 var collection_vault: Control
 ## Minimal node-authored HUD. No dialogue, no lore overlays, no objectives.
@@ -102,9 +104,42 @@ func _ready() -> void:
 	stash_grid.connect("item_hover_cleared",Callable(self,"_hide_item_hover"))
 	item_compare_popup.z_index=180
 	inventory_panel.connect("vault_requested", Callable(self, "_open_collection_vault"))
+	_build_codex_bar()
+
+func _build_codex_bar() -> void:
+	var bar: HBoxContainer = HBoxContainer.new()
+	bar.name = "CodexUtilityBar"
+	$Overlay.add_child(bar)
+	bar.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	bar.offset_left = 20.0
+	bar.offset_right = 224.0
+	bar.offset_top = -54.0
+	bar.offset_bottom = -12.0
+	for entry in [["Menu","Menu","menu"],["Effects","Effects","effects"],["Codex","Discoveries","codex"],["Reliquary","Reliquary","reliquary"]]:
+		var button: Button = Button.new()
+		button.tooltip_text = str(entry[0])
+		button.icon = load("res://assets/ui/codex/"+str(entry[2])+".svg") as Texture2D
+		button.expand_icon = true
+		button.custom_minimum_size = Vector2(44,40)
+		button.focus_mode = Control.FOCUS_NONE
+		button.add_theme_color_override("font_color",Color("d8b98f"))
+		button.button_down.connect(_open_codex_section.bind(str(entry[1])))
+		bar.add_child(button)
+	codex_panel = CODEX_PANEL.new()
+	codex_panel.name = "CodexPanel"
+	$Overlay.add_child(codex_panel)
+	codex_panel.z_index = 85
+
+func _open_codex_section(section: String) -> void:
+	if is_menu_open() or has_cursor_item():
+		return
+	_hide_item_hover()
+	codex_panel.call("show_section",section)
 
 func bind_inventory(value: Node) -> void:
 	inventory_data = value
+	if is_instance_valid(codex_panel):
+		codex_panel.set("inventory",value)
 	if inventory_panel.has_method("bind_inventory"):
 		inventory_panel.call("bind_inventory", value)
 	if equipment_panel.has_method("bind_inventory"):
@@ -253,6 +288,11 @@ func _drop_selected_item(index: int) -> void:
 		inventory_panel.call("clear_selection")
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(codex_panel) and codex_panel.visible:
+		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+			codex_panel.hide()
+			get_viewport().set_input_as_handled()
+		return
 	if is_instance_valid(collector_lens) and collector_lens.visible:
 		if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
 			collector_lens.call("close_lens")
@@ -301,6 +341,9 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if is_instance_valid(codex_panel) and codex_panel.visible:
+		get_viewport().set_input_as_handled()
+		return
 	# Session-only accessibility controls; saves and combat are unaffected.
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_F5 and event.shift_pressed:
@@ -424,7 +467,7 @@ func set_health(current: float, maximum: float) -> void:
 	health_meter.visible = current < maximum
 
 func is_menu_open() -> bool:
-	return inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible) or (is_instance_valid(collection_vault) and collection_vault.visible)
+	return (is_instance_valid(codex_panel) and codex_panel.visible) or inventory_panel.visible or equipment_panel.visible or (is_instance_valid(collector_lens) and collector_lens.visible) or (is_instance_valid(collection_vault) and collection_vault.visible)
 
 func set_stamina(current: float, maximum: float) -> void:
 	stamina_meter.max_value = maximum
