@@ -2,7 +2,7 @@ extends RefCounted
 const GROUND = preload("res://scripts/relic_ground_v288.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const CHANNELS: Dictionary = {
-	"rosemirror_twinblade_v170":{"mode":"spin","drain":17.0,"move":0.74,"radius":111.0,"pulse":0.23,"power":0.34},
+	"rosemirror_twinblade_v170":{"mode":"hybrid","drain":21.0,"move":0.80,"radius":111.0,"pulse":0.23,"power":0.34,"outer_radius":132.0,"outer_power":0.25},
 	"cathedral_thorn_twinblade_v231":{"mode":"cyclone","drain":25.0,"move":0.92,"radius":145.0,"pulse":0.26,"power":0.39}
 }
 const AREAS: Dictionary = {
@@ -16,6 +16,12 @@ const GROUND_SKILLS: Dictionary = {
 	"gallows_greataxe_v283":"ring",
 	"hollowbell_maul_v277":"bells"
 }
+static func bloom_v290(age: float) -> float:
+	return smoothstep(0.35,1.15,age)
+
+static func hybrid_radius_v290(age: float) -> float:
+	return lerpf(111.0,132.0,bloom_v290(age))
+
 static func is_channel(id: String) -> bool:
 	return CHANNELS.has(id)
 
