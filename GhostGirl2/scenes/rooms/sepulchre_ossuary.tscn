@@ -4,6 +4,8 @@
 [ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
 [ext_resource type="Script" path="res://scripts/sepulchre_gauntlet_v266.gd" id="trial"]
 
+[ext_resource type="Script" path="res://scripts/sepulchre_ritual_seal.gd" id="seal"]
+
 [sub_resource type="RectangleShape2D" id="horizontal"]
 size = Vector2(1600, 100)
 
@@ -111,3 +113,13 @@ position = Vector2(420, 650)
 
 [node name="Well6" type="Marker2D" parent="Gameplay/SpawnWells"]
 position = Vector2(800, 535)
+
+[node name="RitualSeal1" type="Node2D" parent="Gameplay"]
+position = Vector2(300, 780)
+script = ExtResource("seal")
+seal_name = "Ossuary seal"
+
+[node name="RitualSeal2" type="Node2D" parent="Gameplay"]
+position = Vector2(1300, 400)
+script = ExtResource("seal")
+seal_name = "Bone seal"
