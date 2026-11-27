@@ -13,6 +13,7 @@ var room_root: Node2D
 var actor: Node2D
 var anchors: Array[Dictionary] = []
 var lights: Array[PointLight2D] = []
+var halos: Array[Sprite2D] = []
 var far_mist: ColorRect
 var near_mist: ColorRect
 var clock: float = 0.0
@@ -26,6 +27,10 @@ static func profile(key: String) -> Dictionary:
 		return {"ink":Color("85899f"),"far":0.115,"near":0.062,"drift":8.0}
 	if key in WARM_ROOMS:
 		return {"ink":Color("a68b8d"),"far":0.066,"near":0.029,"drift":3.0}
+	if key in ["garden","garden_bridge","garden_arbor","glasshouse"]:
+		return {"ink":Color("9b93a4"),"far":0.078,"near":0.032,"drift":5.5}
+	if key=="observatory":
+		return {"ink":Color("7e83b5"),"far":0.082,"near":0.034,"drift":2.5}
 	return {"ink":Color("85809c"),"far":0.085,"near":0.036,"drift":4.5}
 
 func setup(root: Node2D, player: Node2D, key: String) -> void:
@@ -42,6 +47,9 @@ func _ready() -> void:
 	var bounds: Rect2 = _room_bounds()
 	far_mist=_make_mist(bounds,-43,0.0,0.84)
 	near_mist=_make_mist(bounds,38,4.0,0.56)
+	var emissive: CanvasItemMaterial = CanvasItemMaterial.new()
+	emissive.blend_mode=CanvasItemMaterial.BLEND_MODE_ADD
+	emissive.light_mode=CanvasItemMaterial.LIGHT_MODE_UNSHADED
 	for i in range(MAX_LIGHTS):
 		var lamp: PointLight2D = PointLight2D.new()
 		lamp.name="NearbyLight%02d"%i
@@ -55,6 +63,15 @@ func _ready() -> void:
 		lamp.enabled=false
 		add_child(lamp)
 		lights.append(lamp)
+		var halo: Sprite2D = Sprite2D.new()
+		halo.name="LanternHalo%02d"%i
+		halo.texture=TEXTURES.shadow()
+		halo.material=emissive
+		halo.z_as_relative=false
+		halo.z_index=36
+		halo.visible=false
+		add_child(halo)
+		halos.append(halo)
 	initialized=true
 	_refresh()
 
@@ -126,17 +143,19 @@ func _process(delta: float) -> void:
 		_refresh()
 
 func _refresh() -> void:
+	var changed: bool = revision!=SETTINGS.revision or perf_revision!=PERF.revision
 	revision=SETTINGS.revision
 	perf_revision=PERF.revision
 	var strength: float = SETTINGS.strength()
-	var p: Dictionary = profile(room_key)
-	far_mist.visible=strength>0.0
-	near_mist.visible=SETTINGS.foreground_fog()
-	for rect in [far_mist,near_mist]:
-		var mat: ShaderMaterial = rect.material as ShaderMaterial
-		mat.set_shader_parameter("fog_ink",p["ink"])
-		mat.set_shader_parameter("density",float(p["far"] if rect==far_mist else p["near"])*strength)
-		mat.set_shader_parameter("drift",float(p["drift"])*(1.0 if rect==far_mist else 1.65))
+	if changed:
+		var p: Dictionary = profile(room_key)
+		far_mist.visible=strength>0.0
+		near_mist.visible=SETTINGS.foreground_fog()
+		for rect in [far_mist,near_mist]:
+			var mat: ShaderMaterial = rect.material as ShaderMaterial
+			mat.set_shader_parameter("fog_ink",p["ink"])
+			mat.set_shader_parameter("density",float(p["far"] if rect==far_mist else p["near"])*strength)
+			mat.set_shader_parameter("drift",float(p["drift"])*(1.0 if rect==far_mist else 1.65))
 	var budget: int = SETTINGS.light_budget()
 	var candidates: Array[Dictionary] = []
 	if budget>0 and is_instance_valid(actor):
@@ -163,6 +182,8 @@ func _refresh() -> void:
 		var lamp: PointLight2D = lights[i]
 		var active: bool = i<budget and i<candidates.size()
 		lamp.enabled=active
+		var halo: Sprite2D = halos[i]
+		halo.visible=active
 		if not active:
 			continue
 		var entry: Dictionary = candidates[i]
@@ -171,3 +192,8 @@ func _refresh() -> void:
 		lamp.texture_scale=float(entry["diameter"])/128.0
 		lamp.color=entry["color"]
 		lamp.energy=float(entry["energy"])*strength*flicker
+		# Small emissive bloom at the source, not a full-screen glow pass.
+		halo.global_position=entry["at"]
+		halo.scale=Vector2.ONE*(float(entry["diameter"])*0.46/64.0)
+		var tint: Color = entry["color"]
+		halo.modulate=Color(tint.r,tint.g,tint.b,0.12*strength*flicker)
