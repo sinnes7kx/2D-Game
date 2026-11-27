@@ -12,7 +12,13 @@ func _initialize() -> void:
 func _verify() -> void:
 	assert(MECHANICS.CHANNELS.size()==2)
 	assert(MECHANICS.AREAS.size()==3)
-	assert(MECHANICS.GROUND_SKILLS.size()==3)
+	assert(MECHANICS.GROUND_SKILLS.size()==4)
+	assert(MECHANICS.GROUND_SKILLS["hollowbell_maul_v277"]=="bells")
+	assert(MECHANICS.parry_contact_v289(Vector2(100,20),Vector2.RIGHT))
+	assert(not MECHANICS.parry_contact_v289(Vector2(-100,0),Vector2.RIGHT))
+	assert(not MECHANICS.parry_contact_v289(Vector2(300,0),Vector2.RIGHT))
+	assert(MECHANICS.cooldown("ivory_duelist_rapier_v286")==2.5)
+	assert(MECHANICS.cooldown("hollowbell_maul_v277")==5.0)
 	var spin: Dictionary = MECHANICS.CHANNELS["rosemirror_twinblade_v170"]
 	var cyclone: Dictionary = MECHANICS.CHANNELS["cathedral_thorn_twinblade_v231"]
 	assert(spin["mode"]=="spin" and cyclone["mode"]=="cyclone")
