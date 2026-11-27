@@ -88,6 +88,25 @@ static func seraph_axis(heading: Vector2, progress: float, impact: float, left: 
 	var angle: float = lerpf(-1.25,0.0,t/hit) if t<=hit else lerpf(0.0,1.12,(t-hit)/(1.0-hit))
 	return heading.normalized().rotated(angle*(-1.0 if left else 1.0))
 
+static func diagonal_attack_span(clip: String,frame: int) -> PackedVector2Array:
+	var anchor: Vector2 = DIAGONAL.wrist(clip,frame)
+	if anchor==Vector2.INF:
+		return PackedVector2Array()
+	var direction: String = DIAGONAL.diagonal_name(clip)
+	var heading: Vector2 = DIAGONAL.heading_v294(direction)
+	if heading.is_zero_approx():
+		return PackedVector2Array()
+	var i: int = clampi(frame,0,7)
+	var left: bool = direction.ends_with("left")
+	var rapier: bool = clip.contains("rapier_")
+	var angles: Array[float] = [-1.25,-1.55,-0.75,0.0,0.34,1.05,0.64,-0.38]
+	if rapier:
+		angles.assign([-0.75,-0.95,-0.40,0.0,0.0,0.17,-0.45,-0.75])
+	elif clip.contains("_heavy_"):
+		angles.assign([-1.35,-1.65,-1.20,-0.35,0.0,1.25,0.80,-0.38])
+	var axis: Vector2 = heading.rotated(angles[i]*(-1.0 if left else 1.0))
+	return PackedVector2Array([anchor,anchor+axis*(84.0 if rapier else 68.0)])
+
 static func cutting_edge(id: String, painted: bool = false) -> PackedVector2Array:
 	if id=="seraph_reaper_v292":
 		return PackedVector2Array([Vector2(16,-45),Vector2(35,-46),Vector2(55,-44),Vector2(78,-33),Vector2(86,-16),Vector2(79,0)])
