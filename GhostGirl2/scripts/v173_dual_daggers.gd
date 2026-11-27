@@ -3,7 +3,7 @@ extends Node2D
 ## 8 frames x 4 directions for idle, walk, A/B/C light combo and heavy.
 ## Each hand gets an independently authored tip path, driven by frame index.
 const ITEM_ID: String = "moonlace_dual_daggers_v173"
-const BLADE_LENGTH: float = 35.0
+const BLADE_LENGTH: float = 50.0
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const BLADE_SCRIPT = preload("res://scripts/v173_dual_dagger_blade.gd")
@@ -81,7 +81,7 @@ func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 	if not diagonal.diagonal_name(animation_name).is_empty():
 		if not is_active(animation_name):
 			return []
-		var carried: Array = diagonal.paired_spans(animation_name,frame_index,BLADE_LENGTH)
+		var carried: Array = diagonal.paired_dagger_attack_spans(animation_name,frame_index,BLADE_LENGTH) if diagonal.is_modular_combat_v294(animation_name) else diagonal.paired_spans(animation_name,frame_index,BLADE_LENGTH)
 		if GENTLE.modular_idle(animation_name):
 			for hand in range(carried.size()):
 				carried[hand] = GENTLE.smooth(body,animation_name,carried[hand],hand)
