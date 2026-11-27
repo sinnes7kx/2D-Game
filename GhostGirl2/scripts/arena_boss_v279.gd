@@ -143,7 +143,8 @@ func _physics_process(delta: float) -> void:
 	hook_cooldown=maxf(0.0,hook_cooldown-delta)
 	frost_left=maxf(0.0,frost_left-delta)
 	poise=maxf(0.0,poise-delta*8.0)
-	phase=2 if health<=maximum_health*0.50 else 1
+	if health<=maximum_health*0.50 and mode==SEEK:
+		phase=2
 	timer=maxf(0.0,timer-delta)
 	var offset: Vector2 = player.global_position-global_position
 	var distance: float = offset.length()
@@ -321,7 +322,8 @@ func hit(amount: float, poise_multiplier: float = 1.0) -> void:
 	flash=0.13
 	# Only deliberate high-poise attacks efficiently break the guard.
 	var pressure: float = 0.56 if poise_multiplier>=1.15 else 0.20
-	poise+=maxf(0.0,amount)*maxf(0.5,poise_multiplier)*pressure
+	if mode!=STAGGER:
+		poise+=maxf(0.0,amount)*maxf(0.5,poise_multiplier)*pressure
 	if factor<1.0:
 		AUDIO.play(get_parent(),global_position,"arrow_metal",-20.0)
 	if health<=0.0:
@@ -341,7 +343,7 @@ func _stagger(duration: float) -> void:
 	poise=0.0
 	followups.clear()
 	release_left=0.0
-	opening="GUARD BROKEN" if boss_id=="iron" else ("CHANNEL INTERRUPTED" if boss_id=="astral" else "STAGGERED")
+	opening="GUARD BROKEN" if boss_id=="iron" else "STAGGERED"
 	mode=STAGGER
 	timer=duration
 	attack=""
@@ -353,6 +355,7 @@ func on_hook_yank(_destination: Vector2,_strength: float) -> void:
 	if not dead and boss_id=="astral" and mode==TELL and attack=="astral_beam" and hook_cooldown<=0.0:
 		hook_cooldown=3.0
 		_stagger(2.15)
+		opening="CHANNEL INTERRUPTED"
 
 func apply_frost_slow(seconds: float,factor: float) -> void:
 	frost_left=maxf(frost_left,seconds*0.65)
@@ -371,7 +374,7 @@ func _draw() -> void:
 	if mode==WAVE:
 		draw_arc(Vector2.ZERO,wave_radius,0,TAU,96,Color(ink.r,ink.g,ink.b,0.22),WAVE_HALF*2.0,true)
 		draw_arc(Vector2.ZERO,wave_radius,0,TAU,96,ink,3.0,true)
-	if mode==TELL or (release_left>0.0 and mode!=INTERVAL):
+	if mode==TELL or (release_left>0.0 and mode==RECOVER):
 		var a: float = 0.55 if release_left>0.0 else 0.20+0.22*(1.0-timer/maxf(0.01,total))
 		_draw_tell(ink,a)
 	draw_texture_rect(SHADOW.shadow(),Rect2(-68,-19,136,38),false,Color(0.03,0.02,0.05,0.68))
@@ -379,7 +382,10 @@ func _draw() -> void:
 	var bob: float = sin(age*3.0)*(3.0 if boss_id=="astral" else 1.2)
 	var lean: float = direction.x*(4.0 if mode==TELL else 1.5)
 	var tint: Color = Color.WHITE.lerp(ink,0.55) if flash>0.0 else Color.WHITE
-	draw_texture_rect(tex,Rect2(-78+lean,-160+bob,156,160),false,tint)
+	var stride: float = sin(age*15.0)*3.0 if mode==CHARGE else 0.0
+	draw_texture_rect(tex,Rect2(-78+lean,-160+bob+stride,156,160),false,tint)
+	if boss_id=="iron" and mode in [SEEK,TELL,INTERVAL] and poise>0.0:
+		draw_arc(Vector2(0,-95),39.0,-PI*0.5,-PI*0.5+TAU*clampf(poise/65.0,0.0,1.0),32,Color("f2c695"),2.6,true)
 	if boss_id=="iron" and mode in [SEEK,TELL,INTERVAL]:
 		draw_arc(Vector2.ZERO,57.0,direction.angle()-1.14,direction.angle()+1.14,24,Color(ink.r,ink.g,ink.b,0.75),3.0,true)
 	if boss_id=="astral" and mode not in [RECOVER,STAGGER]:
