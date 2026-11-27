@@ -257,6 +257,7 @@ func _ready() -> void:
 	V172_POSE_SCRIPT.install_attack_frames(body_art)
 	CROSSBOW_V236.install(body_art.sprite_frames)
 	FORGE_V238.install(body_art.sprite_frames)
+	preload("res://scripts/weapon_models_v283.gd").install(body_art.sprite_frames)
 	V173_DUAL_DAGGER_SCRIPT.install_animations(body_art)
 	V174_DUAL_SWORD_SCRIPT.install_animations(body_art)
 	V175_CLEAN_WEAPON_BODY.install(body_art)
@@ -857,7 +858,7 @@ func _weapon_motion_prefix(moving: bool) -> String:
 	if world.inventory.get_equipped("wand") != null:
 		return "wand_walk_" if moving else "wand_idle_"
 	var style: String = _weapon_style()
-	if style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
+	if style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword", "rapier", "axe"]:
 		return _weapon_art_style() + ("_walk_" if moving else "_idle_")
 	if style == "blade":
 		return "sword_modular_" + ("walk_" if moving else "idle_") if _uses_modular_sword() else ("sword_walk_" if moving else "sword_idle_")
@@ -875,6 +876,8 @@ func _melee_cost(heavy: bool) -> float:
 		"dual_sword": return base * 1.14
 		"spear": return base * 1.09
 		"maul": return base * 1.25
+		"rapier": return base * 0.90
+		"axe": return base * 1.20
 		"twinblade": return base * 0.90
 		_: return base
 
@@ -1228,8 +1231,8 @@ func _begin_jump_attack(_from_heavy_button: bool = true) -> void:
 	var attack_animation: String = ""
 	var holding_sword: bool = world.inventory != null and world.inventory.get_equipped("sword") != null
 	if holding_sword:
-		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
-			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if active_attack_style in ["dagger", "dual_dagger", "spear"] else "_heavy_") + facing_name
+		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword", "rapier", "axe"]:
+			attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if active_attack_style in ["dagger", "dual_dagger", "spear", "rapier"] else "_heavy_") + facing_name
 		else:
 			attack_animation = ("attack_sword_modular_heavy_" if _uses_modular_sword() else "attack_sword_heavy_") + facing_name
 	else:
@@ -1786,6 +1789,12 @@ func _begin_attack(heavy: bool) -> void:
 		"spear":
 			attack_duration = 0.96 if heavy else [0.53, 0.56, 0.60][combo_step]
 			attack_hit_threshold = 0.57
+		"rapier":
+			attack_duration = 0.73 if heavy else [0.35,0.37,0.40][combo_step]
+			attack_hit_threshold = 0.51
+		"axe":
+			attack_duration = 1.03 if heavy else [0.57,0.61,0.65][combo_step]
+			attack_hit_threshold = 0.52
 		"maul":
 			attack_duration = 1.13 if heavy else [0.67, 0.70, 0.74][combo_step]
 			attack_hit_threshold = 0.54
@@ -1834,10 +1843,10 @@ func _begin_attack(heavy: bool) -> void:
 	if counter_window > 0.0 and active_attack_style == "dual_sword":
 		# A dedicated crossed-blade riposte on the existing confirmed counter.
 		attack_animation = "attack_dual_sword_riposte_" + facing_name
-	elif counter_window > 0.0 and active_attack_style not in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
+	elif counter_window > 0.0 and active_attack_style not in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword", "rapier", "axe"]:
 		attack_animation = ("attack_sword_modular_counter_" if _uses_modular_sword() else "attack_counter_") + facing_name
 	elif holding_sword:
-		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword"]:
+		if active_attack_style in ["scythe", "halberd", "dagger", "spear", "maul", "twinblade", "dual_dagger", "dual_sword", "rapier", "axe"]:
 			if active_attack_style == "dagger":
 				# Always use the hand-anchored thrust, not the legacy slash atlas.
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
@@ -1847,7 +1856,7 @@ func _begin_attack(heavy: bool) -> void:
 				attack_animation = "attack_dual_dagger_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
 			elif active_attack_style == "dual_sword" and not heavy:
 				attack_animation = "attack_dual_sword_light_" + ["a", "b", "c"][combo_step] + "_" + facing_name
-			elif active_attack_style == "spear":
+			elif active_attack_style in ["spear","rapier"]:
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_pierce_" if heavy else "_pierce_") + facing_name
 			else:
 				attack_animation = "attack_" + _weapon_art_style() + ("_heavy_" if heavy else "_light_") + facing_name
@@ -1999,6 +2008,16 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 			power *= 1.18 if heavy_attack else 0.96
 			attack_arc = 0.64 if heavy_attack else 0.71
 			poise_bonus = 1.12
+		"rapier":
+			reach = 214.0 if heavy_attack else 176.0
+			power *= 1.10 if heavy_attack else 0.94
+			attack_arc = 0.86 if heavy_attack else 0.91
+			poise_bonus = 0.85
+		"axe":
+			reach = 208.0 if heavy_attack else 172.0
+			power *= 1.37 if heavy_attack else 1.09
+			attack_arc = -0.02 if heavy_attack else 0.15
+			poise_bonus = 1.52
 		"maul":
 			# Slow and committed, with a broad impact and exceptional stagger.
 			reach = 211.0 if heavy_attack else 173.0
