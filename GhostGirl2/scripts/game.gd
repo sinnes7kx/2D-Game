@@ -535,7 +535,7 @@ func _process(_delta: float) -> void:
 		var switch_hint: String = _rose_switch_hint()
 		if switch_hint.is_empty() and player.carrying == null:
 			switch_hint = _rose_weight_hint()
-		ui.set_prompt("G  DROP    R  THROW" if player.carrying != null else switch_hint)
+		ui.set_prompt("G  DROP    Y  THROW" if player.carrying != null else switch_hint)
 	elif current_target.is_in_group("arena_challenge_v279"):
 		ui.set_prompt(str(current_target.call("prompt_text")))
 	elif current_target.is_in_group("sepulchre_v266"):
