@@ -1104,3 +1104,7 @@ Use metrics to improve joy and trust, not to manipulate rarity odds or trigger c
 - No broad rewrite, broken save compatibility, or “feature complete” announcement without real tests.
 
 **North star check before every change:** *Does this make a cherished rare item more exciting to find, safer to own, easier to admire, or more meaningful to show and eventually trade—without making ordinary collecting frustrating?* If not, explain why it deserves priority now.
+
+
+### Penitent’s Descent — forward lunge unique (source implementation; runtime review pending)
+- Add a new Penitent Longsword base with an original SVG fallback icon and a unique-only committed forward plunge activated with Shift+Mouse2. Use the existing collision-respecting melee movement, narrow forward hit cone, obstruction checks, 1.40x heavy strike multiplier, 1.35x poise multiplier and 3-second recharge; no extra projectile or invulnerability. Existing modular sword poses reused; bespoke plunge artwork and visual testing remain pending. Route a subset of the existing single-sword drop lane to the new base without changing the general quality odds or saved item fields. Extend the registered single-sword smoke test. Dungeon prototype, enemy artwork, wand sounds and descending music phrase remain separate work; no claim that these are implemented.
