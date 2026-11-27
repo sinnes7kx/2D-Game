@@ -1,5 +1,6 @@
 extends RefCounted
 ## Base-specific abilities of genuine unique weapons. No changes to loot rolls.
+const ARSENAL = preload("res://scripts/relic_arsenal_v277.gd")
 const SPECIALS: Dictionary = {
 	"moonwarden_spear_v169": "heavens_reach",
 	"briarwake_trident_v171": "drowned_fork",
@@ -30,12 +31,14 @@ const NAMES: Dictionary = {
 }
 
 static func kind(item: Variant) -> String:
-	if item == null or item.definition == null or item.quality != "unique" or item.is_broken():
+	if item == null or item.definition == null or (item.quality != "unique" and not item.definition.unique) or item.is_broken():
 		return ""
-	return str(SPECIALS.get(str(item.definition.item_id),""))
+	var base: String = str(item.definition.item_id)
+	return base if ARSENAL.has_skill(base) else str(SPECIALS.get(base,""))
 
 static func label(item: Variant) -> String:
-	return str(NAMES.get(kind(item),""))
+	var id: String = kind(item)
+	return ARSENAL.label(id) if ARSENAL.has_skill(id) else str(NAMES.get(id,""))
 
 static func count(id: String) -> int:
 	return 3 if id in ["drowned_fork","roseglass_fan","reliquary_fan"] else 1
@@ -64,6 +67,9 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 			var span: PackedVector2Array = rig.call("get_weapon_span",str(body.animation),body.frame)
 			if span.size() == 2:
 				origin = body.to_global(span[0])
+	if ARSENAL.has_skill(id):
+		ARSENAL.launch(actor,item,heading,id,origin)
+		return
 	var n: int = count(id)
 	var power: float = (34.0 + item.weapon_damage()) * (1.0+float(actor.call("_stat","melee_power_pct"))/100.0) * (1.0+float(actor.call("_stat","heavy_power_pct"))/100.0)
 	if is_throw(id):
