@@ -36,7 +36,7 @@ static func is_dagger_throw(id: String) -> bool:
 	return id in ["vespers_return","ember_return","roseglass_fan"]
 
 static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vector2, id: String) -> void:
-	if kind(item) != id or heading.is_zero_approx() or id == "eclipse_dance":
+	if kind(item) != id or heading.is_zero_approx() or id == "eclipse_dance" or actor.call("thrown_weapon_busy_v273"):
 		return
 	var world: Node = actor.get("world")
 	var root: Node = actor.get_tree().current_scene
@@ -63,6 +63,7 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		root.add_child(dagger)
 		dagger.global_position = origin
 		world.call("track_room_effect",dagger)
+		actor.call("register_thrown_weapon_v273",dagger)
 		return
 	for i in range(n):
 		var shot: Node2D = preload("res://scripts/special_projectile_v261.gd").new()
@@ -81,3 +82,5 @@ static func launch(actor: CharacterBody2D, item: GhostItemInstance, heading: Vec
 		root.add_child(shot)
 		shot.global_position = origin
 		world.call("track_room_effect",shot)
+		if id in ["heavens_reach","drowned_fork","roseglass_fan"]:
+			actor.call("register_thrown_weapon_v273",shot)

@@ -196,12 +196,12 @@ func _draw_ribbon() -> void:
 	for i in range(points.size()-1):
 		var u: float = float(i)/float(points.size()-1)
 		var fade: float = pow(1.0-u,1.8)*alpha
-		var width: float = lerpf(1.0,8.0 if returning else 5.2,1.0-u)
+		var width: float = lerpf(1.0,11.0 if returning else 7.5,1.0-u)
 		var ink: Color = _palette_at(traveled*0.003-u*0.36)
 		var edge: Color = ink.lerp(Color.WHITE,0.32)
 		draw_line(points[i],points[i+1],Color(ink.r,ink.g,ink.b,fade*0.11),width*1.65,true)
-		draw_line(points[i],points[i+1],Color(ink.r,ink.g,ink.b,fade*(0.46 if returning else 0.31)),width*0.68,true)
-		draw_line(points[i],points[i+1],Color(edge.r,edge.g,edge.b,fade*(0.70 if returning else 0.47)),maxf(0.65,width*0.20),true)
+		draw_line(points[i],points[i+1],Color(ink.r,ink.g,ink.b,fade*(0.72 if returning else 0.56)),width*0.68,true)
+		draw_line(points[i],points[i+1],Color(edge.r,edge.g,edge.b,fade*(0.92 if returning else 0.76)),maxf(0.65,width*0.20),true)
 	if returning and points.size()>6:
 		for j in range(2):
 			var idx: int = 3+j*3

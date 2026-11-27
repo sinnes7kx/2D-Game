@@ -129,6 +129,15 @@ var attack_direction: Vector2 = Vector2.DOWN
 var buffered_attack_direction: Vector2 = Vector2.ZERO
 var buffered_attack_valid: bool = false
 var buffered_special_v261: bool = false
+var thrown_lock_v273 = preload("res://scripts/thrown_weapon_lock_v273.gd").new()
+
+func thrown_weapon_busy_v273() -> bool:
+	return thrown_lock_v273.busy()
+
+func register_thrown_weapon_v273(shot: Node) -> void:
+	thrown_lock_v273.register(shot)
+	queued_action=""
+	buffered_attack_valid=false
 var special_mouse_frame_v272: int = -100
 var twinblade_weapon_v272: GhostItemInstance
 var twinblade_second_v272: bool = false
@@ -796,6 +805,8 @@ func _weapon_motion_prefix(moving: bool) -> String:
 	return "walk_" if moving else "idle_"
 
 func _melee_cost(heavy: bool) -> float:
+	if thrown_weapon_busy_v273():
+		return INF
 	var base: float = _action_cost(HEAVY_ATTACK_COST if heavy else LIGHT_ATTACK_COST, false)
 	match _weapon_style():
 		"scythe": return base * 1.05
@@ -809,6 +820,8 @@ func _melee_cost(heavy: bool) -> float:
 		_: return base
 
 func _attack_action_cost(heavy: bool) -> float:
+	if thrown_weapon_busy_v273():
+		return INF
 	if _weapon_style() == "crossbow":
 		return _action_cost(26.0 if heavy else 18.0, false)
 	if _weapon_style() == "bow":
@@ -921,7 +934,7 @@ func _begin_spell_cast(heavy: bool = false, moonfall: bool = false) -> void:
 	_begin_spell_cast_v127(heavy, moonfall, "")
 
 func _begin_spell_cast_v127(heavy: bool, moonfall: bool, new_kind: String) -> void:
-	if carrying != null:
+	if thrown_weapon_busy_v273() or carrying != null:
 		return
 	var spell_cost: float = (40.0 if new_kind == "astral" else 32.0) if not new_kind.is_empty() else (37.0 if moonfall else (HEAVY_ATTACK_COST if heavy else LIGHT_ATTACK_COST))
 	var cost: float = _action_cost(spell_cost)
@@ -976,6 +989,7 @@ func _advance_spell(delta: float) -> void:
 		_update_hand()
 
 func reset_action_state() -> void:
+	thrown_lock_v273.clear()
 	_clear_eclipse_dance_v262()
 	active_special_v261 = ""
 	special_weapon_v261 = null
@@ -1762,6 +1776,8 @@ func _combat_aim_direction() -> Vector2:
 	return facing
 
 func _queue_combat(action: String) -> void:
+	if action in ["light","heavy"] and thrown_weapon_busy_v273():
+		return
 	queued_action = action
 	queue_time_left = INPUT_BUFFER
 	if action == "light" or action == "heavy":

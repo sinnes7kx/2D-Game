@@ -2,7 +2,7 @@ extends RefCounted
 ## Pure, presentation-only vault filter/sort helpers.
 ## Never changes item order in inventory.contents/inventory.vault.
 const QUALITY_ORDER := {"normal": 0, "magic": 1, "rare": 2, "set": 3, "unique": 4}
-const FAMILIES: Array[String] = ["all", "sword", "wand", "dress", "wings", "helm", "trinket", "charm"]
+const FAMILIES: Array[String] = ["all", "sword", "wand", "dress", "wings", "helm", "trinket", "charm", "companion"]
 const QUALITIES: Array[String] = ["all", "normal", "magic", "rare", "set", "unique"]
 
 static func filtered(items: Array, family: String = "all", quality: String = "all", order: int = 0, favorites_only: bool = false, query: String = "") -> Array[GhostItemInstance]:

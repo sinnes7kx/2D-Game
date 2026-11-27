@@ -16,6 +16,10 @@ var look: Dictionary = {}
 var colors: Array[Color] = []
 var wing_colors: Array[Color] = []
 var wing_shape: int = 0
+var fx_profile: Dictionary = {}
+var aura_colors: Array[Color] = []
+var wake: Array[Vector2] = []
+var wake_clock: float = 0.0
 var familiar: GhostItemInstance = null
 
 func _ready() -> void:
@@ -43,6 +47,9 @@ func _process(delta: float) -> void:
             colors = RNG.gradient_for_channel(familiar.cosmetic_uid, familiar.visual_seed(), "companion-v239", familiar.gradient_version)
             wing_colors=RNG.gradient_for_channel(familiar.cosmetic_uid,familiar.visual_seed(),"familiar-wings-v272",familiar.gradient_version)
             wing_shape=posmod(hash("%s|%d|familiar-wing-v272" % [familiar.cosmetic_uid,familiar.visual_seed()]),4)
+            fx_profile=profile_v273(familiar.cosmetic_uid,familiar.visual_seed())
+            aura_colors=RNG.gradient_for_channel(familiar.cosmetic_uid,familiar.visual_seed(),"familiar-aura-v273",familiar.gradient_version)
+            wake.clear()
     time_alive += delta
     var facing: String = str(actor.get("facing_name"))
     var side: float = 1.0 if facing == "left" else -1.0
@@ -52,8 +59,19 @@ func _process(delta: float) -> void:
         check_time = 0.42
         if not subdued:
             _find_secret()
+    if int(look.get("particle_tier",0))<6:
+        var motion: int = int(fx_profile.get("motion",0))
+        normal+=Vector2(sin(time_alive*(0.44+motion*0.09))*float(3+motion*2),cos(time_alive*0.8)*float(motion*2))
     var desired: Vector2 = normal + target_hint * curiosity
     position = position.lerp(desired, minf(1.0, delta * 4.4))
+    wake_clock+=delta
+    if wake_clock>=0.075:
+        wake_clock=0.0
+        if not wake.is_empty() and wake[0].distance_to(global_position)>100.0:
+            wake.clear()
+        wake.push_front(global_position)
+        if wake.size()>9:
+            wake.pop_back()
     queue_redraw()
 
 func _find_secret() -> void:
@@ -127,6 +145,8 @@ func _draw_equipped_wisp() -> void:
     draw_circle(core + Vector2(-1, -1), 1.6, Color("fff5ff"))
     if FX.intensity <= 0.0:
         return
+    if tier<6:
+        _draw_seeded_layers_v273(core,hue,accent,tier)
     draw_circle(core, 13.0 + tier, Color(hue.r, hue.g, hue.b, FX.alpha(0.12)))
     var count: int = 2+mini(tier,4)
     for i in range(count):
@@ -151,3 +171,66 @@ func _draw_equipped_wisp() -> void:
             var a: float = time_alive * 0.85 - t * 2.8
             var p: Vector2 = core + Vector2(cos(a) * 19.0, sin(a) * 10.0)
             draw_circle(p, 2.4 * (1.0 - t), Color(hue.r, hue.g, hue.b, FX.alpha(0.7 * (1.0 - t))))
+
+static func profile_v273(uid: String,seed: int) -> Dictionary:
+    var key: String = "%s|%d|familiar-v273" % [uid,seed]
+    return {"aura":posmod(hash(key+"|aura"),6),"orbit":posmod(hash(key+"|orbit"),5),"motif":posmod(hash(key+"|motif"),8),"trail":posmod(hash(key+"|trail"),4),"motion":posmod(hash(key+"|motion"),4)}
+
+func _draw_seeded_layers_v273(core: Vector2,hue: Color,accent: Color,tier: int) -> void:
+    var aura: Color = RNG.sample_palette(aura_colors,0.4) if not aura_colors.is_empty() else hue
+    var strength: float = FX.alpha(0.30+float(tier)*0.07)
+    var pulse: float = 0.70+0.30*sin(time_alive*1.1)
+    var radius: float = 12.0+float(tier)*1.5
+    var phase: float = time_alive*0.45
+    var shape: int = int(fx_profile.get("aura",0))
+    match shape:
+        0:
+            draw_circle(core,radius,Color(aura.r,aura.g,aura.b,strength*0.14*pulse))
+            draw_arc(core,radius,phase,phase+PI*1.35,28,Color(aura.r,aura.g,aura.b,strength*0.48),1.0,true)
+        1:
+            for j in range(2):
+                draw_arc(core,radius+float(j)*4.0,phase+float(j)*PI,phase+PI*1.25+float(j)*PI,24,Color(aura.r,aura.g,aura.b,strength*0.35),1.0,true)
+        2:
+            var points: PackedVector2Array = PackedVector2Array()
+            for j in range(7):
+                points.append(core+Vector2.from_angle(phase+float(j)*TAU/6.0)*radius)
+            draw_polyline(points,Color(aura.r,aura.g,aura.b,strength*0.43),1.0,true)
+        3:
+            draw_arc(core+Vector2(3,0),radius,phase,phase+PI*1.45,24,Color(aura.r,aura.g,aura.b,strength*0.7),2.2,true)
+        4:
+            for j in range(3):
+                var p: Vector2 = core+Vector2.from_angle(phase+float(j)*TAU/3.0)*radius
+                draw_line(p-Vector2(0,3),p+Vector2(0,3),Color(aura.r,aura.g,aura.b,strength),1.0,true)
+        _:
+            draw_circle(core,radius*pulse,Color(aura.r,aura.g,aura.b,strength*0.09))
+            draw_circle(core,radius*0.65,Color(aura.r,aura.g,aura.b,strength*0.18))
+    var orbit: int = int(fx_profile.get("orbit",0))
+    var motif: int = int(fx_profile.get("motif",0))
+    for j in range(2+mini(tier,3)):
+        var a: float = phase*(1.0+float(orbit)*0.15)+float(j)*TAU/float(2+mini(tier,3))
+        var p: Vector2 = core+Vector2(cos(a)*radius,sin(a*(2.0 if orbit==2 else 1.0))*radius*(0.54+orbit*0.07))
+        var c: Color = RNG.sample_palette(colors,float(j)*0.23+0.1)
+        c.a=strength*pulse
+        match motif:
+            0,1: draw_circle(p,1.25,c)
+            2,3:
+                draw_line(p-Vector2(2.5,0),p+Vector2(2.5,0),c,0.8,true)
+                draw_line(p-Vector2(0,2.5),p+Vector2(0,2.5),c,0.8,true)
+            4: draw_arc(p,2.8,a,a+PI,9,c,0.9,true)
+            5: draw_colored_polygon(PackedVector2Array([p+Vector2(0,-2.8),p+Vector2(1.8,0),p+Vector2(0,2.8),p+Vector2(-1.8,0)]),c)
+            6: draw_line(p,p+Vector2.from_angle(a)*4.0,c,1.0,true)
+            _: draw_circle(p,2.2,Color(c.r,c.g,c.b,c.a*0.4))
+    if tier>=1:
+        var trail_style: int = int(fx_profile.get("trail",0))
+        for j in range(1,wake.size()):
+            var p: Vector2 = to_local(wake[j])
+            var a: float = strength*(1.0-float(j)/float(wake.size()))*0.62
+            var c: Color = Color(accent.r,accent.g,accent.b,a)
+            if trail_style==0:
+                draw_line(to_local(wake[j-1]),p,c,1.8,true)
+            elif trail_style==1:
+                draw_circle(p,1.2,c)
+            elif trail_style==2:
+                draw_circle(p,3.0,Color(c.r,c.g,c.b,c.a*0.3))
+            else:
+                draw_line(p+Vector2(-2,0),p+Vector2(2,0),c,0.8,true)
