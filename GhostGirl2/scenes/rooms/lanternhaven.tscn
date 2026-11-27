@@ -575,3 +575,19 @@ script = ExtResource("v261_familiar")
 item_data = ExtResource("v261_pet")
 pickup_id = "v261_lanternhaven_moonwisp_02"
 item_seed = 261291
+
+[node name="SepulchreEntrance" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(1450, 1920)
+script = ExtResource("2_portal")
+interaction_name = "Descend into the Sepulchres"
+destination = "sepulchre_ossuary"
+opened = true
+
+[node name="From_sepulchre_ossuary" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1450, 1810)
+
+[node name="From_sepulchre_thorn" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1450, 1810)
+
+[node name="From_sepulchre_crownless" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1450, 1810)
