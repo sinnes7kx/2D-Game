@@ -1,0 +1,113 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/world/sepulchre_ossuary_v266.svg" id="bg"]
+[ext_resource type="Script" path="res://scripts/portal.gd" id="portal"]
+[ext_resource type="Script" path="res://scripts/sepulchre_gauntlet_v266.gd" id="trial"]
+
+[sub_resource type="RectangleShape2D" id="horizontal"]
+size = Vector2(1600, 100)
+
+[sub_resource type="RectangleShape2D" id="vertical"]
+size = Vector2(100, 1200)
+
+[node name="Ossuary" type="Node2D"]
+y_sort_enabled = true
+
+[node name="PaintedRoom" type="Sprite2D" parent="."]
+texture = ExtResource("bg")
+centered = false
+z_index = -50
+
+[node name="Collisions" type="Node2D" parent="."]
+
+[node name="North" type="StaticBody2D" parent="Collisions"]
+position = Vector2(800, 110)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collisions/North"]
+shape = SubResource("horizontal")
+
+[node name="South" type="StaticBody2D" parent="Collisions"]
+position = Vector2(800, 1170)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collisions/South"]
+shape = SubResource("horizontal")
+
+[node name="West" type="StaticBody2D" parent="Collisions"]
+position = Vector2(45, 600)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collisions/West"]
+shape = SubResource("vertical")
+
+[node name="East" type="StaticBody2D" parent="Collisions"]
+position = Vector2(1555, 600)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Collisions/East"]
+shape = SubResource("vertical")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(800, 990)
+
+[node name="Gameplay" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Portals" type="Node2D" parent="Gameplay"]
+
+[node name="PuzzlePieces" type="Node2D" parent="Gameplay"]
+
+[node name="Plates" type="Node2D" parent="Gameplay"]
+
+[node name="Carryables" type="Node2D" parent="Gameplay"]
+
+[node name="Memories" type="Node2D" parent="Gameplay"]
+
+[node name="Effects" type="Node2D" parent="Gameplay"]
+
+[node name="SpawnWells" type="Node2D" parent="Gameplay"]
+
+[node name="Retreat" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(800, 1095)
+script = ExtResource("portal")
+interaction_name = "Return to Lanternhaven"
+destination = "lanternhaven"
+opened = true
+
+[node name="Descent" type="Node2D" parent="Gameplay/Portals"]
+position = Vector2(800, 208)
+script = ExtResource("portal")
+interaction_name = "Descend to depth 2"
+destination = "sepulchre_thorn"
+opened = false
+
+[node name="SepulchreAltar" type="Node2D" parent="Gameplay"]
+position = Vector2(800, 870)
+script = ExtResource("trial")
+depth = 1
+y_sort_enabled = true
+
+[node name="Well1" type="Marker2D" parent="Gameplay/SpawnWells"]
+position = Vector2(460, 360)
+
+[node name="Well2" type="Marker2D" parent="Gameplay/SpawnWells"]
+position = Vector2(800, 330)
+
+[node name="Well3" type="Marker2D" parent="Gameplay/SpawnWells"]
+position = Vector2(1140, 360)
+
+[node name="Well4" type="Marker2D" parent="Gameplay/SpawnWells"]
+position = Vector2(1180, 650)
+
+[node name="Well5" type="Marker2D" parent="Gameplay/SpawnWells"]
+position = Vector2(420, 650)
+
+[node name="Well6" type="Marker2D" parent="Gameplay/SpawnWells"]
+position = Vector2(800, 535)
