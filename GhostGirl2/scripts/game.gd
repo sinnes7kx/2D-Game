@@ -955,7 +955,7 @@ func cast_spell(direction: Vector2, charged: bool = false) -> void:
 	if charged:
 		bolt.damage *= 1.0 + inventory.get_stat_total("charged_spell_pct") / 100.0
 	bolt.charged = charged
-	bolt.speed = 530.0 if charged else 770.0
+	bolt.speed = (530.0 if charged else 770.0)*0.88
 	# The wand's saved cosmetic affix determines form, colour, and motif.
 	# This is one gameplay projectile even for twin/triple wisps or beams.
 	var wand: GhostItemInstance = inventory.get_equipped("wand")
@@ -1092,6 +1092,11 @@ func grant_enemy_loot(data: GhostItemData, seed_value: int, quality_choice: Stri
 
 func _deliver_relic_samples_v282() -> void:
 	var result: Dictionary = inventory.deliver_relic_samples_v282()
+	if bool(result["saved"]):
+		var forge: Dictionary = inventory.recover_forge_v293()
+		for key in ["vault","backpack","pending","existing"]:
+			result[key]=int(result[key])+int(forge[key])
+		result["saved"]=forge["saved"]
 	if not bool(result["saved"]):
 		ui.show_pickup("RELIC DELIVERY RESERVED · SAVE UNAVAILABLE")
 	elif int(result["vault"])+int(result["backpack"])>0:
@@ -1147,7 +1152,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_F6:
 			_enter_room("hollow_veil_moor")
 		elif event.physical_keycode == KEY_F7:
-			if OS.is_debug_build() and event.ctrl_pressed and event.shift_pressed:
+			if OS.is_debug_build() and event.ctrl_pressed and event.alt_pressed:
+				var forge: Dictionary = inventory.recover_forge_v293()
+				ui.show_pickup("FORGE · %d STASH / %d BACKPACK / %d PENDING · COLLECTION LIST"%[forge["vault"],forge["backpack"],forge["pending"]],Color("f1d29a"))
+			elif OS.is_debug_build() and event.ctrl_pressed and event.shift_pressed:
 				_give_stiletto_trial_v265()
 			elif OS.is_debug_build() and event.ctrl_pressed:
 				_give_eclipse_dance_trial_v262()
