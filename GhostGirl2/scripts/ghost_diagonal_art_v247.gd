@@ -122,6 +122,7 @@ static func install(frames: SpriteFrames) -> bool:
 	if frames == null or not available():
 		return false
 	if bool(frames.get_meta("v270_diagonal_loaded",false)):
+		_install_modular_combat_v294(frames)
 		return true
 	var sheet: Texture2D = _load_sheet(REVISED_ATLAS)
 	if sheet==null:
@@ -152,6 +153,7 @@ static func install(frames: SpriteFrames) -> bool:
 			frames.add_frame(clip, cell)
 	_install_actions(frames)
 	_install_armed_aliases(frames)
+	_install_modular_combat_v294(frames)
 	frames.set_meta("v270_diagonal_loaded",true)
 	return true
 
@@ -214,7 +216,7 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 				frames.add_frame(clip,frames.get_frame_texture(source,i),frames.get_frame_duration(source,i))
 
 static func wrist(clip: String, frame: int) -> Vector2:
-	var key: String = clip
+	var key: String = combat_body_source_v294(clip) if is_modular_combat_v294(clip) else clip
 	for prefix in WEAPON_PREFIXES:
 		if key.begins_with(prefix):
 			key = key.trim_prefix(prefix)
@@ -286,6 +288,8 @@ static func far_wrist(clip: String, frame: int) -> Vector2:
 	if direction.is_empty() or direction.begins_with("back"):
 		return Vector2.INF
 	var action: String = "idle_"
+	if is_modular_combat_v294(clip):
+		action=combat_body_source_v294(clip).trim_suffix(direction)
 	for name in ["walk_","jump_","dodge_"]:
 		if clip.contains("_"+name) or clip.begins_with(name):
 			action=name
@@ -330,6 +334,10 @@ static func crossbow_span(clip: String, frame: int) -> PackedVector2Array:
 		return PackedVector2Array()
 	var direction: String = diagonal_name(clip)
 	var axis: Vector2 = Vector2(-0.88 if direction.ends_with("left") else 0.88,-0.36 if direction.begins_with("back") else 0.47).normalized()
+	if clip.begins_with("attack_"):
+		axis=heading_v294(direction)
+		if clip.contains("_reload_"):
+			axis=axis.rotated((-1.0 if direction.ends_with("right") else 1.0)*sin(PI*float(clampi(frame,0,7))/7.0)*0.75)
 	return PackedVector2Array([anchor,anchor+axis*32.0])
 
 # Diagonal spear carry uses the visible wrist and existing 74px attack span.
@@ -399,7 +407,7 @@ static func missing_combat_clips_v293(frames: SpriteFrames) -> PackedStringArray
 	if frames==null:
 		return missing
 	for clip in frames.get_animation_names():
-		if not clip.begins_with("attack_"):
+		if not clip.begins_with("attack_") and not clip.begins_with("wand_cast_"):
 			continue
 		if not diagonal_name(clip).is_empty():
 			continue
@@ -407,6 +415,74 @@ static func missing_combat_clips_v293(frames: SpriteFrames) -> PackedStringArray
 			continue
 		var stem: String = clip.trim_suffix("front")
 		for face in DIRECTIONS:
-			if not frames.has_animation(stem+face):
+			if not frames.has_animation(stem+face) or bool(frames.get_meta("v294_reused_"+stem+face,false)):
 				missing.append(stem+face)
 	return missing
+
+# Initial modular combat pass: genuinely angled existing body cells, with
+# weapon motion drawn separately. These are NOT new painted attack poses.
+# Mark each reused body clip so the authored-art audit remains truthful.
+const MODULAR_COMBAT_V294: Array[String] = [
+	"attack_rapier_pierce_", "attack_rapier_heavy_pierce_",
+	"attack_axe_light_", "attack_axe_heavy_",
+	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
+	"attack_forge_bow_light_", "attack_forge_bow_heavy_",
+	"attack_crossbow_fire_", "attack_crossbow_reload_",
+	"attack_forge_dagger_pierce_", "attack_forge_dagger_heavy_pierce_",
+	"wand_cast_", "attack_wand_heavy_"
+]
+
+static func is_modular_combat_v294(clip: String) -> bool:
+	if diagonal_name(clip).is_empty():
+		return false
+	for stem in MODULAR_COMBAT_V294:
+		if clip.begins_with(stem):
+			return true
+	return false
+
+static func combat_body_source_v294(clip: String) -> String:
+	var action: String = "jump_" if clip.contains("_air_") else "dodge_"
+	if not clip.contains("_air_") and (clip.contains("forge_bow_") or clip.contains("crossbow_")):
+		action="idle_"
+	return action+diagonal_name(clip)
+
+static func _install_modular_combat_v294(frames: SpriteFrames) -> void:
+	if _load_sheet(REVISED_ACTIONS)==null:
+		return # Never draw against unmatched legacy hand coordinates.
+	for stem in MODULAR_COMBAT_V294:
+		for air in ["","air_"]:
+			var prefix: String = stem+air
+			for direction in DIRECTIONS:
+				var target: String = prefix+direction
+				var cardinal: String = "front" if direction.begins_with("front") else "back"
+				var timing: String = prefix+cardinal
+				var source: String = combat_body_source_v294(target)
+				if frames.has_animation(target) or not frames.has_animation(timing) or not frames.has_animation(source):
+					continue
+				if frames.get_frame_count(source)!=8 or frames.get_frame_count(timing)<8:
+					continue
+				frames.add_animation(target)
+				_set_loop_v293(frames,target,false)
+				frames.set_animation_speed(target,frames.get_animation_speed(timing))
+				for i in range(8):
+					frames.add_frame(target,frames.get_frame_texture(source,i),frames.get_frame_duration(timing,i))
+				frames.set_meta("v294_reused_"+target,true)
+
+static func combat_clip_v294(requested: String,direction: String,frames: SpriteFrames) -> String:
+	if frames==null or direction not in DIRECTIONS or (not requested.begins_with("attack_") and not requested.begins_with("wand_cast_")):
+		return requested
+	if not diagonal_name(requested).is_empty():
+		return requested
+	for face in ["front","back","left","right"]:
+		if requested.ends_with("_"+face):
+			var target: String = requested.trim_suffix(face)+direction
+			return target if frames.has_animation(target) else requested
+	return requested
+
+static func heading_v294(direction: String) -> Vector2:
+	match direction:
+		"front_left": return Vector2(-1,1).normalized()
+		"front_right": return Vector2(1,1).normalized()
+		"back_left": return Vector2(-1,-1).normalized()
+		"back_right": return Vector2(1,-1).normalized()
+	return Vector2.ZERO

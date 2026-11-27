@@ -281,8 +281,7 @@ func _process(delta: float) -> void:
 		var active_animation: String = str(player_art.animation)
 		var active_frame: int = WAND_ANCHORS_V216.visible_frame(player_art)
 		var wand_points: PackedVector2Array = WAND_ANCHORS_V216.span(active_animation, active_frame, facing)
-		if active_animation.begins_with("wand_idle_"):
-			wand_visual.rotation = GENTLE.angle_at(GENTLE.phase_of(player_art))
+		wand_visual.rotation = WAND_ANCHORS_V216.pose_rotation_v294(player_art,wand_points)
 		if wand_points.size() == 2:
 			var grip: Vector2 = wand_points[0]
 			var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(active_animation, player_art.frame)
