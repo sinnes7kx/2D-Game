@@ -189,3 +189,22 @@ area = "glasshouse"
 position = Vector2(1658, 776)
 script = ExtResource("act_anchor")
 
+[node name="AtmosphereV292" type="Node2D" parent="."]
+
+[node name="MoonPool01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(700, 740)
+
+[node name="MoonPool02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1828, 790)
+
+[node name="MoonPool03" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1188, 914)
+
+[node name="Bloom01" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(701, 1102)
+
+[node name="Bloom02" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1148, 1226)
+
+[node name="Bloom03" type="Marker2D" parent="AtmosphereV292"]
+position = Vector2(1828, 1195)
