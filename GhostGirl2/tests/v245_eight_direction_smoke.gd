@@ -75,7 +75,9 @@ func _verify() -> void:
 		assert(PLAYER_SCRIPT.parry_result(0.10,aim,-aim*60.0)==0)
 		assert(PLAYER_SCRIPT.parry_result(0.10,aim,Vector2.ZERO)==0)
 	DIR.install_controller()
-	assert(InputMap.action_get_events("parry").size()==4)
+	assert(InputMap.action_get_events("parry").size()==5)
+	for action in ["cast_spell","moonfall_blizzard","astral_rain","grasping_roses"]:
+		assert(InputMap.action_get_events(action).is_empty())
 	for code in [KEY_F,KEY_P]:
 		var key: InputEventKey=InputEventKey.new()
 		key.physical_keycode=code
