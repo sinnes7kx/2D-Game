@@ -29,6 +29,12 @@ func _verify() -> void:
     assert(MARKUP.cosmetic_indicator(item).size() == 6)
     assert(item.all_stats() == stats)
     item.rainbow_skin = false
+    item.cosmetic_uid = "0000000000000000000000000005a282"
+    assert(item.white_stop_mask() == 63 and item.has_six_white_glow())
+    for ink in MARKUP.cosmetic_indicator(item):
+        assert(ink == Color.WHITE)
+    assert(item.collector_appearance()["six_white"])
+    assert(item.all_stats() == stats)
 
     var popup: Control = POPUP.instantiate()
     root.add_child(popup)
