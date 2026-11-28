@@ -172,6 +172,10 @@ static func _swatch_colors(colors: Array[Color]) -> String:
 
 const LOOK_CHOICES_V219 = preload("res://scripts/visual_choices_v216.gd")
 
+# Display only: the actual reach used by combat remains unrounded.
+static func display_range(reach: float) -> int:
+	return ceili(reach / 10.0) * 10
+
 static func item_info(item: Variant, advanced: bool = false) -> String:
 	if item == null or item.definition == null:
 		return ""
@@ -188,7 +192,7 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
 	var ability: String = SKILLS.label(item)
 	if slot == "sword":
-		out.append("[font_size=15][color=%s]%.1f Damage[/color][color=%s]   ·   %.0f Reach[/color][/font_size]" % [GOLD, item.weapon_damage(), MUTED, item.weapon_reach()])
+		out.append("[color=#ffffff][font_size=25]%.1f[/font_size][font_size=14] Damage[/font_size][/color][font_size=14][color=%s]   ·   %d Range[/color][/font_size]" % [item.weapon_damage(), MUTED, display_range(item.weapon_reach())])
 	if item.ethereal:
 		out.append("[font_size=13][color=#c1d8e4]ETHEREAL · %s[/color][/font_size]" % ("BROKEN" if item.is_broken() else "%d/%d durability" % [item.durability, item.max_durability]))
 		out.append(_label("Cannot be repaired · " + ("Display only" if item.is_broken() else "Enhanced power")))
@@ -197,9 +201,9 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	var innate_label: String = innate.label(item)
 	var stats: Dictionary = item.all_stats()
 	if not innate_label.is_empty():
-		out.append("[font_size=14][color=#f0d2a0]Innate: %s[/color][/font_size]" % escape(innate_label))
+		out.append("[font_size=14][color=#ffffff]Innate: %s[/color][/font_size]" % escape(innate_label))
 		for key in innate_stats:
-			out.append("[font_size=14][color=#a9d8d3]+%.0f%% %s[/color][/font_size]" % [innate_stats[key],escape(GhostPaletteLibrary.stat_label(str(key)))])
+			out.append("[font_size=14][color=#ffffff]+%.0f%% %s[/color][/font_size]" % [innate_stats[key],escape(GhostPaletteLibrary.stat_label(str(key)))])
 			stats[key]=float(stats.get(key,0.0))-float(innate_stats[key])
 			if absf(float(stats[key]))<0.001:
 				stats.erase(key)
@@ -208,18 +212,17 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 		ids.sort()
 		for id in ids:
 			var value: float = float(stats[id])
-			var ink: String = BLUE if value >= 0.0 else RED
-			out.append("[font_size=15][color=%s]%+.1f%% %s[/color][/font_size]" % [ink, value, escape(GhostPaletteLibrary.stat_label(str(id)))])
-	if not ability.is_empty():
-		var parts: PackedStringArray = ability.split(" · ", true, 1)
-		out.append("[url=skill:granted][font_size=15][color=#f0d2a0]Grants %s[/color][/font_size][/url]" % escape(parts[0]))
+			out.append("[font_size=15][color=#ffffff]%+.1f%% %s[/color][/font_size]" % [value, escape(GhostPaletteLibrary.stat_label(str(id)))])
 	if not item.weapon_mod.is_empty():
 		var special: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.weapon_mod, ""))
 		if not special.is_empty():
-			out.append("[font_size=15][color=%s]%s[/color][/font_size]" % [GOLD, escape(special)])
+			out.append("[font_size=15][color=#ffffff]%s[/color][/font_size]" % escape(special))
 	if OS.is_debug_build() and not item.debug_weapon_mod.is_empty():
 		var preview: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.debug_weapon_mod, ""))
 		out.append("[font_size=12][color=#9cb9de]TEST ONLY · %s (Lanternhaven)[/color][/font_size]" % escape(preview))
+	if not ability.is_empty():
+		var parts: PackedStringArray = ability.split(" · ", true, 1)
+		out.append("[url=skill:granted][font_size=15][color=#ffffff]Grants %s[/color][/font_size][/url]" % escape(parts[0]))
 	if int(item.sockets) > 0:
 		out.append("[font_size=13][color=%s]◈  SOCKETS (%d/%d)[/color][/font_size]" % [GOLD, item.socketed.size(), item.sockets])
 		for jewel in item.socketed:
@@ -230,7 +233,7 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			elif advanced:
 				out.append(_label("◇ " + name))
 	if item_class in ["gem", "rune"]:
-		out.append("[font_size=14][color=%s]+%.1f%% %s[/color][/font_size]" % [GOLD if unique_socketable else BLUE, item.definition.socket_bonus_value, escape(GhostPaletteLibrary.stat_label(item.definition.socket_bonus_id))])
+		out.append("[font_size=14][color=%s]+%.1f%% %s[/color][/font_size]" % ["#ffffff", item.definition.socket_bonus_value, escape(GhostPaletteLibrary.stat_label(item.definition.socket_bonus_id))])
 	if slot == "dress" and item.is_ethereal_dress():
 		out.append("[color=#c1d8e4]Ethereal[/color]")
 	var flavor: String = str(item.definition.description).strip_edges()
@@ -277,9 +280,9 @@ static func changes(candidate: Variant, worn: Variant) -> String:
 		if absf(duration) >= 0.005:
 			lines.append("[font_size=13][color=%s]%+.2fs Quicker Light Strike[/color][/font_size]" % [GREEN if duration > 0.0 else RED, duration])
 			count += 1
-		var reach: float = candidate.weapon_reach() - worn.weapon_reach()
-		if absf(reach) >= 1.0:
-			lines.append("[font_size=13][color=%s]%+.0f Reach[/color][/font_size]" % [GREEN if reach > 0.0 else RED, reach])
+		var reach: int = display_range(candidate.weapon_reach()) - display_range(worn.weapon_reach())
+		if reach != 0:
+			lines.append("[font_size=13][color=%s]%+d Range[/color][/font_size]" % [GREEN if reach > 0 else RED, reach])
 			count += 1
 	for id in ids:
 		var delta: float = float(a.get(id, 0.0)) - float(b.get(id, 0.0))
