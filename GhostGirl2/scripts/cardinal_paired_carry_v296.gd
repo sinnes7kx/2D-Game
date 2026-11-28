@@ -37,6 +37,11 @@ const GUIDES: Dictionary = {
 }
 
 static func source_key(clip: String) -> String:
+	if GUIDES.has(clip):
+		return clip
+	if clip.begins_with("throw_empty_"):
+		var empty_key: String = clip.trim_prefix("throw_empty_")
+		return empty_key if GUIDES.has(empty_key) else ""
 	for family in FAMILIES:
 		if clip.begins_with(family):
 			var key: String = clip.trim_prefix(family)
@@ -60,7 +65,9 @@ static func install(frames: SpriteFrames,painted_bows: bool=false) -> int:
 			tiles.append(tile)
 		if tiles.size()!=8:
 			continue
-		for family in FAMILIES:
+		var families: Array[String] = FAMILIES.duplicate()
+		families.append("throw_empty_")
+		for family in families:
 			if family in ["thornrose_","moonveil_"]:
 				var style: String = family.trim_suffix("_")
 				if not painted_bows or not ResourceLoader.exists("res://assets/equipment/bows_v166/%s_carry_only_2048x1760.png" % style,"Texture2D") or not ResourceLoader.exists("res://assets/ghost/bows_v139/%s_locomotion_mask_2048x1760.png" % style,"Texture2D"):
