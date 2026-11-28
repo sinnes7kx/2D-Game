@@ -17,10 +17,10 @@ func _verify() -> void:
     var item: GhostItemInstance = GhostItemGenerator.create(definition, 199001, "rare")
     var compact: String = MARKUP.item_info(item, false)
     var expanded: String = MARKUP.item_info(item, true)
-    if not compact.contains("[color=%s]" % MARKUP.GOLD) or not expanded.contains("[color=%s]" % MARKUP.GOLD):
-        _fail("Tooltip gold markup was not produced")
+    if not compact.contains("[color=#ffffff][font_size=25]") or not expanded.contains("[color=#ffffff][font_size=25]"):
+        _fail("Prominent white damage markup was not produced")
         return
-    print("PASS: GOLD constant resolves in compact and extended item tooltips")
+    print("PASS: GOLD constant retained for labels; damage uses larger white text")
     quit(0)
 
 func _fail(message: String) -> void:
