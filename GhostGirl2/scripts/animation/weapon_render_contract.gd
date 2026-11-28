@@ -226,12 +226,18 @@ static func guard_span(body: AnimatedSprite2D, span: PackedVector2Array, hand: i
 	var weight: float = smoothstep(0.0, 0.075, age) * smoothstep(0.0, 0.085, float(actor.get("parry_left")))
 	var grip: Vector2 = span[0]
 	var original: Vector2 = span[1] - grip
-	var heading: Vector2 = actor.get("parry_heading")
-	var direction: float = -1.0 if grip.x > 0.0 else 1.0
-	if hand >= 0:
-		direction = 1.0 if hand == 0 else -1.0
-	var guard: Vector2 = Vector2(direction * 0.92, -0.62)
-	if absf(heading.x) > 0.75:
-		guard = Vector2(heading.x * 0.38, -1.0)
+	var world_heading: Vector2 = actor.get("parry_heading")
+	var heading: Vector2 = body.to_local(body.global_position + world_heading).normalized()
+	var guard: Vector2 = guard_axis(heading, grip, hand)
 	var angle: float = lerp_angle(original.angle(), guard.angle(), weight)
 	return PackedVector2Array([grip, grip + Vector2.from_angle(angle) * original.length()])
+
+# Continuous diagonal guard direction, keeping each weapon in its actual hand.
+static func guard_axis(heading: Vector2, grip: Vector2, hand: int = -1) -> Vector2:
+	var side: float = -1.0 if grip.x > 0.0 else 1.0
+	if hand >= 0:
+		side = 1.0 if hand == 0 else -1.0
+	var h: Vector2 = heading.normalized()
+	var across: Vector2 = Vector2(side * 0.92, -0.62)
+	var profile: Vector2 = Vector2(h.x * 0.38, -1.0)
+	return across.lerp(profile, absf(h.x) * 0.85).normalized()
