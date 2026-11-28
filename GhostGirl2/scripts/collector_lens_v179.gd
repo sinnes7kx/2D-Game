@@ -160,7 +160,6 @@ func open_item(value: GhostItemInstance) -> void:
 	inspected = value
 	model.call("set_item", value)
 	heading.text = value.display_name()
-	var appearance: Dictionary = value.collector_appearance()
 	var is_anomaly: bool = value.visual_signature() == 4
 	anomaly_title.visible = is_anomaly
 	ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001, value)
