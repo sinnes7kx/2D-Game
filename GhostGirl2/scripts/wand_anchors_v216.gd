@@ -117,6 +117,19 @@ static func visible_frame(body: AnimatedSprite2D) -> int:
 		return 0 if name.contains("_idle_") else clampi(body.frame, 0, count - 1)
 	return 0 if name.begins_with("wand_idle_") else SAMPLES.source_pose_index(body.sprite_frames, name, body.frame)
 
+static func body_grip(body: AnimatedSprite2D,face: String,frame: int) -> Vector2:
+	if body==null:
+		return Vector2.INF
+	var clip: String = str(body.animation)
+	var carry = preload("res://scripts/cardinal_paired_carry_v296.gd")
+	if carry.applies(body,clip):
+		return carry.lead_grip(clip,body.frame)
+	var art = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	var wrist: Vector2 = art.wrist(clip,body.frame)
+	if wrist!=Vector2.INF or (art.is_guard_clip(clip) and art.has_guided_pose(clip)):
+		return wrist
+	return target_grip(face,clip,frame)
+
 static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2Array:
 	if body == null:
 		return PackedVector2Array()
@@ -126,12 +139,9 @@ static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2
 	if points.size() != 2:
 		return points
 	var grip: Vector2 = points[0]
-	var art = preload("res://scripts/ghost_diagonal_art_v247.gd")
-	var wrist: Vector2 = art.wrist(animation_name, body.frame)
-	if wrist == Vector2.INF:
-		if art.is_guard_clip(animation_name) and art.has_guided_pose(animation_name):
-			return PackedVector2Array() # Occluded authored hand: no detached wand light.
-		wrist = target_grip(face,animation_name,frame)
+	var wrist: Vector2 = body_grip(body,face,frame)
+	if wrist==Vector2.INF:
+		return PackedVector2Array()
 	return transformed_span(points,wrist,pose_rotation_v294(body,points))
 
 static func pose_rotation_v294(body: AnimatedSprite2D,points: PackedVector2Array) -> float:

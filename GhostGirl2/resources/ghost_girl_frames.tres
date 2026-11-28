@@ -515,6 +515,71 @@
 [ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_06.png" id="core1791_45_6"]
 [ext_resource type="Texture2D" path="res://assets/ghost/combat_v14/attack_sword_heavy_right_07.png" id="core1791_45_7"]
 
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_00.png" id="clean_i_front_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_01.png" id="clean_i_front_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_02.png" id="clean_i_front_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_03.png" id="clean_i_front_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_04.png" id="clean_i_front_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_05.png" id="clean_i_front_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_06.png" id="clean_i_front_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_front_07.png" id="clean_i_front_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_00.png" id="clean_w_front_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_01.png" id="clean_w_front_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_02.png" id="clean_w_front_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_03.png" id="clean_w_front_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_04.png" id="clean_w_front_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_05.png" id="clean_w_front_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_06.png" id="clean_w_front_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_front_07.png" id="clean_w_front_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_00.png" id="clean_i_back_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_01.png" id="clean_i_back_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_02.png" id="clean_i_back_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_03.png" id="clean_i_back_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_04.png" id="clean_i_back_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_05.png" id="clean_i_back_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_06.png" id="clean_i_back_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_back_07.png" id="clean_i_back_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_00.png" id="clean_w_back_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_01.png" id="clean_w_back_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_02.png" id="clean_w_back_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_03.png" id="clean_w_back_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_04.png" id="clean_w_back_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_05.png" id="clean_w_back_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_06.png" id="clean_w_back_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_back_07.png" id="clean_w_back_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_00.png" id="clean_i_left_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_01.png" id="clean_i_left_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_02.png" id="clean_i_left_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_03.png" id="clean_i_left_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_04.png" id="clean_i_left_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_05.png" id="clean_i_left_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_06.png" id="clean_i_left_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_left_07.png" id="clean_i_left_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_00.png" id="clean_w_left_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_01.png" id="clean_w_left_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_02.png" id="clean_w_left_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_03.png" id="clean_w_left_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_04.png" id="clean_w_left_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_05.png" id="clean_w_left_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_06.png" id="clean_w_left_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_left_07.png" id="clean_w_left_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_00.png" id="clean_i_right_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_01.png" id="clean_i_right_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_02.png" id="clean_i_right_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_03.png" id="clean_i_right_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_04.png" id="clean_i_right_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_05.png" id="clean_i_right_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_06.png" id="clean_i_right_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/idle_right_07.png" id="clean_i_right_7"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_00.png" id="clean_w_right_0"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_01.png" id="clean_w_right_1"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_02.png" id="clean_w_right_2"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_03.png" id="clean_w_right_3"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_04.png" id="clean_w_right_4"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_05.png" id="clean_w_right_5"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_06.png" id="clean_w_right_6"]
+[ext_resource type="Texture2D" path="res://assets/ghost/weapon_body_v110/walk_right_07.png" id="clean_w_right_7"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_snfaj"]
 atlas = ExtResource("65_vdeli")
 region = Rect2(0, 1980, 256, 220)
@@ -739,25 +804,25 @@ region = Rect2(768, 3300, 256, 220)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_back_1")
+"texture": ExtResource("clean_i_back_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_2")
+"texture": ExtResource("clean_i_back_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_3")
+"texture": ExtResource("clean_i_back_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_4")
+"texture": ExtResource("clean_i_back_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_5")
+"texture": ExtResource("clean_i_back_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_6")
+"texture": ExtResource("clean_i_back_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_0")
+"texture": ExtResource("clean_i_back_0")
 }],
 "loop": 0,
 "name": &"blink_back",
@@ -765,25 +830,25 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_front_1")
+"texture": ExtResource("clean_i_front_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_2")
+"texture": ExtResource("clean_i_front_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_3")
+"texture": ExtResource("clean_i_front_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_4")
+"texture": ExtResource("clean_i_front_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_5")
+"texture": ExtResource("clean_i_front_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_6")
+"texture": ExtResource("clean_i_front_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_0")
+"texture": ExtResource("clean_i_front_0")
 }],
 "loop": 0,
 "name": &"blink_front",
@@ -791,25 +856,25 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_left_1")
+"texture": ExtResource("clean_i_left_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_2")
+"texture": ExtResource("clean_i_left_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_3")
+"texture": ExtResource("clean_i_left_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_4")
+"texture": ExtResource("clean_i_left_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_5")
+"texture": ExtResource("clean_i_left_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_6")
+"texture": ExtResource("clean_i_left_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_0")
+"texture": ExtResource("clean_i_left_0")
 }],
 "loop": 0,
 "name": &"blink_left",
@@ -817,25 +882,25 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_right_1")
+"texture": ExtResource("clean_i_right_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_2")
+"texture": ExtResource("clean_i_right_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_3")
+"texture": ExtResource("clean_i_right_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_4")
+"texture": ExtResource("clean_i_right_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_5")
+"texture": ExtResource("clean_i_right_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_6")
+"texture": ExtResource("clean_i_right_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_0")
+"texture": ExtResource("clean_i_right_0")
 }],
 "loop": 0,
 "name": &"blink_right",
@@ -979,22 +1044,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_back_0")
+"texture": ExtResource("clean_i_back_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_1")
+"texture": ExtResource("clean_i_back_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_2")
+"texture": ExtResource("clean_i_back_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_1")
+"texture": ExtResource("clean_i_back_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_0")
+"texture": ExtResource("clean_i_back_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_back_7")
+"texture": ExtResource("clean_i_back_7")
 }],
 "loop": 1,
 "name": &"idle_back",
@@ -1002,22 +1067,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_front_0")
+"texture": ExtResource("clean_i_front_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_1")
+"texture": ExtResource("clean_i_front_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_2")
+"texture": ExtResource("clean_i_front_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_1")
+"texture": ExtResource("clean_i_front_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_0")
+"texture": ExtResource("clean_i_front_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_front_7")
+"texture": ExtResource("clean_i_front_7")
 }],
 "loop": 1,
 "name": &"idle_front",
@@ -1025,22 +1090,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_left_0")
+"texture": ExtResource("clean_i_left_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_1")
+"texture": ExtResource("clean_i_left_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_2")
+"texture": ExtResource("clean_i_left_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_1")
+"texture": ExtResource("clean_i_left_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_0")
+"texture": ExtResource("clean_i_left_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_left_7")
+"texture": ExtResource("clean_i_left_7")
 }],
 "loop": 1,
 "name": &"idle_left",
@@ -1048,22 +1113,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("i_right_0")
+"texture": ExtResource("clean_i_right_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_1")
+"texture": ExtResource("clean_i_right_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_2")
+"texture": ExtResource("clean_i_right_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_1")
+"texture": ExtResource("clean_i_right_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_0")
+"texture": ExtResource("clean_i_right_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("i_right_7")
+"texture": ExtResource("clean_i_right_7")
 }],
 "loop": 1,
 "name": &"idle_right",
@@ -1139,28 +1204,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("w_back_0")
+"texture": ExtResource("clean_w_back_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_back_1")
+"texture": ExtResource("clean_w_back_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_back_2")
+"texture": ExtResource("clean_w_back_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_back_3")
+"texture": ExtResource("clean_w_back_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_back_4")
+"texture": ExtResource("clean_w_back_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_back_5")
+"texture": ExtResource("clean_w_back_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_back_6")
+"texture": ExtResource("clean_w_back_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_back_7")
+"texture": ExtResource("clean_w_back_7")
 }],
 "loop": 1,
 "name": &"walk_back",
@@ -1168,28 +1233,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("w_front_0")
+"texture": ExtResource("clean_w_front_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_front_1")
+"texture": ExtResource("clean_w_front_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_front_2")
+"texture": ExtResource("clean_w_front_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_front_3")
+"texture": ExtResource("clean_w_front_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_front_4")
+"texture": ExtResource("clean_w_front_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_front_5")
+"texture": ExtResource("clean_w_front_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_front_6")
+"texture": ExtResource("clean_w_front_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_front_7")
+"texture": ExtResource("clean_w_front_7")
 }],
 "loop": 1,
 "name": &"walk_front",
@@ -1197,28 +1262,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("w_left_0")
+"texture": ExtResource("clean_w_left_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_left_1")
+"texture": ExtResource("clean_w_left_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_left_2")
+"texture": ExtResource("clean_w_left_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_left_3")
+"texture": ExtResource("clean_w_left_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_left_4")
+"texture": ExtResource("clean_w_left_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_left_5")
+"texture": ExtResource("clean_w_left_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_left_6")
+"texture": ExtResource("clean_w_left_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_left_7")
+"texture": ExtResource("clean_w_left_7")
 }],
 "loop": 1,
 "name": &"walk_left",
@@ -1226,28 +1291,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("w_right_0")
+"texture": ExtResource("clean_w_right_0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_right_1")
+"texture": ExtResource("clean_w_right_1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_right_2")
+"texture": ExtResource("clean_w_right_2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_right_3")
+"texture": ExtResource("clean_w_right_3")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_right_4")
+"texture": ExtResource("clean_w_right_4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_right_5")
+"texture": ExtResource("clean_w_right_5")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_right_6")
+"texture": ExtResource("clean_w_right_6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("w_right_7")
+"texture": ExtResource("clean_w_right_7")
 }],
 "loop": 1,
 "name": &"walk_right",

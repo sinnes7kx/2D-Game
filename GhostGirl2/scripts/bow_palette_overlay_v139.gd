@@ -5,6 +5,7 @@ const SHADE: Shader = preload("res://assets/equipment/weapon_surface_v190.gdshad
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 const STEADY_IDLE = preload("res://scripts/steady_weapon_idles_v195.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
+const CLEAN_CARRY = preload("res://scripts/cardinal_paired_carry_v296.gd")
 const DIAGONAL_V270 = preload("res://scripts/ghost_diagonal_art_v247.gd")
 var inventory: Node = null
 var body: AnimatedSprite2D = null
@@ -247,7 +248,7 @@ func _process(_delta: float) -> void:
 		if bow_carry_visual != null:
 			bow_carry_visual.visible = false
 		return
-	if DIAGONAL_V270.is_painted_bow_carry(source_animation) or DIAGONAL_V270.is_painted_bow_combat(source_animation):
+	if CLEAN_CARRY.applies(body,source_animation) or DIAGONAL_V270.is_painted_bow_carry(source_animation) or DIAGONAL_V270.is_painted_bow_combat(source_animation):
 		_show_diagonal_bow_v270(item,source_animation)
 		return
 	var animation: String = _resolved_animation_name(item, source_animation)
@@ -363,7 +364,9 @@ func _show_diagonal_bow_v270(item: GhostItemInstance,clip: String) -> void:
 		return
 	bow_carry_visual.visible=false
 	var pose: Dictionary = diagonal_hold_pose(clip,DIAGONAL_V270.hand_local(body))
-	if DIAGONAL_V270.is_guard_clip(clip):
+	if CLEAN_CARRY.applies(body,clip):
+		pose=clean_cardinal_hold_pose(clip,CLEAN_CARRY.lead_grip(clip,body.frame))
+	elif DIAGONAL_V270.is_guard_clip(clip):
 		var wrist: Vector2 = DIAGONAL_V270.hand_local(body)
 		if wrist==Vector2.INF:
 			return
@@ -435,4 +438,17 @@ static func guard_hold_pose(clip: String, wrist: Vector2, heading: Vector2) -> D
 	pose["position"] = wrist-source.rotated(angle)
 	pose["hand"] = wrist
 	pose["behind"] = face=="back"
+	return pose
+
+# Retarget the already calibrated bow-only layer, not the body pixels.
+static func clean_cardinal_hold_pose(clip: String,wrist: Vector2) -> Dictionary:
+	if wrist==Vector2.INF:
+		return {}
+	var face: String = DIAGONAL_V270.cardinal_for_clip(clip)
+	var pose: Dictionary = idle_hold_pose(face)
+	var angle: float = float(pose["rotation_deg"])
+	var source: Vector2 = pose["source_handle"]
+	pose["position"]=wrist-source.rotated(deg_to_rad(angle))
+	pose["hand"]=wrist
+	pose["behind"]=face=="back"
 	return pose

@@ -242,7 +242,7 @@ func _axial_span() -> PackedVector2Array:
 	var end_point: Vector2 = _fallback_tip(grip, face, 46.0)
 	var style: String = item.weapon_style()
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
-	var diagonal_carry: bool = diagonal.is_carried_clip(animation) or diagonal.is_modular_combat_v294(animation)
+	var diagonal_carry: bool = diagonal.is_carried_clip(animation) or diagonal.is_modular_combat_v294(animation) or preload("res://scripts/cardinal_paired_carry_v296.gd").applies(body,animation)
 	var pose_frame: int = 0 if STEADY_IDLE.matches(animation) and not diagonal_carry else body.frame
 	if item.get_slot() == "wand":
 		# Shared with actual wand art and the spell release origin. Do not
@@ -250,6 +250,8 @@ func _axial_span() -> PackedVector2Array:
 		var wand_span: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(body, face)
 		if wand_span.size() == 2:
 			return wand_span
+		if preload("res://scripts/cardinal_paired_carry_v296.gd").applies(body,animation):
+			return empty
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
 	if style in ["dual_sword","dual_dagger"]:
 		var paired: Array = RENDER.paired_spans(body,style,animation,body.frame)
@@ -259,6 +261,8 @@ func _axial_span() -> PackedVector2Array:
 		if style=="dual_sword" or not diagonal.diagonal_name(animation).is_empty() or paired.size()==2:
 			return empty
 		return PackedVector2Array([grip,_fallback_tip(grip,face,50.0)])
+	if preload("res://scripts/cardinal_paired_carry_v296.gd").applies(body,animation) and style in ["blade","dagger","spear","twinblade"]:
+		return RENDER.single_span(body,animation,body.frame)
 	if style == "twinblade":
 		var span: PackedVector2Array = RENDER.single_span(body,animation,body.frame)
 		if span.size()==2:

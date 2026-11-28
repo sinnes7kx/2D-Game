@@ -7,6 +7,7 @@ const ITEM_ID: String = "gloamrose_dual_swords_v174"
 const IDLE_BLADE_LENGTH_SCALE: float = 1.34
 const ATTACK_BLADE_LENGTH_SCALE: float = 1.17
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const CARDINAL_CARRY = preload("res://scripts/cardinal_paired_carry_v296.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const SWORD_SCRIPT: Script = preload("res://scripts/v174_dual_sword_blade.gd")
 var body: AnimatedSprite2D = null
@@ -84,6 +85,14 @@ func is_active(animation_name: String) -> bool:
 	return _equipped() and (animation_name.begins_with("dual_sword_") or animation_name.begins_with("attack_dual_sword_"))
 
 func get_blade_spans(animation_name: String, frame_index: int) -> Array:
+	if CARDINAL_CARRY.applies(body,animation_name):
+		if not is_active(animation_name):
+			return []
+		var carried: Array = CARDINAL_CARRY.spans(animation_name,frame_index,Vector2(18.0,54.0).length()*IDLE_BLADE_LENGTH_SCALE)
+		if GENTLE.modular_idle(animation_name):
+			for hand in range(carried.size()):
+				carried[hand]=GENTLE.smooth(body,animation_name,carried[hand],hand)
+		return carried
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
 	if diagonal.is_guard_clip(animation_name):
 		return diagonal.guard_pair_spans(animation_name,frame_index,Vector2(18,54).length()*IDLE_BLADE_LENGTH_SCALE) if is_active(animation_name) else []
