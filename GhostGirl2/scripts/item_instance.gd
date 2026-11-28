@@ -28,6 +28,7 @@ var eye_style_override: int = -1
 var eye_palette_override: int = -1
 # v2.16: optional owner-chosen rendering preferences (-1 = seeded Natural).
 # Never replace cosmetic_uid, birth roll, item_seed or genuine rarity.
+var rainbow_skin: bool = false # Purchased cosmetic; independent of the seed and stats.
 var glow_level_override: int = -1
 var bow_glow_mode_override: int = -1
 var bow_projectile_style_override: int = -1
@@ -306,6 +307,8 @@ func apply_cosmetic_uid(uid: String) -> void:
 
 # V1.53: complete-spectrum, per-look gradients. Never change the combat seed.
 func glow_gradient_colors() -> Array[Color]:
+	if rainbow_skin:
+		return [Color("ff426d"), Color("ffce55"), Color("79ff9e"), Color("4cdefe"), Color("9b70ff"), Color("ff75d9")]
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel(), gradient_version)
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
@@ -496,7 +499,16 @@ func collector_appearance() -> Dictionary:
 			look["forge_grip"] = clampi(debug_forge_grip, 0, 5)
 	look["signature"] = visual_signature()
 	look["signature_variant"] = mythic_layer_variant()
-	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
+	look.merge(effect_palette_motion(), true)
+	var mythic: bool = visual_signature() == 4
+	look["prism"] = mythic or rainbow_skin
+	look["rainbow"] = rainbow_skin
+	look["glow_motif"] = int(look.get("glow_motif", 0)) % (8 if mythic or rainbow_skin else 4)
+	if not mythic and not rainbow_skin:
+		look["particle"] = 0 # Ordinary motes stay within a simple arc/orbit.
+		look["surface_mode"] = mini(int(look.get("surface_mode", 0)), 1)
+		look["signature"] = 0
+		look["region_rank"] = 0
 	return look
 
 # Only independently rolled collector-level cosmetics earn the tooltip star.
@@ -508,8 +520,7 @@ func has_rare_seeded_appearance() -> bool:
 	return maxi(int(natural.get("material", 0)), int(natural.get("particle_tier", 0))) >= 4 or genuine_visual_signature() >= 4
 
 func collector_material_label() -> String:
-	var look: Dictionary = collector_appearance()
-	return COLLECTOR_LOOK.rarity_label(look) if not look.is_empty() else ""
+	return "Mythic" if visual_signature() == 4 and get_slot() in ["sword", "wand"] else ""
 
 func palette_color() -> Color:
 	return weapon_base_color() if get_slot() == "sword" else COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical:" + get_slot(), gradient_version), 0.5)
@@ -565,7 +576,8 @@ func details(advanced: bool = false) -> String:
 	if advanced:
 		lines.append(definition.description)
 		if get_slot() in ["sword", "wand"]:
-			lines.append("Material rarity: " + collector_material_label())
+			if not collector_material_label().is_empty():
+				lines.append(collector_material_label())
 		if get_slot() == "sword":
 			lines.append("Light attack %.2fs · %.1f stamina" % [light_swing_duration(), light_stamina_cost()])
 		if get_slot() in ["sword", "wand"]:
@@ -628,15 +640,9 @@ func discovery_label() -> String:
 		return ""
 	var genuine: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
 	var tier: int = maxi(int(genuine["material"]), int(genuine["particle_tier"]))
-	if tier == 6:
-		return "ANOMALY DISCOVERED"
 	var signature: int = genuine_visual_signature()
-	if signature == 5:
-		return "MOONFALL DISCOVERED"
 	if signature == 4:
 		return "MYTHIC DISCOVERED"
-	if tier == 5:
-		return "ETHEREAL APPEARANCE DISCOVERED"
 	if regional_rank == 3:
 		return "RADIANT REGIONAL DISCOVERY"
 	if ethereal:
@@ -654,7 +660,9 @@ func effect_palette_channel() -> String:
 	if OS.is_debug_build() and debug_collector_tier >= 0:
 		tier = debug_collector_tier
 		particles = debug_collector_tier
-	return "effect:%d:%d:%d:%d" % [signature, tier, particles, mythic_layer_variant() if signature == 4 else 0]
+	return "effect:%d:%d:%d:%d:%d" % [signature, tier, particles, mythic_layer_variant() if signature == 4 else 0, int(rainbow_skin)]
 
 func effect_palette_motion() -> Dictionary:
-	return COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel())
+	var motion: Dictionary = COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel())
+	motion["color_mode"] = 2 if rainbow_skin or visual_signature() == 4 else 0
+	return motion
