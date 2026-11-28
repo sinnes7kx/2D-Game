@@ -226,6 +226,8 @@ func refresh() -> void:
 func _process(delta: float) -> void:
 	aura_time += delta
 	if inventory == null:
+		if is_instance_valid(wand_held_light):
+			wand_held_light.hide()
 		return
 	var dress_now: GhostItemInstance = inventory.get_equipped("dress")
 	if dress_now != last_dress or (dress_now != null and dress_now.palette_index != last_dress_palette):
