@@ -369,7 +369,7 @@ func _show_diagonal_bow_v270(item: GhostItemInstance,clip: String) -> void:
 		if aim.is_zero_approx():
 			aim = DIAGONAL_V270.heading_v294(DIAGONAL_V270.diagonal_name(clip))
 		var local_aim: Vector2 = body.to_local(body.global_position + aim)
-		pose = diagonal_shoot_pose(clip, DIAGONAL_V270.hand_local(body), local_aim, _bow_style_name(item), body.frame_progress)
+		pose = diagonal_shoot_pose(clip, DIAGONAL_V270.hand_local(body), local_aim, _bow_style_name(item), float(body.frame) + body.frame_progress)
 	if pose.is_empty():
 		return
 	var carry_name: String = _bow_style_name(item)+"_idle_"+str(pose["source_face"])
@@ -392,7 +392,7 @@ func _show_diagonal_bow_v270(item: GhostItemInstance,clip: String) -> void:
 
 # Calibrated right bow limb-end vector from weapon_glow_axes_v142.json.
 # Source pixels and mask share exactly the same grip and flip transform.
-static func diagonal_shoot_pose(clip: String, wrist: Vector2, aim: Vector2, style: String, _progress: float = 0.0) -> Dictionary:
+static func diagonal_shoot_pose(clip: String, wrist: Vector2, aim: Vector2, style: String, pose_frame: float = 0.0) -> Dictionary:
 	var pose: Dictionary = diagonal_hold_pose(clip, wrist)
 	if pose.is_empty() or aim.is_zero_approx():
 		return pose
@@ -404,6 +404,9 @@ static func diagonal_shoot_pose(clip: String, wrist: Vector2, aim: Vector2, styl
 	if target.y < 0.0:
 		target = -target
 	var angle: float = chord.angle_to(target)
+	# Recovery leans away slightly on frames 6–7; draw frames 0–5 stay aimed.
+	var recovery: float = clampf((pose_frame - 6.0) / 2.0, 0.0, 1.0)
+	angle += sin(recovery * PI) * (0.12 if left else -0.12)
 	var source: Vector2 = pose["source_handle"]
 	pose["rotation_deg"] = rad_to_deg(angle)
 	pose["position"] = wrist - source.rotated(angle)
