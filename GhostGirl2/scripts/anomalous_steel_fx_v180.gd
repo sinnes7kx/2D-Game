@@ -171,8 +171,8 @@ static func signature_kind(look: Dictionary) -> int:
 		return 6 + clampi(int(look.get("signature_variant", 0)), 0, 3)
 	return sig
 
-static func draw_signature(canvas: Node2D, path: PackedVector2Array, colors: Array[Color], look: Dictionary, time: float) -> void:
-	if path.size() < 2:
+static func draw_signature(canvas: Node2D, path: PackedVector2Array, colors: Array[Color], look: Dictionary, time: float,scale: float=1.0) -> void:
+	if path.size() < 2 or scale<=0.0:
 		return
 	var kind: int = signature_kind(look)
 	if kind == 0:
@@ -185,7 +185,7 @@ static func draw_signature(canvas: Node2D, path: PackedVector2Array, colors: Arr
 		var u: float = 0.12 + 0.76 * fposmod(time * 0.16 + float(i) / 3.0, 1.0)
 		var center: Vector2 = point_on_path(path, u)
 		var ink: Color = color_at(colors, look, u, time).lerp(Color.WHITE, 0.22)
-		ink.a = FX_LEVEL.edge_alpha(canvas, 0.38 + 0.14 * sin(u * PI))
+		ink.a = FX_LEVEL.edge_alpha(canvas, (0.38 + 0.14 * sin(u * PI))*scale)
 		var offset: Vector2 = normal * (2.5 + 1.5 * sin(time * 2.0 + float(i)))
 		var p: Vector2 = center + offset
 		match kind:
