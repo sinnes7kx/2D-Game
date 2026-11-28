@@ -12,7 +12,8 @@ This is the engineering map of the active Godot project. Product priorities and 
 | Combat rules | scripts/combat/melee_rules.gd | Pure base melee balance and normalized frontal geometry; no nodes, saves, rendering or input |
 | Input and facing | scripts/direction_controller_v245.gd | Normalized movement, octants, cursor dead zone and input registration |
 | Weapon techniques | scripts/unique_specials_v261.gd, relic_arsenal_v277.gd, relic_mechanics_v288.gd | Item-base ability routing, skill profiles and cooldowns |
-| Animation | scripts/ghost_animation_library.gd, ghost_diagonal_art_v247.gd, v172_weapon_pose.gd | Clip names, body atlases, cardinal fallback, wrist-based held art |
+| Animation playback | scripts/animation/directional_playback.gd | Shared locomotion, action/gesture clip routing, phase retention and pause/resume; no combat authority |
+| Animation art | scripts/ghost_animation_library.gd, ghost_diagonal_art_v247.gd, v172_weapon_pose.gd | Clip names, body atlases, cardinal fallback, wrist-based held art |
 | Item identity | scripts/item_instance.gd, item_generator.gd | Stable IDs, original rolls, derived stats and cosmetic choices |
 | Item presentation | scripts/modular_weapon_art_v178.gd, weapon_models_v283.gd, weapon_prestige_fx.gd, collector_lens_model_v179.gd | Physical geometry and seeded visuals; preview must share live geometry, never change gameplay |
 | Inventory/collection | scripts/inventory.gd, collection_vault_v181.gd, sanctum_exhibition_v182.gd | Save ownership, transfers, equipped state, display; UI calls these rather than mutating persistence directly |
@@ -33,7 +34,7 @@ New pure helpers belong in a descriptive domain directory (start with scripts/co
 ## Migration order (incremental, not a rewrite)
 
 1. Base combat rules and regression registration (first step in this PR).
-2. Grounded locomotion extracted; next extract action-state/timing from player.gd, leaving scene-compatible forwarding methods until tested.
+2. Grounded locomotion and directional playback extracted; next isolate remaining action-state transitions while keeping physics timing in player.gd and preserving scene-compatible forwarding methods.
 3. Establish shared per-family geometry and FX contracts for gameplay and Lens. Align each of the eight directions and preserve occlusion; audit authored versus reused frames.
 4. Isolate inventory presentation from ownership mutation; preserve existing save schema and seed provenance.
 5. Extract room routing and visual presentation policies from game.gd; retire obsolete rooms only with explicit progression/save handling.
