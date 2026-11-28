@@ -60,6 +60,8 @@ func _process(delta: float) -> void:
 	z_index = -2 if show_behind_parent else 5
 	queue_redraw()
 
+const CLEAN_CARRY = preload("res://scripts/cardinal_paired_carry_v296.gd")
+
 func _draw() -> void:
 	if not visible or body == null or profile.is_empty():
 		return
@@ -68,6 +70,11 @@ func _draw() -> void:
 	var diagonal: bool = not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(name_now).is_empty()
 	var index: int = 0 if idle and not diagonal else body.frame
 	var points: PackedVector2Array = SCYTHE.span(name_now, index, guides) if style == "scythe" else HEAVY.span(name_now, index, guides)
+	if CLEAN_CARRY.applies(body,name_now):
+		var length: float = SCYTHE.REAPER_SPAN if style=="scythe" else (82.0 if style=="halberd" else 70.0)
+		points=CLEAN_CARRY.single_span(name_now,body.frame,length,true)
+	if points.size()!=2 and is_instance_valid(scythe_glow):
+		scythe_glow.call("clear_pose")
 	if idle:
 		points = GENTLE.smooth(body, name_now, points)
 	points = RENDER.guard_span(body, points)
