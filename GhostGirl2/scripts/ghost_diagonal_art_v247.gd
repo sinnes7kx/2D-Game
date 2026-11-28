@@ -715,6 +715,11 @@ static func guard_clip(idle_prefix: String, eight: String, cardinal: String, fra
 			return clip
 	return ""
 
+# Shared cosmetic guard blend. Does not alter any combat clock.
+static func guard_weight(age: float,remaining: float,confirmed: bool) -> float:
+	var entered: float = 1.0 if confirmed else smoothstep(0.0,0.075,age)
+	return entered*smoothstep(0.0,0.085,remaining)
+
 # Physics clock controls the pose even during an early confirmed parry.
 static func guard_frame(age: float, remaining: float, confirmed: bool = false) -> int:
 	if remaining<=0.0:
