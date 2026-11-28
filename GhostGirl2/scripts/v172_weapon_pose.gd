@@ -420,7 +420,7 @@ func _draw() -> void:
 			var look_v294: Dictionary = item_v283.collector_appearance()
 			var colors_v294: Array[Color] = item_v283.glow_gradient_colors()
 			var mirror_v294: bool = animation_name.contains("seraph_scythe_") and animation_name.begins_with("attack_") and not animation_name.ends_with("left")
-			MODELS_V283.draw_melee(self,str(item_v283.definition.item_id),grip,tip,item_v283.weapon_base_color(),FORGE_CHOICES.effect_scale(item_v283)*FORGE_FX.intensity*0.80,colors_v294,look_v294,v180_elapsed,mirror_v294,item_v283.weapon_gradient_color())
+			MODELS_V283.draw_melee(self,str(item_v283.definition.item_id),grip,tip,item_v283.weapon_base_color(),RENDER.melee_model_glow(item_v283),colors_v294,look_v294,v180_elapsed,mirror_v294,item_v283.weapon_gradient_color())
 	elif animation_name.contains("forge_bow_") or animation_name.contains("forge_dagger_"):
 		var profile: Dictionary = MODULAR.equipped_profile(self, body)
 		var world: Node = player.get("world") as Node
