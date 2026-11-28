@@ -1,4 +1,5 @@
 extends Node2D
+const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
 const MODELS_V283 = preload("res://scripts/weapon_models_v283.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
 const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
@@ -429,11 +430,12 @@ func _draw() -> void:
 			return
 		if held.uses_forge_bow():
 			var amount: float = clampf(float(player.get("bow_draw_time")) / 0.46, 0.0, 1.0) if bool(player.get("bow_draw_active")) else 0.0
-			var glow: float = FORGE_CHOICES.effect_scale(held) * FORGE_FX.intensity if FORGE_CHOICES.bow_body_visible(held) else 0.0
-			var string_glow: float = FORGE_CHOICES.effect_scale(held)*FORGE_FX.intensity if FORGE_CHOICES.bow_string_visible(held) else 0.0
-			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, glow, string_glow, FORGE_CHOICES.bow_mode(held)==3)
+			var light: Vector3 = RENDER.bow_light(held)
+			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, light.x, light.y, light.z>0.0)
 		else:
-			FORGE_V238.draw_dagger(self, span, profile)
+			var geometry: Dictionary = RENDER.straight_geometry("forge_dagger",span)
+			RENDER.draw_straight(self,geometry,profile,v180_elapsed)
+			RENDER.draw_owned_light(self,body,geometry,profile,v180_elapsed)
 	elif animation_name.contains("crossbow_"):
 		var profile: Dictionary = MODULAR.equipped_profile(self, body)
 		var world: Node = player.get("world") as Node
@@ -456,9 +458,9 @@ func _draw() -> void:
 	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)) or (animation_name.begins_with("attack_sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_modular_combat_v294(animation_name)):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
-			var root: Vector2 = grip + tangent * 10.0
-			MODULAR.draw_grip(self, grip - tangent * 12.0, root, 3.0, look)
-			MODULAR.draw_blade(self, root, tip, 4.2, look)
+			var geometry: Dictionary = RENDER.straight_geometry("blade",span)
+			RENDER.draw_straight(self,geometry,look,v180_elapsed)
+			RENDER.draw_owned_light(self,body,geometry,look,v180_elapsed)
 	elif animation_name.contains("twinblade"):
 		_draw_v176_twinblade(grip, tip, animation_name.contains("rosemirror"))
 	elif animation_name.begins_with("attack_nocturne_dagger_") or animation_name.begins_with("attack_dagger_") or animation_name.begins_with("nocturne_dagger_") or animation_name.begins_with("dagger_"):
@@ -473,8 +475,9 @@ func _draw_nightglass_stiletto(grip: Vector2, tip: Vector2, tangent: Vector2, no
 	var steel: Vector2 = grip.lerp(tip, 0.30)
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():
-		MODULAR.draw_grip(self, grip - tangent * 5.0, steel, 3.2, look)
-		MODULAR.draw_blade(self, steel, tip, 3.2, look)
+		var geometry: Dictionary = RENDER.straight_geometry("dagger",PackedVector2Array([grip,tip]))
+		RENDER.draw_straight(self,geometry,look,v180_elapsed)
+		RENDER.draw_owned_light(self,body,geometry,look,v180_elapsed)
 		draw_circle(grip, 3.9, Color("d3c5d5"))
 		return
 	# Discrete fingers and dark hilt stay close to Ghost Girl's hand.
