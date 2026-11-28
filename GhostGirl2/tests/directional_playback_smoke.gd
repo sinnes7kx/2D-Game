@@ -75,18 +75,22 @@ func _verify() -> void:
 	for face in CARDINAL.FACES:
 		for motion in ["idle","walk","blink"]:
 			var clip: String = motion+"_"+face
-			var count: int = 6 if motion=="idle" else (8 if motion=="walk" else 7)
+			var count: int = 7 if motion=="blink" else 8
 			assert(original.has_animation(clip) and original.get_frame_count(clip)==count)
 			var source_motion: String = "walk" if motion=="walk" else "idle"
 			for i in range(count):
 				var source: Texture2D = original.get_frame_texture(clip,i)
 				assert(source!=null and source.get_size()==Vector2(256,220))
 				assert(source.resource_path.begins_with("res://assets/ghost/weapon_body_v110/"+source_motion+"_"+face+"_"))
-	# Visually inspected original left idle images 0,1,2,3,6,7 all have
-	# an open eye. The separate blink uses closed frames 4/5 briefly.
-	var open_left: Array[int] = [0,1,2,3,6,7]
-	for i in range(open_left.size()):
-		assert(original.get_frame_texture("idle_left",i).resource_path.ends_with("idle_left_%02d.png" % open_left[i]))
+	# Every idle uses all eight actual samples, with brief closed-eye beats.
+	for face in CARDINAL.FACES:
+		var total: float=0.0
+		for i in range(8):
+			assert(original.get_frame_texture("idle_"+face,i).resource_path.ends_with("idle_%s_%02d.png" % [face,i]))
+			total+=original.get_frame_duration("idle_"+face,i)
+		assert(is_equal_approx(total,6.0))
+	assert(original.get_frame_duration("idle_left",4)<original.get_frame_duration("idle_left",0))
+	assert(original.get_frame_duration("idle_left",5)<original.get_frame_duration("idle_left",0))
 	assert(original.get_frame_texture("blink_left",3).resource_path.ends_with("idle_left_04.png"))
 	assert(original.get_frame_texture("blink_left",4).resource_path.ends_with("idle_left_05.png"))
 	# All supported equipped cardinal clips reuse clean eight-frame body rows.
@@ -97,7 +101,13 @@ func _verify() -> void:
 				_add(paired,texture,family+motion+"_"+face,8,true)
 		_add(paired,texture,family+"idle_front_left",8,true)
 		_add(paired,texture,family+"parry_front",8)
-	assert(PAIRED_CARRY.install(paired)==(PAIRED_CARRY.FAMILIES.size()-2)*8)
+	for face in PAIRED_CARRY.FACES:
+		for motion in ["idle","walk"]:
+			_add(paired,texture,"throw_empty_"+motion+"_"+face,8,true)
+	assert(PAIRED_CARRY.install(paired)==(PAIRED_CARRY.FAMILIES.size()-1)*8)
+	for face in PAIRED_CARRY.FACES:
+		assert(PAIRED_CARRY.matches_source(paired,"throw_empty_walk_"+face))
+		assert(PAIRED_CARRY.matches_source(paired,"throw_empty_idle_"+face))
 	assert(PAIRED_CARRY.install(paired)==0)
 	var painted: int = 0
 	for style in ["thornrose","moonveil"]:
@@ -170,6 +180,8 @@ func _verify() -> void:
 		for index in range(8):
 			assert(CARDINAL.is_polished_source("res://assets/ghost/idle_%s_%02d.png" % [face,index]))
 			assert(CARDINAL.is_polished_source("res://assets/ghost/%s_%02d.png" % [face,index]))
+			assert(CARDINAL.is_polished_source("res://assets/ghost/weapon_body_v110/idle_%s_%02d.png" % [face,index]))
+			assert(CARDINAL.is_polished_source("res://assets/ghost/weapon_body_v110/walk_%s_%02d.png" % [face,index]))
 			assert(CARDINAL.is_polished_source("res://assets/ghost/combat_v14/attack_unarmed_light_%s_%02d.png" % [face,index]))
 		assert(not CARDINAL.is_polished_source("res://assets/ghost/hook_%s_00.png" % face))
 		assert(CARDINAL.supports("walk_"+face))
