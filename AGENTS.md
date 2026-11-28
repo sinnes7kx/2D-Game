@@ -20,6 +20,8 @@ A task's explicit user request controls scope, but never silently undo these pro
 
 ## 2. Read and inspect before writing
 
+Use [the live codebase architecture map](GhostGirl2/docs/CODEBASE_ARCHITECTURE.md) to identify ownership and shared contracts before refactoring. Extend existing modules instead of adding version-suffixed duplicates; keep resource paths and save compatibility stable.
+
 1. Read `ROADMAP.md` completely; locate the current milestone, acceptance gates, item invariants, and open decisions.
 2. Inspect the **actual current source** under `GhostGirl2/`: relevant `scripts/`, `scenes/`, `items/`, `tests/`, `docs/`, `project.godot`, and GitHub Actions workflow.
 3. Identify what is **already implemented**, what is only **source-implemented but not playtested**, and what is genuinely **planned**. Do not duplicate existing item generation, cosmetic seed saving, collection vault, Sanctum displays, or inventory compatibility logic.
