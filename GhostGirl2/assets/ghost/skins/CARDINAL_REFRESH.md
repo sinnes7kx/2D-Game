@@ -1,13 +1,9 @@
-# Cardinal refresh (candidate)
+# Original cardinal animation restoration
 
-Two optional, transparent 2048 × 1760 candidate atlases (8 columns, 8 rows; 256 × 220 cells):
-- `ghost_cardinal_refresh_candidate.png`: idle front/back/left/right, walk front/back/left/right. Loaded only for unarmed cardinal locomotion.
-- `ghost_cardinal_combat_candidate.png`: parry front/back/left/right, candidate light attack front/back/left/right. Only the four parry rows are installed. The attack rows are deliberately unregistered pending family-specific action review.
+The generated cardinal replacement atlases and candidate wrist-guide JSON are no longer used. This branch retains the project's original character PNGs, frame geometry, weapon anchors and existing art selection. The approved diagonal assets remain untouched.
 
-The PNGs are not committed as binaries: the repository connector can write code and JSON but did not expose a way to transfer the local PNGs. Apply the companion asset patch into the repository root before testing this branch. Without both files, the respective loader keeps existing art.
+The existing body shader now has an isolated cardinal-only detail pass. It adds a small bounded luminance detail correction to opaque interior pixels in centered 256 × 220 original cardinal frames. It does not change alpha, silhouette, UV geometry, source textures, frame count, weapon anchors, damage, or combat timing. The pass is disabled for all diagonal clips, alternate skin clips, flipped/offset or incorrectly sized frames. Direction changes retain the normalized idle/walk phase. Separate weapon layers keep their existing materials.
 
-The guard importer reads `resources/cardinal_guard_candidate_guides.json`, with visually estimated left/right wrist coordinates for each frame and explicit hidden hands. It validates dimensions, the complete four-row set, and peak guard lead-wrist presence. Existing approved authored guards take precedence. Candidate guards remain excluded from the approved artwork audit. Shared single and paired weapon renderers use the same pose and wrist guides; hidden wand poses and their light are suppressed. A confirmed contact advances to the guard hold immediately even if the parry was early; recovery retains the existing gameplay timer. Original diagonal art and combat timings, stats, saves are unchanged by design.
+Parry continues to use the original raised-arm body frames and their existing guide coordinates. Confirmed contact immediately displays the guard pose while retaining gameplay recovery timing. No generated artwork is promoted to approved authored status.
 
-The locomotion loader preserves original duration and normalized phase across directional changes, including in the equipment preview.
-
-Review status: both atlases are generated candidate artwork, not visually approved replacements. Original diagonal PNGs remain unavailable for direct comparison; the new guard candidate has visible face/dress differences and cannot yet be claimed an exact identity match. Validate scale, silhouette, loop smoothness, equipped transitions, wrists, occlusion, parry recovery and every weapon family in Godot. Equipped idle/walk, family-specific attacks, jump, dodge and final polished parry art remain outstanding. Do not merge as a finished art refresh.
+This is a non-destructive first visual restoration, not a painted replacement of the older animation sheets. The uploaded full asset ZIP could not be opened due to the execution environment returning errors; individual repository original PNGs were inspected instead. Final painterly matching of the original cardinal frames to the new diagonal atlas, and runtime verification in Godot, remain outstanding. Do not install the older candidate asset patches.
