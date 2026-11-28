@@ -216,6 +216,8 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 				frames.add_frame(clip,frames.get_frame_texture(source,i),frames.get_frame_duration(source,i))
 
 static func wrist(clip: String, frame: int) -> Vector2:
+	if _authored_guides.has(clip):
+		return authored_wrist(clip,frame,int(_authored_guides[clip]["near_hand"]))
 	if is_guard_clip(clip):
 		return guard_wrist(clip,frame)
 	var key: String = combat_body_source_v294(clip) if is_modular_combat_v294(clip) else clip
@@ -283,9 +285,13 @@ static func carried_span(clip: String, frame: int, length: float, upright: bool 
 	return PackedVector2Array([anchor,anchor+axis*length])
 
 static func near_hand(clip: String) -> int:
+	if _authored_guides.has(clip):
+		return int(_authored_guides[clip]["near_hand"])
 	return 0 if diagonal_name(clip).ends_with("left") else 1
 
 static func far_wrist(clip: String, frame: int) -> Vector2:
+	if _authored_guides.has(clip):
+		return authored_wrist(clip,frame,1-int(_authored_guides[clip]["near_hand"]))
 	if is_guard_clip(clip):
 		return guard_wrist(clip,frame,1-guard_near_hand(clip))
 	var direction: String = diagonal_name(clip)
@@ -614,6 +620,8 @@ static func guard_source_frame(clip: String, frame: int) -> int:
 	return maxi(1,sample) if cardinal_for_clip(clip)=="back" else sample
 
 static func guard_near_hand(clip: String) -> int:
+	if _authored_guides.has(clip):
+		return int(_authored_guides[clip]["near_hand"])
 	var face: String = diagonal_name(clip)
 	if not face.is_empty():
 		return near_hand(clip)
@@ -621,6 +629,8 @@ static func guard_near_hand(clip: String) -> int:
 
 static func guard_wrist(clip: String, frame: int, hand: int = -1) -> Vector2:
 	var chosen: int = guard_near_hand(clip) if hand<0 else hand
+	if _authored_guides.has(clip):
+		return authored_wrist(clip,frame,chosen)
 	var source: String = guard_source(clip)
 	var index: int = guard_source_frame(clip,frame)
 	if not diagonal_name(clip).is_empty():
@@ -681,3 +691,119 @@ static func guard_frame(age: float, remaining: float) -> int:
 	if remaining<0.12:
 		return clampi(5+floori((0.12-remaining)/0.04),5,7)
 	return clampi(floori(age/0.035),0,4)
+
+# Dedicated art is opt-in. No missing/invalid row is promoted to authored.
+# All coordinates are full-cell pixels; [] means deliberately hidden.
+const AUTHORED_MANIFEST: String = "res://resources/authored_combat_atlases.json"
+static var _authored_guides: Dictionary = {}
+
+static func authored_wrist(clip: String, frame: int, hand: int) -> Vector2:
+	if not _authored_guides.has(clip) or hand not in [0,1]:
+		return Vector2.INF
+	var record: Dictionary = _authored_guides[clip]
+	var samples: Array = record["left" if hand==0 else "right"]
+	var point: Array = samples[clampi(frame,0,7)]
+	if point.is_empty():
+		return Vector2.INF
+	return Vector2(float(point[0])-128.0,float(point[1])-110.0)
+
+static func _valid_authored_guides(record: Dictionary) -> bool:
+	var near: Variant = record.get("near_hand",-1)
+	if not (near is int or near is float) or float(near) not in [0.0,1.0]:
+		return false
+	for key in ["left","right"]:
+		var samples: Variant = record.get(key,[])
+		if not samples is Array or samples.size()!=8:
+			return false
+		for point in samples:
+			if not point is Array or point.size() not in [0,2]:
+				return false
+			if point.is_empty():
+				continue
+			for axis in range(2):
+				if not (point[axis] is float or point[axis] is int) or not is_finite(float(point[axis])):
+					return false
+				if float(point[axis])<0.0 or float(point[axis])>=float(CELL[axis]):
+					return false
+	return true
+
+static func _authored_clip_allowed(clip: String) -> bool:
+	if is_guard_clip(clip):
+		for family in [""]+WEAPON_PREFIXES:
+			for face in GUARD_FACES:
+				if clip==family+"parry_"+face:
+					return true
+		return false
+	return is_modular_combat_v294(clip)
+
+# Validate every input before replacing any existing frame or guide.
+# Preserve the existing weighted timing even when a cardinal source has >8 frames.
+static func install_authored_row(frames: SpriteFrames, sheet: Texture2D, row: int, clip: String, record: Dictionary) -> bool:
+	if frames==null or not _valid_dimensions(sheet) or row<0 or row>=8 or not _authored_clip_allowed(clip) or not _valid_authored_guides(record):
+		return false
+	var timing: String = clip
+	if not frames.has_animation(timing) or frames.get_frame_count(timing)<8:
+		if is_guard_clip(clip):
+			timing=clip.trim_suffix(diagonal_name(clip))+cardinal_for_clip(clip) if not diagonal_name(clip).is_empty() else clip
+		else:
+			timing=clip.trim_suffix(diagonal_name(clip))+cardinal_for_clip(clip)
+	if not frames.has_animation(timing) or frames.get_frame_count(timing)<8:
+		return false
+	var speed: float = frames.get_animation_speed(timing)
+	var count: int = frames.get_frame_count(timing)
+	var durations: Array[float] = []
+	for i in range(8):
+		var duration: float = 0.0
+		for source in range(floori(float(i*count)/8.0),floori(float((i+1)*count)/8.0)):
+			duration+=frames.get_frame_duration(timing,source)
+		durations.append(duration)
+	if frames.has_animation(clip):
+		frames.remove_animation(clip)
+	frames.add_animation(clip)
+	_set_loop_v293(frames,clip,false)
+	frames.set_animation_speed(clip,speed)
+	for i in range(8):
+		var tile: AtlasTexture = AtlasTexture.new()
+		tile.atlas=sheet
+		tile.region=Rect2(i*CELL.x,row*CELL.y,CELL.x,CELL.y)
+		tile.filter_clip=true
+		frames.add_frame(clip,tile,durations[i])
+	_authored_guides[clip]=record.duplicate(true)
+	frames.set_meta("v294_reused_"+clip,false)
+	frames.set_meta("reused_guard_"+clip,false)
+	frames.set_meta("authored_combat_"+clip,true)
+	return true
+
+static func install_authored_combat(frames: SpriteFrames) -> int:
+	if frames==null or not FileAccess.file_exists(AUTHORED_MANIFEST):
+		return 0
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(AUTHORED_MANIFEST))
+	if not raw is Dictionary or int(raw.get("version",0))!=1 or not raw.get("rows",[]) is Array:
+		push_warning("Invalid authored combat manifest; keeping original animations.")
+		return 0
+	var count: int = 0
+	for entry in raw["rows"]:
+		if not entry is Dictionary:
+			continue
+		var path: String = str(entry.get("atlas",""))
+		var clip: String = str(entry.get("clip",""))
+		var row: Variant = entry.get("row",-1)
+		if not path.begins_with("res://assets/ghost/authored_combat/") or path.contains("..") or not path.ends_with(".png") or not (row is float or row is int) or float(row)!=floorf(float(row)):
+			push_warning("Invalid authored combat row: "+clip)
+			continue
+		if install_authored_row(frames,_load_sheet(path),int(row),clip,entry):
+			count+=1
+		else:
+			push_warning("Unusable authored combat row: "+clip+"; keeping fallback.")
+	return count
+
+static func missing_authored_guards(frames: SpriteFrames) -> PackedStringArray:
+	var missing: PackedStringArray = PackedStringArray()
+	var families: Array[String] = [""]
+	families.append_array(WEAPON_PREFIXES)
+	for family in families:
+		for face in GUARD_FACES:
+			var clip: String = family+"parry_"+face
+			if frames==null or not frames.has_animation(clip) or not bool(frames.get_meta("authored_combat_"+clip,false)):
+				missing.append(clip)
+	return missing
