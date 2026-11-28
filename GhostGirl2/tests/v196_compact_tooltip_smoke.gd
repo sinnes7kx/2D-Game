@@ -10,9 +10,18 @@ func _verify() -> void:
     var template: GhostItemData = load("res://items/eclipse_twinblade_v170.tres") as GhostItemData
     assert(template != null)
     var item: GhostItemInstance = GhostItemGenerator.create(template, 196001, "unique")
+    item.weapon_mod = "execution"
     var compact: String = MARKUP.item_info(item, false)
     var detailed: String = MARKUP.item_info(item, true)
     assert(compact.contains("Grants Crimson Eclipse"))
+    assert(compact.contains("[color=#ffffff]+25% Heavy Attack Damage"))
+    assert(compact.contains("[color=#ffffff]Grants Crimson Eclipse"))
+    assert(compact.find("+25% Heavy Attack Damage") < compact.find("Grants Crimson Eclipse"))
+    assert(compact.contains("[font_size=25]%.1f[/font_size]" % item.weapon_damage()))
+    assert(compact.contains("%d Range" % MARKUP.display_range(item.weapon_reach())))
+    assert(MARKUP.display_range(165.0) == 170)
+    assert(MARKUP.display_range(170.0) == 170)
+    assert(MARKUP.display_range(170.1) == 180)
     for value in [compact, detailed]:
         assert(not value.contains("UNIQUE SKILL"))
         assert(not value.contains("ROLL ·"))
