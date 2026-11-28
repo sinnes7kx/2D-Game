@@ -391,6 +391,14 @@ static func is_carried_clip(clip: String) -> bool:
 				return true
 	return false
 
+# Diagonal shooting uses the existing hook-free body and extracted painted
+# bow, not cardinal full-body shooting art pasted onto an angled character.
+static func is_painted_bow_combat(clip: String) -> bool:
+	return not diagonal_name(clip).is_empty() and (clip.begins_with("attack_thornrose_") or clip.begins_with("attack_moonveil_"))
+
+static func painted_bow_assets_available(style: String) -> bool:
+	return ResourceLoader.exists("res://assets/equipment/bows_v166/%s_carry_only_2048x1760.png" % style) and ResourceLoader.exists("res://assets/ghost/bows_v139/%s_locomotion_mask_2048x1760.png" % style)
+
 static func is_painted_bow_carry(clip: String) -> bool:
 	return is_carried_clip(clip) and (clip.begins_with("thornrose_") or clip.begins_with("moonveil_"))
 
@@ -471,6 +479,8 @@ const MODULAR_COMBAT_V294: Array[String] = [
 	"attack_rapier_pierce_", "attack_rapier_heavy_pierce_",
 	"attack_axe_light_", "attack_axe_heavy_",
 	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
+	"attack_thornrose_light_", "attack_thornrose_heavy_",
+	"attack_moonveil_light_", "attack_moonveil_heavy_",
 	"attack_forge_bow_light_", "attack_forge_bow_heavy_",
 	"attack_crossbow_fire_", "attack_crossbow_reload_",
 	"attack_forge_dagger_pierce_", "attack_forge_dagger_heavy_pierce_",
@@ -521,7 +531,7 @@ static func heavy_attack_span(clip: String, frame: int, length: float) -> Packed
 
 static func combat_body_source_v294(clip: String) -> String:
 	var action: String = "jump_" if clip.contains("_air_") else "dodge_"
-	if not clip.contains("_air_") and (clip.contains("forge_bow_") or clip.contains("crossbow_")):
+	if not clip.contains("_air_") and (clip.contains("forge_bow_") or clip.contains("crossbow_") or is_painted_bow_combat(clip)):
 		action="idle_"
 	return action+diagonal_name(clip)
 
@@ -536,6 +546,8 @@ static func _install_modular_combat_v294(frames: SpriteFrames) -> void:
 				var cardinal: String = "front" if direction.begins_with("front") else "back"
 				var timing: String = prefix+cardinal
 				var source: String = combat_body_source_v294(target)
+				if is_painted_bow_combat(target) and not painted_bow_assets_available("thornrose" if stem.contains("thornrose") else "moonveil"):
+					continue
 				if frames.has_animation(target) or not frames.has_animation(timing) or not frames.has_animation(source):
 					continue
 				if frames.get_frame_count(source)!=8 or frames.get_frame_count(timing)<8:
