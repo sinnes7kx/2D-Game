@@ -1,6 +1,7 @@
 extends SceneTree
 const RULES = preload("res://scripts/combat/melee_rules.gd")
 const MOTION = preload("res://scripts/combat/grounded_motion.gd")
+const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const PLAYER = preload("res://scripts/player.gd")
 const RELICS = preload("res://scripts/relic_mechanics_v288.gd")
 
@@ -56,5 +57,25 @@ func _initialize() -> void:
 		assert(MOTION.channel_velocity(Vector2.ZERO,heading,140.0,dt).is_equal_approx(heading*1700.0*dt))
 	assert(MOTION.charge_target(Vector2(1,1),200.0).length()<=90.001)
 	assert(MOTION.charge_target(Vector2.RIGHT,-10.0)==Vector2.ZERO)
+	var sprite: AnimatedSprite2D = AnimatedSprite2D.new()
+	var frames: SpriteFrames = SpriteFrames.new()
+	var texture: GradientTexture2D = GradientTexture2D.new()
+	texture.gradient = Gradient.new()
+	for clip in ["cardinal","diagonal"]:
+		frames.add_animation(clip)
+		for frame in range(16 if clip=="cardinal" else 8):
+			frames.add_frame(clip,texture,1.0)
+	sprite.sprite_frames=frames
+	sprite.animation="cardinal"
+	sprite.set_frame_and_progress(12,0.0)
+	var phase: float = GENTLE.phase_of(sprite)
+	sprite.animation="diagonal"
+	GENTLE.seek_phase(sprite,phase,false)
+	assert(sprite.frame==6 and is_zero_approx(sprite.frame_progress))
+	GENTLE.seek_phase(sprite,1.0,false)
+	assert(sprite.frame==7 and is_equal_approx(sprite.frame_progress,1.0))
+	GENTLE.seek_phase(sprite,1.0,true)
+	assert(sprite.frame==0 and is_zero_approx(sprite.frame_progress))
+	sprite.free()
 	print("Combat foundation: 66 legacy weapon profiles and shared frontal geometry PASS")
 	quit(0)
