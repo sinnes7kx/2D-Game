@@ -73,6 +73,7 @@ func _verify() -> void:
 		for index in range(8):
 			assert(CARDINAL.is_polished_source("res://assets/ghost/idle_%s_%02d.png" % [face,index]))
 			assert(CARDINAL.is_polished_source("res://assets/ghost/%s_%02d.png" % [face,index]))
+			assert(CARDINAL.is_polished_source("res://assets/ghost/combat_v14/attack_unarmed_light_%s_%02d.png" % [face,index]))
 		assert(not CARDINAL.is_polished_source("res://assets/ghost/hook_%s_00.png" % face))
 		assert(CARDINAL.supports("walk_"+face))
 		assert(CARDINAL.supports("sword_modular_parry_"+face))
