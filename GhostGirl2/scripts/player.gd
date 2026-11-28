@@ -2008,11 +2008,10 @@ func _refresh_melee_charge_aim() -> void:
 	var resolved: String = DIAGONAL_ART_V247.combat_clip_v294(requested,facing_eight_name,body_art.sprite_frames)
 	if not body_art.sprite_frames.has_animation(resolved):
 		return
-	var frame: int = body_art.frame
-	var progress: float = body_art.frame_progress
+	var phase: float = GENTLE.phase_of(body_art)
 	var paused: bool = not body_art.is_playing()
 	_play_action_frames(requested,attack_duration)
-	body_art.set_frame_and_progress(mini(frame,body_art.sprite_frames.get_frame_count(resolved)-1),progress)
+	GENTLE.seek_phase(body_art,phase,false)
 	if paused:
 		body_art.pause()
 
