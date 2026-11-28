@@ -1,4 +1,5 @@
 extends Node2D
+const WAND = preload("res://scripts/wand_anchors_v216.gd")
 const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 var last_fx_revision: int = -1
@@ -13,6 +14,7 @@ const BOW_POSE = preload("res://scripts/bow_palette_overlay_v139.gd")
 var painted_preview: Sprite2D
 var bow_painted_mask: Sprite2D
 var bow_body_glow: Sprite2D
+var wand_preview_span: PackedVector2Array=PackedVector2Array()
 var scythe_glow: Node2D
 var glow_preview_override: int = -1
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
@@ -187,6 +189,9 @@ func _draw_light() -> void:
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.
 func _draw_artwork_effects() -> void:
+	if item.get_slot()=="wand" and wand_preview_span.size()==2:
+		RENDER.draw_wand_head(self,wand_preview_span,gradients,look,elapsed,RENDER.effect_scale(item,glow_enabled))
+		return
 	if gradients.size() < 3:
 		return
 	var tier: int = int(look.get("particle_tier", 0))
@@ -290,6 +295,7 @@ func _actual_bow_preview() -> bool:
 	return true
 
 func _update_painted_preview() -> void:
+	wand_preview_span=PackedVector2Array()
 	if is_instance_valid(bow_painted_mask):
 		bow_painted_mask.hide()
 	if is_instance_valid(bow_body_glow):
@@ -305,6 +311,8 @@ func _update_painted_preview() -> void:
 		add_child(painted_preview)
 	if item.weapon_style() == "bow" and _actual_bow_preview():
 		return
+	if item.get_slot()=="wand" and _actual_wand_preview():
+		return
 	# Legacy icon remains an explicit fallback for missing optional artwork,
 	# and for wands, whose full directional artwork is a separate workflow.
 	painted_preview.texture = item.definition.icon
@@ -317,3 +325,26 @@ func _update_painted_preview() -> void:
 	painted_preview.material = mat
 	painted_preview.self_modulate.a = item.weapon_opacity()
 	painted_preview.show()
+
+# Preview the same seeded painted wand atlas, with the same material and
+# centered physical grip/tip rather than an unrelated inventory icon.
+func _actual_wand_preview() -> bool:
+	var texture: AtlasTexture=WAND.preview_texture(item.visual_seed())
+	var points: PackedVector2Array=WAND.span("wand_idle_front",0,"front")
+	if texture==null or points.size()!=2:
+		return false
+	var scale_factor: float=WAND.VISUAL_SCALE
+	var center: Vector2=(points[0]+points[1])*0.5
+	painted_preview.texture=texture
+	painted_preview.position=-center*scale_factor
+	painted_preview.scale=Vector2.ONE*scale_factor
+	painted_preview.rotation=0.0
+	painted_preview.z_index=-2
+	painted_preview.centered=true
+	var mat: ShaderMaterial=ShaderMaterial.new()
+	PAINTED_SURFACE.configure(mat,look,WAND.CELL,false,[],true)
+	painted_preview.material=mat
+	painted_preview.self_modulate.a=item.weapon_opacity()*0.98
+	painted_preview.show()
+	wand_preview_span=PackedVector2Array([(points[0]-center)*scale_factor,(points[1]-center)*scale_factor])
+	return true
