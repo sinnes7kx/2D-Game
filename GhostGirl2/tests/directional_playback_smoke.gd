@@ -2,6 +2,7 @@ extends SceneTree
 const PLAYBACK = preload("res://scripts/animation/directional_playback.gd")
 const MOTION = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const DIR = preload("res://scripts/direction_controller_v245.gd")
+const CARDINAL = preload("res://scripts/cardinal_refresh_v295.gd")
 
 func _initialize() -> void:
 	call_deferred("_verify")
@@ -66,6 +67,40 @@ func _verify() -> void:
 	assert(body.frame==5 and not body.is_playing())
 	PLAYBACK.apply_bow_release(body,1.0)
 	assert(body.frame==6 and body.is_playing())
+	# Synthetic texture fixture validates slicing, timing and fallback only.
+	var atlas: GradientTexture2D = GradientTexture2D.new()
+	atlas.width=2048
+	atlas.height=1760
+	atlas.gradient=Gradient.new()
+	for face in CARDINAL.FACES:
+		_add(frames,texture,"walk_"+face,16,true)
+	assert(not CARDINAL.install_sheet(frames,texture))
+	assert(CARDINAL.install_sheet(frames,atlas))
+	for row in range(8):
+		var original: String = CARDINAL.ROWS[row]
+		var clip: String = CARDINAL.PREFIX+original
+		assert(frames.get_frame_count(clip)==8)
+		var total: float=0.0
+		for i in range(frames.get_frame_count(original)):
+			total+=frames.get_frame_duration(original,i)/frames.get_animation_speed(original)
+		assert(is_equal_approx(8.0/frames.get_animation_speed(clip),total))
+		for col in range(8):
+			var tile: AtlasTexture = frames.get_frame_texture(clip,col) as AtlasTexture
+			assert(tile.atlas==atlas and tile.region==Rect2(256*col,220*row,256,220))
+	assert(CARDINAL.resolve("idle_front","front",false,frames)=="cardinal_refresh_idle_front")
+	assert(CARDINAL.resolve("idle_front","front",true,frames)=="idle_front")
+	assert(CARDINAL.resolve("idle_front","front_right",false,frames)=="idle_front")
+	assert(CARDINAL.resolve("blink_front","front",false,frames)=="blink_front")
+	assert(MOTION.same_locomotion_family("cardinal_refresh_idle_front","idle_front_right"))
+	assert(MOTION.same_locomotion_family("walk_back_left","cardinal_refresh_walk_back"))
+	assert(not MOTION.same_locomotion_family("cardinal_refresh_idle_front","sword_modular_idle_front"))
+	PLAYBACK.play_locomotion(body,"cardinal_refresh_idle_front")
+	body.set_frame_and_progress(5,0.5)
+	var idle_phase: float=MOTION.phase_of(body)
+	PLAYBACK.play_locomotion(body,"idle_back_right")
+	assert(is_equal_approx(MOTION.phase_of(body),idle_phase))
+	PLAYBACK.play_locomotion(body,"cardinal_refresh_idle_back")
+	assert(is_equal_approx(MOTION.phase_of(body),idle_phase))
 	body.free()
 	print("Directional playback: all eight headings, missing/empty clips, weighted phase, charge and resume PASS")
 	quit(0)
