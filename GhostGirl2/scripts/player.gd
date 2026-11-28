@@ -2038,7 +2038,11 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	if equipped == null or equipped.weapon_style() != "bow":
 		return
 	var relic_origin: Vector2 = global_position+Vector2(0,-39)+heading.normalized()*31.0
-	if equipped.uses_forge_bow():
+	if DIAGONAL_ART_V247.is_painted_bow_combat(str(body_art.animation)) and not equipped.uses_forge_bow():
+		var wrist: Vector2 = DIAGONAL_ART_V247.hand_local(body_art)
+		if wrist != Vector2.INF:
+			relic_origin = body_art.to_global(wrist) + heading.normalized() * 4.0
+	elif equipped.uses_forge_bow():
 		var relic_span: PackedVector2Array = FORGE_V238.bow_span(body_art,str(body_art.animation),facing_name,body_art.frame,heading)
 		if relic_span.size()==2:
 			relic_origin=body_art.to_global(relic_span[0]+(relic_span[1]-relic_span[0]).normalized()*8.0)
@@ -2084,11 +2088,7 @@ func _launch_bow_arrow(heading: Vector2, charged: bool) -> void:
 	arrow.set("glow_a", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.0))
 	arrow.set("glow_b", GhostCosmeticRNGV152.sample_palette(shot_gradient, 0.5))
 	arrow.set("glow_c", GhostCosmeticRNGV152.sample_palette(shot_gradient, 1.0))
-	var shot_origin: Vector2 = global_position + Vector2(0, -39) + heading.normalized() * 31.0
-	if equipped.uses_forge_bow():
-		var span: PackedVector2Array = FORGE_V238.bow_span(body_art, str(body_art.animation), facing_name, body_art.frame, heading)
-		if span.size() == 2:
-			shot_origin = body_art.to_global(span[0] + (span[1] - span[0]).normalized() * 8.0)
+	var shot_origin: Vector2 = relic_origin # Same physical release point for normal and relic shots.
 	if VISUAL_CHOICES_V216.effect_scale(equipped) > 0.0:
 		var release: Node2D = Node2D.new()
 		release.set_script(BOW_RELEASE_FX)
