@@ -108,5 +108,41 @@ func _verify() -> void:
 	assert(DIAGONAL.guard_frame(0.2,0.10)==5)
 	assert(DIAGONAL.guard_frame(0.25,0.05)==6)
 	assert(DIAGONAL.guard_frame(0.55,0.0)==7)
+	# Synthetic texture tests only validate importer contracts; never ship test
+	# pixels or treat them as finished character artwork.
+	var authored: SpriteFrames = SpriteFrames.new()
+	var fallback: String = "sword_modular_parry_front"
+	var target: String = "sword_modular_parry_front_right"
+	var tile: GradientTexture2D = GradientTexture2D.new()
+	tile.gradient=Gradient.new()
+	authored.add_animation(fallback)
+	authored.set_animation_speed(fallback,16.0)
+	for i in range(16):
+		authored.add_frame(fallback,tile,0.5)
+	var atlas: GradientTexture2D = GradientTexture2D.new()
+	atlas.width=2048
+	atlas.height=1760
+	atlas.gradient=Gradient.new()
+	var guides: Dictionary = {"near_hand":1,"left":[],"right":[]}
+	for i in range(8):
+		guides["left"].append([] if i==3 else [80+i,130])
+		guides["right"].append([140+i,125-i])
+	var invalid: Dictionary = guides.duplicate(true)
+	invalid["right"][0]=[256,20]
+	assert(not DIAGONAL.install_authored_row(authored,atlas,2,target,invalid))
+	assert(not authored.has_animation(target))
+	assert(not DIAGONAL.install_authored_row(authored,tile,2,target,guides))
+	assert(DIAGONAL.install_authored_row(authored,atlas,2,target,guides))
+	assert(authored.get_frame_count(target)==8 and authored.get_animation_speed(target)==16.0)
+	assert(authored.get_meta("authored_combat_"+target,false))
+	for i in range(8):
+		var cell: AtlasTexture = authored.get_frame_texture(target,i) as AtlasTexture
+		assert(cell.atlas==atlas and cell.region==Rect2(256*i,440,256,220))
+		assert(is_equal_approx(authored.get_frame_duration(target,i),1.0))
+		assert(DIAGONAL.guard_wrist(target,i)==Vector2(12+i,15-i))
+	assert(DIAGONAL.guard_wrist(target,3,0)==Vector2.INF)
+	assert(not DIAGONAL.missing_authored_guards(authored).has(target))
+	assert(not DIAGONAL.install_authored_row(authored,atlas,8,target,guides))
+	assert(authored.get_frame_count(target)==8)
 	print("v2.75 bow diagonal carry, shooting, airborne aliases, guard clips and axes PASS: ",count," samples")
 	quit(0)
