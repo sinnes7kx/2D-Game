@@ -1,4 +1,5 @@
 extends RefCounted
+const GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const GROUND = preload("res://scripts/relic_ground_v288.gd")
 const TIME_SCALE: float = 1.50
 const DURATION: float = 0.96*TIME_SCALE
@@ -31,7 +32,7 @@ static func strike(actor: CharacterBody2D,axis: Vector2,damage: float,descending
 	var hits: int = 0
 	var seen: Dictionary = {}
 	for enemy in actor.get_tree().get_nodes_in_group("enemies"):
-		if not is_instance_valid(enemy) or enemy.is_queued_for_deletion() or not enemy is Node2D or not enemy.has_method("hit"):
+		if not GEOMETRY.is_hittable(enemy):
 			continue
 		var point: Vector2 = (enemy as Node2D).global_position
 		if seen.has(enemy.get_instance_id()) or not contact(point-actor.global_position,axis,descending) or not GROUND.clear_path(actor,actor.global_position,point):
