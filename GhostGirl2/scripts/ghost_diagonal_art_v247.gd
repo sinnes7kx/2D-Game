@@ -652,7 +652,13 @@ static func install_guards(frames: SpriteFrames) -> void:
 		for prefix in families:
 			var clip: String = prefix+base
 			if frames.has_animation(clip):
-				continue
+				if not bool(frames.get_meta("reused_guard_"+clip,false)):
+					continue # A dedicated authored replacement takes precedence.
+				if frames.get_frame_count(clip)==8:
+					for i in range(8):
+						frames.set_frame(clip,i,frames.get_frame_texture(source,guard_source_frame(clip,i)))
+					continue
+				frames.remove_animation(clip)
 			frames.add_animation(clip)
 			_set_loop_v293(frames,clip,false)
 			frames.set_animation_speed(clip,8.0)
