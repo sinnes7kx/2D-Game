@@ -22,6 +22,15 @@ var revision: int = -1
 var perf_revision: int = -1
 var initialized: bool = false
 
+# Only the foreground veil clears gently around the character. Far fog
+# preserves the painted room's depth, and LOW still disables near fog.
+static func readability_radius(key: String) -> float:
+	match key:
+		"colosseum": return 250.0
+		"lanternhaven": return 180.0
+		"westwood_road", "moonthorn_woods": return 210.0
+		_: return 170.0
+
 static func profile(key: String) -> Dictionary:
 	if key in WET_ROOMS and key!="moonthorn_woods":
 		return {"ink":Color("85899f"),"far":0.115,"near":0.062,"drift":8.0}
@@ -169,11 +178,24 @@ func _process(delta: float) -> void:
 	if not initialized:
 		return
 	clock+=delta
+	# Update only two uniforms on the existing near-fog material; do not
+	# redraw or reselect lights every render frame.
+	_update_readability()
 	pending+=delta
 	var hz: float = PERF.ambient_hz()
 	if revision!=SETTINGS.revision or perf_revision!=PERF.revision or PERF.due(pending,hz):
 		pending=PERF.remainder(pending,hz)
 		_refresh()
+
+func _update_readability() -> void:
+	if not is_instance_valid(near_mist) or not near_mist.visible:
+		return
+	var mat: ShaderMaterial=near_mist.material as ShaderMaterial
+	var active: bool=is_instance_valid(actor)
+	mat.set_shader_parameter("clear_strength",0.72 if active else 0.0)
+	if active:
+		mat.set_shader_parameter("clear_center",actor.global_position)
+		mat.set_shader_parameter("clear_radius",readability_radius(room_key))
 
 func _refresh() -> void:
 	var changed: bool = revision!=SETTINGS.revision or perf_revision!=PERF.revision
@@ -184,6 +206,7 @@ func _refresh() -> void:
 		var p: Dictionary = profile(room_key)
 		far_mist.visible=strength>0.0
 		near_mist.visible=SETTINGS.foreground_fog()
+		_update_readability()
 		for rect in [far_mist,near_mist]:
 			var mat: ShaderMaterial = rect.material as ShaderMaterial
 			mat.set_shader_parameter("fog_ink",p["ink"])

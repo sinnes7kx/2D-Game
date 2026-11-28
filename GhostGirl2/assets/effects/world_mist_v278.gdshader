@@ -5,6 +5,10 @@ uniform float density : hint_range(0.0,0.22) = 0.06;
 uniform float layer_phase = 0.0;
 uniform float drift = 5.0;
 uniform float spatial_scale = 1.0;
+// Foreground only: preserve the silhouette and nearby enemy telegraphs.
+uniform vec2 clear_center = vec2(0.0);
+uniform float clear_radius = 0.0;
+uniform float clear_strength : hint_range(0.0,1.0) = 0.0;
 varying vec2 world_at;
 
 void vertex() {
@@ -21,5 +25,8 @@ void fragment() {
 	float c = sin(p.x*0.0025 + p.y*0.020 + t*0.008 + b*0.8);
 	float field = 0.5 + 0.24*a + 0.17*b + 0.09*c;
 	float veil = smoothstep(0.22,0.87,field);
-	COLOR = vec4(fog_ink.rgb, density*veil*veil);
+	float distance_to_actor = length((world_at-clear_center)*vec2(1.0,1.22));
+	float outside = smoothstep(clear_radius*0.42, max(clear_radius,1.0), distance_to_actor);
+	float readability = mix(1.0-clear_strength,1.0,outside);
+	COLOR = vec4(fog_ink.rgb, density*veil*veil*readability);
 }
