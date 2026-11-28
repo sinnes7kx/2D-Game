@@ -1,5 +1,6 @@
 extends Node2D
 ## Ground eruptions and physical ring impacts: no projectile instances.
+const GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const IMPACT = preload("res://scripts/impact_spawner_v149.gd")
 var caster: CharacterBody2D
@@ -20,10 +21,7 @@ const RING_SPEED: float = 420.0
 const RING_MAX: float = 235.0
 
 static func clear_path(actor: CharacterBody2D,from: Vector2,to: Vector2) -> bool:
-	if from.distance_squared_to(to)<1.0:
-		return true
-	var query: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(from,to,6,[actor.get_rid()])
-	return actor.get_world_2d().direct_space_state.intersect_ray(query).is_empty()
+	return GEOMETRY.ground_path_clear(actor,from,to)
 
 # A physical double-ended blade contacts only where its two edges have
 # swept during this physics step. The cyclone uses the full disk instead.
@@ -40,7 +38,7 @@ static func blade_sweep_contact(offset: Vector2,angle: float,travel: float,radiu
 static func hit_spin(actor: CharacterBody2D,angle: float,travel: float,radius: float,damage: float,age: float,ledger: Dictionary,interval: float) -> int:
 	var hits: int = 0
 	for other in actor.get_tree().get_nodes_in_group("enemies"):
-		if not is_instance_valid(other) or other.is_queued_for_deletion() or not other is Node2D or not other.has_method("hit"):
+		if not GEOMETRY.is_hittable(other):
 			continue
 		var point: Vector2 = (other as Node2D).global_position
 		var key: int = other.get_instance_id()
@@ -58,7 +56,7 @@ static func hit_disk(actor: CharacterBody2D,center: Vector2,radius: float,damage
 		return 0
 	var count: int = 0
 	for other in actor.get_tree().get_nodes_in_group("enemies"):
-		if not is_instance_valid(other) or other.is_queued_for_deletion() or not other is Node2D or not other.has_method("hit"):
+		if not GEOMETRY.is_hittable(other):
 			continue
 		var point: Vector2 = (other as Node2D).global_position
 		var d: float = point.distance_squared_to(center)
