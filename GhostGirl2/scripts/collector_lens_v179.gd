@@ -187,6 +187,7 @@ func open_item(value: GhostItemInstance) -> void:
 		status.text = "Curved blade highlights · full-scythe glow %d%% · Natural keeps the original seed" % (SCYTHE_GLOW.rolled_level(value) * 10)
 
 func close_lens() -> void:
+	_on_skill_exit(null)
 	hide()
 	inspected = null
 	model.call("set_item", null)
@@ -246,10 +247,12 @@ func _process(delta: float) -> void:
 		return
 	var alt: bool = Input.is_key_pressed(KEY_ALT)
 	if not alt and not skill_hint.is_empty():
-		_on_skill_exit(null)
+		_clear_skill_hint()
 	if alt != advanced_info:
 		advanced_info = alt
 		_refresh_info()
+	if alt and not hovered_skill_meta.is_empty() and skill_hint.is_empty():
+		_on_skill_hover(hovered_skill_meta)
 	if not motion_button.button_pressed:
 		return
 	motion_time += delta
@@ -326,8 +329,10 @@ func _apply_rainbow() -> void:
 
 var skill_hint: String = ""
 var previous_status: String = ""
+var hovered_skill_meta: String = ""
 
 func _on_skill_hover(meta: Variant) -> void:
+	hovered_skill_meta = str(meta)
 	if not Input.is_key_pressed(KEY_ALT):
 		return
 	var message: String = MARKUP.skill_hover_details(inspected, str(meta))
@@ -339,6 +344,10 @@ func _on_skill_hover(meta: Variant) -> void:
 	status.text = skill_hint
 
 func _on_skill_exit(_meta: Variant) -> void:
+	hovered_skill_meta = ""
+	_clear_skill_hint()
+
+func _clear_skill_hint() -> void:
 	if not skill_hint.is_empty():
 		status.text = previous_status
 		skill_hint = ""
