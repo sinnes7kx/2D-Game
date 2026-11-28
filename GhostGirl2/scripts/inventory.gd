@@ -7,6 +7,31 @@ signal equipment_changed
 
 const CODEX = preload("res://scripts/codex_discoveries.gd")
 var codex_discoveries: Array = []
+var rainbow_balance: int = 0
+
+# One Rainbow buys a permanent skin on this owned item. Transaction is saved atomically.
+func spend_rainbow(item: GhostItemInstance) -> bool:
+	if item == null or rainbow_balance < 1 or item.rainbow_skin or item.get_slot() not in ["sword", "wand"] or (not contents.has(item) and not vault.has(item)):
+		return false
+	rainbow_balance -= 1
+	item.rainbow_skin = true
+	if not save_game():
+		rainbow_balance += 1
+		item.rainbow_skin = false
+		return false
+	contents_changed.emit()
+	equipment_changed.emit()
+	return true
+
+func grant_rainbow(amount: int = 1) -> bool:
+	if amount <= 0 or rainbow_balance > 1000000 - amount:
+		return false
+	rainbow_balance += amount
+	if not save_game():
+		rainbow_balance -= amount
+		return false
+	contents_changed.emit()
+	return true
 const ROLL_CODE_V1931 = preload("res://scripts/collector_roll_code_v1931.gd")
 const SAVE_FILE: String = "user://ghost_girl_treasures_v2.json"
 const LEGACY_SAVE_FILE: String = "user://ghost_girl_treasures_v1.json"
@@ -496,7 +521,7 @@ func _build_save_data() -> Dictionary:
 	var saved_vault: Array[Dictionary] = unresolved_vault.duplicate(true)
 	for item in vault:
 		saved_vault.append(_serialize_item(item, stash_position_v284(item)))
-	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "unresolved_backpack": unresolved_backpack.duplicate(true), "codex_discoveries": codex_discoveries.duplicate(true)}
+	return {"items": saved_items, "equipment": equipment.duplicate(true), "collected": collected_pickups.duplicate(true), "grid_rows": GRID_ROWS, "vault": saved_vault, "unresolved_backpack": unresolved_backpack.duplicate(true), "codex_discoveries": codex_discoveries.duplicate(true), "rainbow_balance": rainbow_balance}
 
 func save_game() -> bool:
 	if not save_block_reason.is_empty():
@@ -546,6 +571,7 @@ func _serialize_item(item: GhostItemInstance, pos: Vector2i) -> Dictionary:
 		"eye_style_override": item.eye_style_override,
 		"eye_palette_override": item.eye_palette_override,
 		"glow_level_override": item.glow_level_override,
+		"rainbow_skin": item.rainbow_skin,
 		"bow_glow_mode_override": item.bow_glow_mode_override,
 		"bow_projectile_style_override": item.bow_projectile_style_override,
 		"cosmetic_seed": item.cosmetic_seed,
@@ -616,6 +642,7 @@ func _restore_save_data(data: Dictionary) -> bool:
 		if not data.get(key, {}) is Dictionary:
 			return false
 	codex_discoveries = CODEX.restore(data.get("codex_discoveries", []))
+	rainbow_balance = clampi(int(data.get("rainbow_balance", 0)), 0, 1000000)
 	contents.clear()
 	grid_positions.clear()
 	unresolved_backpack.clear()
@@ -722,6 +749,7 @@ func _deserialize_item(saved: Dictionary) -> GhostItemInstance:
 	item.eye_palette_override = clampi(int(saved.get("eye_palette_override", -1)), -1, 5)
 	# Optional v2.16 cosmetic preferences. Missing keys mean Natural.
 	item.glow_level_override = clampi(int(saved.get("glow_level_override", -1)), -1, 7)
+	item.rainbow_skin = bool(saved.get("rainbow_skin", false))
 	item.bow_glow_mode_override = clampi(int(saved.get("bow_glow_mode_override", -1)), -1, 3)
 	item.bow_projectile_style_override = clampi(int(saved.get("bow_projectile_style_override", -1)), -1, 8)
 	# These keys are optional: old saves preserve their exact appearance.
