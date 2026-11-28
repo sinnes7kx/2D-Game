@@ -1,10 +1,10 @@
 extends RefCounted
 ## Body-only original v110 art with frame-specific, visually estimated grips.
-## Only paired weapon locomotion is replaced; combat and guard remain on
+## Equipped locomotion only; combat and guard remain on
 ## their existing measured body sources. Never modify diagonal art.
 const ROOT: String = "res://assets/ghost/weapon_body_v110/"
 const FACES: Array[String] = ["front","back","left","right"]
-const FAMILIES: Array[String] = ["dual_sword_","dual_dagger_"]
+const FAMILIES: Array[String] = ["dual_sword_","dual_dagger_","sword_modular_","sword_","dagger_","nocturne_dagger_","forge_dagger_","spear_","briarwake_spear_","twinblade_","rosemirror_twinblade_","scythe_","seraph_scythe_","halberd_","maul_","ashglass_maul_","rapier_","axe_","wand_","crossbow_","forge_bow_"]
 const META: String = "v296_clean_pair_carry"
 # Full 256x220 cell coordinates, slots 0/1 as in the paired render rigs.
 # Empty entries denote an occluded hand; do not attach a floating blade.
@@ -62,10 +62,13 @@ static func install(frames: SpriteFrames) -> int:
 			continue
 		for family in FAMILIES:
 			var clip: String = family+key
-			if not frames.has_animation(clip) or frames.get_frame_count(clip)!=8 or installed.has(clip):
+			if not frames.has_animation(clip) or frames.get_frame_count(clip)==0:
+				continue
+			if installed.has(clip) and matches_source(frames,clip):
 				continue
 			var duration_sum: float = 0.0
-			for i in range(8):
+			var original_count: int = frames.get_frame_count(clip)
+			for i in range(original_count):
 				duration_sum+=frames.get_frame_duration(clip,i)
 			# Preserve the cycle duration. Blinks are short instead of holding
 			# closed eyes for a large portion of the slow equipped idle loop.
@@ -77,8 +80,10 @@ static func install(frames: SpriteFrames) -> int:
 			var total: float = 0.0
 			for weight in weights:
 				total+=weight
+			# Retain original loop and FPS even for interpolated legacy clips.
+			frames.clear(clip)
 			for i in range(8):
-				frames.set_frame(clip,i,tiles[i],weights[i]*duration_sum/total)
+				frames.add_frame(clip,tiles[i],weights[i]*duration_sum/total)
 			installed[clip]=true
 			count+=1
 	frames.set_meta(META,installed)
@@ -90,8 +95,17 @@ static func applies(body: AnimatedSprite2D, clip: String) -> bool:
 	var installed: Dictionary = body.sprite_frames.get_meta(META,{})
 	if not installed.has(clip) or not body.sprite_frames.has_animation(clip) or body.sprite_frames.get_frame_count(clip)!=8:
 		return false
-	var tile: Texture2D = body.sprite_frames.get_frame_texture(clip,0)
-	return tile!=null and tile.resource_path==ROOT+source_key(clip)+"_00.png"
+	return matches_source(body.sprite_frames,clip)
+
+static func matches_source(frames: SpriteFrames,clip: String) -> bool:
+	var key: String = source_key(clip)
+	if key.is_empty() or not frames.has_animation(clip) or frames.get_frame_count(clip)!=8:
+		return false
+	for i in range(8):
+		var tile: Texture2D = frames.get_frame_texture(clip,i)
+		if tile==null or tile.resource_path!=ROOT+"%s_%02d.png" % [key,i]:
+			return false
+	return true
 
 static func grip(clip: String, frame: int, hand: int) -> Vector2:
 	var key: String = source_key(clip)
@@ -115,3 +129,29 @@ static func spans(clip: String, frame: int, length: float) -> Array:
 		var axis: Vector2 = Vector2(side*0.49,0.87).normalized()
 		result.append(PackedVector2Array([anchor,anchor+axis*length]))
 	return result
+
+static func lead_hand(clip: String) -> int:
+	return 0 if clip.ends_with("_left") else 1
+
+static func lead_grip(clip: String,frame: int) -> Vector2:
+	return grip(clip,frame,lead_hand(clip))
+
+# Visual-only geometry: use the same grip for the physical model and light.
+static func single_span(clip: String,frame: int,length: float,upright: bool=false) -> PackedVector2Array:
+	var anchor: Vector2 = lead_grip(clip,frame)
+	if anchor==Vector2.INF:
+		return PackedVector2Array()
+	var side: float = -1.0 if clip.ends_with("_left") else 1.0
+	var axis: Vector2 = Vector2(side*0.50,-0.86 if upright else 0.86).normalized()
+	if clip.begins_with("crossbow_"):
+		var forward: Vector2 = Vector2.DOWN
+		if clip.ends_with("_left"):
+			forward=Vector2.LEFT
+		elif clip.ends_with("_right"):
+			forward=Vector2.RIGHT
+		elif clip.ends_with("_back"):
+			forward=Vector2.UP
+		axis=forward.rotated(0.42 if side<0.0 else -0.42)
+	elif clip.begins_with("forge_bow_"):
+		axis=Vector2(side*0.70,-0.45 if clip.ends_with("_back") else 0.45).normalized()
+	return PackedVector2Array([anchor,anchor+axis*length])
