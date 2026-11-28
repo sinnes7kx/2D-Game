@@ -6,6 +6,7 @@ extends CharacterBody2D
 const COMBAT_GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const MELEE_RULES = preload("res://scripts/combat/melee_rules.gd")
 const PLAYBACK = preload("res://scripts/animation/directional_playback.gd")
+const CARDINAL_REFRESH = preload("res://scripts/cardinal_refresh_v295.gd")
 const GROUNDED = preload("res://scripts/combat/grounded_motion.gd")
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
@@ -323,6 +324,7 @@ func _ready() -> void:
 		DIAGONAL_ART_V247.install(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
+		CARDINAL_REFRESH.install(body_art.sprite_frames)
 		GENTLE.prepare_timing(body_art.sprite_frames)
 		body_art.play("idle_front")
 		_update_hand()
@@ -337,6 +339,7 @@ func _ready() -> void:
 		push_warning(DIAGONAL_ART_V247.diagnostic()+" Cardinal fallback remains active.")
 	DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
 	DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
+	CARDINAL_REFRESH.install(body_art.sprite_frames)
 	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
