@@ -324,6 +324,7 @@ func _ready() -> void:
 		DIAGONAL_ART_V247.install(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
+		DIAGONAL_ART_V247.install_candidate_cardinal_guards(body_art.sprite_frames)
 		CARDINAL_REFRESH.install(body_art.sprite_frames)
 		GENTLE.prepare_timing(body_art.sprite_frames)
 		body_art.play("idle_front")
@@ -339,6 +340,7 @@ func _ready() -> void:
 		push_warning(DIAGONAL_ART_V247.diagnostic()+" Cardinal fallback remains active.")
 	DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
 	DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
+	DIAGONAL_ART_V247.install_candidate_cardinal_guards(body_art.sprite_frames)
 	CARDINAL_REFRESH.install(body_art.sprite_frames)
 	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
@@ -1436,7 +1438,7 @@ func _begin_parry() -> void:
 
 func _sync_guard_frame() -> void:
 	if DIAGONAL_ART_V247.is_guard_clip(str(body_art.animation)):
-		body_art.set_frame_and_progress(DIAGONAL_ART_V247.guard_frame(parry_age,parry_left),0.0)
+		body_art.set_frame_and_progress(DIAGONAL_ART_V247.guard_frame(parry_age,parry_left,parry_used),0.0)
 		body_art.pause()
 
 static func parry_result(age: float, heading: Vector2, offset: Vector2) -> int:
@@ -1456,6 +1458,7 @@ func try_parry_contact(attacker: Node2D) -> bool:
 	var perfect: bool = result == 2
 	attacker.call("on_parried",perfect)
 	parry_left = minf(parry_left,0.12 if perfect else 0.22)
+	_sync_guard_frame()
 	counter_window = 0.95 if perfect else 0.50
 	_spawn_precision_feedback("riposte" if perfect else "ready",global_position+Vector2(0,-31),parry_heading)
 	COMBAT_JUICE.play(get_tree().current_scene,global_position,"parry",-10.0 if perfect else -16.0)
