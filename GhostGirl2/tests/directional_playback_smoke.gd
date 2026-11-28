@@ -3,6 +3,7 @@ const PLAYBACK = preload("res://scripts/animation/directional_playback.gd")
 const MOTION = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const DIR = preload("res://scripts/direction_controller_v245.gd")
 const CARDINAL = preload("res://scripts/cardinal_refresh_v295.gd")
+const PAIRED_CARRY = preload("res://scripts/cardinal_paired_carry_v296.gd")
 
 func _initialize() -> void:
 	call_deferred("_verify")
@@ -88,6 +89,47 @@ func _verify() -> void:
 		assert(original.get_frame_texture("idle_left",i).resource_path.ends_with("idle_left_%02d.png" % open_left[i]))
 	assert(original.get_frame_texture("blink_left",3).resource_path.ends_with("idle_left_04.png"))
 	assert(original.get_frame_texture("blink_left",4).resource_path.ends_with("idle_left_05.png"))
+	# All 16 paired cardinal clips reuse the clean eight-frame body rows.
+	var paired: SpriteFrames = SpriteFrames.new()
+	for family in PAIRED_CARRY.FAMILIES:
+		for face in PAIRED_CARRY.FACES:
+			for motion in ["idle","walk"]:
+				_add(paired,texture,family+motion+"_"+face,8,true)
+		_add(paired,texture,family+"idle_front_left",8,true)
+		_add(paired,texture,family+"parry_front",8)
+	assert(PAIRED_CARRY.install(paired)==16)
+	assert(PAIRED_CARRY.install(paired)==0)
+	for family in PAIRED_CARRY.FAMILIES:
+		assert(paired.get_frame_texture(family+"idle_front_left",0)==texture)
+		assert(paired.get_frame_texture(family+"parry_front",0)==texture)
+		for face in PAIRED_CARRY.FACES:
+			for motion in ["idle","walk"]:
+				var clip: String = family+motion+"_"+face
+				assert(paired.get_frame_count(clip)==8)
+				assert(is_equal_approx(paired.get_animation_speed(clip),16.0))
+				var total: float = 0.0
+				for i in range(8):
+					var tile: Texture2D = paired.get_frame_texture(clip,i)
+					assert(tile.resource_path==PAIRED_CARRY.ROOT+"%s_%s_%02d.png" % [motion,face,i])
+					total+=paired.get_frame_duration(clip,i)
+					var spans: Array = PAIRED_CARRY.spans(clip,i,60.0)
+					assert(spans.size()==2)
+					for hand in range(2):
+						var grip: Vector2 = PAIRED_CARRY.grip(clip,i,hand)
+						var span: PackedVector2Array = spans[hand]
+						if grip==Vector2.INF:
+							assert(span.is_empty())
+						else:
+							assert(span.size()==2 and span[0]==grip)
+							assert(is_equal_approx(span[0].distance_to(span[1]),60.0))
+				assert(is_equal_approx(total,8.0))
+		assert(paired.get_frame_duration(family+"idle_left",4)<paired.get_frame_duration(family+"idle_left",0))
+		assert(paired.get_frame_duration(family+"idle_left",5)<paired.get_frame_duration(family+"idle_left",0))
+		assert(PAIRED_CARRY.grip(family+"idle_back",0,0)==Vector2.INF)
+	body.sprite_frames=paired
+	assert(PAIRED_CARRY.applies(body,"dual_sword_idle_front"))
+	assert(not PAIRED_CARRY.applies(body,"dual_sword_idle_front_left"))
+	body.sprite_frames=frames
 	# Original clips stay selected and their normalized idle phase follows the turn.
 	for face in CARDINAL.FACES:
 		assert(CARDINAL.supports("idle_"+face))
