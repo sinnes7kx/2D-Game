@@ -89,7 +89,7 @@ func _verify() -> void:
 		assert(original.get_frame_texture("idle_left",i).resource_path.ends_with("idle_left_%02d.png" % open_left[i]))
 	assert(original.get_frame_texture("blink_left",3).resource_path.ends_with("idle_left_04.png"))
 	assert(original.get_frame_texture("blink_left",4).resource_path.ends_with("idle_left_05.png"))
-	# All 16 paired cardinal clips reuse the clean eight-frame body rows.
+	# All supported equipped cardinal clips reuse clean eight-frame body rows.
 	var paired: SpriteFrames = SpriteFrames.new()
 	for family in PAIRED_CARRY.FAMILIES:
 		for face in PAIRED_CARRY.FACES:
@@ -97,14 +97,23 @@ func _verify() -> void:
 				_add(paired,texture,family+motion+"_"+face,8,true)
 		_add(paired,texture,family+"idle_front_left",8,true)
 		_add(paired,texture,family+"parry_front",8)
-	assert(PAIRED_CARRY.install(paired)==16)
+	assert(PAIRED_CARRY.install(paired)==(PAIRED_CARRY.FAMILIES.size()-2)*8)
 	assert(PAIRED_CARRY.install(paired)==0)
+	var painted: int = 0
+	for style in ["thornrose","moonveil"]:
+		if ResourceLoader.exists("res://assets/equipment/bows_v166/%s_carry_only_2048x1760.png" % style,"Texture2D") and ResourceLoader.exists("res://assets/ghost/bows_v139/%s_locomotion_mask_2048x1760.png" % style,"Texture2D"):
+			painted+=8
+	assert(PAIRED_CARRY.install(paired,true)==painted)
+	assert(PAIRED_CARRY.install(paired,true)==0)
 	for family in PAIRED_CARRY.FAMILIES:
 		assert(paired.get_frame_texture(family+"idle_front_left",0)==texture)
 		assert(paired.get_frame_texture(family+"parry_front",0)==texture)
 		for face in PAIRED_CARRY.FACES:
 			for motion in ["idle","walk"]:
 				var clip: String = family+motion+"_"+face
+				if not PAIRED_CARRY.matches_source(paired,clip):
+					assert(family in ["thornrose_","moonveil_"])
+					continue
 				assert(paired.get_frame_count(clip)==8)
 				assert(is_equal_approx(paired.get_animation_speed(clip),16.0))
 				var total: float = 0.0
@@ -123,9 +132,34 @@ func _verify() -> void:
 							assert(span.size()==2 and span[0]==grip)
 							assert(is_equal_approx(span[0].distance_to(span[1]),60.0))
 				assert(is_equal_approx(total,8.0))
+		if not PAIRED_CARRY.matches_source(paired,family+"idle_left"):
+			continue
 		assert(paired.get_frame_duration(family+"idle_left",4)<paired.get_frame_duration(family+"idle_left",0))
 		assert(paired.get_frame_duration(family+"idle_left",5)<paired.get_frame_duration(family+"idle_left",0))
 		assert(PAIRED_CARRY.grip(family+"idle_back",0,0)==Vector2.INF)
+	# An expanded legacy idle still retains its weighted cycle duration.
+	var expanded: String = "sword_modular_idle_front"
+	paired.clear(expanded)
+	for i in range(24):
+		paired.add_frame(expanded,texture,0.5)
+	assert(PAIRED_CARRY.install(paired,true)==1)
+	assert(paired.get_frame_count(expanded)==8)
+	var expanded_total: float = 0.0
+	for i in range(8):
+		expanded_total+=paired.get_frame_duration(expanded,i)
+	assert(is_equal_approx(expanded_total,12.0))
+	for family in PAIRED_CARRY.FAMILIES:
+		for face in PAIRED_CARRY.FACES:
+			var clip: String = family+"walk_"+face
+			for i in range(8):
+				var wrist: Vector2 = PAIRED_CARRY.lead_grip(clip,i)
+				var single: PackedVector2Array = PAIRED_CARRY.single_span(clip,i,74.0,true)
+				assert(single.size()==2 and single[0]==wrist)
+				assert(is_equal_approx(single[0].distance_to(single[1]),74.0))
+				if family in ["thornrose_","moonveil_"]:
+					var pose: Dictionary = preload("res://scripts/bow_palette_overlay_v139.gd").clean_cardinal_hold_pose(clip,wrist)
+					var angle: float = deg_to_rad(float(pose["rotation_deg"]))
+					assert(((pose["position"] as Vector2)+(pose["source_handle"] as Vector2).rotated(angle)).is_equal_approx(wrist))
 	body.sprite_frames=paired
 	assert(PAIRED_CARRY.applies(body,"dual_sword_idle_front"))
 	assert(not PAIRED_CARRY.applies(body,"dual_sword_idle_front_left"))
