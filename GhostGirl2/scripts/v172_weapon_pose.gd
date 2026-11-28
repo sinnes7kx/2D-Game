@@ -496,13 +496,8 @@ func _draw_briarwake_trident(grip: Vector2, tip: Vector2, tangent: Vector2, norm
 	var head: Vector2 = tip - tangent * 17.0
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():
-		preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,shaft_base,grip,head,4.5,look)
-		for side in [-1.0, 1.0]:
-			var fork: Vector2 = head + normal * side * 8.0
-			var prong: Vector2 = tip - tangent * 2.0 + normal * side * 7.0
-			preload("res://scripts/forged_polearm_v255.gd").draw_fork(self,head,fork,tangent,look)
-			MODULAR.draw_blade(self, fork, prong, 1.8, look)
-		MODULAR.draw_blade(self, head, tip, 2.6, look)
+		var paths: Array[PackedVector2Array]=RENDER.draw_polearm(self,PackedVector2Array([grip,tip]),true,look,v180_elapsed)
+		RENDER.draw_owned_paths(self,body,paths,v180_elapsed)
 		return
 	# Rosewood haft with a pale winding thread and a second grip.
 	draw_line(shaft_base, head, Color("2d1a2c"), 7.7, true)
@@ -529,8 +524,8 @@ func _draw_moonwarden_spear(grip: Vector2, tip: Vector2, tangent: Vector2, norma
 	var butt: Vector2 = grip - tangent * 22.0
 	var look: Dictionary = MODULAR.equipped_profile(self, body)
 	if not look.is_empty():
-		preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,butt,grip,root,3.8,look)
-		MODULAR.draw_blade(self, root, tip, 4.5, look)
+		var paths: Array[PackedVector2Array]=RENDER.draw_polearm(self,PackedVector2Array([grip,tip]),false,look,v180_elapsed)
+		RENDER.draw_owned_paths(self,body,paths,v180_elapsed)
 		return
 	draw_line(butt, root, Color("322638"), 6.5, true)
 	draw_line(butt, root, Color("876f84"), 3.2, true)
