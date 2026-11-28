@@ -43,8 +43,7 @@ static func single_span(body: AnimatedSprite2D,clip: String,frame: int) -> Packe
 	return rig.call("get_weapon_span",clip,frame) if rig!=null and rig.has_method("get_weapon_span") else PackedVector2Array()
 
 # Exact metal geometry measured from the actual physical rig. No hitbox data.
-# The vector holds grip-start distance, blade-root distance, tip extension,
-# grip width and blade width (named dictionary keeps these independent).
+# Named geometry fields keep grip start, blade root, tip and widths independent.
 static func straight_geometry(style: String,span: PackedVector2Array,hand: int=0) -> Dictionary:
 	if span.size()!=2 or span[0].distance_squared_to(span[1])<36.0:
 		return {}
@@ -118,7 +117,7 @@ static func draw_owned_light(canvas: Node2D,body: AnimatedSprite2D,geometry: Dic
 		canvas.set_meta("shared_edge_key",key)
 		canvas.set_meta("shared_edge_look",item.collector_appearance())
 		canvas.set_meta("shared_edge_palette",item.glow_gradient_colors())
-	var colors: Array[Color] = canvas.get_meta("shared_edge_palette",[])
+	var colors: Array[Color] = canvas.get_meta("shared_edge_palette")
 	var look: Dictionary = canvas.get_meta("shared_edge_look",{})
 	draw_light(canvas,edge_paths(geometry,profile),colors,look,phase,effect_scale(item))
 
@@ -142,3 +141,10 @@ static func owns_straight_core(body: AnimatedSprite2D,item: GhostItemInstance,cl
 		return false
 	var rig: Node=body.get_node_or_null("WeaponPoseV172")
 	return rig!=null and rig.has_method("_is_equipped") and bool(rig.call("_is_equipped",clip)) and single_span(body,clip,body.frame).size()==2
+
+# One clearing redraw when light becomes disabled, then no idle FX redraw.
+static func light_redraw(owner: Node,body: AnimatedSprite2D) -> bool:
+	var enabled: bool = effect_scale(equipped(body))>0.0 and FX.intensity>0.0
+	var previous: bool = bool(owner.get_meta("shared_edge_active",false))
+	owner.set_meta("shared_edge_active",enabled)
+	return enabled or previous
