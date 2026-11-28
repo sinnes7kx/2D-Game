@@ -181,7 +181,8 @@ static func cutting_edge(id: String, painted: bool = false) -> PackedVector2Arra
 static func seeded_edge(canvas: Node2D, edge: PackedVector2Array, colors: Array[Color], look: Dictionary, phase: float, glow: float) -> void:
 	if edge.size()<2 or colors.is_empty() or look.is_empty() or glow<=0.0:
 		return
-	SEED_FX.draw_edge(canvas,edge,colors,look,phase,glow)
+	var paths: Array[PackedVector2Array] = [edge]
+	SEED_FX.draw_blade_light(canvas,paths,colors,look,phase,glow)
 	var center: Vector2 = edge[0].lerp(edge[-1],0.5)
 	var axis: Vector2 = (edge[-1]-edge[0]).normalized()
 	SEED_PARTICLES.draw_pattern(canvas,center,axis,Vector2(edge[0].distance_to(edge[-1])*0.53,7.0),colors,look,phase,glow)
@@ -214,7 +215,9 @@ static func draw_melee(canvas: Node2D, id: String, grip: Vector2, tip: Vector2, 
 		if colors.is_empty() or look.is_empty():
 			canvas.draw_polyline(edge,Color(pigment.r,pigment.g,pigment.b,clampf(glow,0.0,1.0)*0.46),1.5,true)
 		else:
-			seeded_edge(canvas,edge,colors,look,phase,glow)
+			seeded_edge(canvas,edge,colors,look,phase,glow * (1.3 if seraph else 1.0))
+			if seraph:
+				seeded_edge(canvas,PackedVector2Array([Vector2(-27,0),Vector2(70,0)]),colors,look,phase,glow * 0.60)
 		if id.begins_with("gallows_") and painted==null:
 			var opposite: PackedVector2Array = PackedVector2Array()
 			for point in edge:
@@ -249,5 +252,8 @@ static func draw_crossbow(canvas: Node2D, id: String, grip: Vector2, tip: Vector
 			canvas.draw_polyline(limbs,ink,1.4,true)
 		else:
 			seeded_edge(canvas,limbs,colors,look,phase,glow)
+			seeded_edge(canvas,PackedVector2Array([Vector2(-20,-2),Vector2(7,-2),Vector2(35,-2)]),colors,look,phase,glow*0.85)
+			seeded_edge(canvas,PackedVector2Array([Vector2(-20,2),Vector2(7,2),Vector2(35,2)]),colors,look,phase,glow*0.65)
+			SEED_FX.draw_edge(canvas,cord,colors,look,phase,glow*0.55,false)
 	canvas.draw_set_transform(Vector2.ZERO)
 	return true
