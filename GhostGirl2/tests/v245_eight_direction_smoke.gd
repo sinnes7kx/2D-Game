@@ -1,4 +1,5 @@
 extends SceneTree
+const GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const DIR = preload("res://scripts/direction_controller_v245.gd")
 const PLAYER_SCRIPT = preload("res://scripts/player.gd")
 const PLAYER = preload("res://scenes/player.tscn")
@@ -66,6 +67,20 @@ func _verify() -> void:
 	assert(is_equal_approx(PLAYER_SCRIPT.charge_target_velocity(Vector2(1,1),200.0).length(),90.0))
 	assert(PLAYER_SCRIPT.charge_target_velocity(Vector2.ZERO,200.0)==Vector2.ZERO)
 	assert(PLAYER_SCRIPT.charge_target_velocity(Vector2.LEFT*0.5,200.0)==Vector2.LEFT*45.0)
+	# Shared geometry: exact dead zone, range boundary and directional gate.
+	assert(GEOMETRY.WORLD_MASK==2 and GEOMETRY.WORLD_AND_PROPS_MASK==6)
+	assert(not GEOMETRY.is_hittable(null))
+	var no_hit: Node2D=Node2D.new()
+	assert(not GEOMETRY.is_hittable(no_hit))
+	no_hit.free()
+	for i in range(8):
+		var axis: Vector2=DIR.heading(i)
+		assert(GEOMETRY.cone_contact(axis*99.0,axis,100.0,4.0,0.60))
+		assert(not GEOMETRY.cone_contact(-axis*99.0,axis,100.0,4.0,0.60))
+		assert(not GEOMETRY.cone_contact(axis*101.0,axis,100.0,4.0,0.60))
+		assert(not GEOMETRY.cone_contact(axis*1.0,axis,100.0,4.0,0.60))
+	assert(GEOMETRY.cone_contact(Vector2(100,0),Vector2.RIGHT,100.0,4.0,0.60))
+	assert(not GEOMETRY.facing_contact(Vector2.RIGHT,Vector2.ZERO,0.0,0.50))
 	# All octants use the same timed frontal contact rules.
 	for i in range(8):
 		var aim: Vector2 = DIR.heading(i)
