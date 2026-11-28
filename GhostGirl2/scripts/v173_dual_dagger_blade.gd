@@ -24,7 +24,7 @@ func _process(_delta: float) -> void:
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_name: String = str(body.animation)
 	var active: bool = bool(rig.call("is_active", animation_name))
-	if active and (RENDER.effect_scale(RENDER.equipped(body))>0.0 or animation_name.begins_with("attack_") or GENTLE.modular_idle(animation_name) or MODULAR.surface_is_animated(self, body, blade_index)):
+	if active and (RENDER.light_redraw(self,body) or animation_name.begins_with("attack_") or GENTLE.modular_idle(animation_name) or MODULAR.surface_is_animated(self, body, blade_index)):
 		queue_redraw()
 	if animation_name != last_animation or body.frame != last_frame or active != last_active:
 		last_animation = animation_name
