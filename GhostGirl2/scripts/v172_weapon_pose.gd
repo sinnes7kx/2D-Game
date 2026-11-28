@@ -211,7 +211,7 @@ func _is_equipped(animation_name: String) -> bool:
 		return false
 	var ident: String = str(equipped.definition.item_id)
 	if preload("res://scripts/ghost_diagonal_art_v247.gd").is_guard_clip(animation_name):
-		return equipped.weapon_style() in ["blade","dagger","spear","twinblade","rapier","axe","crossbow"] or equipped.uses_forge_bow() or ident=="seraph_reaper_v292"
+		return not animation_name.begins_with("wand_") and not animation_name.begins_with("parry_") and (equipped.weapon_style() in ["blade","dagger","spear","twinblade","rapier","axe","crossbow"] or equipped.uses_forge_bow() or ident=="seraph_reaper_v292")
 	if ident=="seraph_reaper_v292":
 		return animation_name.begins_with("seraph_scythe_") or animation_name.begins_with("attack_seraph_scythe_")
 	if equipped.weapon_style() in ["rapier","axe"]:
