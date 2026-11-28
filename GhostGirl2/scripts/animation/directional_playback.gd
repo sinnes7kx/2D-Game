@@ -4,7 +4,6 @@ extends RefCounted
 const ART = preload("res://scripts/ghost_diagonal_art_v247.gd")
 const SKIN = preload("res://scripts/rose_nocturne_skin_v246.gd")
 const MOTION = preload("res://scripts/gentle_weapon_motion_v191.gd")
-const CARDINAL = preload("res://scripts/cardinal_refresh_v295.gd")
 
 static func has_clip(frames: SpriteFrames, clip: String) -> bool:
 	return frames!=null and frames.has_animation(clip) and frames.get_frame_count(clip)>0
@@ -21,8 +20,7 @@ static func locomotion_clip(requested: String,eight: String,cardinal: String,arm
 		if skin_clip!=requested and has_clip(frames,skin_clip):
 			return skin_clip
 		# Missing alternate skin rows fall back to the original angled art.
-	var resolved: String = ART.resolve(requested,eight,cardinal,false,frames)
-	return CARDINAL.resolve(resolved,eight,false,frames)
+	return ART.resolve(requested,eight,cardinal,false,frames)
 
 static func gesture_clip(action: String,fallback: String,eight: String,cardinal: String,walk_prefix: String,armed: bool,thrown: bool,frames: SpriteFrames) -> String:
 	if thrown:
