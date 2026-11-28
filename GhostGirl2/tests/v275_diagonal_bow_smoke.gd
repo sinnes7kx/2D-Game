@@ -144,5 +144,42 @@ func _verify() -> void:
 	assert(not DIAGONAL.missing_authored_guards(authored).has(target))
 	assert(not DIAGONAL.install_authored_row(authored,atlas,8,target,guides))
 	assert(authored.get_frame_count(target)==8)
+	# Candidate art is not counted as approved authored art. The synthetic
+	# atlas checks contracts only; actual pixel alignment needs Godot review.
+	var candidate: SpriteFrames = SpriteFrames.new()
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(DIAGONAL.CARDINAL_GUARD_GUIDES))
+	assert(raw is Dictionary and raw["rows"].size()==4)
+	var records: Array = raw["rows"]
+	for face in DIAGONAL.CARDINAL_GUARD_FACES:
+		for family in ["sword_modular_","dual_sword_","wand_"]:
+			var clip: String = family+"parry_"+face
+			candidate.add_animation(clip)
+			candidate.set_animation_speed(clip,8.0)
+			for i in range(8):
+				candidate.add_frame(clip,tile)
+	var broken: Array = records.duplicate(true)
+	broken[2]["left"][3]=[]
+	assert(DIAGONAL.install_candidate_guard_rows(candidate,atlas,broken)==0)
+	assert(DIAGONAL.install_candidate_guard_rows(candidate,atlas,records)==12)
+	for record in records:
+		var face: String = record["face"]
+		var clip: String = "sword_modular_parry_"+face
+		assert(candidate.get_meta("candidate_guard_"+clip,false))
+		assert(DIAGONAL.missing_authored_guards(candidate).has(clip))
+		for i in range(8):
+			var cell: AtlasTexture = candidate.get_frame_texture(clip,i) as AtlasTexture
+			assert(cell.atlas==atlas and cell.region==Rect2(256*i,220*int(record["row"]),256,220))
+			var samples: Array = record["left" if int(record["near_hand"])==0 else "right"]
+			var sample: Array = samples[i]
+			var wrist: Vector2 = DIAGONAL.guard_wrist(clip,i)
+			if sample.is_empty():
+				assert(wrist==Vector2.INF and DIAGONAL.guard_base_span(clip,i,60.0).is_empty())
+			else:
+				assert(wrist==Vector2(float(sample[0])-128.0,float(sample[1])-110.0))
+	assert(DIAGONAL.guard_frame(0.04,0.12,true)==4)
+	assert(DIAGONAL.guard_frame(0.04,0.22,true)==4)
+	assert(DIAGONAL.guard_frame(0.08,0.09,true)==5)
+	assert(DIAGONAL.guard_frame(0.15,0.04,true)==6)
+	assert(DIAGONAL.guard_frame(0.2,0.01,true)==7)
 	print("v2.75 bow diagonal carry, shooting, airborne aliases, guard clips and axes PASS: ",count," samples")
 	quit(0)
