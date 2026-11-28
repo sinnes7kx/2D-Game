@@ -108,3 +108,26 @@ static func effect_scale(item: GhostItemInstance,enabled: bool=true) -> float:
 static func bow_light(item: GhostItemInstance,enabled: bool=true) -> Vector3:
 	var strength: float = effect_scale(item,enabled)*FX.intensity
 	return Vector3(strength if CHOICES.bow_body_visible(item) else 0.0,strength if CHOICES.bow_string_visible(item) else 0.0,1.0 if enabled and CHOICES.bow_mode(item)==3 else 0.0)
+
+static func draw_owned_light(canvas: Node2D,body: AnimatedSprite2D,geometry: Dictionary,profile: Dictionary,phase: float) -> void:
+	var item: GhostItemInstance = equipped(body)
+	if item==null or effect_scale(item)<=0.0 or FX.intensity<=0.0:
+		return
+	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(),item.cosmetic_uid,item.visual_seed(),item.gradient_version,item.origin_room,item.regional_rank,item.debug_collector_tier,item.debug_color_mode,item.debug_glow_motif,item.debug_surface_mode,item.effect_palette_channel()]
+	if canvas.get_meta("shared_edge_key","")!=key:
+		canvas.set_meta("shared_edge_key",key)
+		canvas.set_meta("shared_edge_look",item.collector_appearance())
+		canvas.set_meta("shared_edge_palette",item.glow_gradient_colors())
+	var colors: Array[Color] = canvas.get_meta("shared_edge_palette",[])
+	var look: Dictionary = canvas.get_meta("shared_edge_look",{})
+	draw_light(canvas,edge_paths(geometry,profile),colors,look,phase,effect_scale(item))
+
+static func preview_span(style: String,hand: int=0) -> PackedVector2Array:
+	var x: float = (-17.0 if hand==0 else 17.0) if style in ["dual_sword","dual_dagger"] else 0.0
+	match style:
+		"dual_sword": return PackedVector2Array([Vector2(x,15),Vector2(x,-51)])
+		"dual_dagger": return PackedVector2Array([Vector2(x,9),Vector2(x,-41)])
+		"dagger": return PackedVector2Array([Vector2(0,5),Vector2(0,-49)])
+		"forge_dagger": return PackedVector2Array([Vector2(0,14),Vector2(0,-40)])
+		"blade": return PackedVector2Array([Vector2(0,10),Vector2(0,-50)])
+	return PackedVector2Array()
