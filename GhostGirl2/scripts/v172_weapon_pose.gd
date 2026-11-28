@@ -1,5 +1,6 @@
 extends Node2D
 const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
+const CLEAN_CARRY = preload("res://scripts/cardinal_paired_carry_v296.gd")
 const MODELS_V283 = preload("res://scripts/weapon_models_v283.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
 const FORGE_V238 = preload("res://scripts/bow_dagger_forge_v238.gd")
@@ -210,6 +211,9 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
+	if CLEAN_CARRY.applies(body,animation_name):
+		var style: String = equipped.weapon_style()
+		return (style=="blade" and animation_name.begins_with("sword_")) or (style=="dagger" and (animation_name.begins_with("dagger_") or animation_name.begins_with("nocturne_dagger_") or animation_name.begins_with("forge_dagger_"))) or (style=="spear" and (animation_name.begins_with("spear_") or animation_name.begins_with("briarwake_spear_"))) or (style=="twinblade" and animation_name.contains("twinblade")) or (style in ["rapier","axe","crossbow"] and animation_name.begins_with(style+"_")) or (ident=="seraph_reaper_v292" and animation_name.begins_with("seraph_scythe_")) or (equipped.uses_forge_bow() and animation_name.begins_with("forge_bow_"))
 	if preload("res://scripts/ghost_diagonal_art_v247.gd").is_guard_clip(animation_name):
 		return not animation_name.begins_with("wand_") and not animation_name.begins_with("parry_") and (equipped.weapon_style() in ["blade","dagger","spear","twinblade","rapier","axe","crossbow"] or equipped.uses_forge_bow() or ident=="seraph_reaper_v292")
 	if ident=="seraph_reaper_v292":
@@ -271,6 +275,21 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 	return RENDER.guard_span(body, span)
 
 func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedVector2Array:
+	if CLEAN_CARRY.applies(body,animation_name) and _is_equipped(animation_name):
+		var length: float = 67.0
+		var upright: bool = animation_name.contains("spear_") or animation_name.contains("twinblade") or animation_name.contains("seraph_scythe_") or animation_name.begins_with("axe_") or animation_name.begins_with("rapier_")
+		if animation_name.contains("dagger_"):
+			length=DAGGER_THRUST.SINGLE_LENGTH
+		elif animation_name.contains("spear_"):
+			length=74.0
+		elif animation_name.contains("twinblade"):
+			length=76.0
+		elif animation_name.begins_with("rapier_"):
+			length=84.0
+		elif animation_name.begins_with("forge_bow_") or animation_name.begins_with("crossbow_"):
+			length=32.0
+		var carry: PackedVector2Array = CLEAN_CARRY.single_span(animation_name,frame_index,length,upright)
+		return GENTLE.smooth(body,animation_name,carry) if GENTLE.modular_idle(animation_name) else carry
 	var guard_art = preload("res://scripts/ghost_diagonal_art_v247.gd")
 	if guard_art.is_guard_clip(animation_name) and _is_equipped(animation_name):
 		var length: float = 67.0
@@ -469,10 +488,13 @@ func _draw() -> void:
 		if base == "blackthorn_crossbow_v236":
 			var face: String = animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
 			var off: PackedVector2Array = CROSSBOW_V236.offhand_span(animation_name, face, body.frame, tangent)
+			if CLEAN_CARRY.applies(body,animation_name):
+				var wrist: Vector2 = CLEAN_CARRY.grip(animation_name,body.frame,1-CLEAN_CARRY.lead_hand(animation_name))
+				off=PackedVector2Array() if wrist==Vector2.INF else PackedVector2Array([wrist,wrist+tangent*32.0])
 			if off.size() == 2:
 				CROSSBOW_V236.draw_weapon(self, off[0], off[1], profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
 		CROSSBOW_V236.draw_weapon(self, grip, tip, profile, loaded, base, cocking, look, colors, v180_elapsed, FORGE_CHOICES.effect_scale(held))
-	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name)) or (animation_name.begins_with("attack_sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_modular_combat_v294(animation_name)):
+	elif animation_name.contains("sword_modular_") or (animation_name.begins_with("sword_") and (CLEAN_CARRY.applies(body,animation_name) or preload("res://scripts/ghost_diagonal_art_v247.gd").is_carried_clip(animation_name))) or (animation_name.begins_with("attack_sword_") and preload("res://scripts/ghost_diagonal_art_v247.gd").is_modular_combat_v294(animation_name)):
 		var look: Dictionary = MODULAR.equipped_profile(self, body)
 		if not look.is_empty():
 			var geometry: Dictionary = RENDER.straight_geometry("blade",span)
