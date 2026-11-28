@@ -184,7 +184,7 @@ func _process(_delta: float) -> void:
 			if forge_fx_revision != FORGE_FX.revision:
 				forge_fx_revision = FORGE_FX.revision
 				queue_redraw()
-	if animation_now.contains("rapier_") or animation_now.contains("axe_") or animation_now.contains("seraph_scythe_") or animation_now.contains("forge_bow_") or animation_now.contains("twinblade") or animation_now.contains("crossbow_") or (_is_equipped(animation_now) and (animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
+	if animation_now.contains("rapier_") or animation_now.contains("axe_") or animation_now.contains("seraph_scythe_") or animation_now.contains("forge_bow_") or animation_now.contains("twinblade") or animation_now.contains("crossbow_") or (_is_equipped(animation_now) and (RENDER.light_redraw(self,body) or animation_now.begins_with("attack_") or GENTLE.modular_idle(animation_now) or MODULAR.surface_is_animated(self, body))):
 		queue_redraw()
 	# Explicitly redraw when leaving an attack, or its last weapon image
 	# would remain visible during walking/idle until the next attack.
