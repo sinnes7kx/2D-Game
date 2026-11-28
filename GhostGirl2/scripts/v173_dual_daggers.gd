@@ -5,6 +5,7 @@ extends Node2D
 const ITEM_ID: String = "moonlace_dual_daggers_v173"
 const BLADE_LENGTH: float = 50.0
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
+const CARDINAL_CARRY = preload("res://scripts/cardinal_paired_carry_v296.gd")
 const THRUST = preload("res://scripts/dagger_thrust_v186.gd")
 const BLADE_SCRIPT = preload("res://scripts/v173_dual_dagger_blade.gd")
 var body: AnimatedSprite2D = null
@@ -77,6 +78,14 @@ func is_active(animation_name: String) -> bool:
 	return _equipped() and (animation_name.begins_with("dual_dagger_") or animation_name.begins_with("attack_dual_dagger_"))
 
 func get_blade_spans(animation_name: String, frame_index: int) -> Array:
+	if CARDINAL_CARRY.applies(body,animation_name):
+		if not is_active(animation_name):
+			return []
+		var carried: Array = CARDINAL_CARRY.spans(animation_name,frame_index,BLADE_LENGTH)
+		if GENTLE.modular_idle(animation_name):
+			for hand in range(carried.size()):
+				carried[hand]=GENTLE.smooth(body,animation_name,carried[hand],hand)
+		return carried
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
 	if diagonal.is_guard_clip(animation_name):
 		return diagonal.guard_pair_spans(animation_name,frame_index,BLADE_LENGTH) if is_active(animation_name) else []
