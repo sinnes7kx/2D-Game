@@ -24,7 +24,7 @@ static func strength_for(name: String, size: Vector2, centered: bool, offset: Ve
 static func is_polished_source(path: String) -> bool:
 	for face in FACES:
 		for index in range(8):
-			if path=="res://assets/ghost/idle_%s_%02d.png" % [face,index] or path=="res://assets/ghost/%s_%02d.png" % [face,index]:
+			if path=="res://assets/ghost/idle_%s_%02d.png" % [face,index] or path=="res://assets/ghost/%s_%02d.png" % [face,index] or path=="res://assets/ghost/weapon_body_v110/idle_%s_%02d.png" % [face,index] or path=="res://assets/ghost/weapon_body_v110/walk_%s_%02d.png" % [face,index]:
 				return true
 	return false
 
