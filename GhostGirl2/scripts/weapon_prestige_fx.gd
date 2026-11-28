@@ -437,7 +437,7 @@ func _process(delta: float) -> void:
 	had_visible_fx = visible_fx
 
 func _fx_key(value: GhostItemInstance) -> String:
-	return "%s:%s:%s:%s:%s:%s:%d:%d:%d" % [value.effect_palette_channel(), value.debug_color_mode, value.debug_glow_motif, value.debug_surface_mode, value.debug_forge_guard, value.debug_forge_grip, value.glow_level_override, value.bow_glow_mode_override, value.bow_projectile_style_override]
+	return "%s:%s:%s:%s:%s:%s:%d:%d:%d:%s" % [value.effect_palette_channel(), value.debug_color_mode, value.debug_glow_motif, value.debug_surface_mode, value.debug_forge_guard, value.debug_forge_grip, value.glow_level_override, value.bow_glow_mode_override, value.bow_projectile_style_override, str(value.rainbow_skin)]
 
 func _ink(progress: float, opacity: float) -> Color:
 	var tint: Color = paint_a.lerp(paint_b, clampf(progress, 0.0, 1.0))
@@ -457,6 +457,8 @@ func _draw() -> void:
 	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0 or FX_LEVEL.intensity <= 0.0:
 		return
 	# Crossbow geometry owns its restrained physical finish; bolt glow is independent.
+	if player != null and float(player.get("parry_left")) > 0.0:
+		return # The physical rig owns the moving guard light.
 	if item.weapon_style() in ["crossbow","rapier","axe"] or item.uses_forge_bow() or str(item.definition.item_id)=="seraph_reaper_v292":
 		return
 	var visible_clip: String = str(body.animation)
@@ -512,15 +514,8 @@ func _draw() -> void:
 		_draw_v173_dual_dagger_fx(RENDER.paired_spans(body,style,animation,body.frame),intensity,attacking,shared_core)
 		return
 	if shared_core:
-		# The physical blade layer now draws the same core light as the Lens.
-		# Retain the rare secondary ornaments, but not a second base halo.
-		_draw_ambient_fireflies(grip,tip,tangent,normal,minf(intensity,1.5))
 		_draw_socketed_jewel_echo(grip,tip,normal)
-		if visual_signature_level>0:
-			_draw_signature(grip,tip,tangent,normal,attacking,minf(intensity,1.6))
-		_draw_v172_named_weapon_fx(grip,tip,tangent,normal,attacking,minf(intensity,1.55))
-		_draw_v1723_mythic_sheen(grip,tip,tangent,normal,style,attacking)
-		return
+		return # Shared physical blade renderer owns the rarity FX.
 	var narrow: bool = style == "bow"
 	var wand: bool = item.get_slot() == "wand"
 	if narrow:
