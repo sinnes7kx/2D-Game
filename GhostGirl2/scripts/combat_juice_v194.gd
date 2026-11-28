@@ -121,7 +121,7 @@ static func _render_air_sweep(kind: String) -> AudioStreamWAV:
 # steel resonance. Strong hits have weight, but no sharp synthetic beep.
 static func _render_soft_contact(kind: String) -> AudioStreamWAV:
     var parry: bool = kind == "parry"
-    var duration: float = 0.23 if parry else 0.16
+    var duration: float = 0.115 if parry else 0.16
     var count: int = roundi(duration * RATE)
     var pcm: PackedByteArray = PackedByteArray()
     pcm.resize(count * 2)
@@ -140,7 +140,10 @@ static func _render_soft_contact(kind: String) -> AudioStreamWAV:
         phase += TAU * lerpf(830.0, 500.0, t) / RATE
         var resonance: float = sin(phase) * (0.13 if parry else 0.042) * exp(-13.0 * t)
         var attack: float = minf(1.0, t / 0.008)
-        var sound: float = (body * 0.95 + scrape * (0.85 if parry else 0.62) + resonance) * attack
+        var sound: float = (body * 0.95 + scrape * 0.62 + resonance) * attack
+        if parry:
+            var sec: float = float(i) / float(RATE)
+            sound = (sin(TAU * 1560.0 * sec) * 0.32 + sin(TAU * 2330.0 * sec) * 0.18 + scrape * 0.28) * attack * exp(-6.0 * t)
         var sample: int = clampi(roundi(sound * 13000.0), -32768, 32767)
         var packed: int = sample & 0xffff
         pcm[i * 2] = packed & 255
