@@ -91,7 +91,7 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.uses_forge_bow() or item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul", "axe", "rapier"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.uses_forge_bow() or item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul", "axe", "rapier", "spear"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
@@ -157,11 +157,8 @@ func _draw() -> void:
 			for hand in range(2):
 				_draw_straight(style,hand)
 		"spear":
-			if str(item.definition.item_id) == "briarwake_trident_v171":
-				_draw_trident()
-			else:
-				preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-29),3.8,profiles[0])
-				_blade(Vector2(0, -29), Vector2(0, -53), 4.5, 0)
+			var trident: bool=str(item.definition.item_id)=="briarwake_trident_v171"
+			segments.append_array(RENDER.draw_polearm(self,PackedVector2Array([Vector2(0,27),Vector2(0,-53)]),trident,profiles[0],elapsed))
 		"blade":
 			_draw_straight("blade",0)
 		"trident":
@@ -182,11 +179,7 @@ func _draw_straight(style: String,hand: int) -> void:
 	segments.append_array(RENDER.edge_paths(geometry,profiles[hand]))
 
 func _draw_trident() -> void:
-	preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-36),4.5,profiles[0])
-	for side in [-1.0, 1.0]:
-		preload("res://scripts/forged_polearm_v255.gd").draw_fork(self,Vector2(0,-36),Vector2(side*8,-36),Vector2.UP,profiles[0])
-		_blade(Vector2(side * 8, -36), Vector2(side * 7, -51), 1.8, 0)
-	_blade(Vector2(0, -36), Vector2(0, -53), 2.6, 0)
+	segments.append_array(RENDER.draw_polearm(self,PackedVector2Array([Vector2(0,27),Vector2(0,-53)]),true,profiles[0],elapsed))
 
 func _draw_light() -> void:
 	RENDER.draw_light(self,segments,gradients,look,elapsed,RENDER.effect_scale(item,glow_enabled))
