@@ -52,8 +52,8 @@ func _verify() -> void:
 			if equipped_look != model.get("look") or equipped_look != item.collector_appearance():
 				_fail("Equipped and inspected look differ")
 				return
-			if OS.is_debug_build() and id == 36 and FX.signature_kind(equipped_look) != 10:
-				_fail("Anomaly geometry missing")
+			if OS.is_debug_build() and id == 36 and FX.signature_kind(equipped_look) != 0:
+				_fail("Retired Anomaly signature still visible")
 				return
 			if OS.is_debug_build() and id == 23 and FX.signature_kind(equipped_look) != 9:
 				_fail("Mythic variant geometry missing")
