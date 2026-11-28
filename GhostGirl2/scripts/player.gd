@@ -3,6 +3,7 @@ extends CharacterBody2D
 ## New gesture frames (hook_front / back / left / right) contain the ornate
 ## rose hook at her hand, with slight reach/lean animation during casting.
 
+const COMBAT_GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
@@ -1448,7 +1449,7 @@ func _begin_parry() -> void:
 	world.ui.set_stamina(stamina,MAX_STAMINA)
 
 static func parry_result(age: float, heading: Vector2, offset: Vector2) -> int:
-	if age < 0.0 or age > PARRY_WINDOW or offset.length_squared() <= 1.0 or heading.is_zero_approx() or heading.normalized().dot(offset.normalized()) < 0.50:
+	if age < 0.0 or age > PARRY_WINDOW or not COMBAT_GEOMETRY.facing_contact(offset, heading, 1.0, 0.50):
 		return 0
 	return 2 if age >= PARRY_PERFECT_START and age <= PARRY_PERFECT_END else 1
 
@@ -2547,7 +2548,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 	var finisher_shown: bool = false
 	var struck_world: bool = false
 	for candidate in get_tree().get_nodes_in_group("enemies"):
-		if not is_instance_valid(candidate) or not candidate is Node2D or candidate.is_queued_for_deletion() or not candidate.has_method("hit"):
+		if not COMBAT_GEOMETRY.is_hittable(candidate):
 			continue
 		var delta_to: Vector2 = candidate.global_position - global_position
 		if delta_to.length() > reach or delta_to.length_squared() < 20.0:
@@ -2556,10 +2557,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 			continue
 		if active_attack_style=="rapier" and not FORGE_TACTICS_V286.thrust_contact(delta_to,attack_direction,reach,heavy_attack):
 			continue
-		var ray: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position + Vector2(0, -18), candidate.global_position + Vector2(0, -18))
-		ray.collision_mask = 2
-		ray.exclude = [get_rid()]
-		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+		if not COMBAT_GEOMETRY.obstruction(self, global_position + Vector2(0, -18), candidate.global_position + Vector2(0, -18), COMBAT_GEOMETRY.WORLD_MASK).is_empty():
 			continue
 		candidate.call("hit", power, poise_bonus * (0.65 if twin_edge else 1.0) * (1.0 + _stat("poise_power_pct") / 100.0))
 		if sword != null and sword.active_weapon_mod(world.room == "lanternhaven") == "frostbite" and is_instance_valid(candidate) and not candidate.is_queued_for_deletion() and candidate.has_method("apply_frost_slow"):
@@ -2607,10 +2605,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 				continue
 			# Stone walls must still block hits through geometry. The breakable
 			# object itself is the acceptable first hit on this physics ray.
-			var probe: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position + Vector2(0.0, -12.0), object.global_position + Vector2(0.0, -12.0))
-			probe.collision_mask = 2
-			probe.exclude = [get_rid()]
-			var obstruction: Dictionary = get_world_2d().direct_space_state.intersect_ray(probe)
+			var obstruction: Dictionary = COMBAT_GEOMETRY.obstruction(self, global_position + Vector2(0.0, -12.0), object.global_position + Vector2(0.0, -12.0), COMBAT_GEOMETRY.WORLD_MASK)
 			if not obstruction.is_empty() and obstruction.get("collider") != object:
 				continue
 			object.call("receive_damage", power * (0.90 if jump_attack_active else 0.80), global_position)
