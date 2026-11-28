@@ -133,7 +133,7 @@ func _draw() -> void:
 			var p: Dictionary = profiles[0].duplicate()
 			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
 			p["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
-			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0, str(item.definition.item_id))
+			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0, str(item.definition.item_id),RENDER.effect_scale(item,glow_enabled))
 		"scythe":
 			if str(item.definition.item_id)=="seraph_reaper_v292":
 				if is_instance_valid(scythe_glow):
@@ -143,7 +143,7 @@ func _draw() -> void:
 			var p: Dictionary = profiles[0].duplicate()
 			p["scythe_span"] = float(look.get("scythe_span", 1.0))
 			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
-			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0)
+			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0,RENDER.effect_scale(item,glow_enabled))
 			if is_instance_valid(scythe_glow):
 				if glow_enabled:
 					scythe_glow.call("set_pose", item, Vector2(-12, 20), Vector2(-12, -56), p, 1.0, glow_preview_override)
