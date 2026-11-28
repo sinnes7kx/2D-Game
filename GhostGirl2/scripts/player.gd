@@ -5,6 +5,7 @@ extends CharacterBody2D
 
 const COMBAT_GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const MELEE_RULES = preload("res://scripts/combat/melee_rules.gd")
+const PLAYBACK = preload("res://scripts/animation/directional_playback.gd")
 const GROUNDED = preload("res://scripts/combat/grounded_motion.gd")
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
@@ -938,55 +939,22 @@ func _attack_action_cost(heavy: bool) -> float:
 	return _melee_cost(heavy)
 
 func _resolve_skin_clip(animation_name: String) -> String:
-	if animation_name.begins_with("throw_empty_"):
-		var requested: String = animation_name.trim_prefix("throw_empty_")
-		var diagonal: String = DIAGONAL_ART_V247.resolve(requested,facing_eight_name,facing_name,false,body_art.sprite_frames)
-		return diagonal if diagonal!=requested else animation_name
 	var armed: bool = world == null or world.inventory == null
 	if not armed:
 		armed = world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null
-	if SKIN_V246.current() == SKIN_V246.NOCTURNE and not armed:
-		return SKIN_V246.resolve(animation_name, facing_eight_name, facing_name, armed, body_art.sprite_frames)
-	# Nocturne has no authored armed rows. Bows keep the approved original
-	# equipped diagonal clips rather than silently reverting to cardinal art.
-	if armed:
-		return DIAGONAL_ART_V247.armed_clip(animation_name, facing_eight_name, facing_name, body_art.sprite_frames)
-	return DIAGONAL_ART_V247.resolve(animation_name, facing_eight_name, facing_name, false, body_art.sprite_frames)
+	return PLAYBACK.locomotion_clip(animation_name,facing_eight_name,facing_name,armed,body_art.sprite_frames)
 
 func _play_if_changed(animation_name: String) -> void:
-	animation_name = _resolve_skin_clip(animation_name)
-	if body_art.animation != animation_name:
-		var phase: float = -1.0
-		if GENTLE.same_walk_family(str(body_art.animation), animation_name):
-			phase = GENTLE.phase_of(body_art)
-		body_art.play(animation_name)
-		if phase >= 0.0:
-			GENTLE.seek_phase(body_art, phase)
+	PLAYBACK.play_locomotion(body_art,_resolve_skin_clip(animation_name))
 
-# Synchronize non-looping directional frames with the actual combat timing,
-# including attack-speed modifiers. No animation-notify timing drift.
+# Combat state owns duration; the shared playback module owns display timing.
 func _play_action_frames(animation_name: String, duration: float) -> void:
-	animation_name=DIAGONAL_ART_V247.combat_clip_v294(animation_name,facing_eight_name,body_art.sprite_frames)
-	# Walk/sprint/idle speed_scale otherwise multiplies the computed action
-	# rate and can shorten or stretch the visual clip without changing damage.
-	body_art.speed_scale = 1.0
-	action_animation_rate = 1.0
-	if body_art.sprite_frames == null or not body_art.sprite_frames.has_animation(animation_name):
-		push_warning("Missing combat animation: " + animation_name)
-		body_art.play("idle_" + facing_name)
-		return
-	action_animation_rate = GENTLE.playback_rate(body_art.sprite_frames, animation_name, duration)
-	body_art.play(animation_name, action_animation_rate)
+	action_animation_rate=PLAYBACK.play_action(body_art,animation_name,facing_eight_name,facing_name,duration)
 
 func _resume_timed_action() -> void:
 	if crossbow_stage != 0:
 		return # Crossbow poses follow the physics clock, not sprite playback.
-	# AnimatedSprite2D.play() defaults to rate 1.0. Preserve the original
-	# rate and exact frame/progress instead of speeding up or slowing down.
-	var frame_index: int = body_art.frame
-	var fraction: float = body_art.frame_progress
-	body_art.play(body_art.animation, action_animation_rate)
-	body_art.set_frame_and_progress(frame_index, fraction)
+	PLAYBACK.resume_action(body_art,action_animation_rate)
 
 func set_facing(direction: Vector2) -> void:
 	if direction.length_squared() < DIRECTIONS_V245.DEAD_ZONE_SQUARED:
@@ -1998,22 +1966,8 @@ func _refresh_melee_charge_aim() -> void:
 	attack_direction=aim
 	var old_face: String = facing_eight_name
 	set_facing(aim)
-	if old_face==facing_eight_name:
-		return
-	var current: String = str(body_art.animation)
-	var old_suffix: String = DIAGONAL_ART_V247.diagonal_name(current)
-	if old_suffix.is_empty():
-		old_suffix = DIAGONAL_ART_V247.cardinal_for_clip(current)
-	var requested: String = current.trim_suffix(old_suffix)+facing_name
-	var resolved: String = DIAGONAL_ART_V247.combat_clip_v294(requested,facing_eight_name,body_art.sprite_frames)
-	if not body_art.sprite_frames.has_animation(resolved):
-		return
-	var phase: float = GENTLE.phase_of(body_art)
-	var paused: bool = not body_art.is_playing()
-	_play_action_frames(requested,attack_duration)
-	GENTLE.seek_phase(body_art,phase,false)
-	if paused:
-		body_art.pause()
+	if old_face!=facing_eight_name:
+		action_animation_rate=PLAYBACK.retarget_action(body_art,facing_name,facing_eight_name,attack_duration,action_animation_rate)
 
 func _cancel_bow_charge_for_dodge() -> void:
 	bow_draw_active=false
@@ -2044,13 +1998,12 @@ func _advance_bow_draw(delta: float) -> void:
 				name = AIR_V203.air_name(name)
 			_play_action_frames(name, 0.70)
 			body_art.pause()
+	# Resolve the current draw pose before firing, including a direction
+	# change on the exact release tick, so the projectile uses the right wrist.
+	PLAYBACK.apply_bow_draw(body_art,bow_draw_time/BOW_FULL_DRAW_TIME)
 	if release_requested:
 		_release_bow_charge()
 		return
-	var fraction: float = clampf(bow_draw_time / BOW_FULL_DRAW_TIME, 0.0, 1.0)
-	var draw_frame: int = mini(5, floori(fraction * 5.0))
-	body_art.set_frame_and_progress(draw_frame, 0.0)
-	body_art.pause()
 	queue_redraw()
 
 func _release_bow_charge() -> void:
@@ -2072,8 +2025,7 @@ func _release_bow_charge() -> void:
 		COMBAT_JUICE.play(get_tree().current_scene, global_position, "charged_swing", -16.5)
 		camera_kick = maxf(camera_kick, 1.7)
 		camera_push = bow_firing_direction.normalized() * 1.2
-	body_art.set_frame_and_progress(6, 0.0)
-	body_art.play()
+	PLAYBACK.apply_bow_release(body_art,action_animation_rate)
 	bow_duration = 0.18
 	bow_time_left = bow_duration
 	bow_draw_time = 0.0
@@ -2827,14 +2779,8 @@ func _play_action_sfx(stream: AudioStream) -> void:
 func _diagonal_action_clip(action: String, fallback: String) -> String:
 	if world == null or world.inventory == null:
 		return fallback
-	if thrown_weapon_busy_v273():
-		return DIAGONAL_ART_V247.action_clip(action,facing_eight_name,fallback,body_art.sprite_frames)
-	if SKIN_V246.current() != SKIN_V246.ORIGINAL and world.inventory.get_equipped("sword")==null and world.inventory.get_equipped("wand")==null:
-		return fallback
-	if world.inventory.get_equipped("sword") != null or world.inventory.get_equipped("wand") != null:
-		var safe: String = DIAGONAL_ART_V247.armed_jump_carry(fallback,facing_eight_name,facing_name,body_art.sprite_frames) if action=="jump" else fallback
-		return DIAGONAL_ART_V247.armed_action_clip(action,_weapon_motion_prefix(true),facing_eight_name,safe,body_art.sprite_frames)
-	return DIAGONAL_ART_V247.action_clip(action, facing_eight_name, fallback, body_art.sprite_frames)
+	var armed: bool = world.inventory.get_equipped("sword")!=null or world.inventory.get_equipped("wand")!=null
+	return PLAYBACK.gesture_clip(action,fallback,facing_eight_name,facing_name,_weapon_motion_prefix(true),armed,thrown_weapon_busy_v273(),body_art.sprite_frames)
 
 func _start_eclipse_dance_v262() -> void:
 	dance_stage_v262 = 1
