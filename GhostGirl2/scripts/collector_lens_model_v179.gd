@@ -1,4 +1,5 @@
 extends Node2D
+const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 var last_fx_revision: int = -1
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
@@ -114,22 +115,18 @@ func _draw() -> void:
 			var strength: float = CHOICES_V216.effect_scale(item)*FX_LEVEL.intensity*0.80 if glow_enabled else 0.0
 			MODELS_V283.draw_melee(self,str(item.definition.item_id),Vector2(0,30),Vector2(0,-38),item.weapon_base_color(),strength,gradients,look,elapsed,false,item.weapon_gradient_color())
 		"bow":
-			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, FX_LEVEL.intensity * CHOICES_V216.effect_scale(item) if glow_enabled and CHOICES_V216.bow_body_visible(item) else 0.0)
+			var light: Vector3 = RENDER.bow_light(item,glow_enabled)
+			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, light.x,light.y,light.z>0.0)
 		"dagger":
-			if item.uses_forge_dagger():
-				FORGE_V238.draw_dagger(self, PackedVector2Array([Vector2(0, 14), Vector2(0, -40)]), profiles[0])
-				segments.append(PackedVector2Array([Vector2(0, 6), Vector2(0, -40)]))
-			else:
-				_grip(Vector2(0, 20), Vector2(0, 5), 3.2, 0)
-				_blade(Vector2(0, 5), Vector2(0, -49), 3.2, 0)
+			_draw_straight("forge_dagger" if item.uses_forge_dagger() else "dagger",0)
 		"crossbow":
 			var base: String = str(item.definition.item_id)
 			var fx: Dictionary = look if glow_enabled and CHOICES_V216.effect_scale(item) > 0.0 else {}
 			if base == "blackthorn_crossbow_v236":
 				for x in [-20.0, 20.0]:
-					CROSSBOW_V236.draw_weapon(self, Vector2(x, 12), Vector2(x, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed)
+					CROSSBOW_V236.draw_weapon(self, Vector2(x, 12), Vector2(x, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed,RENDER.effect_scale(item,glow_enabled))
 			else:
-				CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed)
+				CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed,RENDER.effect_scale(item,glow_enabled))
 		"halberd", "maul":
 			var p: Dictionary = profiles[0].duplicate()
 			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
@@ -152,13 +149,8 @@ func _draw() -> void:
 			for span in spans:
 				_blade(span[0], span[1], width, 0)
 		"dual_sword", "dual_dagger":
-			var dagger: bool = style == "dual_dagger"
 			for hand in range(2):
-				var x: float = -17.0 if hand == 0 else 17.0
-				var a: Vector2 = Vector2(x, 9)
-				var tip: Vector2 = Vector2(x, -41 if dagger else -53)
-				_grip(Vector2(x, 25), a, 3.5 if dagger else 5.1, hand)
-				_blade(a, tip, 3.1 if dagger else (5.2 if hand == 0 else 4.8), hand)
+				_draw_straight(style,hand)
 		"spear":
 			if str(item.definition.item_id) == "briarwake_trident_v171":
 				_draw_trident()
@@ -166,8 +158,7 @@ func _draw() -> void:
 				preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-29),3.8,profiles[0])
 				_blade(Vector2(0, -29), Vector2(0, -53), 4.5, 0)
 		"blade":
-			_grip(Vector2(0, 22), Vector2(0, 0), 3.0, 0)
-			_blade(Vector2(0, 0), Vector2(0, -50), 4.2, 0)
+			_draw_straight("blade",0)
 		"trident":
 			_draw_trident()
 		_:
@@ -180,6 +171,11 @@ func _draw() -> void:
 		_draw_light()
 		# Weapon signatures are drawn along the same edge as equipped art.
 
+func _draw_straight(style: String,hand: int) -> void:
+	var geometry: Dictionary=RENDER.straight_geometry(style,RENDER.preview_span(style,hand),hand)
+	RENDER.draw_straight(self,geometry,profiles[hand],elapsed)
+	segments.append_array(RENDER.edge_paths(geometry,profiles[hand]))
+
 func _draw_trident() -> void:
 	preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-36),4.5,profiles[0])
 	for side in [-1.0, 1.0]:
@@ -188,7 +184,7 @@ func _draw_trident() -> void:
 	_blade(Vector2(0, -36), Vector2(0, -53), 2.6, 0)
 
 func _draw_light() -> void:
-	ANOMALOUS.draw_blade_light(self, segments, gradients, look, elapsed, CHOICES_V216.effect_scale(item))
+	RENDER.draw_light(self,segments,gradients,look,elapsed,RENDER.effect_scale(item,glow_enabled))
 
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.
