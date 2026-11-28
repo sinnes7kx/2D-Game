@@ -50,12 +50,8 @@ func _process(delta: float) -> void:
 	if next != key:
 		key = next
 		look = item.collector_appearance()
-		profile = ART.weapon_profile(look, item.definition.item_id)
+		profile = RENDER.heavy_profile(ART.weapon_profile(look, item.definition.item_id),look)
 		ashglass = str(item.definition.item_id) == "ashglass_warmaul_v170"
-		profile["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
-		profile["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
-		profile["scythe_span"] = float(look.get("scythe_span", 1.0))
-		profile["scythe_curve"] = float(look.get("scythe_curve", 0.7))
 		colors = item.glow_gradient_colors()
 	self_modulate.a = item.weapon_opacity()
 	var diagonal_face: String = preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(str(body.animation))
