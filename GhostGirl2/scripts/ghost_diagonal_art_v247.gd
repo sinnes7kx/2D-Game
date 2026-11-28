@@ -729,7 +729,9 @@ static func _valid_authored_guides(record: Dictionary) -> bool:
 
 static func _authored_clip_allowed(clip: String) -> bool:
 	if is_guard_clip(clip):
-		for family in [""]+WEAPON_PREFIXES:
+		var families: Array[String] = [""]
+		families.append_array(WEAPON_PREFIXES)
+		for family in families:
 			for face in GUARD_FACES:
 				if clip==family+"parry_"+face:
 					return true
@@ -791,7 +793,10 @@ static func install_authored_combat(frames: SpriteFrames) -> int:
 		if not path.begins_with("res://assets/ghost/authored_combat/") or path.contains("..") or not path.ends_with(".png") or not (row is float or row is int) or float(row)!=floorf(float(row)):
 			push_warning("Invalid authored combat row: "+clip)
 			continue
-		if install_authored_row(frames,_load_sheet(path),int(row),clip,entry):
+		var sheet: Texture2D = null
+		if ResourceLoader.exists(path,"Texture2D"):
+			sheet=load(path) as Texture2D
+		if install_authored_row(frames,sheet,int(row),clip,entry):
 			count+=1
 		else:
 			push_warning("Unusable authored combat row: "+clip+"; keeping fallback.")
