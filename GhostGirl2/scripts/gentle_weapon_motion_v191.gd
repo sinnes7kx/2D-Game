@@ -144,7 +144,7 @@ static func _walk_family(name: String) -> String:
 			return name.trim_suffix("_" + suffix)
 	return name
 
-static func seek_phase(body: AnimatedSprite2D, phase: float) -> void:
+static func seek_phase(body: AnimatedSprite2D, phase: float, looping: bool = true) -> void:
 	if body == null or body.sprite_frames == null:
 		return
 	var frames: SpriteFrames = body.sprite_frames
@@ -154,7 +154,7 @@ static func seek_phase(body: AnimatedSprite2D, phase: float) -> void:
 	var total: float = 0.0
 	for i in range(count):
 		total += frames.get_frame_duration(body.animation, i)
-	var remaining: float = fposmod(phase, 1.0) * total
+	var remaining: float = (fposmod(phase, 1.0) if looping else clampf(phase,0.0,1.0)) * total
 	for i in range(count):
 		var weight: float = frames.get_frame_duration(body.animation, i)
 		if remaining < weight or i == count - 1:
