@@ -250,6 +250,8 @@ func _axial_span() -> PackedVector2Array:
 		var wand_span: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(body, face)
 		if wand_span.size() == 2:
 			return wand_span
+		if preload("res://scripts/cardinal_paired_carry_v296.gd").applies(body,animation):
+			return empty
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
 	if style in ["dual_sword","dual_dagger"]:
 		var paired: Array = RENDER.paired_spans(body,style,animation,body.frame)
@@ -259,6 +261,8 @@ func _axial_span() -> PackedVector2Array:
 		if style=="dual_sword" or not diagonal.diagonal_name(animation).is_empty() or paired.size()==2:
 			return empty
 		return PackedVector2Array([grip,_fallback_tip(grip,face,50.0)])
+	if preload("res://scripts/cardinal_paired_carry_v296.gd").applies(body,animation) and style in ["blade","dagger","spear","twinblade"]:
+		return RENDER.single_span(body,animation,body.frame)
 	if style == "twinblade":
 		var span: PackedVector2Array = RENDER.single_span(body,animation,body.frame)
 		if span.size()==2:
