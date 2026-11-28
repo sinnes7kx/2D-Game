@@ -26,6 +26,8 @@ static func is_polished_source(path: String) -> bool:
 		for index in range(8):
 			if path=="res://assets/ghost/idle_%s_%02d.png" % [face,index] or path=="res://assets/ghost/%s_%02d.png" % [face,index]:
 				return true
+			if path=="res://assets/ghost/combat_v14/attack_unarmed_light_%s_%02d.png" % [face,index]:
+				return true
 	return false
 
 # Generated walking in-betweens also derive from the polished source PNGs.
