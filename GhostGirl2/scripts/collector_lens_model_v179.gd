@@ -130,9 +130,7 @@ func _draw() -> void:
 			else:
 				CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed,RENDER.effect_scale(item,glow_enabled))
 		"halberd", "maul":
-			var p: Dictionary = profiles[0].duplicate()
-			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
-			p["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
+			var p: Dictionary = RENDER.heavy_profile(profiles[0],look)
 			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0, str(item.definition.item_id),RENDER.effect_scale(item,glow_enabled))
 		"scythe":
 			if str(item.definition.item_id)=="seraph_reaper_v292":
@@ -140,9 +138,7 @@ func _draw() -> void:
 					scythe_glow.call("clear_pose")
 				MODELS_V283.draw_melee(self,"seraph_reaper_v292",Vector2(-12,20),Vector2(-12,-48),item.weapon_base_color(),RENDER.melee_model_glow(item,glow_enabled),gradients,look,elapsed,false,item.weapon_gradient_color())
 				return
-			var p: Dictionary = profiles[0].duplicate()
-			p["scythe_span"] = float(look.get("scythe_span", 1.0))
-			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
+			var p: Dictionary = RENDER.heavy_profile(profiles[0],look)
 			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0,RENDER.effect_scale(item,glow_enabled))
 			if is_instance_valid(scythe_glow):
 				if glow_enabled:
