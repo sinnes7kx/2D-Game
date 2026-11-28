@@ -325,7 +325,7 @@ func _ready() -> void:
 		DIAGONAL_ART_V247.install(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
-		PAIRED_CARRY_V296.install(body_art.sprite_frames)
+		PAIRED_CARRY_V296.install(body_art.sprite_frames,body_art.has_node("BowCarryV166") and body_art.has_node("BowPaletteV139"))
 		CARDINAL_REFRESH.attach(body_art)
 		GENTLE.prepare_timing(body_art.sprite_frames)
 		body_art.play("idle_front")
@@ -341,7 +341,7 @@ func _ready() -> void:
 		push_warning(DIAGONAL_ART_V247.diagnostic()+" Cardinal fallback remains active.")
 	DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
 	DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
-	PAIRED_CARRY_V296.install(body_art.sprite_frames)
+	PAIRED_CARRY_V296.install(body_art.sprite_frames,body_art.has_node("BowCarryV166") and body_art.has_node("BowPaletteV139"))
 	CARDINAL_REFRESH.attach(body_art)
 	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
