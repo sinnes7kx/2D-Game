@@ -14,15 +14,15 @@ static func kind_from_id(item_id: String) -> String:
 
 # Full-head outline: long-running collector glow must describe the
 # *actual* spiked or flanged shape, never a single line on one side.
-static func _rim(canvas: Node2D, path: PackedVector2Array, gradient: Array[Color], look: Dictionary, time: float, strength: float) -> void:
+static func _rim(canvas: Node2D, path: PackedVector2Array, gradient: Array[Color], look: Dictionary, time: float, strength: float, glow_scale: float=1.0) -> void:
     var ink: Color = FX.color_at(gradient, look, 0.56, time)
     var closed: PackedVector2Array = path.duplicate()
     if closed.size() < 3:
         return
     closed.append(closed[0])
-    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.06)), 4.0, true)
-    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.14)), 1.6, true)
-    FX.draw_edge(canvas, closed, gradient, look, time, strength)
+    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.06*glow_scale)), 4.0, true)
+    canvas.draw_polyline(closed, Color(ink.r, ink.g, ink.b, FX_LEVEL.alpha(0.14*glow_scale)), 1.6, true)
+    FX.draw_edge(canvas, closed, gradient, look, time, strength*glow_scale)
 
 # Forged, compact heads. The same outline drives opaque art and glow.
 static func head_outline(center: Vector2, axis: Vector2, kind: String) -> PackedVector2Array:
@@ -40,7 +40,7 @@ static func head_outline(center: Vector2, axis: Vector2, kind: String) -> Packed
         result.append(center + Vector2.from_angle(a + 0.22) * radius)
     return result
 
-static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Dictionary, look: Dictionary, gradient: Array[Color], time: float, kind: String, glow: bool) -> void:
+static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Dictionary, look: Dictionary, gradient: Array[Color], time: float, kind: String, glow: bool, glow_scale: float=1.0) -> void:
     if grip.distance_squared_to(head) < 16.0 or profile.is_empty():
         return
     var axis: Vector2 = (head - grip).normalized()
@@ -106,15 +106,15 @@ static func draw_blunt(canvas: Node2D, grip: Vector2, head: Vector2, profile: Di
         canvas.draw_arc(center, 3.7, PI, TAU, 14, edge, 0.7, true)
         for side in [-1.0, 1.0]:
             canvas.draw_circle(center + n * side * 4.3, 0.9, trim.darkened(0.12))
-    if glow and FX_LEVEL.intensity > 0.0:
-        _rim(canvas, outline, gradient, look, time, 0.65)
-        FX.draw_signature(canvas, outline, gradient, look, time)
+    if glow and glow_scale>0.0 and FX_LEVEL.intensity > 0.0:
+        _rim(canvas, outline, gradient, look, time, 0.65,glow_scale)
+        FX.draw_signature(canvas, outline, gradient, look, time,glow_scale)
 
-static func draw_seeded_aura(canvas: Node2D, head: Vector2, gradient: Array[Color], look: Dictionary, time: float) -> void:
+static func draw_seeded_aura(canvas: Node2D, head: Vector2, gradient: Array[Color], look: Dictionary, time: float, glow_scale: float=1.0) -> void:
     var tier: int = clampi(int(look.get("particle_tier", 0)), 0, 6)
-    if FX_LEVEL.intensity <= 0.0 or gradient.is_empty():
+    if FX_LEVEL.intensity <= 0.0 or gradient.is_empty() or glow_scale<=0.0:
         return
     var ink: Color = FX.color_at(gradient, look, 0.5, time)
     for i in range(3):
-        canvas.draw_circle(head, 19.0 - float(i) * 5.0, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, 0.032 + float(i) * 0.024)))
-    preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(canvas, head, Vector2.UP, Vector2.ONE * (17.0 + tier * 1.5), gradient, look, time)
+        canvas.draw_circle(head, 19.0 - float(i) * 5.0, Color(ink.r, ink.g, ink.b, FX_LEVEL.edge_alpha(canvas, (0.032 + float(i) * 0.024)*glow_scale)))
+    preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(canvas, head, Vector2.UP, Vector2.ONE * (17.0 + tier * 1.5), gradient, look, time,glow_scale)
