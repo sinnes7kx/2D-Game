@@ -5,6 +5,7 @@ const DIAGONAL = preload("res://scripts/ghost_diagonal_art_v247.gd")
 const FX = preload("res://scripts/fx_intensity_v1924.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
 const WAND = preload("res://scripts/wand_anchors_v216.gd")
+const WAND_LIGHT=preload("res://scripts/animation/wand_held_light.gd")
 
 func _initialize() -> void:
 	var profile: Dictionary = {"width_scale":1.0,"shape":0,"shoulder":1.0,"taper":1.0}
@@ -77,6 +78,15 @@ func _initialize() -> void:
 	bow.glow_level_override=0
 	assert(RENDER.bow_light(bow).x==0.0 and RENDER.bow_light(bow).y==0.0)
 	assert(RENDER.melee_model_glow(bow)==0.0)
+	var light_node: Node2D=WAND_LIGHT.new()
+	root.add_child(light_node)
+	wand.glow_level_override=4
+	light_node.call("set_pose",wand,visible,false,0.1)
+	assert(light_node.visible and is_equal_approx(float(light_node.get("strength")),0.4))
+	wand.glow_level_override=0
+	light_node.call("set_pose",wand,visible,false,0.1)
+	assert(not light_node.visible)
+	light_node.free()
 	FX.set_intensity(initial)
 	print("Weapon render contract: straight and polearm geometry, wand atlas identity, 8 headings and glow inputs PASS")
 	quit(0)
