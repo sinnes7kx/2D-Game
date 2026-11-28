@@ -4,6 +4,7 @@ const DIR = preload("res://scripts/direction_controller_v245.gd")
 const DIAGONAL = preload("res://scripts/ghost_diagonal_art_v247.gd")
 const FX = preload("res://scripts/fx_intensity_v1924.gd")
 const ART = preload("res://scripts/modular_weapon_art_v178.gd")
+const WAND = preload("res://scripts/wand_anchors_v216.gd")
 
 func _initialize() -> void:
 	var profile: Dictionary = {"width_scale":1.0,"shape":0,"shoulder":1.0,"taper":1.0}
@@ -34,6 +35,30 @@ func _initialize() -> void:
 	assert(RENDER.first_visible([PackedVector2Array(),visible])==visible)
 	assert(RENDER.first_visible([PackedVector2Array(),PackedVector2Array()]).is_empty())
 	assert(RENDER.paired_spans(null,"dual_dagger","",0).is_empty())
+	for i in range(8):
+		var heading: Vector2=DIR.heading(i)
+		var grip: Vector2=Vector2(12,-7)
+		var tip: Vector2=grip+heading*80.0
+		var span: PackedVector2Array=PackedVector2Array([grip,tip])
+		var spear: Array=RENDER.polearm_heads(span,false)
+		var trident: Array=RENDER.polearm_heads(span,true)
+		assert(spear.size()==1 and trident.size()==3)
+		assert((spear[0]["root"] as Vector2).is_equal_approx(tip-heading*24.0))
+		assert((trident[2]["root"] as Vector2).is_equal_approx(tip-heading*17.0))
+		assert((trident[2]["tip"] as Vector2).is_equal_approx(tip))
+		for prong in trident:
+			assert(RENDER.edge_paths(prong,profile).size()==2)
+		assert(((trident[0]["tip"] as Vector2)+(trident[1]["tip"] as Vector2)).is_equal_approx((tip-heading*2.0)*2.0))
+	assert(RENDER.polearm_heads(PackedVector2Array(),true).is_empty())
+	for seed in [-4,-1,0,1,2,3,2001]:
+		var texture: AtlasTexture=WAND.preview_texture(seed)
+		assert(texture!=null and texture.atlas==WAND.POSE_ATLASES[WAND.atlas_index(seed)])
+		assert(texture.region.size==WAND.CELL)
+	var wand: GhostItemInstance=GhostItemGenerator.create(load("res://items/briar_wand.tres") as GhostItemData,192301,"rare")
+	var wand_stats: Dictionary=wand.all_stats()
+	var wand_snapshot: Dictionary=wand.cosmetic_snapshot()
+	assert(WAND.preview_texture(wand.visual_seed())!=null)
+	assert(wand.all_stats()==wand_stats and wand.cosmetic_snapshot()==wand_snapshot)
 	var bow: GhostItemInstance=GhostItemGenerator.create(load("res://items/thornrose_bow.tres") as GhostItemData,192301,"rare")
 	var stats: Dictionary=bow.all_stats()
 	var initial: float=FX.intensity
@@ -53,5 +78,5 @@ func _initialize() -> void:
 	assert(RENDER.bow_light(bow).x==0.0 and RENDER.bow_light(bow).y==0.0)
 	assert(RENDER.melee_model_glow(bow)==0.0)
 	FX.set_intensity(initial)
-	print("Weapon render contract: geometry, visible hand ordering, 8 headings and independent glow inputs PASS")
+	print("Weapon render contract: straight and polearm geometry, wand atlas identity, 8 headings and glow inputs PASS")
 	quit(0)
