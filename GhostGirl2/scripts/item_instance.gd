@@ -507,6 +507,9 @@ func collector_appearance() -> Dictionary:
 	var mythic: bool = visual_signature() == 4
 	look["prism"] = mythic or rainbow_skin
 	look["rainbow"] = rainbow_skin
+	if mythic or rainbow_skin:
+		look["prism_colors"] = glow_gradient_colors()
+		look["palette_curve"] = 0
 	look["glow_motif"] = int(look.get("glow_motif", 0)) % (8 if mythic or rainbow_skin else 4)
 	if not mythic and not rainbow_skin:
 		look["particle"] = 0 # Ordinary motes stay within a simple arc/orbit.
