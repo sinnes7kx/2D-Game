@@ -28,6 +28,7 @@ static func title_font() -> Font:
 
 static func style_body(label: RichTextLabel) -> void:
 	label.add_theme_font_override("normal_font", body_font())
+	label.add_theme_font_override("bold_font", title_font())
 	label.add_theme_font_size_override("normal_font_size", 14)
 	label.add_theme_constant_override("line_separation", 3)
 	label.meta_underlined = false
@@ -56,11 +57,7 @@ static func cosmetic_indicator(item: Variant) -> Array[Color]:
 	if item == null or item.get_slot() not in ["sword","wand"]:
 		return out
 	var colors: Array[Color] = item.glow_gradient_colors()
-	if item.rainbow_skin or item.has_six_white_glow():
-		return colors
-	for i in range(6):
-		out.append(GhostCosmeticRNGV152.sample_palette(colors, float(i)/5.0))
-	return out
+	return colors
 
 static func skill_hover_details(item: Variant, meta: String) -> String:
 	if item == null or meta != "skill:granted":
@@ -200,15 +197,12 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	var innate_label: String = innate.label(item)
 	var stats: Dictionary = item.all_stats()
 	if not innate_label.is_empty():
-		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
-		out.append("[font_size=12][color=#d4ae76]◆  UNIQUE PASSIVE[/color][/font_size]")
-		out.append("[font_size=18][color=#f0d2a0][b]%s[/b][/color][/font_size]" % escape(innate_label))
+		out.append("[font_size=14][color=#f0d2a0]Innate: %s[/color][/font_size]" % escape(innate_label))
 		for key in innate_stats:
 			out.append("[font_size=14][color=#a9d8d3]+%.0f%% %s[/color][/font_size]" % [innate_stats[key],escape(GhostPaletteLibrary.stat_label(str(key)))])
 			stats[key]=float(stats.get(key,0.0))-float(innate_stats[key])
 			if absf(float(stats[key]))<0.001:
 				stats.erase(key)
-		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
 	if not stats.is_empty():
 		var ids: Array = stats.keys()
 		ids.sort()
