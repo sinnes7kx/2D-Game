@@ -1356,8 +1356,7 @@ func _draw_wand_hold_cosmetics(grip: Vector2, tip: Vector2, tangent: Vector2, no
 	var mid: Vector2 = grip.lerp(tip, 0.58)
 	var head: Vector2 = grip.lerp(tip, 0.94)
 	var base_alpha: float = power * (1.22 if attacking else 0.94)
-	# Core gemstone uses the same physical tip and seeded motif as inspection.
-	RENDER.draw_wand_head(self,PackedVector2Array([grip,tip]),effect_palette,collector_look,elapsed,1.0)
+	# The shared core gemstone is now drawn by Ghost/WandHeldLight.
 	if attacking:
 		# Spell preparation tightens the light into the gemstone; the actual
 		# release flash remains owned by wand_release_fx_v156.gd.
