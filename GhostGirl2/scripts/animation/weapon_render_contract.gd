@@ -163,7 +163,7 @@ static func polearm_heads(span: PackedVector2Array,trident: bool) -> Array:
 	var tip: Vector2=span[1]
 	var axis: Vector2=(tip-span[0]).normalized()
 	var normal: Vector2=Vector2(-axis.y,axis.x)
-	var head: Vector2=tip-axis*(17.0 if trident else 24.0)
+	var head: Vector2=tip-axis*(25.0 if trident else 24.0)
 	if trident:
 		for side in [-1.0,1.0]:
 			result.append({"root":head+normal*side*8.0,"tip":tip-axis*2.0+normal*side*7.0,"width":1.8})
@@ -180,9 +180,9 @@ static func draw_polearm(canvas: Node2D,span: PackedVector2Array,trident: bool,p
 	if heads.is_empty():
 		return paths
 	var axis: Vector2=(span[1]-span[0]).normalized()
-	var head: Vector2=span[1]-axis*(17.0 if trident else 24.0)
+	var head: Vector2=span[1]-axis*(25.0 if trident else 24.0)
 	var forged=preload("res://scripts/forged_polearm_v255.gd")
-	forged.draw_haft(canvas,span[0]-axis*(26.0 if trident else 22.0),span[0],head,4.5 if trident else 3.8,profile)
+	forged.draw_haft(canvas,span[0]-axis*(48.0 if trident else 22.0),span[0],head,3.8 if trident else 3.8,profile)
 	for i in range(heads.size()):
 		var part: Dictionary=heads[i]
 		if trident and i<2:
