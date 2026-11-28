@@ -282,7 +282,7 @@ func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedV
 			length=76.0
 		elif animation_name.contains("rapier_"):
 			length=84.0
-		elif animation_name.contains("bow_"):
+		elif animation_name.contains("bow_") or animation_name.contains("crossbow_"):
 			length=32.0
 		return guard_art.guard_base_span(animation_name,frame_index,length)
 	if _is_equipped(animation_name) and (animation_name.contains("rapier_") or animation_name.contains("axe_") or animation_name.contains("seraph_scythe_")):
