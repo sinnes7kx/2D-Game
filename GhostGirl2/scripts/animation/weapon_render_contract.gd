@@ -202,3 +202,13 @@ static func draw_wand_head(canvas: Node2D,span: PackedVector2Array,colors: Array
 		canvas.draw_circle(head,7.0-float(i)*2.1,Color(ink.r,ink.g,ink.b,FX.edge_alpha(canvas,(0.045+float(i)*0.065)*scale*pulse)))
 	canvas.draw_circle(head,1.2,Color(ink.r,ink.g,ink.b,FX.edge_alpha(canvas,0.52*scale)))
 	preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(canvas,head,axis,Vector2(7.0,9.0),colors,look,phase,scale)
+
+static func heavy_profile(profile: Dictionary,look: Dictionary) -> Dictionary:
+	var result: Dictionary=profile.duplicate()
+	if result.is_empty():
+		return result
+	result["heavy_head_span"]=float(look.get("heavy_head_span",1.0))
+	result["heavy_head_flare"]=float(look.get("heavy_head_flare",1.0))
+	result["scythe_span"]=float(look.get("scythe_span",1.0))
+	result["scythe_curve"]=float(look.get("scythe_curve",0.7))
+	return result
