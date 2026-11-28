@@ -93,7 +93,13 @@ func _verify() -> void:
 			assert(not clip.is_empty() and guard_frames.get_frame_count(clip)==8)
 			for i in range(8):
 				var source: String = DIAGONAL.guard_source(clip)
-				assert(guard_frames.get_frame_texture(clip,i)==guard_frames.get_frame_texture(source,DIAGONAL.guard_source_frame(clip,i)))
+				var neutral: Texture2D = DIAGONAL.guard_neutral_texture(clip,i)
+				var expected: Texture2D = neutral if neutral!=null else guard_frames.get_frame_texture(source,DIAGONAL.guard_source_frame(clip,i))
+				assert(guard_frames.get_frame_texture(clip,i)==expected)
+				if neutral!=null:
+					assert(i in [0,7] and DIAGONAL.diagonal_name(clip).is_empty())
+					var carry = preload("res://scripts/cardinal_paired_carry_v296.gd")
+					assert(DIAGONAL.guard_wrist(clip,i)==carry.lead_grip(DIAGONAL.guard_idle_clip(clip),0))
 				var grip: Vector2 = DIAGONAL.guard_wrist(clip,i)
 				var span: PackedVector2Array = DIAGONAL.guard_base_span(clip,i,60.0)
 				if grip!=Vector2.INF:
@@ -103,6 +109,16 @@ func _verify() -> void:
 						assert(((pose["position"] as Vector2)+(pose["source_handle"] as Vector2).rotated(deg_to_rad(float(pose["rotation_deg"])))).is_equal_approx(grip))
 				else:
 					assert(span.is_empty())
+	assert(is_zero_approx(DIAGONAL.guard_weight(0.0,0.55,false)))
+	assert(is_equal_approx(DIAGONAL.guard_weight(0.04,0.12,true),1.0))
+	assert(is_zero_approx(DIAGONAL.guard_weight(0.4,0.0,true)))
+	for face in ["front","back","left","right"]:
+		var wrist: Vector2 = DIAGONAL.guard_wrist("thornrose_parry_"+face,0)
+		var relaxed: Dictionary = BOW.guard_hold_pose("thornrose_parry_"+face,wrist,Vector2.DOWN,0.0)
+		var raised: Dictionary = BOW.guard_hold_pose("thornrose_parry_"+face,wrist,Vector2.DOWN,1.0)
+		assert(is_equal_approx(float(relaxed["rotation_deg"]),float(BOW.idle_hold_pose(face)["rotation_deg"])))
+		for pose in [relaxed,raised]:
+			assert(((pose["position"] as Vector2)+(pose["source_handle"] as Vector2).rotated(deg_to_rad(float(pose["rotation_deg"])))).is_equal_approx(wrist))
 	assert(DIAGONAL.guard_frame(0.0,0.55)==0)
 	assert(DIAGONAL.guard_frame(0.2,0.35)==4)
 	assert(DIAGONAL.guard_frame(0.2,0.10)==5)

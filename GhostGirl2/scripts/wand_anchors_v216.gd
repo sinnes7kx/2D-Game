@@ -152,7 +152,11 @@ static func pose_rotation_v294(body: AnimatedSprite2D,points: PackedVector2Array
 			var heading: Vector2 = actor.get("parry_heading")
 			var local: Vector2 = body.to_local(body.global_position+heading).normalized()
 			var axis: Vector2 = Vector2(-0.9 if local.x>=0.0 else 0.9,-0.6).normalized()
-			return (points[1]-points[0]).angle_to(axis)
+			var target: float = (points[1]-points[0]).angle_to(axis)
+			var art = preload("res://scripts/ghost_diagonal_art_v247.gd")
+			if art.diagonal_name(clip).is_empty():
+				return lerp_angle(0.0,target,art.guard_weight(float(actor.get("parry_age")),float(actor.get("parry_left")),bool(actor.get("parry_used"))))
+			return target
 	if clip.begins_with("wand_idle_"):
 		return GENTLE.angle_at(GENTLE.phase_of(body))
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")

@@ -627,10 +627,33 @@ static func guard_near_hand(clip: String) -> int:
 		return near_hand(clip)
 	return 0 if cardinal_for_clip(clip)=="left" else 1
 
+# Cardinal entry/recovery endpoints reuse the approved neutral body.
+# Raised middle guard poses retain their matching original guides.
+static var _guard_neutral_cache: Dictionary = {}
+
+static func guard_neutral_texture(clip: String,frame: int) -> Texture2D:
+	if frame not in [0,7] or not diagonal_name(clip).is_empty():
+		return null
+	var face: String = cardinal_for_clip(clip)
+	if not _guard_neutral_cache.has(face):
+		var path: String = "res://assets/ghost/weapon_body_v110/idle_%s_00.png" % face
+		var tile: Texture2D = load(path) as Texture2D if ResourceLoader.exists(path,"Texture2D") else null
+		_guard_neutral_cache[face]=tile if tile!=null and tile.get_size()==Vector2(256,220) else null
+	return _guard_neutral_cache[face] as Texture2D
+
+static func guard_texture(frames: SpriteFrames,clip: String,frame: int) -> Texture2D:
+	var neutral: Texture2D = guard_neutral_texture(clip,frame)
+	return neutral if neutral!=null else frames.get_frame_texture(guard_source(clip),guard_source_frame(clip,frame))
+
+static func guard_idle_clip(clip: String) -> String:
+	return clip.replace("parry_","idle_")
+
 static func guard_wrist(clip: String, frame: int, hand: int = -1) -> Vector2:
 	var chosen: int = guard_near_hand(clip) if hand<0 else hand
 	if _authored_guides.has(clip):
 		return authored_wrist(clip,frame,chosen)
+	if guard_neutral_texture(clip,frame)!=null:
+		return preload("res://scripts/cardinal_paired_carry_v296.gd").grip(guard_idle_clip(clip),0,chosen)
 	var source: String = guard_source(clip)
 	var index: int = guard_source_frame(clip,frame)
 	if not diagonal_name(clip).is_empty():
@@ -641,6 +664,14 @@ static func guard_base_span(clip: String, frame: int, length: float, hand: int =
 	var anchor: Vector2 = guard_wrist(clip,frame,hand)
 	if anchor==Vector2.INF:
 		return PackedVector2Array()
+	if not _authored_guides.has(clip) and guard_neutral_texture(clip,frame)!=null:
+		var carry = preload("res://scripts/cardinal_paired_carry_v296.gd")
+		var idle: String = guard_idle_clip(clip)
+		if hand>=0:
+			var spans: Array = carry.spans(idle,0,length)
+			return spans[hand] if hand<spans.size() else PackedVector2Array()
+		var upright: bool = clip.contains("spear_") or clip.contains("twinblade") or clip.contains("scythe_") or clip.contains("halberd_") or clip.contains("maul_") or clip.contains("axe_") or clip.contains("rapier_")
+		return carry.single_span(idle,0,length,upright)
 	var side: float = -1.0 if anchor.x<0.0 else 1.0
 	return PackedVector2Array([anchor,anchor+Vector2(side*0.55,0.83).normalized()*length])
 
@@ -666,14 +697,14 @@ static func install_guards(frames: SpriteFrames) -> void:
 					continue # A dedicated authored replacement takes precedence.
 				if frames.get_frame_count(clip)==8:
 					for i in range(8):
-						frames.set_frame(clip,i,frames.get_frame_texture(source,guard_source_frame(clip,i)))
+						frames.set_frame(clip,i,guard_texture(frames,clip,i))
 					continue
 				frames.remove_animation(clip)
 			frames.add_animation(clip)
 			_set_loop_v293(frames,clip,false)
 			frames.set_animation_speed(clip,8.0)
 			for i in range(8):
-				frames.add_frame(clip,frames.get_frame_texture(source,guard_source_frame(clip,i)))
+				frames.add_frame(clip,guard_texture(frames,clip,i))
 			frames.set_meta("reused_guard_"+clip,true)
 
 static func guard_clip(idle_prefix: String, eight: String, cardinal: String, frames: SpriteFrames) -> String:
@@ -683,6 +714,11 @@ static func guard_clip(idle_prefix: String, eight: String, cardinal: String, fra
 		if frames!=null and frames.has_animation(clip) and frames.get_frame_count(clip)==8:
 			return clip
 	return ""
+
+# Shared cosmetic guard blend. Does not alter any combat clock.
+static func guard_weight(age: float,remaining: float,confirmed: bool) -> float:
+	var entered: float = 1.0 if confirmed else smoothstep(0.0,0.075,age)
+	return entered*smoothstep(0.0,0.085,remaining)
 
 # Physics clock controls the pose even during an early confirmed parry.
 static func guard_frame(age: float, remaining: float, confirmed: bool = false) -> int:
