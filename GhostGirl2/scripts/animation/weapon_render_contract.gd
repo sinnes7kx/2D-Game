@@ -109,6 +109,9 @@ static func bow_light(item: GhostItemInstance,enabled: bool=true) -> Vector3:
 	return Vector3(strength if CHOICES.bow_body_visible(item) else 0.0,strength if CHOICES.bow_string_visible(item) else 0.0,1.0 if enabled and CHOICES.bow_mode(item)==3 else 0.0)
 
 static func draw_owned_light(canvas: Node2D,body: AnimatedSprite2D,geometry: Dictionary,profile: Dictionary,phase: float) -> void:
+	draw_owned_paths(canvas,body,edge_paths(geometry,profile),phase)
+
+static func draw_owned_paths(canvas: Node2D,body: AnimatedSprite2D,paths: Array[PackedVector2Array],phase: float) -> void:
 	var item: GhostItemInstance = equipped(body)
 	if item==null or effect_scale(item)<=0.0 or FX.intensity<=0.0:
 		return
@@ -119,7 +122,7 @@ static func draw_owned_light(canvas: Node2D,body: AnimatedSprite2D,geometry: Dic
 		canvas.set_meta("shared_edge_palette",item.glow_gradient_colors())
 	var colors: Array[Color] = canvas.get_meta("shared_edge_palette")
 	var look: Dictionary = canvas.get_meta("shared_edge_look",{})
-	draw_light(canvas,edge_paths(geometry,profile),colors,look,phase,effect_scale(item))
+	draw_light(canvas,paths,colors,look,phase,effect_scale(item))
 
 static func preview_span(style: String,hand: int=0) -> PackedVector2Array:
 	var x: float = (-17.0 if hand==0 else 17.0) if style in ["dual_sword","dual_dagger"] else 0.0
