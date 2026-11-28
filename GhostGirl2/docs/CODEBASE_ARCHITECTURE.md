@@ -41,7 +41,7 @@ Versioned filenames are historical identifiers, not a reason to duplicate a work
 ## Incremental extraction queue
 
 - First pass: shared combat geometry, with existing public wrappers preserved.
-- Directional playback and shared straight-blade rendering extracted. Next: complete remaining baked/heavy/polearm/wand FX and attachment parity, including secondary ornaments.
+- Directional playback and shared straight-blade rendering extracted. Polearm heads, heavy shape/strength and wand atlas/core now shared. Next: finish baked weapon and secondary ornament parity and test real rendering.
 - Later: separate player action-state transitions and world/save responsibilities once regression coverage allows it. No full rewrite or mass relocation of resources.
 
 The existing codebase is intentionally retained; these are ownership boundaries for future maintenance, not a claim that every domain is already fully decoupled.
