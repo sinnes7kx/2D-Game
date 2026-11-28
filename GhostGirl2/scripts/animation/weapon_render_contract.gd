@@ -137,7 +137,7 @@ static func owns_straight_core(body: AnimatedSprite2D,item: GhostItemInstance,cl
 	var style: String=item.weapon_style()
 	if style in ["dual_sword","dual_dagger"]:
 		return not first_visible(paired_spans(body,style,clip,body.frame)).is_empty()
-	if style not in ["blade","dagger"]:
+	if style not in ["blade","dagger","spear"]:
 		return false
 	var rig: Node=body.get_node_or_null("WeaponPoseV172")
 	return rig!=null and rig.has_method("_is_equipped") and bool(rig.call("_is_equipped",clip)) and single_span(body,clip,body.frame).size()==2
@@ -151,3 +151,51 @@ static func light_redraw(owner: Node,body: AnimatedSprite2D) -> bool:
 
 static func melee_model_glow(item: GhostItemInstance,enabled: bool=true) -> float:
 	return effect_scale(item,enabled)*FX.intensity*0.80
+
+# All three physical tines use the same head and handle geometry in both views.
+static func polearm_heads(span: PackedVector2Array,trident: bool) -> Array:
+	var result: Array=[]
+	if span.size()!=2 or span[0].distance_squared_to(span[1])<36.0:
+		return result
+	var tip: Vector2=span[1]
+	var axis: Vector2=(tip-span[0]).normalized()
+	var normal: Vector2=Vector2(-axis.y,axis.x)
+	var head: Vector2=tip-axis*(17.0 if trident else 24.0)
+	if trident:
+		for side in [-1.0,1.0]:
+			result.append({"root":head+normal*side*8.0,"tip":tip-axis*2.0+normal*side*7.0,"width":1.8})
+		result.append({"root":head,"tip":tip,"width":2.6})
+	else:
+		result.append({"root":head,"tip":tip,"width":4.5})
+	return result
+
+static func draw_polearm(canvas: Node2D,span: PackedVector2Array,trident: bool,profile: Dictionary,phase: float) -> Array[PackedVector2Array]:
+	var paths: Array[PackedVector2Array]=[]
+	if profile.is_empty():
+		return paths
+	var heads: Array=polearm_heads(span,trident)
+	if heads.is_empty():
+		return paths
+	var axis: Vector2=(span[1]-span[0]).normalized()
+	var head: Vector2=span[1]-axis*(17.0 if trident else 24.0)
+	var forged=preload("res://scripts/forged_polearm_v255.gd")
+	forged.draw_haft(canvas,span[0]-axis*(26.0 if trident else 22.0),span[0],head,4.5 if trident else 3.8,profile)
+	for i in range(heads.size()):
+		var part: Dictionary=heads[i]
+		if trident and i<2:
+			forged.draw_fork(canvas,head,part["root"],axis,profile)
+		ART.draw_blade(canvas,part["root"],part["tip"],part["width"],profile,phase)
+		paths.append_array(edge_paths(part,profile))
+	return paths
+
+static func draw_wand_head(canvas: Node2D,span: PackedVector2Array,colors: Array[Color],look: Dictionary,phase: float,scale: float) -> void:
+	if span.size()!=2 or colors.size()<2 or scale<=0.0 or FX.intensity<=0.0:
+		return
+	var axis: Vector2=(span[1]-span[0]).normalized()
+	var head: Vector2=span[1]
+	var ink: Color=LIGHT.color_at(colors,look,0.82,phase)
+	var pulse: float=0.90+0.10*sin(phase*3.1)
+	for i in range(3):
+		canvas.draw_circle(head,7.0-float(i)*2.1,Color(ink.r,ink.g,ink.b,FX.edge_alpha(canvas,(0.045+float(i)*0.065)*scale*pulse)))
+	canvas.draw_circle(head,1.2,Color(ink.r,ink.g,ink.b,FX.edge_alpha(canvas,0.52*scale)))
+	preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(canvas,head,axis,Vector2(7.0,9.0),colors,look,phase,scale)
