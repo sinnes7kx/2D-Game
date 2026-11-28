@@ -1,6 +1,6 @@
 extends RefCounted
-## Conservative render-only restoration of ORIGINAL cardinal poses.
-## No substitute atlases, source image edits, new wrist coordinates or saves.
+## Conservative finish for ORIGINAL cardinal poses not already polished in PNGs.
+## No substitute atlases, new wrist coordinates or saves.
 ## The diagonal art is never processed by this pass.
 const FACES: Array[String] = ["front","back","left","right"]
 const DIAGONALS: Array[String] = ["front_right","front_left","back_left","back_right"]
@@ -21,6 +21,13 @@ static func supports(name: String) -> bool:
 static func strength_for(name: String, size: Vector2, centered: bool, offset: Vector2, flipped: bool) -> float:
 	return STRENGTH if supports(name) and size==Vector2(256,220) and centered and offset==Vector2.ZERO and not flipped else 0.0
 
+static func is_polished_idle_source(path: String) -> bool:
+	for face in FACES:
+		for index in range(8):
+			if path=="res://assets/ghost/idle_%s_%02d.png" % [face,index]:
+				return true
+	return false
+
 static func apply(body: AnimatedSprite2D) -> void:
 	if not is_instance_valid(body) or not body.material is ShaderMaterial:
 		return
@@ -32,7 +39,7 @@ static func apply(body: AnimatedSprite2D) -> void:
 	var clip: String = str(body.animation)
 	if frames!=null and frames.has_animation(clip) and body.frame<frames.get_frame_count(clip):
 		var tile: Texture2D = frames.get_frame_texture(clip,body.frame)
-		if tile!=null:
+		if tile!=null and not is_polished_idle_source(tile.resource_path):
 			strength=strength_for(clip,tile.get_size(),body.centered,body.offset,body.flip_h or body.flip_v)
 	if float(material.get_shader_parameter("cardinal_finish"))!=strength:
 		material.set_shader_parameter("cardinal_finish",strength)
