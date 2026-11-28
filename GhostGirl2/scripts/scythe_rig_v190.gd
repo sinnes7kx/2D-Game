@@ -1,4 +1,5 @@
 extends Node2D
+const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const HEAVY = preload("res://scripts/heavy_weapon_art_v192.gd")
 const SCYTHE = preload("res://scripts/scythe_art_v190.gd")
@@ -77,10 +78,11 @@ func _draw() -> void:
 		var world: Node = player.get("world") as Node
 		var inv: Node = world.get("inventory") as Node if world != null else null
 		var equipped: GhostItemInstance = inv.get_equipped("sword") if inv != null else null
-		var show_light: bool = equipped == null or equipped.glow_level_override != 0
+		var glow_scale: float = RENDER.effect_scale(equipped)
+		var show_light: bool = glow_scale>0.0
 		if style == "scythe":
-			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, show_light)
+			SCYTHE.draw_scythe(self, points[0], points[1], profile, look, colors, phase, side, show_light,glow_scale)
 			if is_instance_valid(scythe_glow):
 				scythe_glow.call("set_pose", equipped, points[0], points[1], profile, side)
 		else:
-			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, show_light, active_item_id)
+			HEAVY.draw_heavy(self, points[0], points[1], profile, look, colors, phase, style, ashglass, side, show_light, active_item_id,glow_scale)
