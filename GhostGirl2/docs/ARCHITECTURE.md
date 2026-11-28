@@ -15,6 +15,7 @@ This is the engineering map of the active Godot project. Product priorities and 
 | Animation playback | scripts/animation/directional_playback.gd | Shared locomotion, action/gesture clip routing, phase retention and pause/resume; no combat authority |
 | Animation art | scripts/ghost_animation_library.gd, ghost_diagonal_art_v247.gd, v172_weapon_pose.gd | Clip names, body atlases, cardinal fallback, wrist-based held art |
 | Item identity | scripts/item_instance.gd, item_generator.gd | Stable IDs, original rolls, derived stats and cosmetic choices |
+| Shared weapon render contract | scripts/animation/weapon_render_contract.gd | Rig span lookup, paired hand layering, shared straight-blade geometry and light inputs; only presentation |
 | Item presentation | scripts/modular_weapon_art_v178.gd, weapon_models_v283.gd, weapon_prestige_fx.gd, collector_lens_model_v179.gd | Physical geometry and seeded visuals; preview must share live geometry, never change gameplay |
 | Inventory/collection | scripts/inventory.gd, collection_vault_v181.gd, sanctum_exhibition_v182.gd | Save ownership, transfers, equipped state, display; UI calls these rather than mutating persistence directly |
 | World | scripts/game.gd, scenes/rooms/ | Room loading, rewards, exploration, environment interactions |
@@ -35,7 +36,7 @@ New pure helpers belong in a descriptive domain directory (start with scripts/co
 
 1. Base combat rules and regression registration (first step in this PR).
 2. Grounded locomotion and directional playback extracted; next isolate remaining action-state transitions while keeping physics timing in player.gd and preserving scene-compatible forwarding methods.
-3. Establish shared per-family geometry and FX contracts for gameplay and Lens. Align each of the eight directions and preserve occlusion; audit authored versus reused frames.
+3. Shared physical blade geometry and edge light adopted for modular single swords, daggers, forged daggers and paired blades; forged bow/crossbow and Seraph preview inputs corrected. Continue remaining baked weapons, polearms and wands, secondary ornaments and eight-direction artwork.
 4. Isolate inventory presentation from ownership mutation; preserve existing save schema and seed provenance.
 5. Extract room routing and visual presentation policies from game.gd; retire obsolete rooms only with explicit progression/save handling.
 
