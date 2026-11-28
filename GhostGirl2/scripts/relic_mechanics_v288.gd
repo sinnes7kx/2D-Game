@@ -1,5 +1,6 @@
 extends RefCounted
 const GROUND = preload("res://scripts/relic_ground_v288.gd")
+const MELEE_RULES = preload("res://scripts/combat/melee_rules.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const CHANNELS: Dictionary = {
 	"rosemirror_twinblade_v170":{"mode":"hybrid","drain":21.0,"move":0.80,"radius":111.0,"pulse":0.23,"power":0.34,"outer_radius":132.0,"outer_power":0.25},
@@ -15,7 +16,7 @@ const PHYSICAL: Dictionary = {
 const VOLLEY: Dictionary = {"frostveil_bow_v277":4.0}
 
 static func physical_contact(offset: Vector2, axis: Vector2, reach: float, cone: float) -> bool:
-	return offset.length_squared()>4.0 and offset.length_squared()<=reach*reach and not axis.is_zero_approx() and offset.normalized().dot(axis.normalized())>=cone
+	return MELEE_RULES.frontal_contact(offset,axis,4.0,reach,cone)
 
 static func _physical_strike(actor: CharacterBody2D,item: GhostItemInstance,axis: Vector2,id: String,root: Node) -> void:
 	var profile: Dictionary = PHYSICAL[id]
@@ -52,7 +53,7 @@ static func is_channel(id: String) -> bool:
 	return CHANNELS.has(id)
 
 static func parry_contact_v289(offset: Vector2,axis: Vector2) -> bool:
-	return offset.length_squared()>4.0 and offset.length_squared()<=220.0*220.0 and not axis.is_zero_approx() and offset.normalized().dot(axis.normalized())>=0.60
+	return MELEE_RULES.frontal_contact(offset,axis,4.0,220.0,0.60)
 
 static func cooldown(id: String) -> float:
 	if id=="seraph_descent":
