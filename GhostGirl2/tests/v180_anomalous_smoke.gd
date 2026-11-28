@@ -12,10 +12,12 @@ func _initialize() -> void:
 		look["color_mode"] = mode
 		var first: Color = FX.color_at(colors, look, 0.31, 0.0)
 		var later: Color = FX.color_at(colors, look, 0.31, 2.4)
-		if mode >= 2 and first.is_equal_approx(later):
-			push_error("Animated chromatic mode did not change: " + str(mode))
+		if not first.is_equal_approx(later):
+			push_error("Ordinary palette unexpectedly shifted: " + str(mode))
 			quit(1)
 			return
+	look["prism"] = true
+	assert(not FX.color_at(colors,look,0.31,0.0).is_equal_approx(FX.color_at(colors,look,0.31,2.4)))
 	var eclipse: Dictionary = ART.weapon_profile(look, "eclipse_twinblade_v170")
 	var rose: Dictionary = ART.weapon_profile(look, "rosemirror_twinblade_v170")
 	if eclipse["shape"] == rose["shape"] or float(eclipse["width_scale"]) >= float(rose["width_scale"]):
@@ -34,7 +36,7 @@ func _initialize() -> void:
 	item.debug_collector_tier = 6
 	item.debug_color_mode = 6
 	item.debug_glow_motif = 7
-	if OS.is_debug_build() and (item.collector_appearance()["material"] != 6 or item.collector_appearance()["glow_motif"] != 7):
+	if OS.is_debug_build() and (item.collector_appearance()["material"] != 6 or item.collector_appearance()["glow_motif"] != 3):
 		push_error("Debug preview not active")
 		quit(1)
 		return

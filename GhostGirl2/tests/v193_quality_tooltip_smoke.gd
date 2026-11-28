@@ -8,7 +8,7 @@ func _initialize() -> void:
 func _verify() -> void:
     var node: Control = POPUP.instantiate()
     root.add_child(node)
-    var title: Label = node.get_node("Columns/Current/Layout/TitleRow/Name")
+    var title: Label = node.get_node("Columns/Current/Layout/Name")
     var star: Button = node.get_node("Columns/Current/Layout/TitleRow/RareStar")
     var body: RichTextLabel = node.get_node("Columns/Current/Layout/Body")
     if title == null or star == null or body == null:
@@ -24,8 +24,8 @@ func _verify() -> void:
     if body.text.contains("—  ADVANCED  —"):
         _fail("Advanced header is still present")
         return
-    if star.visible != item.has_rare_seeded_appearance():
-        _fail("Rare star is not gated on genuine roll")
+    if star.visible:
+        _fail("Cosmetic star should not replace six-dot indicator")
         return
     node.call("set_pinned", true)
     var anchored: Vector2 = node.position

@@ -1,70 +1,64 @@
 extends SceneTree
-## Regression: compact default/ALT tooltip, truthful shader swatches, metadata hover.
+## Compact tooltip contract: six dots, no hit/roll labels, skill detail only on hover.
 const POPUP = preload("res://scenes/item_compare_popup.tscn")
 const MARKUP = preload("res://scripts/item_rich_text.gd")
-const SURFACE = preload("res://scripts/weapon_surface_v190.gd")
 
 func _initialize() -> void:
     call_deferred("_verify")
 
 func _verify() -> void:
-    var template: GhostItemData = load("res://items/moonveil_bow.tres") as GhostItemData
-    if template == null:
-        _fail("Missing Moonveil item fixture")
-        return
-    var item: GhostItemInstance = GhostItemGenerator.create(template, 196001, "set")
+    var template: GhostItemData = load("res://items/eclipse_twinblade_v170.tres") as GhostItemData
+    assert(template != null)
+    var item: GhostItemInstance = GhostItemGenerator.create(template, 196001, "unique")
+    item.weapon_mod = "execution"
     var compact: String = MARKUP.item_info(item, false)
     var detailed: String = MARKUP.item_info(item, true)
-    if compact.contains("VISUAL EFFECTS") or compact.contains("ROLL ·") or compact.contains("Mythic animation"):
-        _fail("Default tooltip leaked advanced technical detail")
-        return
-    if compact != MARKUP.item_info(item, false) or not compact.contains("[url=visual:surface]") or not compact.contains("[url=visual:string]") or not compact.contains("[url=visual:glow]"):
-        _fail("The three bow color channels must have distinct hoverable swatches")
-        return
-    if not compact.contains(MARKUP.FLAVOUR) or not compact.contains(template.description.strip_edges()):
-        _fail("Description must be visible in a distinctive flavour color")
-        return
-    if not detailed.contains("ROLL ·") or not detailed.contains("VISUAL EFFECTS"):
-        _fail("Full collector Inspect lost roll or visual information")
-        return
-    var shader_tint: Array[Color] = SURFACE.bow_pigment(item, item.collector_appearance())
-    if MARKUP.visual_colors(item, "surface") != shader_tint:
-        _fail("Limb dots do not match the actual shader tint ramp")
-        return
-    var hint: String = MARKUP.visual_dot_details(item, "visual:surface:1")
-    if not hint.contains("Bow colors") or not hint.contains("whole bow"):
-        _fail("Limb dot does not explain mixing with original painted art")
-        return
-    if MARKUP.visual_dot_details(item, "visual:glow:99") != "":
-        _fail("Invalid color dot index displayed metadata")
-        return
+    assert(compact.contains("Grants Crimson Eclipse"))
+    assert(compact.contains("[color=#ffffff]+25% Heavy Attack Damage"))
+    assert(compact.contains("[color=#ffffff]Grants Crimson Eclipse"))
+    assert(compact.find("+25% Heavy Attack Damage") < compact.find("Grants Crimson Eclipse"))
+    assert(compact.contains("[font_size=25]%.1f[/font_size]" % item.weapon_damage()))
+    assert(compact.contains("%d Range" % MARKUP.display_range(item.weapon_reach())))
+    assert(MARKUP.display_range(165.0) == 170)
+    assert(MARKUP.display_range(170.0) == 170)
+    assert(MARKUP.display_range(170.1) == 180)
+    for value in [compact, detailed]:
+        assert(not value.contains("UNIQUE SKILL"))
+        assert(not value.contains("ROLL ·"))
+        assert(not value.contains("Advancing blade dance"))
+        assert(value.count("●") == 6)
+        assert(value.ends_with("[/font_size]"))
+    assert(MARKUP.impact_text(item).is_empty())
+    assert(MARKUP.skill_hover_details(item, "visual:glow").is_empty())
+    assert(MARKUP.skill_hover_details(item, "skill:granted").contains("Advancing blade dance"))
+    assert(MARKUP.skill_hover_details(item, "skill:granted").contains("Shift + Mouse2"))
+    var stats: Dictionary = item.all_stats()
+    item.rainbow_skin = true
+    assert(MARKUP.special_title(item) == "Prism")
+    assert(MARKUP.cosmetic_indicator(item).size() == 6)
+    assert(item.all_stats() == stats)
+    item.rainbow_skin = false
+    item.cosmetic_uid = "0000000000000000000000000005a282"
+    assert(item.white_stop_mask() == 63 and item.has_six_white_glow())
+    for ink in MARKUP.cosmetic_indicator(item):
+        assert(ink == Color.WHITE)
+    assert(item.collector_appearance()["six_white"])
+    assert(item.all_stats() == stats)
 
     var popup: Control = POPUP.instantiate()
     root.add_child(popup)
-    popup.call("display_item", item, null, true) # ALT must not expand the body.
-    var body: RichTextLabel = popup.get_node("Columns/Current/Layout/Body") as RichTextLabel
+    popup.call("display_item", item, null, false)
     var help: Label = popup.get_node("Columns/Current/Layout/VisualHint") as Label
-    if body.text != compact or help.visible:
-        _fail("ALT tooltip must begin compact without unsolicited visual text")
-        return
+    assert(not help.visible)
+    popup.call("_on_current_dot_hover", "skill:granted")
+    assert(not help.visible)
     popup.call("set_pinned", true)
-    popup.call("_on_current_dot_hover", "visual:glow:0")
-    if not help.visible or not help.text.contains("Special glow"):
-        _fail("Pinned metadata dot did not show the relevant effect descriptions")
-        return
-    popup.call("_on_current_dot_exit", "visual:glow:0")
-    if help.visible:
-        _fail("Visual help remained after hover ended")
-        return
-    popup.call("set_pinned", false)
-    popup.call("_on_current_dot_hover", "visual:glow:0")
-    if help.visible:
-        _fail("Unpinned tooltip allowed detached visual help")
-        return
+    popup.call("_on_current_dot_hover", "visual:glow")
+    assert(not help.visible)
+    popup.call("_on_current_dot_hover", "skill:granted")
+    assert(help.visible and help.text.contains("Crimson Eclipse"))
+    popup.call("_on_current_dot_exit", "skill:granted")
+    assert(not help.visible)
     popup.free()
-    print("v1.96/v2.10 PASS: compact special FX tooltip, larger swatch row targets and pinned color help")
+    print("PASS: compact tooltip, Prism title, six dots and Alt-pinned skill hover")
     quit(0)
-
-func _fail(message: String) -> void:
-    push_error(message)
-    quit(1)

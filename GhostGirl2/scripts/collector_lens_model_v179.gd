@@ -118,7 +118,7 @@ func _draw() -> void:
 			MODELS_V283.draw_melee(self,str(item.definition.item_id),Vector2(0,30),Vector2(0,-38),item.weapon_base_color(),strength,gradients,look,elapsed,false,item.weapon_gradient_color())
 		"bow":
 			var light: Vector3 = RENDER.bow_light(item,glow_enabled)
-			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, light.x,light.y,light.z>0.0)
+			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, light.x,light.y,light.z>0.0,look,elapsed)
 		"dagger":
 			_draw_straight("forge_dagger" if item.uses_forge_dagger() else "dagger",0)
 		"crossbow":
@@ -201,9 +201,9 @@ func _draw_artwork_effects() -> void:
 	_draw_signature(Vector2.ZERO, radius + 10.0)
 
 func _draw_signature(center: Vector2, radius: float) -> void:
-	var sig: int = item.visual_signature()
+	var sig: int = 4 if item.visual_signature() == 4 or item.rainbow_skin else 0
 	var tier: int = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0)))
-	if gradients.size() < 3 or (sig <= 0 and tier < 4):
+	if gradients.size() < 3 or sig == 0:
 		return
 	var ink: Color = ANOMALOUS.color_at(gradients, look, 0.4, elapsed)
 	ink.a = FX_LEVEL.alpha(0.32)

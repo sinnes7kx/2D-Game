@@ -36,17 +36,14 @@ func _verify() -> void:
 	assert(JOURNAL.rank("09999-----") < JOURNAL.rank("19999-----"))
 	var stats: Dictionary = item.all_stats()
 	var original: Dictionary = item.cosmetic_snapshot()
-	if not CODE.valid_code(born) or CODE.current(item) != born or uid != item.cosmetic_uid or not MARKUP.item_info(item,true).contains(born):
-		_fail("Newly generated item did not record or show the original code")
+	if not CODE.valid_code(born) or CODE.current(item) != born or uid != item.cosmetic_uid or MARKUP.item_info(item,true).contains(born):
+		_fail("Newly generated item did not record the original code or leaked it into tooltip")
 		return
 	item.debug_collector_tier = 6
 	item.debug_visual_override = 5
 	item.debug_surface_mode = 6
 	if CODE.current(item) != born or item.birth_roll_code_v1 != born or item.cosmetic_snapshot() != original:
 		_fail("Debug testing changed genuine rarity fingerprint")
-		return
-	if OS.is_debug_build() and not MARKUP.item_info(item,true).contains("TEST FX active"):
-		_fail("Debug tooltip missing test notice")
 		return
 	item.debug_collector_tier = -1
 	item.debug_visual_override = -1
@@ -80,7 +77,7 @@ func _verify() -> void:
 	serialized.erase("birth_roll_code_v1")
 	serialized.erase("birth_roll_uid_v1")
 	var legacy: GhostItemInstance = inv._deserialize_item(serialized)
-	if legacy == null or not legacy.birth_roll_code_v1.is_empty() or CODE.current(legacy)!=current or not MARKUP.item_info(legacy,true).contains("unknown (legacy)"):
+	if legacy == null or not legacy.birth_roll_code_v1.is_empty() or CODE.current(legacy)!=current or MARKUP.item_info(legacy,true).contains("unknown (legacy)"):
 		_fail("Legacy item invented birth history or changed current roll")
 		return
 	if not CODE.share(restored).contains("birth="+born):

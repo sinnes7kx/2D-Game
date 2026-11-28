@@ -51,11 +51,8 @@ func _verify() -> void:
 		_fail("Expected eight independent cosmetic categories")
 		return
 	var tooltip: String = MARKUP.item_info(item, false)
-	if not tooltip.contains("[url=visual:glow]") or not tooltip.contains("Glow:"):
-		_fail("Regular tooltip lost easy color hover or effect summary")
-		return
-	if MARKUP.visual_dot_details(item, "visual:surface").is_empty():
-		_fail("Full-row color hover has no simple explanation")
+	if tooltip.count("●") != 6 or tooltip.contains("[url=visual:") or tooltip.contains("ROLL ·"):
+		_fail("Expected six cosmetic dots with no extra labels")
 		return
 	var eye_front: Array[Vector2] = EYES.eye_centers("front")
 	if eye_front.size() != 2 or eye_front[0].y < -50.0 or EYES.eye_centers("back").size() != 0:

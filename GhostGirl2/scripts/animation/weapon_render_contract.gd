@@ -116,6 +116,7 @@ static func draw_owned_paths(canvas: Node2D,body: AnimatedSprite2D,paths: Array[
 	if item==null or effect_scale(item)<=0.0 or FX.intensity<=0.0:
 		return
 	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(),item.cosmetic_uid,item.visual_seed(),item.gradient_version,item.origin_room,item.regional_rank,item.debug_collector_tier,item.debug_color_mode,item.debug_glow_motif,item.debug_surface_mode,item.effect_palette_channel(),item.visual_signature(),item.mythic_layer_variant()]
+	key += ":" + str(item.rainbow_skin)
 	if canvas.get_meta("shared_edge_key","")!=key:
 		canvas.set_meta("shared_edge_key",key)
 		canvas.set_meta("shared_edge_look",item.collector_appearance())
@@ -163,7 +164,7 @@ static func polearm_heads(span: PackedVector2Array,trident: bool) -> Array:
 	var tip: Vector2=span[1]
 	var axis: Vector2=(tip-span[0]).normalized()
 	var normal: Vector2=Vector2(-axis.y,axis.x)
-	var head: Vector2=tip-axis*(17.0 if trident else 24.0)
+	var head: Vector2=tip-axis*(25.0 if trident else 24.0)
 	if trident:
 		for side in [-1.0,1.0]:
 			result.append({"root":head+normal*side*8.0,"tip":tip-axis*2.0+normal*side*7.0,"width":1.8})
@@ -180,9 +181,9 @@ static func draw_polearm(canvas: Node2D,span: PackedVector2Array,trident: bool,p
 	if heads.is_empty():
 		return paths
 	var axis: Vector2=(span[1]-span[0]).normalized()
-	var head: Vector2=span[1]-axis*(17.0 if trident else 24.0)
+	var head: Vector2=span[1]-axis*(25.0 if trident else 24.0)
 	var forged=preload("res://scripts/forged_polearm_v255.gd")
-	forged.draw_haft(canvas,span[0]-axis*(26.0 if trident else 22.0),span[0],head,4.5 if trident else 3.8,profile)
+	forged.draw_haft(canvas,span[0]-axis*(48.0 if trident else 22.0),span[0],head,3.8,profile)
 	for i in range(heads.size()):
 		var part: Dictionary=heads[i]
 		if trident and i<2:
@@ -212,3 +213,25 @@ static func heavy_profile(profile: Dictionary,look: Dictionary) -> Dictionary:
 	result["scythe_span"]=float(look.get("scythe_span",1.0))
 	result["scythe_curve"]=float(look.get("scythe_curve",0.7))
 	return result
+
+# Cosmetic guard: wrist remains attached; only the held item's axis rotates.
+# No combat window, hitbox, facing or damage change.
+static func guard_span(body: AnimatedSprite2D, span: PackedVector2Array, hand: int = -1) -> PackedVector2Array:
+	if not is_instance_valid(body) or span.size() != 2:
+		return span
+	var actor: Node = body.get_parent()
+	if actor == null or float(actor.get("parry_left")) <= 0.0:
+		return span
+	var age: float = float(actor.get("parry_age"))
+	var weight: float = smoothstep(0.0, 0.075, age) * smoothstep(0.0, 0.085, float(actor.get("parry_left")))
+	var grip: Vector2 = span[0]
+	var original: Vector2 = span[1] - grip
+	var heading: Vector2 = actor.get("parry_heading")
+	var direction: float = -1.0 if grip.x > 0.0 else 1.0
+	if hand >= 0:
+		direction = 1.0 if hand == 0 else -1.0
+	var guard: Vector2 = Vector2(direction * 0.92, -0.62)
+	if absf(heading.x) > 0.75:
+		guard = Vector2(heading.x * 0.38, -1.0)
+	var angle: float = lerp_angle(original.angle(), guard.angle(), weight)
+	return PackedVector2Array([grip, grip + Vector2.from_angle(angle) * original.length()])

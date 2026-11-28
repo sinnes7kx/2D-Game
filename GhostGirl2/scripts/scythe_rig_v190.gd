@@ -47,6 +47,7 @@ func _process(delta: float) -> void:
 	if not visible:
 		return
 	var next: String = SURFACE.key(item) + ":%d:%d:%d:%d" % [item.debug_color_mode, item.debug_glow_motif, item.debug_forge_guard, item.debug_forge_grip]
+	next += ":" + str(item.rainbow_skin)
 	if next != key:
 		key = next
 		look = item.collector_appearance()
@@ -69,6 +70,7 @@ func _draw() -> void:
 	var points: PackedVector2Array = SCYTHE.span(name_now, index, guides) if style == "scythe" else HEAVY.span(name_now, index, guides)
 	if idle:
 		points = GENTLE.smooth(body, name_now, points)
+	points = RENDER.guard_span(body, points)
 	if points.size() == 2:
 		var side: float = -1.0 if name_now.ends_with("_left") else 1.0
 		var world: Node = player.get("world") as Node

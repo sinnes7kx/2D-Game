@@ -10,6 +10,87 @@ const BLUE = "#a8bcff"
 const PALE = "#d9ccd7"
 const FLAVOUR = "#c99fd4"
 const WEAPON_SURFACE = preload("res://scripts/weapon_surface_v190.gd")
+const SKILLS = preload("res://scripts/unique_specials_v261.gd")
+static var _body_font: SystemFont
+static var _title_font: SystemFont
+
+static func body_font() -> Font:
+	if _body_font == null:
+		_body_font = SystemFont.new()
+		_body_font.font_names = PackedStringArray(["Segoe UI", "Noto Sans", "DejaVu Sans"])
+	return _body_font
+
+static func title_font() -> Font:
+	if _title_font == null:
+		_title_font = SystemFont.new()
+		_title_font.font_names = PackedStringArray(["Georgia", "Noto Serif", "DejaVu Serif"])
+	return _title_font
+
+static func style_body(label: RichTextLabel) -> void:
+	label.add_theme_font_override("normal_font", body_font())
+	label.add_theme_font_override("bold_font", title_font())
+	label.add_theme_font_size_override("normal_font_size", 14)
+	label.add_theme_constant_override("line_separation", 3)
+	label.meta_underlined = false
+
+static func special_title(item: Variant) -> String:
+	if item == null or item.get_slot() not in ["sword","wand"]:
+		return ""
+	if item.rainbow_skin:
+		return "Prism"
+	return "Mythic" if item.visual_signature() == 4 else ""
+
+static func special_title_markup(item: Variant) -> String:
+	var title: String = special_title(item)
+	if title == "Prism":
+		var colors: Array[Color] = item.glow_gradient_colors()
+		var glyphs: Array[String] = []
+		for i in range(title.length()):
+			glyphs.append("[color=%s]%s[/color]" % [color_to_tag(colors[i]), title.substr(i,1)])
+		return "[font_size=18][b]" + "".join(glyphs) + "[/b][/font_size]"
+	if title == "Mythic":
+		return "[font_size=17][color=#e8c6ff][b]Mythic[/b][/font_size]"
+	return ""
+
+static func cosmetic_indicator(item: Variant) -> Array[Color]:
+	var out: Array[Color] = []
+	if item == null or item.get_slot() not in ["sword","wand"]:
+		return out
+	var colors: Array[Color] = item.glow_gradient_colors()
+	return colors
+
+static func skill_hover_details(item: Variant, meta: String) -> String:
+	if item == null or meta != "skill:granted":
+		return ""
+	var ability: String = SKILLS.label(item)
+	if ability.is_empty():
+		return ""
+	var parts: PackedStringArray = ability.split(" · ", true, 1)
+	var lines: Array[String] = [parts[0]]
+	if parts.size() > 1:
+		lines.append(parts[1])
+	lines.append("Shift + Mouse2")
+	var kind: String = SKILLS.kind(item)
+	var mechanics = preload("res://scripts/relic_mechanics_v288.gd")
+	if mechanics.is_channel(kind):
+		var channel: Dictionary = mechanics.CHANNELS[kind]
+		lines.append("Hold Mouse2 · move with WASD")
+		lines.append("5 stamina to start · %.0f/s · release or dodge to stop" % float(channel["drain"]))
+	elif mechanics.cooldown(kind)>0.0:
+		lines.append("%.1fs recharge" % mechanics.cooldown(kind))
+	if preload("res://scripts/relic_arsenal_v277.gd").has_skill(kind):
+		if item.weapon_style()=="bow":
+			lines.append("Hold Shift + Mouse2 to full draw, then release")
+		elif item.weapon_style()=="crossbow":
+			lines.append("Heavy relic shot · normal reload")
+	if SKILLS.is_throw(kind):
+		lines.append("Hold to charge · release Mouse2 to throw")
+		lines.append("Full charge increases power, speed and reach")
+		lines.append("Weapon returns when the throw ends")
+	if kind=="eclipse_dance":
+		lines.append("Repeat during dance · retreat combo")
+	return "\n".join(lines)
+
 
 static func escape(raw: String) -> String:
 	return raw.replace("[", "[lb]")
@@ -53,18 +134,11 @@ static func _visual_row(item: Variant, channel: String, caption: String) -> Stri
 	return "[url=visual:%s][font_size=13][color=%s]%s[/color][/font_size]   %s[/url]" % [channel, MUTED, caption, "  ".join(dots)]
 
 static func _cosmetic_dots(item: Variant) -> String:
-	var rows: Array[String] = []
-	if item.weapon_style() == "bow":
-		rows.append(_visual_row(item, "surface", "BOW TINT"))
-		rows.append(_visual_row(item, "string", "STRING LIGHT"))
-	elif item.get_slot() in ["sword", "wand"]:
-		rows.append(_visual_row(item, "surface", "SURFACE TINT"))
-	rows.append(_visual_row(item, "glow", "FX LIGHT"))
-	var present: Array[String] = []
-	for line in rows:
-		if not line.is_empty():
-			present.append(line)
-	return "\n".join(present)
+	var colors: Array[Color] = cosmetic_indicator(item)
+	var dots: Array[String] = []
+	for ink in colors:
+		dots.append("[font_size=19][color=%s]●[/color][/font_size]" % color_to_tag(ink))
+	return "  ".join(dots)
 
 # One swatch's visible meaning is explained here, when hovered. Kept out
 # of the ordinary item body: Alt only pins the panel for interactive reading.
@@ -98,6 +172,10 @@ static func _swatch_colors(colors: Array[Color]) -> String:
 
 const LOOK_CHOICES_V219 = preload("res://scripts/visual_choices_v216.gd")
 
+# Display only: the actual reach used by combat remains unrounded.
+static func display_range(reach: float) -> int:
+	return ceili(reach / 10.0) * 10
+
 static func item_info(item: Variant, advanced: bool = false) -> String:
 	if item == null or item.definition == null:
 		return ""
@@ -108,38 +186,13 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	if slot == "sword" and item.physical_damage_kind() == "blunt":
 		category = "BLUNT WEAPON"
 	var unique_socketable: bool = item.definition.unique and item_class in ["gem", "rune"]
+	var title: String = special_title_markup(item)
+	if not title.is_empty():
+		out.append(title)
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
-	var ability: String = preload("res://scripts/unique_specials_v261.gd").label(item)
-	if not ability.is_empty():
-		var parts: PackedStringArray = ability.split(" · ",true,1)
-		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
-		out.append("[font_size=12][color=#d4ae76]◆  UNIQUE SKILL[/color][/font_size]")
-		out.append("[font_size=19][color=#f0d2a0][b]%s[/b][/color][/font_size]" % escape(parts[0]))
-		if parts.size()>1:
-			out.append("[font_size=14][color=#e4cfde]%s[/color][/font_size]" % escape(parts[1]))
-		out.append("[font_size=13][color=#a9d8d3][b]SHIFT + MOUSE2[/b][/color][/font_size]")
-		var ability_kind: String = preload("res://scripts/unique_specials_v261.gd").kind(item)
-		var mechanics = preload("res://scripts/relic_mechanics_v288.gd")
-		if mechanics.is_channel(ability_kind):
-			var channel: Dictionary = mechanics.CHANNELS[ability_kind]
-			out.append(_label("Hold Mouse2 after activation · move with WASD"))
-			out.append(_label("5 stamina to start · %.0f/s base drain · release or dodge to stop" % float(channel["drain"])))
-		elif mechanics.cooldown(ability_kind)>0.0:
-			out.append(_label("%.1fs recharge" % mechanics.cooldown(ability_kind)))
-		if preload("res://scripts/relic_arsenal_v277.gd").has_skill(ability_kind):
-			if item.weapon_style()=="bow":
-				out.append(_label("Hold Shift + Mouse2 to full draw, then release"))
-			elif item.weapon_style()=="crossbow":
-				out.append(_label("Heavy relic shot · normal reload"))
-		if preload("res://scripts/unique_specials_v261.gd").is_throw(ability_kind):
-			out.append(_label("Hold to charge · release Mouse2 to throw"))
-			out.append(_label("Full charge increases power, speed and reach"))
-			out.append(_label("Weapon returns when the throw ends"))
-		if ability_kind=="eclipse_dance":
-			out.append(_label("Repeat during dance · retreat combo"))
-		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
+	var ability: String = SKILLS.label(item)
 	if slot == "sword":
-		out.append("[font_size=15][color=%s]%.1f Damage[/color][color=%s]   ·   %.0f Reach[/color][/font_size]" % [GOLD, item.weapon_damage(), MUTED, item.weapon_reach()])
+		out.append("[color=#ffffff][font_size=25]%.1f[/font_size][font_size=14] Damage[/font_size][/color][font_size=14][color=%s]   ·   %d Range[/color][/font_size]" % [item.weapon_damage(), MUTED, display_range(item.weapon_reach())])
 	if item.ethereal:
 		out.append("[font_size=13][color=#c1d8e4]ETHEREAL · %s[/color][/font_size]" % ("BROKEN" if item.is_broken() else "%d/%d durability" % [item.durability, item.max_durability]))
 		out.append(_label("Cannot be repaired · " + ("Display only" if item.is_broken() else "Enhanced power")))
@@ -148,29 +201,28 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	var innate_label: String = innate.label(item)
 	var stats: Dictionary = item.all_stats()
 	if not innate_label.is_empty():
-		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
-		out.append("[font_size=12][color=#d4ae76]◆  UNIQUE PASSIVE[/color][/font_size]")
-		out.append("[font_size=18][color=#f0d2a0][b]%s[/b][/color][/font_size]" % escape(innate_label))
+		out.append("[font_size=14][color=#ffffff]Innate: %s[/color][/font_size]" % escape(innate_label))
 		for key in innate_stats:
-			out.append("[font_size=14][color=#a9d8d3]+%.0f%% %s[/color][/font_size]" % [innate_stats[key],escape(GhostPaletteLibrary.stat_label(str(key)))])
+			out.append("[font_size=14][color=#ffffff]+%.0f%% %s[/color][/font_size]" % [innate_stats[key],escape(GhostPaletteLibrary.stat_label(str(key)))])
 			stats[key]=float(stats.get(key,0.0))-float(innate_stats[key])
 			if absf(float(stats[key]))<0.001:
 				stats.erase(key)
-		out.append("[color=#76586c]━━━━━━━━━━━━━━━━━━[/color]")
 	if not stats.is_empty():
 		var ids: Array = stats.keys()
 		ids.sort()
 		for id in ids:
 			var value: float = float(stats[id])
-			var ink: String = BLUE if value >= 0.0 else RED
-			out.append("[font_size=15][color=%s]%+.1f%% %s[/color][/font_size]" % [ink, value, escape(GhostPaletteLibrary.stat_label(str(id)))])
+			out.append("[font_size=15][color=#ffffff]%+.1f%% %s[/color][/font_size]" % [value, escape(GhostPaletteLibrary.stat_label(str(id)))])
 	if not item.weapon_mod.is_empty():
 		var special: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.weapon_mod, ""))
 		if not special.is_empty():
-			out.append("[font_size=15][color=%s]%s[/color][/font_size]" % [GOLD, escape(special)])
+			out.append("[font_size=15][color=#ffffff]%s[/color][/font_size]" % escape(special))
 	if OS.is_debug_build() and not item.debug_weapon_mod.is_empty():
 		var preview: String = str(preload("res://scripts/weapon_mods_v250.gd").LABELS.get(item.debug_weapon_mod, ""))
 		out.append("[font_size=12][color=#9cb9de]TEST ONLY · %s (Lanternhaven)[/color][/font_size]" % escape(preview))
+	if not ability.is_empty():
+		var parts: PackedStringArray = ability.split(" · ", true, 1)
+		out.append("[url=skill:granted][font_size=15][color=#ffffff]Grants %s[/color][/font_size][/url]" % escape(parts[0]))
 	if int(item.sockets) > 0:
 		out.append("[font_size=13][color=%s]◈  SOCKETS (%d/%d)[/color][/font_size]" % [GOLD, item.socketed.size(), item.sockets])
 		for jewel in item.socketed:
@@ -181,37 +233,24 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 			elif advanced:
 				out.append(_label("◇ " + name))
 	if item_class in ["gem", "rune"]:
-		out.append("[font_size=14][color=%s]+%.1f%% %s[/color][/font_size]" % [GOLD if unique_socketable else BLUE, item.definition.socket_bonus_value, escape(GhostPaletteLibrary.stat_label(item.definition.socket_bonus_id))])
+		out.append("[font_size=14][color=%s]+%.1f%% %s[/color][/font_size]" % ["#ffffff", item.definition.socket_bonus_value, escape(GhostPaletteLibrary.stat_label(item.definition.socket_bonus_id))])
 	if slot == "dress" and item.is_ethereal_dress():
 		out.append("[color=#c1d8e4]Ethereal[/color]")
-	if advanced and slot != "none":
-		var dots: String = _cosmetic_dots(item)
-		if not dots.is_empty():
-			out.append(dots)
-		if slot in ["sword", "wand"]:
-			var code: String = ROLL_CODE.current(item)
-			var birth: String = item.birth_roll_code_v1 if ROLL_CODE.valid_code(item.birth_roll_code_v1) else "unknown"
-			out.append("[font_size=14][color=#dfc38e]ROLL · %s[/color][/font_size]" % code)
-			out.append(_label("Original · " + birth))
-			if ROLL_CODE.debug_active(item):
-				out.append(_label("Test preview · genuine roll unchanged"))
-		if LOOK_CHOICES_V219.has_personalization(item):
-			out.append(_label("Personalized appearance · not a new roll"))
 	var flavor: String = str(item.definition.description).strip_edges()
-	if not flavor.is_empty():
+	if advanced and not flavor.is_empty():
 		out.append("[font_size=13][color=%s][i]%s[/i][/color][/font_size]" % [FLAVOUR, escape(flavor)])
 	if not advanced:
 		if slot in ["sword", "wand"]:
 			out.append("[font_size=11][color=%s]P · Inspect[/color][/font_size]" % MUTED)
-		out.append("[font_size=11][color=%s]HOLD ALT · Colors & roll[/color][/font_size]" % MUTED)
+		if not ability.is_empty():
+			out.append("[font_size=11][color=%s]Alt + hover skill for details[/color][/font_size]" % MUTED)
+	var dots: String = _cosmetic_dots(item)
+	if not dots.is_empty():
+		out.append(dots)
 	return "\n".join(out)
 
-static func impact_text(item: Variant) -> String:
-	if item == null or item.get_slot() not in ["sword", "wand"]:
-		return ""
-	if item.get_slot() == "sword" and item.physical_damage_kind() == "blunt":
-		return "Heavy impact"
-	return GhostWeaponFXLibrary.impact_name(item.get_slot(), int(item.effect_rolls().get("impact", 0)))
+static func impact_text(_item: Variant) -> String:
+	return "" # Compatibility for older callers; never display hit effect labels.
 
 static func impact_color(item: Variant) -> Color:
 	if item.get_slot() == "wand":
@@ -241,9 +280,9 @@ static func changes(candidate: Variant, worn: Variant) -> String:
 		if absf(duration) >= 0.005:
 			lines.append("[font_size=13][color=%s]%+.2fs Quicker Light Strike[/color][/font_size]" % [GREEN if duration > 0.0 else RED, duration])
 			count += 1
-		var reach: float = candidate.weapon_reach() - worn.weapon_reach()
-		if absf(reach) >= 1.0:
-			lines.append("[font_size=13][color=%s]%+.0f Reach[/color][/font_size]" % [GREEN if reach > 0.0 else RED, reach])
+		var reach: int = display_range(candidate.weapon_reach()) - display_range(worn.weapon_reach())
+		if reach != 0:
+			lines.append("[font_size=13][color=%s]%+d Range[/color][/font_size]" % [GREEN if reach > 0 else RED, reach])
 			count += 1
 	for id in ids:
 		var delta: float = float(a.get(id, 0.0)) - float(b.get(id, 0.0))

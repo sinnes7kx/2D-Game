@@ -62,13 +62,14 @@ func _ready() -> void:
 	layout.add_child(eyebrow)
 	heading = Label.new()
 	heading.add_theme_font_size_override("font_size", 24)
+	heading.add_theme_font_override("font", MARKUP.title_font())
 	var header: HBoxContainer = HBoxContainer.new()
 	layout.add_child(header)
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	header.add_child(heading)
 	anomaly_title = Label.new()
-	anomaly_title.text = "Anomalous"
+	anomaly_title.text = "Mythic"
 	anomaly_title.add_theme_font_size_override("font_size", 22)
 	ANOMALY_TITLE.apply(anomaly_title, 3.0)
 	layout.add_child(anomaly_title)
@@ -97,6 +98,9 @@ func _ready() -> void:
 	stage.gui_input.connect(_stage_input)
 	info = RichTextLabel.new()
 	info.bbcode_enabled = true
+	MARKUP.style_body(info)
+	info.meta_hover_started.connect(_on_skill_hover)
+	info.meta_hover_ended.connect(_on_skill_exit)
 	info.custom_minimum_size = Vector2(310, 350)
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	columns.add_child(info)
@@ -140,6 +144,8 @@ func _ready() -> void:
 	menu.add_item("Copy look code", 2)
 	menu.add_item("Copy roll", 3)
 	menu.add_item("Copy collector card (offline)", 4)
+	menu.add_separator()
+	menu.add_item("Apply Prism skin", 5)
 	menu.id_pressed.connect(_on_option_selected)
 	controls.add_child(options_menu)
 	var close: Button = Button.new()
@@ -158,11 +164,7 @@ func open_item(value: GhostItemInstance) -> void:
 	inspected = value
 	model.call("set_item", value)
 	heading.text = value.display_name()
-	var appearance: Dictionary = value.collector_appearance()
-	var is_anomaly: bool = maxi(int(appearance.get("material", 0)), int(appearance.get("particle_tier", 0))) == 6
-	anomaly_title.visible = is_anomaly
-	ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001, value)
-	anomaly_title.text = "Anomalous"
+	anomaly_title.hide() # Shared markup displays Prism or Mythic once.
 	anomaly_title.tooltip_text = "Test appearance — genuine roll unchanged" if ROLL_CODE.debug_active(value) else ""
 	heading.add_theme_color_override("font_color", value.quality_color())
 	advanced_info = Input.is_key_pressed(KEY_ALT)
@@ -179,11 +181,13 @@ func open_item(value: GhostItemInstance) -> void:
 	_reset_view()
 	show()
 	_position_model()
-	status.text = "Drag to rotate · Wheel to zoom · Hold Alt for colors & roll"
+	status.text = "Drag to rotate · Wheel to zoom · Alt + hover skill for details"
+	_refresh_rainbow_option()
 	if value.weapon_style() == "scythe":
 		status.text = "Curved blade highlights · full-scythe glow %d%% · Natural keeps the original seed" % (SCYTHE_GLOW.rolled_level(value) * 10)
 
 func close_lens() -> void:
+	_on_skill_exit(null)
 	hide()
 	inspected = null
 	model.call("set_item", null)
@@ -241,12 +245,14 @@ func _stage_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not visible:
 		return
-	if anomaly_title.visible:
-		ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001, inspected)
 	var alt: bool = Input.is_key_pressed(KEY_ALT)
+	if not alt and not skill_hint.is_empty():
+		_clear_skill_hint()
 	if alt != advanced_info:
 		advanced_info = alt
 		_refresh_info()
+	if alt and not hovered_skill_meta.is_empty() and skill_hint.is_empty():
+		_on_skill_hover(hovered_skill_meta)
 	if not motion_button.button_pressed:
 		return
 	motion_time += delta
@@ -284,9 +290,6 @@ func _refresh_info() -> void:
 	if inspected == null:
 		return
 	info.text = MARKUP.item_info(inspected, advanced_info)
-	var impact: String = MARKUP.impact_text(inspected)
-	if not impact.is_empty():
-		info.text += "\n[right][color=%s]%s[/color][/right]" % [MARKUP.color_to_tag(MARKUP.impact_color(inspected)), MARKUP.escape(impact)]
 	info.scroll_to_line(0)
 
 func _on_option_selected(id: int) -> void:
@@ -301,3 +304,50 @@ func _on_option_selected(id: int) -> void:
 		2: _copy_code()
 		3: _copy_roll()
 		4: _copy_card()
+		5: _apply_rainbow()
+
+func _refresh_rainbow_option() -> void:
+	var menu: PopupMenu = options_menu.get_popup()
+	var index: int = menu.get_item_index(5)
+	var count: int = int(owned_inventory.get("rainbow_balance")) if owned_inventory != null else 0
+	var owned: bool = owned_inventory != null and inspected != null and (owned_inventory.contents.has(inspected) or owned_inventory.vault.has(inspected))
+	var eligible: bool = owned and inspected.get_slot() in ["sword","wand"] and not inspected.rainbow_skin
+	menu.set_item_text(index, "Prism skin applied" if inspected != null and inspected.rainbow_skin else "Apply Prism skin · 1 / %d" % count)
+	menu.set_item_disabled(index, not eligible or count < 1)
+
+func _apply_rainbow() -> void:
+	if inspected == null or owned_inventory == null:
+		return
+	if owned_inventory.spend_rainbow(inspected):
+		model.call("set_item", inspected)
+		model.set("glow_enabled", glow_button.button_pressed)
+		_refresh_info()
+		status.text = "Prism skin applied · stats and original seed unchanged"
+	else:
+		status.text = "Prism skin unavailable"
+	_refresh_rainbow_option()
+
+var skill_hint: String = ""
+var previous_status: String = ""
+var hovered_skill_meta: String = ""
+
+func _on_skill_hover(meta: Variant) -> void:
+	hovered_skill_meta = str(meta)
+	if not Input.is_key_pressed(KEY_ALT):
+		return
+	var message: String = MARKUP.skill_hover_details(inspected, str(meta))
+	if message.is_empty():
+		return
+	previous_status = status.text
+	skill_hint = message
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	status.text = skill_hint
+
+func _on_skill_exit(_meta: Variant) -> void:
+	hovered_skill_meta = ""
+	_clear_skill_hint()
+
+func _clear_skill_hint() -> void:
+	if not skill_hint.is_empty():
+		status.text = previous_status
+		skill_hint = ""

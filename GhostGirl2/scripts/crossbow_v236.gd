@@ -96,7 +96,7 @@ static func construction(profile: Dictionary, base: String) -> Dictionary:
 
 static func draw_weapon(canvas: Node2D, grip: Vector2, tip: Vector2, profile: Dictionary, loaded: bool, base: String, cocking: float = 0.0, look: Dictionary = {}, colors: Array[Color] = [], phase: float = 0.0, glow_scale: float = 1.0) -> void:
 	var pigment: Color = profile.get("metal",Color.WHITE)
-	var glow: float = FX_LEVEL.intensity*0.55*glow_scale if not look.is_empty() else 0.0
+	var glow: float = FX_LEVEL.intensity*0.80*glow_scale if not look.is_empty() else 0.0
 	if preload("res://scripts/weapon_models_v283.gd").draw_crossbow(canvas,base,grip,tip,loaded,cocking,pigment,glow,colors,look,phase):
 		return
 	var scale: float = weapon_scale(base)

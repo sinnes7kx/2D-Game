@@ -80,6 +80,7 @@ func _ready() -> void:
 		test_looks.item_selected.connect(_preview_look)
 	$Layout/Actions/DropSelected.pressed.connect(_drop_selected)
 	description.bbcode_enabled = true
+	ITEM_MARKUP.style_body(description)
 	# The item information belongs in the hover popup / Collector's Lens.
 	# Keep legacy scene nodes for old save/test compatibility, but show a
 	# categorized preview lab in the freed panel instead of duplicate stats.

@@ -28,6 +28,7 @@ var eye_style_override: int = -1
 var eye_palette_override: int = -1
 # v2.16: optional owner-chosen rendering preferences (-1 = seeded Natural).
 # Never replace cosmetic_uid, birth roll, item_seed or genuine rarity.
+var rainbow_skin: bool = false # Purchased cosmetic; independent of the seed and stats.
 var glow_level_override: int = -1
 var bow_glow_mode_override: int = -1
 var bow_projectile_style_override: int = -1
@@ -305,8 +306,31 @@ func apply_cosmetic_uid(uid: String) -> void:
 		rare_visual_mod = 5
 
 # V1.53: complete-spectrum, per-look gradients. Never change the combat seed.
+# Six independent white chances, each 1/8; six white is 1/262144.
+# This cosmetic-only roll is derived from the existing saved identity.
+func white_stop_mask() -> int:
+	if get_slot() not in ["sword", "wand"]:
+		return 0
+	var identity: String = cosmetic_uid.to_lower() if COSMETIC_RNG.is_valid_uid(cosmetic_uid) else "legacy-%d" % visual_seed()
+	var digest: PackedByteArray = ("ghost-girl-six-white-v1:" + identity).sha256_buffer()
+	var mask: int = 0
+	for i in range(6):
+		if int(digest[i]) % 8 == 0:
+			mask |= 1 << i
+	return mask
+
+func has_six_white_glow() -> bool:
+	return white_stop_mask() == 63
+
 func glow_gradient_colors() -> Array[Color]:
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel(), gradient_version)
+	if rainbow_skin:
+		return [Color("ff426d"), Color("ffce55"), Color("79ff9e"), Color("4cdefe"), Color("9b70ff"), Color("ff75d9")]
+	var base: Array[Color] = COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel(), gradient_version)
+	var mask: int = white_stop_mask()
+	var colors: Array[Color] = []
+	for i in range(6):
+		colors.append(Color.WHITE if (mask & (1 << i)) != 0 else COSMETIC_RNG.sample_palette(base, float(i)/5.0))
+	return colors
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
 # Saving/restoring the cosmetic UID reproduces both without new schema fields.
@@ -324,9 +348,13 @@ func bow_art_style() -> String:
 	return "thornrose"
 
 func bow_limb_gradient_colors() -> Array[Color]:
+	if rainbow_skin or has_six_white_glow():
+		return glow_gradient_colors()
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel(), gradient_version)
 
 func bow_string_gradient_colors() -> Array[Color]:
+	if rainbow_skin or has_six_white_glow():
+		return glow_gradient_colors()
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string:" + effect_palette_channel(), gradient_version)
 
 func mythic_layer_variant() -> int:
@@ -496,7 +524,20 @@ func collector_appearance() -> Dictionary:
 			look["forge_grip"] = clampi(debug_forge_grip, 0, 5)
 	look["signature"] = visual_signature()
 	look["signature_variant"] = mythic_layer_variant()
-	look.merge(COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel()), true)
+	look.merge(effect_palette_motion(), true)
+	var mythic: bool = visual_signature() == 4
+	look["prism"] = mythic or rainbow_skin
+	look["rainbow"] = rainbow_skin
+	look["six_white"] = has_six_white_glow() and not rainbow_skin
+	if mythic or rainbow_skin:
+		look["prism_colors"] = glow_gradient_colors()
+		look["palette_curve"] = 0
+	look["glow_motif"] = int(look.get("glow_motif", 0)) % (8 if mythic or rainbow_skin else 4)
+	if not mythic and not rainbow_skin:
+		look["particle"] = 0 # Ordinary motes stay within a simple arc/orbit.
+		look["surface_mode"] = mini(int(look.get("surface_mode", 0)), 1)
+		look["signature"] = 0
+		look["region_rank"] = 0
 	return look
 
 # Only independently rolled collector-level cosmetics earn the tooltip star.
@@ -504,12 +545,10 @@ func collector_appearance() -> Dictionary:
 func has_rare_seeded_appearance() -> bool:
 	if get_slot() not in ["sword", "wand"]:
 		return false
-	var natural: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
-	return maxi(int(natural.get("material", 0)), int(natural.get("particle_tier", 0))) >= 4 or genuine_visual_signature() >= 4
+	return has_six_white_glow() or genuine_visual_signature() == 4
 
 func collector_material_label() -> String:
-	var look: Dictionary = collector_appearance()
-	return COLLECTOR_LOOK.rarity_label(look) if not look.is_empty() else ""
+	return "Mythic" if visual_signature() == 4 and get_slot() in ["sword", "wand"] else ""
 
 func palette_color() -> Color:
 	return weapon_base_color() if get_slot() == "sword" else COSMETIC_RNG.sample_palette(COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "physical:" + get_slot(), gradient_version), 0.5)
@@ -565,16 +604,10 @@ func details(advanced: bool = false) -> String:
 	if advanced:
 		lines.append(definition.description)
 		if get_slot() in ["sword", "wand"]:
-			lines.append("Material rarity: " + collector_material_label())
+			if not collector_material_label().is_empty():
+				lines.append(collector_material_label())
 		if get_slot() == "sword":
 			lines.append("Light attack %.2fs · %.1f stamina" % [light_swing_duration(), light_stamina_cost()])
-		if get_slot() in ["sword", "wand"]:
-			var fx: Dictionary = effect_rolls()
-			lines.append("Aura: " + GhostWeaponFXLibrary.motif_name(int(fx["motif"])))
-			lines.append("Trail: " + GhostWeaponFXLibrary.trail_name(int(fx["trail"])))
-			lines.append("Impact: " + GhostWeaponFXLibrary.impact_name(get_slot(), int(fx["impact"])))
-			if get_slot() == "wand":
-				lines.append("Spell: " + GhostWeaponFXLibrary.spell_form_name(int(fx["form"])))
 	return "\n".join(lines)
 
 func stamp_origin(room_id: String) -> void:
@@ -628,15 +661,9 @@ func discovery_label() -> String:
 		return ""
 	var genuine: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
 	var tier: int = maxi(int(genuine["material"]), int(genuine["particle_tier"]))
-	if tier == 6:
-		return "ANOMALY DISCOVERED"
 	var signature: int = genuine_visual_signature()
-	if signature == 5:
-		return "MOONFALL DISCOVERED"
 	if signature == 4:
 		return "MYTHIC DISCOVERED"
-	if tier == 5:
-		return "ETHEREAL APPEARANCE DISCOVERED"
 	if regional_rank == 3:
 		return "RADIANT REGIONAL DISCOVERY"
 	if ethereal:
@@ -657,4 +684,8 @@ func effect_palette_channel() -> String:
 	return "effect:%d:%d:%d:%d" % [signature, tier, particles, mythic_layer_variant() if signature == 4 else 0]
 
 func effect_palette_motion() -> Dictionary:
-	return COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel())
+	var motion: Dictionary = COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel())
+	motion["color_mode"] = 2 if rainbow_skin or visual_signature() == 4 else 0
+	motion["prism"] = rainbow_skin or visual_signature() == 4
+	motion["rainbow"] = rainbow_skin
+	return motion

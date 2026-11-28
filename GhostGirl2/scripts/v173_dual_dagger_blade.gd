@@ -40,7 +40,7 @@ func _draw() -> void:
 	var blades: Array = rig.call("get_blade_spans", str(body.animation), body.frame)
 	if blades.size() != 2:
 		return
-	var span: PackedVector2Array = blades[blade_index]
+	var span: PackedVector2Array = RENDER.guard_span(body, blades[blade_index], blade_index)
 	if span.size() != 2:
 		return
 	var grip: Vector2 = span[0]

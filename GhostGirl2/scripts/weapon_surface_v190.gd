@@ -18,7 +18,7 @@ static func ramp(colors: Array) -> GradientTexture1D:
 
 static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, overlay: bool, colors: Array = [], refined: bool = false) -> void:
 	mat.shader = SHADER
-	mat.set_shader_parameter("pigment_ramp", ramp(colors if not colors.is_empty() else look.get("surface_colors", [])))
+	mat.set_shader_parameter("pigment_ramp", ramp(look.get("prism_colors", colors) if bool(look.get("prism", false)) else (colors if not colors.is_empty() else look.get("surface_colors", []))))
 	mat.set_shader_parameter("signature_kind", FX.signature_kind(look))
 	var tier: int = maxi(int(look.get("material",0)),int(look.get("particle_tier",0)))
 	mat.set_shader_parameter("rarity_shine_tier",-1 if tier >= 6 or int(look.get("signature",0)) >= 4 else clampi(tier,0,5))
@@ -34,7 +34,7 @@ static func configure(mat: ShaderMaterial, look: Dictionary, cell: Vector2, over
 	mat.set_shader_parameter("fx_intensity", FX_LEVEL.intensity)
 
 static func key(item: GhostItemInstance) -> String:
-	return "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.gradient_version, item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank, item.debug_glow_motif, item.debug_color_mode, FX_LEVEL.revision,item.debug_collector_tier,item.visual_signature()]
+	return "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(), item.cosmetic_uid, item.visual_seed(), item.gradient_version, item.debug_surface_mode, item.effect_palette_channel(), item.regional_rank, item.debug_glow_motif, item.debug_color_mode, FX_LEVEL.revision,item.debug_collector_tier,item.visual_signature()] + (":rainbow" if item.rainbow_skin else "")
 
 static func bow_pigment(item: GhostItemInstance, look: Dictionary) -> Array[Color]:
 	var limbs: Array[Color] = item.bow_limb_gradient_colors()

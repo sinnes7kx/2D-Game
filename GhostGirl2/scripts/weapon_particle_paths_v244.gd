@@ -1,6 +1,7 @@
 extends RefCounted
 ## Existing particle seed selects motion independently from color and rarity.
 const FX = preload("res://scripts/fx_intensity_v1924.gd")
+const RNG = preload("res://scripts/cosmetic_rng_v152.gd")
 static func offset(pattern: int, u: float, phase: float, radius: Vector2) -> Vector2:
     var a: float = u * TAU + phase
     var travel: float = fposmod(u + phase / TAU, 1.0)
@@ -22,7 +23,8 @@ static func draw_pattern(canvas: Node2D, center: Vector2, axis: Vector2, radius:
     if colors.is_empty() or strength <= 0.0 or FX.intensity <= 0.0:
         return
     var tier: int = clampi(int(look.get("particle_tier", 0)), 0, 6)
-    var pattern: int = posmod(int(look.get("particle", 0)), 8)
+    var prism: bool = bool(look.get("prism", false))
+    var pattern: int = posmod(int(look.get("particle", 0)), 8) if prism else 0
     var motif: int = int(look.get("glow_motif", 0))
     var count: int = 2 + mini(tier / 2, 3)
     var phase: float = time * (0.40 + float(tier) * 0.035)
@@ -35,7 +37,7 @@ static func draw_pattern(canvas: Node2D, center: Vector2, axis: Vector2, radius:
         var point: Vector2 = center + tangent * at.x + normal * at.y
         var f: float = fposmod(u + phase / TAU, 1.0)
         var fade: float = sin(f * PI) if pattern in [1,2,6] else 0.85
-        var ink: Color = colors[i % colors.size()].lerp(Color.WHITE, 0.18)
+        var ink: Color = (RNG.sample_palette(colors, u + time * 0.13, true) if prism else colors[i % colors.size()]).lerp(Color.WHITE, 0.18)
         ink.a = FX.edge_alpha(canvas, clampf(0.52 * strength * fade, 0.0, 1.0))
         var previous: Vector2 = offset(pattern, u, phase - 0.22, radius)
         if previous.distance_to(at) < radius.length() * 0.4:

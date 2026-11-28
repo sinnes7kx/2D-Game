@@ -71,7 +71,7 @@ static func limbs(grip: Vector2, axis: Vector2, base: String, width_scale: float
 		result.append(points)
 	return result
 
-static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, profile: Dictionary, limb_colors: Array[Color], string_colors: Array[Color], draw_amount: float, glow: float, string_glow: float = 0.0, full_glow: bool = false) -> void:
+static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, profile: Dictionary, limb_colors: Array[Color], string_colors: Array[Color], draw_amount: float, glow: float, string_glow: float = 0.0, full_glow: bool = false, look: Dictionary = {}, phase: float = 0.0) -> void:
 	if points.size() != 2 or profile.is_empty() or limb_colors.size() < 2 or string_colors.size() < 2:
 		return
 	var grip: Vector2 = points[0]
@@ -111,6 +111,8 @@ static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, p
 			var band: Vector2 = at+n*(float(i)-1.0)*1.8
 			canvas.draw_line(band-axis*1.6,band+axis*1.6,trim.darkened(0.40),1.25,true)
 			canvas.draw_line(band-axis*1.35,band+axis*1.35,trim.lerp(steel,0.60),0.52,true)
+		if glow > 0.0 and not look.is_empty():
+			preload("res://scripts/anomalous_steel_fx_v180.gd").draw_edge(canvas,limb,limb_colors,look,phase,glow)
 	var notch: Vector2 = grip - axis * lerpf(12.0, 34.0, clampf(draw_amount, 0.0, 1.0))
 	var string: Color = GhostCosmeticRNGV152.sample_palette(string_colors, 0.5)
 	var cord: PackedVector2Array = PackedVector2Array([build[0][4],notch,build[1][4]])
@@ -121,6 +123,8 @@ static func draw_bow(canvas: Node2D, points: PackedVector2Array, base: String, p
 	if string_glow>0.0:
 		var lit_string: Color = string.lightened(0.45)
 		canvas.draw_polyline(cord,Color(lit_string.r,lit_string.g,lit_string.b,string_glow*0.86),1.15,true)
+	if string_glow > 0.0 and bool(look.get("prism", false)):
+		preload("res://scripts/anomalous_steel_fx_v180.gd").draw_edge(canvas,cord,string_colors,look,phase,string_glow,false)
 	ART.draw_grip(canvas, grip-n*5.0, grip+n*5.0, 2.0, profile)
 
 static func draw_dagger(canvas: Node2D, points: PackedVector2Array, profile: Dictionary) -> void:
