@@ -22,6 +22,8 @@ uniform float ethereal_weapon_width = 0.0;
 // v2.26: optional, bounded secondary movement in approximate outer hair
 // and lower hem zones. No hue-derived masks. Only supported 256x220 poses
 // enable this branch; the face, central torso and weapon poses are protected.
+// Original cardinal finish: luminance detail only, no silhouette or hue changes.
+uniform float cardinal_finish : hint_range(0.0, 1.0) = 0.0;
 uniform float silk_enabled : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 silk_flow = vec4(0.0);
 uniform vec3 silk_state = vec3(0.0);
@@ -32,6 +34,7 @@ void vertex() {
     silk_ink = COLOR;
 }
 void fragment() {
+    vec2 sample_uv = UV;
     if (silk_enabled > 0.5 && silk_state.z > 0.001) {
         vec2 p = silk_local;
         // Spatial envelopes are deliberately small and zero near the face,
@@ -66,7 +69,25 @@ void fragment() {
         if (dot(shift, shift) > 0.000001) {
             // UV offset is in actual backing-texture pixels. Local frame
             // borders are never sampled by either deformation envelope.
-            COLOR = texture(TEXTURE, UV - shift * TEXTURE_PIXEL_SIZE) * silk_ink;
+            sample_uv = UV - shift * TEXTURE_PIXEL_SIZE;
+            COLOR = texture(TEXTURE, sample_uv) * silk_ink;
+        }
+    }
+    // Interior-only, alpha-gated unsharp detail. No sampling of adjacent atlas
+    // cells, no color bleed at transparent edges and no alpha modification.
+    if (cardinal_finish > 0.001 && COLOR.a > 0.97 && abs(silk_local.x) < 121.0 && abs(silk_local.y) < 103.0) {
+        vec2 dx = vec2(TEXTURE_PIXEL_SIZE.x, 0.0);
+        vec2 dy = vec2(0.0, TEXTURE_PIXEL_SIZE.y);
+        vec4 c = texture(TEXTURE, sample_uv);
+        vec4 a = texture(TEXTURE, sample_uv - dx);
+        vec4 b = texture(TEXTURE, sample_uv + dx);
+        vec4 d = texture(TEXTURE, sample_uv - dy);
+        vec4 e = texture(TEXTURE, sample_uv + dy);
+        if (min(c.a, min(min(a.a,b.a),min(d.a,e.a))) > 0.97) {
+            vec3 avg = (a.rgb+b.rgb+d.rgb+e.rgb)*0.25;
+            float detail = dot(c.rgb-avg, vec3(0.2126,0.7152,0.0722));
+            float gain = clamp(detail*0.55,-0.035,0.035)*cardinal_finish;
+            COLOR.rgb = clamp(COLOR.rgb+vec3(gain)*silk_ink.rgb,vec3(0.0),vec3(1.0));
         }
     }
     float weapon_keep = 0.0;
