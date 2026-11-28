@@ -67,6 +67,27 @@ func _verify() -> void:
 	assert(body.frame==5 and not body.is_playing())
 	PLAYBACK.apply_bow_release(body,1.0)
 	assert(body.frame==6 and body.is_playing())
+	# Actual source resource: normal cardinal locomotion has no painted hook,
+	# halo or sword. Equipment and explicit hook gestures keep their layers.
+	var original: SpriteFrames = load("res://resources/ghost_girl_frames.tres") as SpriteFrames
+	assert(original!=null)
+	for face in CARDINAL.FACES:
+		for motion in ["idle","walk","blink"]:
+			var clip: String = motion+"_"+face
+			var count: int = 6 if motion=="idle" else (8 if motion=="walk" else 7)
+			assert(original.has_animation(clip) and original.get_frame_count(clip)==count)
+			var source_motion: String = "walk" if motion=="walk" else "idle"
+			for i in range(count):
+				var source: Texture2D = original.get_frame_texture(clip,i)
+				assert(source!=null and source.get_size()==Vector2(256,220))
+				assert(source.resource_path.begins_with("res://assets/ghost/weapon_body_v110/"+source_motion+"_"+face+"_"))
+	# Visually inspected original left idle images 0,1,2,3,6,7 all have
+	# an open eye. The separate blink uses closed frames 4/5 briefly.
+	var open_left: Array[int] = [0,1,2,3,6,7]
+	for i in range(open_left.size()):
+		assert(original.get_frame_texture("idle_left",i).resource_path.ends_with("idle_left_%02d.png" % open_left[i]))
+	assert(original.get_frame_texture("blink_left",3).resource_path.ends_with("idle_left_04.png"))
+	assert(original.get_frame_texture("blink_left",4).resource_path.ends_with("idle_left_05.png"))
 	# Original clips stay selected and their normalized idle phase follows the turn.
 	for face in CARDINAL.FACES:
 		assert(CARDINAL.supports("idle_"+face))
