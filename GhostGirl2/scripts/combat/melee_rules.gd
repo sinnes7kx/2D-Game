@@ -1,8 +1,14 @@
 extends RefCounted
 ## Pure base melee tuning. The player owns action state, equipment modifiers,
 ## contact, damage application and feedback. Keep art geometry independent.
-## Vector4: reach, base power (before item damage), minimum forward dot, poise.
-static func base_profile(style: String, heavy: bool, armed: bool, combo: int) -> Vector4:
+## Named double-precision fields avoid packing combat values into float32 vectors.
+class Profile:
+	var reach: float
+	var power: float
+	var arc: float
+	var poise: float
+
+static func base_profile(style: String, heavy: bool, armed: bool, combo: int) -> Profile:
 	var reach: float = (174.0 if heavy else 144.0) if armed else (128.0 if heavy else 106.0)
 	var power: float = 34.0 if heavy else [16.0, 19.0, 24.0][combo]
 	var attack_arc: float = 0.12 if heavy else 0.32
@@ -61,7 +67,12 @@ static func base_profile(style: String, heavy: bool, armed: bool, combo: int) ->
 			power *= 1.05 if heavy else 0.87
 			attack_arc = -0.10 if heavy else 0.01
 			poise_bonus = 0.85
-	return Vector4(reach,power,attack_arc,poise_bonus)
+	var result: Profile = Profile.new()
+	result.reach = reach
+	result.power = power
+	result.arc = attack_arc
+	result.poise = poise_bonus
+	return result
 
 # Shared normalized frontal contact geometry for timed guards and weapon
 # techniques. Individual callers keep their own range and minimum distance.
