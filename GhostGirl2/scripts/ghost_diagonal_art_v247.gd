@@ -216,6 +216,8 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 				frames.add_frame(clip,frames.get_frame_texture(source,i),frames.get_frame_duration(source,i))
 
 static func wrist(clip: String, frame: int) -> Vector2:
+	if is_guard_clip(clip):
+		return guard_wrist(clip,frame)
 	var key: String = combat_body_source_v294(clip) if is_modular_combat_v294(clip) else clip
 	for prefix in WEAPON_PREFIXES:
 		if key.begins_with(prefix):
@@ -284,6 +286,8 @@ static func near_hand(clip: String) -> int:
 	return 0 if diagonal_name(clip).ends_with("left") else 1
 
 static func far_wrist(clip: String, frame: int) -> Vector2:
+	if is_guard_clip(clip):
+		return guard_wrist(clip,frame,1-guard_near_hand(clip))
 	var direction: String = diagonal_name(clip)
 	if direction.is_empty() or direction.begins_with("back"):
 		return Vector2.INF
@@ -383,6 +387,8 @@ static func armed_jump_carry(requested: String, direction: String, cardinal: Str
 
 # All equipped locomotion aliases use the authored diagonal cells directly.
 static func is_carried_clip(clip: String) -> bool:
+	if is_guard_clip(clip):
+		return true
 	if diagonal_name(clip).is_empty():
 		return false
 	for family in WEAPON_PREFIXES:
@@ -584,3 +590,88 @@ static func heading_v294(direction: String) -> Vector2:
 		"back_left": return Vector2(-1,-1).normalized()
 		"back_right": return Vector2(1,-1).normalized()
 	return Vector2.ZERO
+
+# Eight ordered guard beats use existing approved clean-body cells.
+# This is a staged guard animation, not newly painted guard artwork.
+const GUARD_FACES: Array[String] = ["front","back","left","right","front_right","front_left","back_left","back_right"]
+const GUARD_SEQUENCE: Array[int] = [0,1,2,2,2,2,1,0]
+const GUARD_DIAGONAL_SEQUENCE: Array[int] = [0,1,2,3,3,2,1,0]
+
+static func is_guard_clip(clip: String) -> bool:
+	return clip.begins_with("parry_") or clip.contains("_parry_")
+
+static func guard_source(clip: String) -> String:
+	var face: String = diagonal_name(clip)
+	if not face.is_empty():
+		return "dodge_"+face
+	return "attack_unarmed_light_"+cardinal_for_clip(clip)
+
+static func guard_source_frame(clip: String, frame: int) -> int:
+	var i: int = clampi(frame,0,7)
+	if not diagonal_name(clip).is_empty():
+		return GUARD_DIAGONAL_SEQUENCE[i]
+	var sample: int = GUARD_SEQUENCE[i]
+	return maxi(1,sample) if cardinal_for_clip(clip)=="back" else sample
+
+static func guard_near_hand(clip: String) -> int:
+	var face: String = diagonal_name(clip)
+	if not face.is_empty():
+		return near_hand(clip)
+	return 0 if cardinal_for_clip(clip)=="left" else 1
+
+static func guard_wrist(clip: String, frame: int, hand: int = -1) -> Vector2:
+	var chosen: int = guard_near_hand(clip) if hand<0 else hand
+	var source: String = guard_source(clip)
+	var index: int = guard_source_frame(clip,frame)
+	if not diagonal_name(clip).is_empty():
+		return hand_wrist(source,index,chosen)
+	return preload("res://scripts/dagger_thrust_v186.gd").hand_anchor(cardinal_for_clip(clip),index,chosen)
+
+static func guard_base_span(clip: String, frame: int, length: float, hand: int = -1) -> PackedVector2Array:
+	var anchor: Vector2 = guard_wrist(clip,frame,hand)
+	if anchor==Vector2.INF:
+		return PackedVector2Array()
+	var side: float = -1.0 if anchor.x<0.0 else 1.0
+	return PackedVector2Array([anchor,anchor+Vector2(side*0.55,0.83).normalized()*length])
+
+static func guard_pair_spans(clip: String, frame: int, length: float) -> Array:
+	return [guard_base_span(clip,frame,length,0),guard_base_span(clip,frame,length,1)]
+
+static func install_guards(frames: SpriteFrames) -> void:
+	if frames==null:
+		return
+	var families: Array[String] = [""]
+	families.append_array(WEAPON_PREFIXES)
+	for face in GUARD_FACES:
+		var base: String = "parry_"+face
+		if not diagonal_name(base).is_empty() and _load_sheet(REVISED_ACTIONS)==null:
+			continue
+		var source: String = guard_source(base)
+		if not frames.has_animation(source) or frames.get_frame_count(source)<8:
+			continue
+		for prefix in families:
+			var clip: String = prefix+base
+			if frames.has_animation(clip):
+				continue
+			frames.add_animation(clip)
+			_set_loop_v293(frames,clip,false)
+			frames.set_animation_speed(clip,8.0)
+			for i in range(8):
+				frames.add_frame(clip,frames.get_frame_texture(source,guard_source_frame(clip,i)))
+			frames.set_meta("reused_guard_"+clip,true)
+
+static func guard_clip(idle_prefix: String, eight: String, cardinal: String, frames: SpriteFrames) -> String:
+	var prefix: String = idle_prefix.trim_suffix("idle_")
+	for face in [eight,cardinal]:
+		var clip: String = prefix+"parry_"+face
+		if frames!=null and frames.has_animation(clip) and frames.get_frame_count(clip)==8:
+			return clip
+	return ""
+
+# Physics clock controls the pose even during an early confirmed parry.
+static func guard_frame(age: float, remaining: float) -> int:
+	if remaining<=0.0:
+		return 7
+	if remaining<0.12:
+		return clampi(5+floori((0.12-remaining)/0.04),5,7)
+	return clampi(floori(age/0.035),0,4)
