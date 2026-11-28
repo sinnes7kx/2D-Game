@@ -68,7 +68,7 @@ func _ready() -> void:
 	heading.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	header.add_child(heading)
 	anomaly_title = Label.new()
-	anomaly_title.text = "Anomalous"
+	anomaly_title.text = "Mythic"
 	anomaly_title.add_theme_font_size_override("font_size", 22)
 	ANOMALY_TITLE.apply(anomaly_title, 3.0)
 	layout.add_child(anomaly_title)
@@ -140,6 +140,8 @@ func _ready() -> void:
 	menu.add_item("Copy look code", 2)
 	menu.add_item("Copy roll", 3)
 	menu.add_item("Copy collector card (offline)", 4)
+	menu.add_separator()
+	menu.add_item("Apply Rainbow skin", 5)
 	menu.id_pressed.connect(_on_option_selected)
 	controls.add_child(options_menu)
 	var close: Button = Button.new()
@@ -159,7 +161,7 @@ func open_item(value: GhostItemInstance) -> void:
 	model.call("set_item", value)
 	heading.text = value.display_name()
 	var appearance: Dictionary = value.collector_appearance()
-	var is_anomaly: bool = maxi(int(appearance.get("material", 0)), int(appearance.get("particle_tier", 0))) == 6
+	var is_anomaly: bool = value.visual_signature() == 4
 	anomaly_title.visible = is_anomaly
 	ANOMALY_TITLE.apply(anomaly_title, Time.get_ticks_msec() * 0.001, value)
 	anomaly_title.text = "Anomalous"
@@ -180,6 +182,7 @@ func open_item(value: GhostItemInstance) -> void:
 	show()
 	_position_model()
 	status.text = "Drag to rotate · Wheel to zoom · Hold Alt for colors & roll"
+	_refresh_rainbow_option()
 	if value.weapon_style() == "scythe":
 		status.text = "Curved blade highlights · full-scythe glow %d%% · Natural keeps the original seed" % (SCYTHE_GLOW.rolled_level(value) * 10)
 
@@ -301,3 +304,24 @@ func _on_option_selected(id: int) -> void:
 		2: _copy_code()
 		3: _copy_roll()
 		4: _copy_card()
+		5: _apply_rainbow()
+
+func _refresh_rainbow_option() -> void:
+	var menu: PopupMenu = options_menu.get_popup()
+	var index: int = menu.get_item_index(5)
+	var count: int = int(owned_inventory.get("rainbow_balance")) if owned_inventory != null else 0
+	var owned: bool = owned_inventory != null and inspected != null and (owned_inventory.contents.has(inspected) or owned_inventory.vault.has(inspected))
+	var eligible: bool = owned and inspected.get_slot() in ["sword","wand"] and not inspected.rainbow_skin
+	menu.set_item_text(index, "Rainbow skin applied" if inspected != null and inspected.rainbow_skin else "Apply Rainbow skin · 1 / %d" % count)
+	menu.set_item_disabled(index, not eligible or count < 1)
+
+func _apply_rainbow() -> void:
+	if inspected == null or owned_inventory == null:
+		return
+	if owned_inventory.spend_rainbow(inspected):
+		model.call("set_item", inspected)
+		model.set("glow_enabled", glow_button.button_pressed)
+		status.text = "Rainbow skin applied · stats and original seed unchanged"
+	else:
+		status.text = "Rainbow skin unavailable"
+	_refresh_rainbow_option()
