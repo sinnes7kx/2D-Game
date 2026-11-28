@@ -457,7 +457,7 @@ func _draw() -> void:
 	if item == null or body == null or CHOICES_V216.effect_scale(item) <= 0.0 or FX_LEVEL.intensity <= 0.0:
 		return
 	# Crossbow geometry owns its restrained physical finish; bolt glow is independent.
-	if player != null and float(player.get("parry_left")) > 0.0:
+	if player != null and float(player.get("parry_left")) > 0.0 and item.weapon_style() != "bow":
 		return # The physical rig owns the moving guard light.
 	if item.weapon_style() in ["crossbow","rapier","axe"] or item.uses_forge_bow() or str(item.definition.item_id)=="seraph_reaper_v292":
 		return

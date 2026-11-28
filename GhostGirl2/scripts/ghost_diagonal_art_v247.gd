@@ -216,6 +216,10 @@ static func _install_armed_aliases(frames: SpriteFrames) -> void:
 				frames.add_frame(clip,frames.get_frame_texture(source,i),frames.get_frame_duration(source,i))
 
 static func wrist(clip: String, frame: int) -> Vector2:
+	if _authored_guides.has(clip):
+		return authored_wrist(clip,frame,int(_authored_guides[clip]["near_hand"]))
+	if is_guard_clip(clip):
+		return guard_wrist(clip,frame)
 	var key: String = combat_body_source_v294(clip) if is_modular_combat_v294(clip) else clip
 	for prefix in WEAPON_PREFIXES:
 		if key.begins_with(prefix):
@@ -281,9 +285,15 @@ static func carried_span(clip: String, frame: int, length: float, upright: bool 
 	return PackedVector2Array([anchor,anchor+axis*length])
 
 static func near_hand(clip: String) -> int:
+	if _authored_guides.has(clip):
+		return int(_authored_guides[clip]["near_hand"])
 	return 0 if diagonal_name(clip).ends_with("left") else 1
 
 static func far_wrist(clip: String, frame: int) -> Vector2:
+	if _authored_guides.has(clip):
+		return authored_wrist(clip,frame,1-int(_authored_guides[clip]["near_hand"]))
+	if is_guard_clip(clip):
+		return guard_wrist(clip,frame,1-guard_near_hand(clip))
 	var direction: String = diagonal_name(clip)
 	if direction.is_empty() or direction.begins_with("back"):
 		return Vector2.INF
@@ -383,6 +393,8 @@ static func armed_jump_carry(requested: String, direction: String, cardinal: Str
 
 # All equipped locomotion aliases use the authored diagonal cells directly.
 static func is_carried_clip(clip: String) -> bool:
+	if is_guard_clip(clip):
+		return true
 	if diagonal_name(clip).is_empty():
 		return false
 	for family in WEAPON_PREFIXES:
@@ -390,6 +402,14 @@ static func is_carried_clip(clip: String) -> bool:
 			if clip.begins_with(family+motion):
 				return true
 	return false
+
+# Diagonal shooting uses the existing hook-free body and extracted painted
+# bow, not cardinal full-body shooting art pasted onto an angled character.
+static func is_painted_bow_combat(clip: String) -> bool:
+	return not diagonal_name(clip).is_empty() and (clip.begins_with("attack_thornrose_") or clip.begins_with("attack_moonveil_"))
+
+static func painted_bow_assets_available(style: String) -> bool:
+	return ResourceLoader.exists("res://assets/equipment/bows_v166/%s_carry_only_2048x1760.png" % style) and ResourceLoader.exists("res://assets/ghost/bows_v139/%s_locomotion_mask_2048x1760.png" % style)
 
 static func is_painted_bow_carry(clip: String) -> bool:
 	return is_carried_clip(clip) and (clip.begins_with("thornrose_") or clip.begins_with("moonveil_"))
@@ -471,6 +491,8 @@ const MODULAR_COMBAT_V294: Array[String] = [
 	"attack_rapier_pierce_", "attack_rapier_heavy_pierce_",
 	"attack_axe_light_", "attack_axe_heavy_",
 	"attack_seraph_scythe_light_", "attack_seraph_scythe_heavy_",
+	"attack_thornrose_light_", "attack_thornrose_heavy_",
+	"attack_moonveil_light_", "attack_moonveil_heavy_",
 	"attack_forge_bow_light_", "attack_forge_bow_heavy_",
 	"attack_crossbow_fire_", "attack_crossbow_reload_",
 	"attack_forge_dagger_pierce_", "attack_forge_dagger_heavy_pierce_",
@@ -521,7 +543,7 @@ static func heavy_attack_span(clip: String, frame: int, length: float) -> Packed
 
 static func combat_body_source_v294(clip: String) -> String:
 	var action: String = "jump_" if clip.contains("_air_") else "dodge_"
-	if not clip.contains("_air_") and (clip.contains("forge_bow_") or clip.contains("crossbow_")):
+	if not clip.contains("_air_") and (clip.contains("forge_bow_") or clip.contains("crossbow_") or is_painted_bow_combat(clip)):
 		action="idle_"
 	return action+diagonal_name(clip)
 
@@ -536,6 +558,8 @@ static func _install_modular_combat_v294(frames: SpriteFrames) -> void:
 				var cardinal: String = "front" if direction.begins_with("front") else "back"
 				var timing: String = prefix+cardinal
 				var source: String = combat_body_source_v294(target)
+				if is_painted_bow_combat(target) and not painted_bow_assets_available("thornrose" if stem.contains("thornrose") else "moonveil"):
+					continue
 				if frames.has_animation(target) or not frames.has_animation(timing) or not frames.has_animation(source):
 					continue
 				if frames.get_frame_count(source)!=8 or frames.get_frame_count(timing)<8:
@@ -572,3 +596,228 @@ static func heading_v294(direction: String) -> Vector2:
 		"back_left": return Vector2(-1,-1).normalized()
 		"back_right": return Vector2(1,-1).normalized()
 	return Vector2.ZERO
+
+# Eight ordered guard beats use existing approved clean-body cells.
+# This is a staged guard animation, not newly painted guard artwork.
+const GUARD_FACES: Array[String] = ["front","back","left","right","front_right","front_left","back_left","back_right"]
+const GUARD_SEQUENCE: Array[int] = [0,1,2,2,2,2,1,0]
+const GUARD_DIAGONAL_SEQUENCE: Array[int] = [0,1,2,3,3,2,1,0]
+
+static func is_guard_clip(clip: String) -> bool:
+	return clip.begins_with("parry_") or clip.contains("_parry_")
+
+static func guard_source(clip: String) -> String:
+	var face: String = diagonal_name(clip)
+	if not face.is_empty():
+		return "dodge_"+face
+	return "attack_unarmed_light_"+cardinal_for_clip(clip)
+
+static func guard_source_frame(clip: String, frame: int) -> int:
+	var i: int = clampi(frame,0,7)
+	if not diagonal_name(clip).is_empty():
+		return GUARD_DIAGONAL_SEQUENCE[i]
+	var sample: int = GUARD_SEQUENCE[i]
+	return maxi(1,sample) if cardinal_for_clip(clip)=="back" else sample
+
+static func guard_near_hand(clip: String) -> int:
+	if _authored_guides.has(clip):
+		return int(_authored_guides[clip]["near_hand"])
+	var face: String = diagonal_name(clip)
+	if not face.is_empty():
+		return near_hand(clip)
+	return 0 if cardinal_for_clip(clip)=="left" else 1
+
+static func guard_wrist(clip: String, frame: int, hand: int = -1) -> Vector2:
+	var chosen: int = guard_near_hand(clip) if hand<0 else hand
+	if _authored_guides.has(clip):
+		return authored_wrist(clip,frame,chosen)
+	var source: String = guard_source(clip)
+	var index: int = guard_source_frame(clip,frame)
+	if not diagonal_name(clip).is_empty():
+		return hand_wrist(source,index,chosen)
+	return preload("res://scripts/dagger_thrust_v186.gd").hand_anchor(cardinal_for_clip(clip),index,chosen)
+
+static func guard_base_span(clip: String, frame: int, length: float, hand: int = -1) -> PackedVector2Array:
+	var anchor: Vector2 = guard_wrist(clip,frame,hand)
+	if anchor==Vector2.INF:
+		return PackedVector2Array()
+	var side: float = -1.0 if anchor.x<0.0 else 1.0
+	return PackedVector2Array([anchor,anchor+Vector2(side*0.55,0.83).normalized()*length])
+
+static func guard_pair_spans(clip: String, frame: int, length: float) -> Array:
+	return [guard_base_span(clip,frame,length,0),guard_base_span(clip,frame,length,1)]
+
+static func install_guards(frames: SpriteFrames) -> void:
+	if frames==null:
+		return
+	var families: Array[String] = [""]
+	families.append_array(WEAPON_PREFIXES)
+	for face in GUARD_FACES:
+		var base: String = "parry_"+face
+		if not diagonal_name(base).is_empty() and _load_sheet(REVISED_ACTIONS)==null:
+			continue
+		var source: String = guard_source(base)
+		if not frames.has_animation(source) or frames.get_frame_count(source)<8:
+			continue
+		for prefix in families:
+			var clip: String = prefix+base
+			if frames.has_animation(clip):
+				if not bool(frames.get_meta("reused_guard_"+clip,false)):
+					continue # A dedicated authored replacement takes precedence.
+				if frames.get_frame_count(clip)==8:
+					for i in range(8):
+						frames.set_frame(clip,i,frames.get_frame_texture(source,guard_source_frame(clip,i)))
+					continue
+				frames.remove_animation(clip)
+			frames.add_animation(clip)
+			_set_loop_v293(frames,clip,false)
+			frames.set_animation_speed(clip,8.0)
+			for i in range(8):
+				frames.add_frame(clip,frames.get_frame_texture(source,guard_source_frame(clip,i)))
+			frames.set_meta("reused_guard_"+clip,true)
+
+static func guard_clip(idle_prefix: String, eight: String, cardinal: String, frames: SpriteFrames) -> String:
+	var prefix: String = idle_prefix.trim_suffix("idle_")
+	for face in [eight,cardinal]:
+		var clip: String = prefix+"parry_"+face
+		if frames!=null and frames.has_animation(clip) and frames.get_frame_count(clip)==8:
+			return clip
+	return ""
+
+# Physics clock controls the pose even during an early confirmed parry.
+static func guard_frame(age: float, remaining: float) -> int:
+	if remaining<=0.0:
+		return 7
+	if remaining<0.12:
+		return clampi(5+floori((0.12-remaining)/0.04),5,7)
+	return clampi(floori(age/0.035),0,4)
+
+# Dedicated art is opt-in. No missing/invalid row is promoted to authored.
+# All coordinates are full-cell pixels; [] means deliberately hidden.
+const AUTHORED_MANIFEST: String = "res://resources/authored_combat_atlases.json"
+static var _authored_guides: Dictionary = {}
+
+static func authored_wrist(clip: String, frame: int, hand: int) -> Vector2:
+	if not _authored_guides.has(clip) or hand not in [0,1]:
+		return Vector2.INF
+	var record: Dictionary = _authored_guides[clip]
+	var samples: Array = record["left" if hand==0 else "right"]
+	var point: Array = samples[clampi(frame,0,7)]
+	if point.is_empty():
+		return Vector2.INF
+	return Vector2(float(point[0])-128.0,float(point[1])-110.0)
+
+static func _valid_authored_guides(record: Dictionary) -> bool:
+	var near: Variant = record.get("near_hand",-1)
+	if not (near is int or near is float) or float(near) not in [0.0,1.0]:
+		return false
+	for key in ["left","right"]:
+		var samples: Variant = record.get(key,[])
+		if not samples is Array or samples.size()!=8:
+			return false
+		for point in samples:
+			if not point is Array or point.size() not in [0,2]:
+				return false
+			if point.is_empty():
+				continue
+			for axis in range(2):
+				if not (point[axis] is float or point[axis] is int) or not is_finite(float(point[axis])):
+					return false
+				if float(point[axis])<0.0 or float(point[axis])>=float(CELL[axis]):
+					return false
+	return true
+
+static func _authored_clip_allowed(clip: String) -> bool:
+	if is_guard_clip(clip):
+		var families: Array[String] = [""]
+		families.append_array(WEAPON_PREFIXES)
+		for family in families:
+			for face in GUARD_FACES:
+				if clip==family+"parry_"+face:
+					return true
+		return false
+	for stem in MODULAR_COMBAT_V294:
+		for face in DIRECTIONS:
+			if clip==stem+face or clip==stem+"air_"+face:
+				return true
+	return false
+
+# Validate every input before replacing any existing frame or guide.
+# Preserve the existing weighted timing even when a cardinal source has >8 frames.
+static func install_authored_row(frames: SpriteFrames, sheet: Texture2D, row: int, clip: String, record: Dictionary) -> bool:
+	if frames==null or not _valid_dimensions(sheet) or row<0 or row>=8 or not _authored_clip_allowed(clip) or not _valid_authored_guides(record):
+		return false
+	var timing: String = clip
+	if not frames.has_animation(timing) or frames.get_frame_count(timing)<8:
+		if is_guard_clip(clip):
+			timing=clip.trim_suffix(diagonal_name(clip))+cardinal_for_clip(clip) if not diagonal_name(clip).is_empty() else clip
+		else:
+			timing=clip.trim_suffix(diagonal_name(clip))+cardinal_for_clip(clip)
+	if not frames.has_animation(timing) or frames.get_frame_count(timing)<8:
+		return false
+	var speed: float = frames.get_animation_speed(timing)
+	var count: int = frames.get_frame_count(timing)
+	var durations: Array[float] = []
+	for i in range(8):
+		var duration: float = 0.0
+		for source in range(floori(float(i*count)/8.0),floori(float((i+1)*count)/8.0)):
+			duration+=frames.get_frame_duration(timing,source)
+		durations.append(duration)
+	if frames.has_animation(clip):
+		frames.remove_animation(clip)
+	frames.add_animation(clip)
+	_set_loop_v293(frames,clip,false)
+	frames.set_animation_speed(clip,speed)
+	for i in range(8):
+		var tile: AtlasTexture = AtlasTexture.new()
+		tile.atlas=sheet
+		tile.region=Rect2(i*CELL.x,row*CELL.y,CELL.x,CELL.y)
+		tile.filter_clip=true
+		frames.add_frame(clip,tile,durations[i])
+	_authored_guides[clip]=record.duplicate(true)
+	frames.set_meta("v294_reused_"+clip,false)
+	frames.set_meta("reused_guard_"+clip,false)
+	frames.set_meta("authored_combat_"+clip,true)
+	return true
+
+static func install_authored_combat(frames: SpriteFrames) -> int:
+	if frames==null or not FileAccess.file_exists(AUTHORED_MANIFEST):
+		return 0
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(AUTHORED_MANIFEST))
+	if not raw is Dictionary or int(raw.get("version",0))!=1 or not raw.get("rows") is Array:
+		push_warning("Invalid authored combat manifest; keeping original animations.")
+		return 0
+	var count: int = 0
+	var seen: Dictionary = {}
+	for entry in raw["rows"]:
+		if not entry is Dictionary:
+			continue
+		var path: String = str(entry.get("atlas",""))
+		var clip: String = str(entry.get("clip",""))
+		var row: Variant = entry.get("row",-1)
+		if not path.begins_with("res://assets/ghost/authored_combat/") or path.contains("..") or not path.ends_with(".png") or not (row is float or row is int) or not is_finite(float(row)) or float(row)!=floorf(float(row)) or float(row)<0.0 or float(row)>=8.0:
+			push_warning("Invalid authored combat row: "+clip)
+			continue
+		if seen.has(clip):
+			push_warning("Duplicate authored combat clip: "+clip)
+			continue
+		var sheet: Texture2D = null
+		if ResourceLoader.exists(path,"Texture2D"):
+			sheet=load(path) as Texture2D
+		if install_authored_row(frames,sheet,int(row),clip,entry):
+			seen[clip]=true
+			count+=1
+		else:
+			push_warning("Unusable authored combat row: "+clip+"; keeping fallback.")
+	return count
+
+static func missing_authored_guards(frames: SpriteFrames) -> PackedStringArray:
+	var missing: PackedStringArray = PackedStringArray()
+	var families: Array[String] = [""]
+	families.append_array(WEAPON_PREFIXES)
+	for family in families:
+		for face in GUARD_FACES:
+			var clip: String = family+"parry_"+face
+			if frames==null or not frames.has_animation(clip) or not bool(frames.get_meta("authored_combat_"+clip,false)):
+				missing.append(clip)
+	return missing

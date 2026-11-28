@@ -40,6 +40,8 @@ static func span(name: String, frame: int, guides: Dictionary) -> PackedVector2A
 	if not matches(name):
 		return PackedVector2Array()
 	var art = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if art.is_guard_clip(name):
+		return art.guard_base_span(name,frame,82.0 if name.contains("halberd") else 70.0)
 	if not art.diagonal_name(name).is_empty():
 		var length: float = 82.0 if name.contains("halberd") else 70.0
 		return art.heavy_attack_span(name,frame,length) if art.is_modular_combat_v294(name) else art.carried_span(name,frame,length,true)

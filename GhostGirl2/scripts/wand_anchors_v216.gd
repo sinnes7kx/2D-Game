@@ -133,6 +133,13 @@ static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2
 
 static func pose_rotation_v294(body: AnimatedSprite2D,points: PackedVector2Array) -> float:
 	var clip: String = str(body.animation)
+	if preload("res://scripts/ghost_diagonal_art_v247.gd").is_guard_clip(clip) and points.size()==2:
+		var actor: Node = body.get_parent()
+		if actor!=null:
+			var heading: Vector2 = actor.get("parry_heading")
+			var local: Vector2 = body.to_local(body.global_position+heading).normalized()
+			var axis: Vector2 = Vector2(-0.9 if local.x>=0.0 else 0.9,-0.6).normalized()
+			return (points[1]-points[0]).angle_to(axis)
 	if clip.begins_with("wand_idle_"):
 		return GENTLE.angle_at(GENTLE.phase_of(body))
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")

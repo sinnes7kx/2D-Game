@@ -9,6 +9,9 @@ static func weapon_scale(base: String) -> float:
 
 static func offhand_span(name: String, face: String, frame: int, axis: Vector2) -> PackedVector2Array:
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if diagonal.is_guard_clip(name):
+		var grip: Vector2 = diagonal.guard_wrist(name,frame,1-diagonal.guard_near_hand(name))
+		return PackedVector2Array() if grip==Vector2.INF else PackedVector2Array([grip,grip+axis.normalized()*32.0])
 	if not diagonal.diagonal_name(name).is_empty():
 		var wrist: Vector2 = diagonal.far_wrist(name,frame)
 		return PackedVector2Array() if wrist==Vector2.INF else PackedVector2Array([wrist,wrist+axis.normalized()*32.0])

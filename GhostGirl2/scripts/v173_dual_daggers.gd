@@ -78,6 +78,8 @@ func is_active(animation_name: String) -> bool:
 
 func get_blade_spans(animation_name: String, frame_index: int) -> Array:
 	var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if diagonal.is_guard_clip(animation_name):
+		return diagonal.guard_pair_spans(animation_name,frame_index,BLADE_LENGTH) if is_active(animation_name) else []
 	if not diagonal.diagonal_name(animation_name).is_empty():
 		if not is_active(animation_name):
 			return []
