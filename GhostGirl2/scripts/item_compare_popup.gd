@@ -23,6 +23,12 @@ var _equipped_item: Variant = null
 func _ready() -> void:
     current_body.bbcode_enabled = true
     equipped_body.bbcode_enabled = true
+    ITEM_MARKUP.style_body(current_body)
+    ITEM_MARKUP.style_body(equipped_body)
+    current_title.add_theme_font_override("font", ITEM_MARKUP.title_font())
+    equipped_title.add_theme_font_override("font", ITEM_MARKUP.title_font())
+    current_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    equipped_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     mouse_filter = Control.MOUSE_FILTER_IGNORE
     rare_star.mouse_filter = Control.MOUSE_FILTER_IGNORE
     impact_label = Label.new()
@@ -64,14 +70,8 @@ func display_item(item: Variant, equipped: Variant = null, _advanced: bool = fal
     current_title.text = item.display_name()
     _quality_border(current_panel, item)
     rare_star.hide()
-    var look: Dictionary = item.collector_appearance()
-    anomaly_label.visible = maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0))) == 6
-    ANOMALY_TITLE.apply(anomaly_label, Time.get_ticks_msec() * 0.001, item)
-    anomaly_label.text = "Anomalous"
-    anomaly_label.tooltip_text = "Test appearance — genuine roll unchanged" if preload("res://scripts/collector_roll_code_v1931.gd").debug_active(item) else ""
-    impact_label.text = ITEM_MARKUP.impact_text(item)
-    impact_label.visible = not impact_label.text.is_empty()
-    impact_label.add_theme_color_override("font_color", ITEM_MARKUP.impact_color(item))
+    anomaly_label.hide() # Special titles live in shared markup.
+    impact_label.hide()
     current_title.add_theme_color_override("font_color", item.quality_color())
     # ALT pins the compact tooltip; detailed roll history lives in P/Inspect.
     current_body.text = ITEM_MARKUP.item_info(item, _advanced)
@@ -108,7 +108,7 @@ func set_pinned(active: bool) -> void:
 func _display_dot_hint(meta: Variant, item: Variant, target: Label) -> void:
     if not pinned or item == null or target == null:
         return
-    var message: String = ITEM_MARKUP.visual_dot_details(item, str(meta))
+    var message: String = ITEM_MARKUP.skill_hover_details(item, str(meta))
     if message.is_empty():
         target.hide()
         return
@@ -149,8 +149,6 @@ func _rare_details(item: Variant) -> String:
     return "\n".join(lines)
 
 func _process(_delta: float) -> void:
-    if visible and is_instance_valid(anomaly_label) and anomaly_label.visible:
-        ANOMALY_TITLE.apply(anomaly_label, Time.get_ticks_msec() * 0.001, _current_item)
     if visible and not pinned:
         _place_popup()
 
