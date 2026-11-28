@@ -247,7 +247,7 @@ func _process(_delta: float) -> void:
 		if bow_carry_visual != null:
 			bow_carry_visual.visible = false
 		return
-	if DIAGONAL_V270.is_painted_bow_carry(source_animation):
+	if DIAGONAL_V270.is_painted_bow_carry(source_animation) or DIAGONAL_V270.is_painted_bow_combat(source_animation):
 		_show_diagonal_bow_v270(item,source_animation)
 		return
 	var animation: String = _resolved_animation_name(item, source_animation)
@@ -363,6 +363,13 @@ func _show_diagonal_bow_v270(item: GhostItemInstance,clip: String) -> void:
 		return
 	bow_carry_visual.visible=false
 	var pose: Dictionary = diagonal_hold_pose(clip,DIAGONAL_V270.hand_local(body))
+	if DIAGONAL_V270.is_painted_bow_combat(clip):
+		var actor: Node = body.get_parent()
+		var aim: Vector2 = actor.get("bow_firing_direction")
+		if aim.is_zero_approx():
+			aim = DIAGONAL_V270.heading_v294(DIAGONAL_V270.diagonal_name(clip))
+		var local_aim: Vector2 = body.to_local(body.global_position + aim)
+		pose = diagonal_shoot_pose(clip, DIAGONAL_V270.hand_local(body), local_aim, _bow_style_name(item), body.frame_progress)
 	if pose.is_empty():
 		return
 	var carry_name: String = _bow_style_name(item)+"_idle_"+str(pose["source_face"])
@@ -382,3 +389,23 @@ func _show_diagonal_bow_v270(item: GhostItemInstance,clip: String) -> void:
 			layer.animation=StringName(carry_name)
 		layer.set_frame_and_progress(0,0.0)
 		layer.visible=true
+
+# Calibrated right bow limb-end vector from weapon_glow_axes_v142.json.
+# Source pixels and mask share exactly the same grip and flip transform.
+static func diagonal_shoot_pose(clip: String, wrist: Vector2, aim: Vector2, style: String, _progress: float = 0.0) -> Dictionary:
+	var pose: Dictionary = diagonal_hold_pose(clip, wrist)
+	if pose.is_empty() or aim.is_zero_approx():
+		return pose
+	var left: bool = bool(pose["flip_h"])
+	var chord: Vector2 = Vector2(17.1, 88.5) if style == "moonveil" else Vector2(16.4, 87.7)
+	if left:
+		chord.x = -chord.x
+	var target: Vector2 = aim.normalized().orthogonal()
+	if target.y < 0.0:
+		target = -target
+	var angle: float = chord.angle_to(target)
+	var source: Vector2 = pose["source_handle"]
+	pose["rotation_deg"] = rad_to_deg(angle)
+	pose["position"] = wrist - source.rotated(angle)
+	pose["hand"] = wrist
+	return pose
