@@ -4,7 +4,7 @@ extends RefCounted
 ## their existing measured body sources. Never modify diagonal art.
 const ROOT: String = "res://assets/ghost/weapon_body_v110/"
 const FACES: Array[String] = ["front","back","left","right"]
-const FAMILIES: Array[String] = ["dual_sword_","dual_dagger_","sword_modular_","sword_","dagger_","nocturne_dagger_","forge_dagger_","spear_","briarwake_spear_","twinblade_","rosemirror_twinblade_","scythe_","seraph_scythe_","halberd_","maul_","ashglass_maul_","rapier_","axe_","wand_","crossbow_","forge_bow_"]
+const FAMILIES: Array[String] = ["dual_sword_","dual_dagger_","sword_modular_","sword_","dagger_","nocturne_dagger_","forge_dagger_","spear_","briarwake_spear_","twinblade_","rosemirror_twinblade_","scythe_","seraph_scythe_","halberd_","maul_","ashglass_maul_","rapier_","axe_","wand_","crossbow_","forge_bow_","thornrose_","moonveil_"]
 const META: String = "v296_clean_pair_carry"
 # Full 256x220 cell coordinates, slots 0/1 as in the paired render rigs.
 # Empty entries denote an occluded hand; do not attach a floating blade.
@@ -43,7 +43,7 @@ static func source_key(clip: String) -> String:
 			return key if GUIDES.has(key) else ""
 	return ""
 
-static func install(frames: SpriteFrames) -> int:
+static func install(frames: SpriteFrames,painted_bows: bool=false) -> int:
 	if frames==null:
 		return 0
 	var installed: Dictionary = frames.get_meta(META,{})
@@ -61,6 +61,10 @@ static func install(frames: SpriteFrames) -> int:
 		if tiles.size()!=8:
 			continue
 		for family in FAMILIES:
+			if family in ["thornrose_","moonveil_"]:
+				var style: String = family.trim_suffix("_")
+				if not painted_bows or not ResourceLoader.exists("res://assets/equipment/bows_v166/%s_carry_only_2048x1760.png" % style,"Texture2D") or not ResourceLoader.exists("res://assets/ghost/bows_v139/%s_locomotion_mask_2048x1760.png" % style,"Texture2D"):
+					continue
 			var clip: String = family+key
 			if not frames.has_animation(clip) or frames.get_frame_count(clip)==0:
 				continue
