@@ -93,7 +93,13 @@ func _verify() -> void:
 			assert(not clip.is_empty() and guard_frames.get_frame_count(clip)==8)
 			for i in range(8):
 				var source: String = DIAGONAL.guard_source(clip)
-				assert(guard_frames.get_frame_texture(clip,i)==guard_frames.get_frame_texture(source,DIAGONAL.guard_source_frame(clip,i)))
+				var neutral: Texture2D = DIAGONAL.guard_neutral_texture(clip,i)
+				var expected: Texture2D = neutral if neutral!=null else guard_frames.get_frame_texture(source,DIAGONAL.guard_source_frame(clip,i))
+				assert(guard_frames.get_frame_texture(clip,i)==expected)
+				if neutral!=null:
+					assert(i in [0,7] and DIAGONAL.diagonal_name(clip).is_empty())
+					var carry = preload("res://scripts/cardinal_paired_carry_v296.gd")
+					assert(DIAGONAL.guard_wrist(clip,i)==carry.lead_grip(DIAGONAL.guard_idle_clip(clip),0))
 				var grip: Vector2 = DIAGONAL.guard_wrist(clip,i)
 				var span: PackedVector2Array = DIAGONAL.guard_base_span(clip,i,60.0)
 				if grip!=Vector2.INF:
