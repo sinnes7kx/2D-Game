@@ -34,8 +34,8 @@ func _draw() -> void:
 		draw_colored_polygon(vertices,Color(0.04,0.03,0.10,0.34))
 		return
 	var spread: float = lerpf(1.0,1.40,lift)
-	var outer: Vector2 = Vector2(width*1.65,depth*1.85)*spread
-	var core: Vector2 = Vector2(width*0.88,depth*0.78)*spread
-	var alpha: float = lerpf(0.45,0.19,lift)
+	var outer: Vector2 = Vector2(width*1.52,depth*1.70)*spread
+	var core: Vector2 = Vector2(width*0.95,depth*0.86)*spread
+	var alpha: float = lerpf(0.51,0.16,lift)
 	draw_texture_rect(TEXTURES.shadow(),Rect2(-outer,outer*2.0),false,Color(0.045,0.032,0.075,alpha*0.72))
-	draw_texture_rect(TEXTURES.shadow(),Rect2(-core,core*2.0),false,Color(0.035,0.025,0.055,alpha*0.8))
+	draw_texture_rect(TEXTURES.shadow(),Rect2(-core,core*2.0),false,Color(0.035,0.025,0.055,alpha*0.88))
