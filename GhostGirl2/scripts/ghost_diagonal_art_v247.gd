@@ -736,7 +736,11 @@ static func _authored_clip_allowed(clip: String) -> bool:
 				if clip==family+"parry_"+face:
 					return true
 		return false
-	return is_modular_combat_v294(clip)
+	for stem in MODULAR_COMBAT_V294:
+		for face in DIRECTIONS:
+			if clip==stem+face or clip==stem+"air_"+face:
+				return true
+	return false
 
 # Validate every input before replacing any existing frame or guide.
 # Preserve the existing weighted timing even when a cardinal source has >8 frames.
@@ -780,23 +784,28 @@ static func install_authored_combat(frames: SpriteFrames) -> int:
 	if frames==null or not FileAccess.file_exists(AUTHORED_MANIFEST):
 		return 0
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(AUTHORED_MANIFEST))
-	if not raw is Dictionary or int(raw.get("version",0))!=1 or not raw.get("rows",[]) is Array:
+	if not raw is Dictionary or int(raw.get("version",0))!=1 or not raw.get("rows") is Array:
 		push_warning("Invalid authored combat manifest; keeping original animations.")
 		return 0
 	var count: int = 0
+	var seen: Dictionary = {}
 	for entry in raw["rows"]:
 		if not entry is Dictionary:
 			continue
 		var path: String = str(entry.get("atlas",""))
 		var clip: String = str(entry.get("clip",""))
 		var row: Variant = entry.get("row",-1)
-		if not path.begins_with("res://assets/ghost/authored_combat/") or path.contains("..") or not path.ends_with(".png") or not (row is float or row is int) or float(row)!=floorf(float(row)):
+		if not path.begins_with("res://assets/ghost/authored_combat/") or path.contains("..") or not path.ends_with(".png") or not (row is float or row is int) or not is_finite(float(row)) or float(row)!=floorf(float(row)) or float(row)<0.0 or float(row)>=8.0:
 			push_warning("Invalid authored combat row: "+clip)
+			continue
+		if seen.has(clip):
+			push_warning("Duplicate authored combat clip: "+clip)
 			continue
 		var sheet: Texture2D = null
 		if ResourceLoader.exists(path,"Texture2D"):
 			sheet=load(path) as Texture2D
 		if install_authored_row(frames,sheet,int(row),clip,entry):
+			seen[clip]=true
 			count+=1
 		else:
 			push_warning("Unusable authored combat row: "+clip+"; keeping fallback.")
