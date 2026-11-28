@@ -7,6 +7,8 @@ This is the engineering map of the active Godot project. Product priorities and 
 | Domain | Active entry points | Responsibility |
 | --- | --- | --- |
 | Combat orchestration | scripts/player.gd | Input, action state, stamina, movement, committed animation, hit application |
+| Grounded motion | scripts/combat/grounded_motion.gd | Shared walk, sprint, charge, channel and terrain speed policy; physics state stays in player |
+| Combat geometry | scripts/combat_geometry.gd | Shared frontal geometry and obstruction queries from mainline PR #157 |
 | Combat rules | scripts/combat/melee_rules.gd | Pure base melee balance and normalized frontal geometry; no nodes, saves, rendering or input |
 | Input and facing | scripts/direction_controller_v245.gd | Normalized movement, octants, cursor dead zone and input registration |
 | Weapon techniques | scripts/unique_specials_v261.gd, relic_arsenal_v277.gd, relic_mechanics_v288.gd | Item-base ability routing, skill profiles and cooldowns |
@@ -31,7 +33,7 @@ New pure helpers belong in a descriptive domain directory (start with scripts/co
 ## Migration order (incremental, not a rewrite)
 
 1. Base combat rules and regression registration (first step in this PR).
-2. Extract action-state/timing and grounded locomotion from player.gd, leaving scene-compatible forwarding methods until tested.
+2. Grounded locomotion extracted; next extract action-state/timing from player.gd, leaving scene-compatible forwarding methods until tested.
 3. Establish shared per-family geometry and FX contracts for gameplay and Lens. Align each of the eight directions and preserve occlusion; audit authored versus reused frames.
 4. Isolate inventory presentation from ownership mutation; preserve existing save schema and seed provenance.
 5. Extract room routing and visual presentation policies from game.gd; retire obsolete rooms only with explicit progression/save handling.
