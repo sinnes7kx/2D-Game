@@ -1,0 +1,5 @@
+# Cardinal refresh (candidate)
+
+The optional `ghost_cardinal_refresh_candidate.png` is a transparent 2048 × 1760 atlas, with eight columns of 256 × 220 cells. Rows: idle front, back, left, right; walk front, back, left, right. It is not yet committed as a binary: the repository connector accepts text changes but did not expose a way to transfer the local PNG. Apply the accompanying asset patch into the repository root before testing this branch.
+
+The loader uses separate clip names, retains original animation duration, keeps the approved diagonals and existing weapon-equipped animations intact, and falls back without the asset. Idle and walking directional transitions preserve normalized phase. The candidate is unarmed locomotion only; painted attack, jump, dodge and equipped parry frames and their frame-specific wrist guides are outstanding. The original diagonal PNG could not be retrieved for exact comparison. Validate all eight headings, visual scale, loop smoothness and weapon transitions in Godot before promoting the candidate.
