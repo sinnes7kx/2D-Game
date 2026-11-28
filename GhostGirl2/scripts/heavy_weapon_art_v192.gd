@@ -73,14 +73,14 @@ static func maul_outline(head: Vector2, axis: Vector2, p: Dictionary, ashglass: 
 	var bevel: float = 3.5 if ashglass else 2.2
 	return PackedVector2Array([head-axis*depth-n*(half_width-bevel),head-axis*(depth-bevel)-n*half_width,head+axis*(depth-bevel)-n*half_width,head+axis*depth-n*(half_width-bevel),head+axis*depth+n*(half_width-bevel),head+axis*(depth-bevel)+n*half_width,head-axis*(depth-bevel)+n*half_width,head-axis*depth+n*(half_width-bevel)])
 
-static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictionary, look: Dictionary, colors: Array[Color], phase: float, style: String, ashglass: bool, side: float, glow: bool, item_id: String = "") -> void:
+static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictionary, look: Dictionary, colors: Array[Color], phase: float, style: String, ashglass: bool, side: float, glow: bool, item_id: String = "", glow_scale: float = 1.0) -> void:
 	if p.is_empty() or grip.distance_squared_to(head)<16.0:
 		return
 	var blunt_kind: String = BLUNT_V203.kind_from_id(item_id)
 	if style == "maul" and not blunt_kind.is_empty():
-		BLUNT_V203.draw_blunt(canvas, grip, head, p, look, colors, phase, blunt_kind, glow)
+		BLUNT_V203.draw_blunt(canvas, grip, head, p, look, colors, phase, blunt_kind, glow,glow_scale)
 		if glow:
-			BLUNT_V203.draw_seeded_aura(canvas, head, colors, look, phase)
+			BLUNT_V203.draw_seeded_aura(canvas, head, colors, look, phase,glow_scale)
 		return
 	var axis: Vector2 = (head-grip).normalized()
 	var n: Vector2 = Vector2(-axis.y,axis.x)
@@ -113,7 +113,7 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 		canvas.draw_polyline(hook,Color(p["shade"]).darkened(0.20),0.85,true)
 		canvas.draw_line(hook[1],hook[2],Color(p["edge"]).lerp(p["metal"],0.40),0.7,true)
 		if glow:
-			FX.draw_edge(canvas,edge,colors,look,phase,0.66)
+			FX.draw_edge(canvas,edge,colors,look,phase,0.66*glow_scale)
 	else:
 		var outline: PackedVector2Array = maul_outline(head,axis,p,ashglass)
 		for i in range(outline.size()):
@@ -136,14 +136,14 @@ static func draw_heavy(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictiona
 			canvas.draw_circle(rivet,1.6,metal.darkened(0.5))
 			canvas.draw_circle(rivet-axis*0.4,0.65,metal.lightened(0.25))
 
-		if glow and FX_LEVEL.intensity > 0.0:
+		if glow and glow_scale>0.0 and FX_LEVEL.intensity > 0.0:
 			# Illuminate the complete head silhouette, not only one side.
 			# The shaft stays faint so the actual maul shape remains dominant.
 			var halo: Color = FX.color_at(colors, look, 0.65, phase)
-			var outer_halo: Color = Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.10))
+			var outer_halo: Color = Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.10*glow_scale))
 			canvas.draw_polyline(closed, outer_halo, 9.2, true)
-			canvas.draw_polyline(closed, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.22)), 3.5, true)
-			canvas.draw_line(foot, head, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.085)), 7.0, true)
-			FX.draw_edge(canvas, closed, colors, look, phase, 0.90)
-			FX.draw_signature(canvas, closed, colors, look, phase)
-			BLUNT_V203.draw_seeded_aura(canvas, head, colors, look, phase)
+			canvas.draw_polyline(closed, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.22*glow_scale)), 3.5, true)
+			canvas.draw_line(foot, head, Color(halo.r, halo.g, halo.b, FX_LEVEL.alpha(0.085*glow_scale)), 7.0, true)
+			FX.draw_edge(canvas, closed, colors, look, phase, 0.90*glow_scale)
+			FX.draw_signature(canvas, closed, colors, look, phase,glow_scale)
+			BLUNT_V203.draw_seeded_aura(canvas, head, colors, look, phase,glow_scale)
