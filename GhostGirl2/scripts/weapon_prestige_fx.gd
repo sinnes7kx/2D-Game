@@ -1356,9 +1356,8 @@ func _draw_wand_hold_cosmetics(grip: Vector2, tip: Vector2, tangent: Vector2, no
 	var mid: Vector2 = grip.lerp(tip, 0.58)
 	var head: Vector2 = grip.lerp(tip, 0.94)
 	var base_alpha: float = power * (1.22 if attacking else 0.94)
-	# Crystal / wand head emphasis.
-	_soft_orb(head, 6.2, _gradient_at(0.16 + seed_phase * 0.18), base_alpha)
-	_soft_orb(head + normal * 1.8, 3.2, _gradient_at(0.72), base_alpha * 0.9)
+	# Core gemstone uses the same physical tip and seeded motif as inspection.
+	RENDER.draw_wand_head(self,PackedVector2Array([grip,tip]),effect_palette,collector_look,elapsed,1.0)
 	if attacking:
 		# Spell preparation tightens the light into the gemstone; the actual
 		# release flash remains owned by wand_release_fx_v156.gd.
@@ -1373,10 +1372,8 @@ func _draw_wand_hold_cosmetics(grip: Vector2, tip: Vector2, tangent: Vector2, no
 	draw_line(charm, charm + Vector2(0, 4.0), Color(charm_color.r, charm_color.g, charm_color.b, 0.12 * base_alpha), 0.8, true)
 	# Restore the luminous gemstone core alongside the new motion path.
 	var shine: Color = _gradient_at(fposmod(seed_phase + elapsed * 0.06, 1.0))
-	_soft_orb(head, 8.4, shine, base_alpha * 0.8)
 	draw_arc(head, 4.8, elapsed * 0.36, elapsed * 0.36 + PI * 1.3, 24, Color(shine.r, shine.g, shine.b, 0.24 * base_alpha), 1.0, true)
 	# The existing cosmetic particle ticket now chooses distinct motion paths.
-	preload("res://scripts/weapon_particle_paths_v244.gd").draw_pattern(self, head, tangent, Vector2(8.0, 10.0), effect_palette, collector_look, elapsed, minf(base_alpha, 1.35))
 	if rarity_tier >= 2:
 		# Always-visible runic dust for rarer wands.
 		for i in range(4):
