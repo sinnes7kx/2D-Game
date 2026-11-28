@@ -108,6 +108,8 @@ static func item_info(item: Variant, advanced: bool = false) -> String:
 	if slot == "sword" and item.physical_damage_kind() == "blunt":
 		category = "BLUNT WEAPON"
 	var unique_socketable: bool = item.definition.unique and item_class in ["gem", "rune"]
+	if slot in ["sword", "wand"] and item.visual_signature() == 4:
+		out.append("[color=#e8c6ff][b]Mythic[/b][/color]")
 	out.append("[font_size=12][color=%s]%s[/color][/font_size]" % [GOLD if unique_socketable else MUTED, "UNIQUE JEWEL" if unique_socketable else (escape(category.to_upper()) + "  ·  LEVEL %d" % item.item_level)])
 	var ability: String = preload("res://scripts/unique_specials_v261.gd").label(item)
 	if not ability.is_empty():
