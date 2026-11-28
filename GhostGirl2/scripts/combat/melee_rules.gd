@@ -1,4 +1,5 @@
 extends RefCounted
+const GEOMETRY = preload("res://scripts/combat_geometry.gd")
 ## Pure base melee tuning. The player owns action state, equipment modifiers,
 ## contact, damage application and feedback. Keep art geometry independent.
 ## Named double-precision fields avoid packing combat values into float32 vectors.
@@ -77,8 +78,4 @@ static func base_profile(style: String, heavy: bool, armed: bool, combo: int) ->
 # Shared normalized frontal contact geometry for timed guards and weapon
 # techniques. Individual callers keep their own range and minimum distance.
 static func frontal_contact(offset: Vector2, axis: Vector2, min_distance_squared: float, max_distance: float, min_dot: float) -> bool:
-	if offset.length_squared()<=min_distance_squared or axis.is_zero_approx():
-		return false
-	if max_distance>=0.0 and offset.length_squared()>max_distance*max_distance:
-		return false
-	return axis.normalized().dot(offset.normalized())>=min_dot
+	return GEOMETRY.facing_contact(offset,axis,min_distance_squared,min_dot) if max_distance<0.0 else GEOMETRY.cone_contact(offset,axis,max_distance,min_distance_squared,min_dot)
