@@ -4,6 +4,8 @@ extends CharacterBody2D
 ## rose hook at her hand, with slight reach/lean animation during casting.
 
 const COMBAT_GEOMETRY = preload("res://scripts/combat_geometry.gd")
+const MELEE_RULES = preload("res://scripts/combat/melee_rules.gd")
+const GROUNDED = preload("res://scripts/combat/grounded_motion.gd")
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
@@ -44,11 +46,11 @@ const RIPOSTE_SFX: AudioStream = preload("res://assets/audio/riposte_chime_v113.
 const COMBAT_RESPONSE_V157: Script = preload("res://scripts/combat_response_v157.gd")
 const DODGE_SFX: AudioStream = preload("res://assets/audio/dodge_wisp.wav")
 const HOOK_SFX: AudioStream = preload("res://assets/audio/hook_chime.wav")
-const WALK_SPEED: float = 175.0
-const SPRINT_SPEED: float = 246.0
-const MOVE_ACCELERATION: float = 1700.0
-const MOVE_BRAKE: float = 2700.0
-const TURN_ACCELERATION: float = 1900.0
+const WALK_SPEED: float = GROUNDED.WALK_SPEED
+const SPRINT_SPEED: float = GROUNDED.SPRINT_SPEED
+const MOVE_ACCELERATION: float = GROUNDED.MOVE_ACCELERATION
+const MOVE_BRAKE: float = GROUNDED.MOVE_BRAKE
+const TURN_ACCELERATION: float = GROUNDED.TURN_ACCELERATION
 const SPRINT_STAMINA_PER_SECOND: float = 9.0
 const BASE_ART_POS: Vector2 = Vector2(0.0, -57.0)
 const BASE_ART_SCALE: float = 0.52
@@ -73,7 +75,7 @@ const MAX_DEW: int = 3
 const HEAL_WINDUP: float = 0.63
 const LOCK_RANGE: float = 620.0
 const INPUT_BUFFER: float = 0.38
-const CHARGE_WALK_FACTOR: float = 0.45
+const CHARGE_WALK_FACTOR: float = GROUNDED.CHARGE_WALK_FACTOR
 const PARRY_WINDOW: float = 0.32
 const PARRY_PERFECT_START: float = 0.04
 const PARRY_PERFECT_END: float = 0.15
@@ -643,13 +645,8 @@ func _physics_process(delta: float) -> void:
 	var desired_speed: float = (SPRINT_SPEED if sprinting else WALK_SPEED) * (1.0 + speed_bonus / 100.0)
 	# Shallow moor water impedes grounded movement; Moonfall's temporary ice
 	# restores normal footing. Jumping, dodging and the rose hook are unaffected.
-	for water in get_tree().get_nodes_in_group("water_body"):
-		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
-			desired_speed *= float(water.call("movement_multiplier_at", global_position))
-	var target_velocity: Vector2 = direction.normalized() * desired_speed if moving else Vector2.ZERO
-	var turn: bool = moving and velocity.length_squared() > 50.0 and velocity.normalized().dot(direction.normalized()) < 0.22
-	var responsiveness: float = TURN_ACCELERATION if turn else (MOVE_ACCELERATION if moving else MOVE_BRAKE)
-	velocity = velocity.move_toward(target_velocity, responsiveness * delta)
+	desired_speed = GROUNDED.terrain_speed(self,desired_speed)
+	velocity = GROUNDED.walking_velocity(velocity,direction,desired_speed,delta)
 	if sprinting:
 		stamina = maxf(0.0, stamina - SPRINT_STAMINA_PER_SECOND * delta)
 		stamina_recovery_left = maxf(stamina_recovery_left, 0.25)
@@ -1770,10 +1767,8 @@ func _advance_relic_channel_v288(delta: float) -> void:
 	var direction: Vector2 = _movement_input()
 	var moving: bool = direction.length_squared()>0.01
 	var speed: float = WALK_SPEED*float(profile["move"])*(1.0+_stat("move_speed_pct")/100.0)
-	for water in get_tree().get_nodes_in_group("water_body"):
-		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
-			speed*=float(water.call("movement_multiplier_at",global_position))
-	velocity=velocity.move_toward(direction.normalized()*speed if moving else Vector2.ZERO,MOVE_ACCELERATION*delta)
+	speed=GROUNDED.terrain_speed(self,speed)
+	velocity=GROUNDED.channel_velocity(velocity,direction,speed,delta)
 	if moving:
 		set_facing(direction)
 	# Cycle approved cardinal poses instead of rotating the whole sprite upside down.
@@ -1988,17 +1983,13 @@ func _begin_bow_shot(charged: bool, airborne: bool) -> void:
 # sprinting or resetting the held animation. The actual released strike
 # continues to use its original committed movement.
 static func charge_target_velocity(direction: Vector2, walk_speed: float) -> Vector2:
-	return direction.limit_length(1.0)*maxf(0.0,walk_speed)*CHARGE_WALK_FACTOR
+	return GROUNDED.charge_target(direction,walk_speed)
 
 func _charge_walk(delta: float) -> void:
 	var direction: Vector2 = _movement_input()
 	var speed: float = WALK_SPEED*(1.0+_stat("move_speed_pct")/100.0)
-	for water in get_tree().get_nodes_in_group("water_body"):
-		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
-			speed*=float(water.call("movement_multiplier_at",global_position))
-	var target: Vector2 = charge_target_velocity(direction,speed)
-	velocity=velocity.move_toward(target,(MOVE_ACCELERATION if direction.length_squared()>0.01 else MOVE_BRAKE)*delta)
-	velocity=velocity.limit_length(maxf(0.0,speed)*CHARGE_WALK_FACTOR)
+	speed=GROUNDED.terrain_speed(self,speed)
+	velocity=GROUNDED.charge_velocity(velocity,direction,speed,delta)
 
 func _refresh_melee_charge_aim() -> void:
 	var aim: Vector2 = _combat_aim_direction().normalized()
@@ -2017,11 +2008,10 @@ func _refresh_melee_charge_aim() -> void:
 	var resolved: String = DIAGONAL_ART_V247.combat_clip_v294(requested,facing_eight_name,body_art.sprite_frames)
 	if not body_art.sprite_frames.has_animation(resolved):
 		return
-	var frame: int = body_art.frame
-	var progress: float = body_art.frame_progress
+	var phase: float = GENTLE.phase_of(body_art)
 	var paused: bool = not body_art.is_playing()
 	_play_action_frames(requested,attack_duration)
-	body_art.set_frame_and_progress(mini(frame,body_art.sprite_frames.get_frame_count(resolved)-1),progress)
+	GENTLE.seek_phase(body_art,phase,false)
 	if paused:
 		body_art.pause()
 
@@ -2448,64 +2438,11 @@ func _advance_attack(delta: float) -> void:
 
 func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = false, second_edge: bool = false) -> void:
 	var sword: GhostItemInstance = world.inventory.get_equipped("sword") if world.inventory != null else null
-	var reach: float = (174.0 if heavy_attack else 144.0) if sword != null else (128.0 if heavy_attack else 106.0)
-	var power: float = 34.0 if heavy_attack else [16.0, 19.0, 24.0][combo_step]
-	var attack_arc: float = 0.12 if heavy_attack else 0.32
-	var poise_bonus: float = 1.0
-	match active_attack_style:
-		"scythe":
-			reach = 216.0 if heavy_attack else 184.0
-			power *= 1.06 if heavy_attack else 0.95
-			attack_arc = -0.05 if heavy_attack else 0.12
-			poise_bonus = 1.12
-		"halberd":
-			reach = 242.0 if heavy_attack else 206.0
-			power *= 1.28 if heavy_attack else 1.08
-			attack_arc = 0.34 if heavy_attack else 0.48
-			poise_bonus = 1.35
-		"dagger":
-			reach = 143.0 if heavy_attack else 112.0
-			power *= 0.90 if heavy_attack else 0.77
-			# Dagger strikes have a narrow forward hit cone, not a sweep.
-			attack_arc = 0.08 if heavy_attack else 0.10
-			poise_bonus = 0.70
-		"dual_dagger":
-			reach = 153.0 if heavy_attack else 122.0
-			power *= 0.96 if heavy_attack else 0.80
-			attack_arc = 0.14 if heavy_attack else 0.15
-			poise_bonus = 0.73
-		"dual_sword":
-			reach = 199.0 if heavy_attack else 165.0
-			power *= 1.18 if heavy_attack else 0.97
-			attack_arc = 0.08 if heavy_attack else 0.12
-			poise_bonus = 0.96
-		"spear":
-			reach = 252.0 if heavy_attack else 213.0
-			power *= 1.18 if heavy_attack else 0.96
-			attack_arc = 0.64 if heavy_attack else 0.71
-			poise_bonus = 1.12
-		"rapier":
-			reach = 214.0 if heavy_attack else 176.0
-			power *= 1.10 if heavy_attack else 0.94
-			attack_arc = 0.86 if heavy_attack else 0.91
-			poise_bonus = 0.85
-		"axe":
-			reach = 208.0 if heavy_attack else 172.0
-			power *= 1.37 if heavy_attack else 1.09
-			attack_arc = -0.02 if heavy_attack else 0.15
-			poise_bonus = 1.52
-		"maul":
-			# Slow and committed, with a broad impact and exceptional stagger.
-			reach = 211.0 if heavy_attack else 173.0
-			power *= 1.45 if heavy_attack else 1.13
-			attack_arc = 0.04 if heavy_attack else 0.23
-			poise_bonus = 1.65
-		"twinblade":
-			# Each committed heavy spin has two separately timed physical cuts.
-			reach = 206.0 if heavy_attack else 168.0
-			power *= 1.05 if heavy_attack else 0.87
-			attack_arc = -0.10 if heavy_attack else 0.01
-			poise_bonus = 0.85
+	var profile = MELEE_RULES.base_profile(active_attack_style,heavy_attack,sword!=null,combo_step)
+	var reach: float = profile.reach
+	var power: float = profile.power
+	var attack_arc: float = profile.arc
+	var poise_bonus: float = profile.poise
 	if sword != null:
 		if active_attack_style in ["axe","rapier"]:
 			var tuning: Dictionary = FORGE_TACTICS_V286.tuning(str(sword.definition.item_id))

@@ -1,6 +1,6 @@
 extends RefCounted
-const GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const GROUND = preload("res://scripts/relic_ground_v288.gd")
+const GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const CHANNELS: Dictionary = {
 	"rosemirror_twinblade_v170":{"mode":"hybrid","drain":21.0,"move":0.80,"radius":111.0,"pulse":0.23,"power":0.34,"outer_radius":132.0,"outer_power":0.25},

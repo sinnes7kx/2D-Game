@@ -63,6 +63,10 @@ Use [the live codebase architecture map](GhostGirl2/docs/CODEBASE_ARCHITECTURE.m
 5. **Document:** report changed files, exact validation performed/results, untested areas, migrations, backup/downgrade instructions, and any open risks.
 6. **Update roadmap:** mark work completed only when verified; otherwise record it as source-present / pending real playtest.
 
+### Architecture maintenance
+
+Read `GhostGirl2/docs/ARCHITECTURE.md` before implementing cross-system features. Prefer named domain modules for new pure rules; do not duplicate established systems or move scene-bound scripts without verified reference migration. Gameplay and preview must share physical weapon geometry where possible. Keep cosmetic effects independent of combat and persistence. Register smoke scripts exactly once and keep the manual CI budget policy.
+
 Helpful existing resources:
 - Main Godot project: `GhostGirl2/project.godot`
 - Live inventory: `GhostGirl2/scripts/inventory_panel.gd`
