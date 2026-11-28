@@ -6,7 +6,8 @@ const PALETTE = preload("res://scripts/cosmetic_rng_v152.gd")
 static func color_at(colors: Array[Color], look: Dictionary, t: float, time: float) -> Color:
 	if colors.is_empty():
 		return Color.WHITE
-	var mode: int = int(look.get("color_mode", 0))
+	var prism: bool = bool(look.get("prism", false))
+	var mode: int = 2 if prism else 0
 	var speed: float = float(look.get("palette_speed", look.get("shift_rate", 0.1)))
 	var direction: float = float(look.get("palette_direction", 1.0))
 	var phase: float = time * speed * direction
@@ -33,7 +34,7 @@ static func color_at(colors: Array[Color], look: Dictionary, t: float, time: flo
 		6:
 			u += phase + sin(t * TAU + phase * TAU) * 0.25
 			cycle = true
-	if anomaly:
+	if anomaly and prism:
 		# Anomaly has a more unusual wave, but NEVER rotates the HSV hue wheel.
 		u += phase * 0.7 + sin(t * TAU * spread + phase * TAU) * 0.18
 		cycle = true
@@ -42,7 +43,7 @@ static func color_at(colors: Array[Color], look: Dictionary, t: float, time: flo
 		ink = ink.lerp(Color.WHITE, (0.5 + 0.5 * sin(phase * TAU)) * pulse)
 	elif mode == 5:
 		ink = ink.lerp(Color.WHITE, pow(maxf(0.0, sin((t - phase) * TAU)), 5.0) * pulse)
-	if int(look.get("region_rank", 0)) > 0:
+	if prism and int(look.get("region_rank", 0)) > 0:
 		var local: Color = look.get("region_color", Color.WHITE)
 		var dusk: Color = look.get("region_shadow", Color.WHITE)
 		var wave: float = 0.5 + 0.5 * sin(time * 1.7 + t * TAU)
@@ -56,7 +57,9 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 	var motif: int = int(look.get("glow_motif", 0))
 	var region_rank: int = int(look.get("region_rank", 0))
 	var power: float = clampf(strength, 0.0, 1.35)
-	var protected_top: bool = tier >= 6 or int(look.get("signature",0)) >= 4
+	var protected_top: bool = bool(look.get("prism", false))
+	if protected_top:
+		power = minf(2.4, power * (1.85 if bool(look.get("rainbow", false)) else 1.50))
 	if power <= 0.0:
 		return
 	for i in range(path.size() - 1):
@@ -101,11 +104,23 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 					canvas.draw_line(p - normal * 3.0, p + normal * 3.0, ink, 1.0, true)
 					canvas.draw_line(p - axis * 3.0, p + axis * 3.0, ink, 1.0, true)
 				7: canvas.draw_circle(p + wiggle, 1.7, ink)
+			if bool(look.get("rainbow", false)):
+				canvas.draw_arc(p + wiggle, 4.0, time, time + PI * 1.3, 12, ink, 1.1, true)
+				canvas.draw_circle(p - wiggle, 1.1, ink)
 			if tier == 6:
 				canvas.draw_line(p + wiggle * 1.8, p - wiggle * 1.8 + axis * 2.0, ink, 0.9, true)
 
 	else:
 		_draw_tier_detail(canvas,path,colors,look,time,power,tier)
+	if protected_top:
+		for k in range(3):
+			var u: float = fposmod(time * 0.19 + float(k) * 0.31, 1.0)
+			var p: Vector2 = point_on_path(path, u)
+			var flash: float = pow(maxf(0.0, sin(time * 3.5 + float(k) * 2.4)), 5.0)
+			var ink: Color = color_at(colors, look, u, time).lerp(Color.WHITE, 0.75)
+			ink.a = FX_LEVEL.edge_alpha(canvas, flash * 0.85 * strength)
+			canvas.draw_line(p - axis * 3.5, p + axis * 3.5, ink, 1.0, true)
+			canvas.draw_line(p - normal * 3.5, p + normal * 3.5, ink, 1.0, true)
 
 	# A distinct local signature accompanies the independent original motif.
 	if region_rank > 0:
@@ -165,6 +180,10 @@ static func point_on_path(path: PackedVector2Array, u: float) -> Vector2:
 
 static func signature_kind(look: Dictionary) -> int:
 	var sig: int = int(look.get("signature", 0))
+	if not bool(look.get("prism", false)):
+		return 0
+	if bool(look.get("rainbow", false)):
+		return 5
 	if maxi(int(look.get("material", 0)), int(look.get("particle_tier", 0))) == 6:
 		return 10
 	if sig == 4:
@@ -230,18 +249,16 @@ static func _draw_tier_detail(canvas: Node2D,path: PackedVector2Array,colors: Ar
 		var ink: Color = color_at(colors,look,u,time).lerp(Color.WHITE,0.36)
 		var alpha: float = FX_LEVEL.edge_alpha(canvas,sin(u*PI)*power*0.70)
 		ink.a = alpha
-		match tier:
+		match 1 + posmod(int(look.get("glow_motif", 0)), 4):
 			1: # A passing silver glint.
 				canvas.draw_line(p-axis*3.0,p+axis*3.0,ink,1.5,true)
 			2: # A small luminous bead with a soft halo.
 				canvas.draw_circle(p,4.0,Color(ink.r,ink.g,ink.b,alpha*0.13))
 				canvas.draw_circle(p,1.4,ink)
-			3: # A short slow ribbon, bound to the edge.
-				canvas.draw_polyline(PackedVector2Array([p-axis*5.0,p+n*2.0,p+axis*4.0]),ink,1.2,true)
-			4: # Celestial stars.
-				canvas.draw_line(p-axis*3.0,p+axis*3.0,ink,1.0,true)
-				canvas.draw_line(p-n*3.5,p+n*3.5,ink,1.0,true)
-				canvas.draw_circle(p,1.25,ink)
+			3: # A small arc, bound to the edge.
+				canvas.draw_arc(p, 3.5, 0.0, PI, 12, ink, 1.0, true)
+			4: # Quiet motes.
+				canvas.draw_circle(p + n * 2.5, 1.25, ink)
 			5: # Ethereal wisps, not a fast swarm.
 				var drift: Vector2 = p+n*sin(time*0.55+float(j)*2.1)*5.0
 				canvas.draw_circle(drift,6.0,Color(ink.r,ink.g,ink.b,alpha*0.10))
