@@ -129,7 +129,7 @@ func refresh() -> void:
 		# Every equipped weapon gets baseline illumination, regardless of
 		# quality or whether it rolled a named prestige motif.
 		style_index = GhostWeaponFXLibrary.prestige_variant(item.visual_seed(), item.quality)
-		visual_signature_level = item.visual_signature()
+		visual_signature_level = 4 if item.visual_signature() == 4 or item.rainbow_skin else 0
 		rarity_tier = GhostWeaponFXLibrary.tier(item.quality)
 		generated = item.procedural_visuals() if style_index >= 0 else {}
 		var rolls: Dictionary = item.effect_rolls()
@@ -507,6 +507,8 @@ func _draw() -> void:
 	var shared_core: bool = RENDER.owns_straight_core(body,item,animation)
 	if not shared_core and (item.glow_level_override > 0 or (item.glow_level_override < 0 and seeded_special)) and style not in ["dual_sword", "dual_dagger", "twinblade"]:
 		_draw_v216_visible_fallback(grip, tip, intensity)
+	if shared_core and style in ["dual_sword", "dual_dagger"]:
+		return # Both visible blades use the same path renderer as inspection.
 	if style == "dual_sword":
 		_draw_v174_dual_sword_fx(RENDER.paired_spans(body,style,animation,body.frame),intensity,attacking,shared_core)
 		return
@@ -604,10 +606,9 @@ func _draw() -> void:
 	_draw_socketed_jewel_echo(grip, tip, normal)
 	if item.get_slot() == "wand":
 		_draw_wand_hold_cosmetics(grip, tip, tangent, normal, attacking, minf(intensity, 1.7))
-	if visual_signature_level > 0:
+	if visual_signature_level == 4:
 		_draw_signature(grip, tip, tangent, normal, attacking, minf(intensity, 1.6))
-	_draw_v172_named_weapon_fx(grip, tip, tangent, normal, attacking, minf(intensity, 1.55))
-	_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
+		_draw_v1723_mythic_sheen(grip, tip, tangent, normal, style, attacking)
 
 
 # v1.72.3 - blade-region maps are normalized segments along the authored grip-to-tip
