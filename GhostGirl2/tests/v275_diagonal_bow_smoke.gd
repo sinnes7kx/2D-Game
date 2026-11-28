@@ -76,5 +76,37 @@ func _verify() -> void:
 		for dy in [-1,1]:
 			var movement: Vector2 = DIRECTION.digital_vector(dx<0,dx>0,dy<0,dy>0)
 			assert(is_equal_approx(movement.length(),1.0))
-	print("v2.75 bow diagonal carry, shooting, airborne aliases and guard axes PASS: ",count," samples")
+	# Guard clips must use the exact source cell referenced by wrist sampling.
+	var guard_frames: SpriteFrames = SpriteFrames.new()
+	for face in DIAGONAL.GUARD_FACES:
+		var source: String = DIAGONAL.guard_source("parry_"+face)
+		guard_frames.add_animation(source)
+		for i in range(8):
+			var tex: GradientTexture2D = GradientTexture2D.new()
+			tex.gradient=Gradient.new()
+			guard_frames.add_frame(source,tex)
+	DIAGONAL.install_guards(guard_frames)
+	for face in DIAGONAL.GUARD_FACES:
+		var cardinal: String = DIAGONAL.cardinal_for_clip("parry_"+face)
+		for family in ["","sword_","sword_modular_","dagger_","nocturne_dagger_","dual_dagger_","dual_sword_","spear_","briarwake_spear_","scythe_","halberd_","maul_","ashglass_maul_","twinblade_","rosemirror_twinblade_","rapier_","axe_","seraph_scythe_","thornrose_","moonveil_","forge_bow_","crossbow_","forge_dagger_","wand_"]:
+			var clip: String = DIAGONAL.guard_clip(family+"idle_",face,cardinal,guard_frames)
+			assert(not clip.is_empty() and guard_frames.get_frame_count(clip)==8)
+			for i in range(8):
+				var source: String = DIAGONAL.guard_source(clip)
+				assert(guard_frames.get_frame_texture(clip,i)==guard_frames.get_frame_texture(source,DIAGONAL.guard_source_frame(clip,i)))
+				var grip: Vector2 = DIAGONAL.guard_wrist(clip,i)
+				var span: PackedVector2Array = DIAGONAL.guard_base_span(clip,i,60.0)
+				if grip!=Vector2.INF:
+					assert(span.size()==2 and span[0]==grip and is_equal_approx(span[0].distance_to(span[1]),60.0))
+					if family in ["thornrose_","moonveil_"]:
+						var pose: Dictionary = BOW.guard_hold_pose(clip,grip,Vector2.DOWN)
+						assert(((pose["position"] as Vector2)+(pose["source_handle"] as Vector2).rotated(deg_to_rad(float(pose["rotation_deg"])))).is_equal_approx(grip))
+				else:
+					assert(span.is_empty())
+	assert(DIAGONAL.guard_frame(0.0,0.55)==0)
+	assert(DIAGONAL.guard_frame(0.2,0.35)==4)
+	assert(DIAGONAL.guard_frame(0.2,0.10)==5)
+	assert(DIAGONAL.guard_frame(0.25,0.05)==6)
+	assert(DIAGONAL.guard_frame(0.55,0.0)==7)
+	print("v2.75 bow diagonal carry, shooting, airborne aliases, guard clips and axes PASS: ",count," samples")
 	quit(0)
