@@ -36,7 +36,7 @@ New pure helpers belong in a descriptive domain directory (start with scripts/co
 
 1. Base combat rules and regression registration (first step in this PR).
 2. Grounded locomotion and directional playback extracted; next isolate remaining action-state transitions while keeping physics timing in player.gd and preserving scene-compatible forwarding methods.
-3. Shared physical blade geometry and edge light adopted for modular single swords, daggers, forged daggers and paired blades; forged bow/crossbow and Seraph preview inputs corrected. Continue remaining baked weapons, polearms and wands, secondary ornaments and eight-direction artwork.
+3. Shared physical blade geometry and edge light adopted for modular single swords, daggers, forged daggers and paired blades; forged bow/crossbow and Seraph preview inputs corrected. Spear/trident heads, heavy shape profiles, manual heavy glow and physical wand atlas/core are now shared. Continue baked weapon and secondary ornament parity, eight-direction artwork and visual testing.
 4. Isolate inventory presentation from ownership mutation; preserve existing save schema and seed provenance.
 5. Extract room routing and visual presentation policies from game.gd; retire obsolete rooms only with explicit progression/save handling.
 
