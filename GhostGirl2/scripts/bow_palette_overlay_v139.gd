@@ -363,7 +363,14 @@ func _show_diagonal_bow_v270(item: GhostItemInstance,clip: String) -> void:
 		return
 	bow_carry_visual.visible=false
 	var pose: Dictionary = diagonal_hold_pose(clip,DIAGONAL_V270.hand_local(body))
-	if DIAGONAL_V270.is_painted_bow_combat(clip):
+	if DIAGONAL_V270.is_guard_clip(clip):
+		var wrist: Vector2 = DIAGONAL_V270.hand_local(body)
+		if wrist==Vector2.INF:
+			return
+		var actor: Node = body.get_parent()
+		var aim: Vector2 = actor.get("parry_heading")
+		pose = guard_hold_pose(clip,wrist,body.to_local(body.global_position+aim))
+	elif DIAGONAL_V270.is_painted_bow_combat(clip):
 		var actor: Node = body.get_parent()
 		var aim: Vector2 = actor.get("bow_firing_direction")
 		if aim.is_zero_approx():
@@ -411,4 +418,21 @@ static func diagonal_shoot_pose(clip: String, wrist: Vector2, aim: Vector2, styl
 	pose["rotation_deg"] = rad_to_deg(angle)
 	pose["position"] = wrist - source.rotated(angle)
 	pose["hand"] = wrist
+	return pose
+
+static func guard_hold_pose(clip: String, wrist: Vector2, heading: Vector2) -> Dictionary:
+	if wrist==Vector2.INF:
+		return {}
+	var diagonal: String = DIAGONAL_V270.diagonal_name(clip)
+	var face: String = DIAGONAL_V270.cardinal_for_clip(clip)
+	var pose: Dictionary = diagonal_hold_pose(clip,wrist) if not diagonal.is_empty() else idle_hold_pose(face)
+	if pose.is_empty():
+		return pose
+	var left: bool = bool(pose["flip_h"])
+	var angle: float = deg_to_rad(85.0 if not left else -85.0) + heading.normalized().x*0.12
+	var source: Vector2 = pose["source_handle"]
+	pose["rotation_deg"] = rad_to_deg(angle)
+	pose["position"] = wrist-source.rotated(angle)
+	pose["hand"] = wrist
+	pose["behind"] = face=="back"
 	return pose
