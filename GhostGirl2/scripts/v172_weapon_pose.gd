@@ -432,7 +432,7 @@ func _draw() -> void:
 		if held.uses_forge_bow():
 			var amount: float = clampf(float(player.get("bow_draw_time")) / 0.46, 0.0, 1.0) if bool(player.get("bow_draw_active")) else 0.0
 			var light: Vector3 = RENDER.bow_light(held)
-			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, light.x, light.y, light.z>0.0)
+			FORGE_V238.draw_bow(self, span, str(held.definition.item_id), profile, forge_limb_colors, forge_string_colors, amount, light.x, light.y, light.z>0.0, held.collector_appearance(), v180_elapsed)
 		else:
 			var geometry: Dictionary = RENDER.straight_geometry("forge_dagger",span)
 			RENDER.draw_straight(self,geometry,profile,v180_elapsed)
