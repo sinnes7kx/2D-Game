@@ -112,7 +112,7 @@ func _draw() -> void:
 	var style: String = item.weapon_style()
 	match style:
 		"axe", "rapier":
-			var strength: float = CHOICES_V216.effect_scale(item)*FX_LEVEL.intensity*0.80 if glow_enabled else 0.0
+			var strength: float = RENDER.melee_model_glow(item,glow_enabled)
 			MODELS_V283.draw_melee(self,str(item.definition.item_id),Vector2(0,30),Vector2(0,-38),item.weapon_base_color(),strength,gradients,look,elapsed,false,item.weapon_gradient_color())
 		"bow":
 			var light: Vector3 = RENDER.bow_light(item,glow_enabled)
@@ -133,6 +133,11 @@ func _draw() -> void:
 			p["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
 			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0, str(item.definition.item_id))
 		"scythe":
+			if str(item.definition.item_id)=="seraph_reaper_v292":
+				if is_instance_valid(scythe_glow):
+					scythe_glow.call("clear_pose")
+				MODELS_V283.draw_melee(self,"seraph_reaper_v292",Vector2(-12,20),Vector2(-12,-48),item.weapon_base_color(),RENDER.melee_model_glow(item,glow_enabled),gradients,look,elapsed,false,item.weapon_gradient_color())
+				return
 			var p: Dictionary = profiles[0].duplicate()
 			p["scythe_span"] = float(look.get("scythe_span", 1.0))
 			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
