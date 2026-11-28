@@ -75,7 +75,8 @@ void fragment() {
     }
     // Interior-only, alpha-gated unsharp detail. No sampling of adjacent atlas
     // cells, no color bleed at transparent edges and no alpha modification.
-    if (cardinal_finish > 0.001 && COLOR.a > 0.97 && abs(silk_local.x) < 121.0 && abs(silk_local.y) < 103.0) {
+    // Match the source-image pass's protected head and upper hand areas.
+    if (cardinal_finish > 0.001 && COLOR.a > 0.97 && abs(silk_local.x) < 121.0 && silk_local.y >= -5.0 && silk_local.y < 103.0 && (silk_local.y >= 45.0 || abs(silk_local.x) <= 32.0)) {
         vec2 dx = vec2(TEXTURE_PIXEL_SIZE.x, 0.0);
         vec2 dy = vec2(0.0, TEXTURE_PIXEL_SIZE.y);
         vec4 c = texture(TEXTURE, sample_uv);
