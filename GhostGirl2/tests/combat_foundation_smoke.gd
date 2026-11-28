@@ -1,5 +1,6 @@
 extends SceneTree
 const RULES = preload("res://scripts/combat/melee_rules.gd")
+const MOTION = preload("res://scripts/combat/grounded_motion.gd")
 const PLAYER = preload("res://scripts/player.gd")
 const RELICS = preload("res://scripts/relic_mechanics_v288.gd")
 
@@ -44,5 +45,16 @@ func _initialize() -> void:
 	assert(not RULES.frontal_contact(Vector2(2,0),Vector2.RIGHT,4.0,100.0,0.60))
 	assert(not RULES.frontal_contact(Vector2(60,0),Vector2.ZERO,4.0,100.0,0.60))
 	assert(RULES.frontal_contact(Vector2(10000,0),Vector2.RIGHT,1.0,-1.0,0.50))
+	var dt: float = 1.0/60.0
+	for i in range(8):
+		var heading: Vector2 = Vector2.from_angle(float(i)*PI/4.0)
+		assert(MOTION.walking_velocity(Vector2.ZERO,heading,175.0,dt).is_equal_approx(heading*1700.0*dt))
+		assert(MOTION.walking_velocity(heading*100.0,-heading,175.0,dt).is_equal_approx(heading*(100.0-1900.0*dt)))
+		assert(MOTION.walking_velocity(heading*100.0,Vector2.ZERO,175.0,dt).is_equal_approx(heading*55.0))
+		assert(MOTION.charge_target(heading*0.5,200.0).is_equal_approx(heading*45.0))
+		assert(MOTION.charge_velocity(heading*200.0,heading,200.0,dt).is_equal_approx(heading*90.0))
+		assert(MOTION.channel_velocity(Vector2.ZERO,heading,140.0,dt).is_equal_approx(heading*1700.0*dt))
+	assert(MOTION.charge_target(Vector2(1,1),200.0).length()<=90.001)
+	assert(MOTION.charge_target(Vector2.RIGHT,-10.0)==Vector2.ZERO)
 	print("Combat foundation: 66 legacy weapon profiles and shared frontal geometry PASS")
 	quit(0)
