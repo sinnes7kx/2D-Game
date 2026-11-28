@@ -131,3 +131,14 @@ static func preview_span(style: String,hand: int=0) -> PackedVector2Array:
 		"forge_dagger": return PackedVector2Array([Vector2(0,14),Vector2(0,-40)])
 		"blade": return PackedVector2Array([Vector2(0,10),Vector2(0,-50)])
 	return PackedVector2Array()
+
+static func owns_straight_core(body: AnimatedSprite2D,item: GhostItemInstance,clip: String) -> bool:
+	if item==null or equipped(body)!=item:
+		return false
+	var style: String=item.weapon_style()
+	if style in ["dual_sword","dual_dagger"]:
+		return not first_visible(paired_spans(body,style,clip,body.frame)).is_empty()
+	if style not in ["blade","dagger"]:
+		return false
+	var rig: Node=body.get_node_or_null("WeaponPoseV172")
+	return rig!=null and rig.has_method("_is_equipped") and bool(rig.call("_is_equipped",clip)) and single_span(body,clip,body.frame).size()==2
