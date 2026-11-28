@@ -148,3 +148,6 @@ static func light_redraw(owner: Node,body: AnimatedSprite2D) -> bool:
 	var previous: bool = bool(owner.get_meta("shared_edge_active",false))
 	owner.set_meta("shared_edge_active",enabled)
 	return enabled or previous
+
+static func melee_model_glow(item: GhostItemInstance,enabled: bool=true) -> float:
+	return effect_scale(item,enabled)*FX.intensity*0.80
