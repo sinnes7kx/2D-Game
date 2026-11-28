@@ -223,8 +223,7 @@ static func guard_span(body: AnimatedSprite2D, span: PackedVector2Array, hand: i
 	if actor == null or float(actor.get("parry_left")) <= 0.0:
 		return span
 	var age: float = float(actor.get("parry_age"))
-	var entered: float = 1.0 if bool(actor.get("parry_used")) else smoothstep(0.0, 0.075, age)
-	var weight: float = entered * smoothstep(0.0, 0.085, float(actor.get("parry_left")))
+	var weight: float = DIAGONAL.guard_weight(age,float(actor.get("parry_left")),bool(actor.get("parry_used")))
 	var grip: Vector2 = span[0]
 	var original: Vector2 = span[1] - grip
 	var world_heading: Vector2 = actor.get("parry_heading")
