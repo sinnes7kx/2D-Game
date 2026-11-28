@@ -45,7 +45,7 @@ func _initialize() -> void:
 		var trident: Array=RENDER.polearm_heads(span,true)
 		assert(spear.size()==1 and trident.size()==3)
 		assert((spear[0]["root"] as Vector2).is_equal_approx(tip-heading*24.0))
-		assert((trident[2]["root"] as Vector2).is_equal_approx(tip-heading*17.0))
+		assert((trident[2]["root"] as Vector2).is_equal_approx(tip-heading*25.0))
 		assert((trident[2]["tip"] as Vector2).is_equal_approx(tip))
 		for prong in trident:
 			assert(RENDER.edge_paths(prong,profile).size()==2)
@@ -87,6 +87,25 @@ func _initialize() -> void:
 	light_node.call("set_pose",wand,visible,false,0.1)
 	assert(not light_node.visible)
 	light_node.free()
+	# Rehaul preserves stat seed, suppresses ordinary hue motion, and saves purchased skin separately.
+	var palette_fx = preload("res://scripts/anomalous_steel_fx_v180.gd")
+	var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
+	var regular: Dictionary = {"color_mode": 6, "material": 6, "particle_tier": 6, "signature": 0}
+	assert(palette_fx.color_at(colors,regular,0.35,0.0)==palette_fx.color_at(colors,regular,0.35,4.0))
+	var prism: Dictionary = {"prism": true, "palette_speed": 0.2}
+	assert(palette_fx.color_at(colors,prism,0.35,0.0)!=palette_fx.color_at(colors,prism,0.35,1.0))
+	bow.rainbow_skin = true
+	assert(bow.glow_gradient_colors().size()==6 and bool(bow.collector_appearance()["prism"]))
+	assert(bow.all_stats()==stats)
+	var inv: Node = preload("res://scripts/inventory.gd").new()
+	var record: Dictionary = inv.call("_serialize_item",bow,Vector2i.ZERO)
+	var restored: GhostItemInstance = inv.call("_deserialize_item",record)
+	assert(restored.rainbow_skin and restored.glow_gradient_colors()==bow.glow_gradient_colors())
+	assert(restored.all_stats()==bow.all_stats())
+	record.erase("rainbow_skin")
+	var legacy: GhostItemInstance = inv.call("_deserialize_item",record)
+	assert(not legacy.rainbow_skin)
+	inv.free()
 	FX.set_intensity(initial)
 	print("Weapon render contract: straight and polearm geometry, wand atlas identity, 8 headings and glow inputs PASS")
 	quit(0)
