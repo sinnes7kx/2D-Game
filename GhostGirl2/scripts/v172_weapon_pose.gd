@@ -210,6 +210,8 @@ func _is_equipped(animation_name: String) -> bool:
 	if equipped == null or equipped.definition == null:
 		return false
 	var ident: String = str(equipped.definition.item_id)
+	if preload("res://scripts/ghost_diagonal_art_v247.gd").is_guard_clip(animation_name):
+		return equipped.weapon_style() in ["blade","dagger","spear","twinblade","rapier","axe","crossbow"] or equipped.uses_forge_bow() or ident=="seraph_reaper_v292"
 	if ident=="seraph_reaper_v292":
 		return animation_name.begins_with("seraph_scythe_") or animation_name.begins_with("attack_seraph_scythe_")
 	if equipped.weapon_style() in ["rapier","axe"]:
@@ -269,6 +271,20 @@ func get_weapon_span(animation_name: String, frame_index: int) -> PackedVector2A
 	return RENDER.guard_span(body, span)
 
 func _base_weapon_span_v288(animation_name: String, frame_index: int) -> PackedVector2Array:
+	var guard_art = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	if guard_art.is_guard_clip(animation_name) and _is_equipped(animation_name):
+		var length: float = 67.0
+		if animation_name.contains("dagger_"):
+			length=DAGGER_THRUST.SINGLE_LENGTH
+		elif animation_name.contains("spear_"):
+			length=74.0
+		elif animation_name.contains("twinblade"):
+			length=76.0
+		elif animation_name.contains("rapier_"):
+			length=84.0
+		elif animation_name.contains("bow_"):
+			length=32.0
+		return guard_art.guard_base_span(animation_name,frame_index,length)
 	if _is_equipped(animation_name) and (animation_name.contains("rapier_") or animation_name.contains("axe_") or animation_name.contains("seraph_scythe_")):
 		var diagonal_v283 = preload("res://scripts/ghost_diagonal_art_v247.gd")
 		if diagonal_v283.is_modular_combat_v294(animation_name):
