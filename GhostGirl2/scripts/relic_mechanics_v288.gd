@@ -1,4 +1,5 @@
 extends RefCounted
+const GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const GROUND = preload("res://scripts/relic_ground_v288.gd")
 const AUDIO = preload("res://scripts/combat_juice_v194.gd")
 const CHANNELS: Dictionary = {
@@ -15,14 +16,14 @@ const PHYSICAL: Dictionary = {
 const VOLLEY: Dictionary = {"frostveil_bow_v277":4.0}
 
 static func physical_contact(offset: Vector2, axis: Vector2, reach: float, cone: float) -> bool:
-	return offset.length_squared()>4.0 and offset.length_squared()<=reach*reach and not axis.is_zero_approx() and offset.normalized().dot(axis.normalized())>=cone
+	return GEOMETRY.cone_contact(offset,axis,reach,4.0,cone)
 
 static func _physical_strike(actor: CharacterBody2D,item: GhostItemInstance,axis: Vector2,id: String,root: Node) -> void:
 	var profile: Dictionary = PHYSICAL[id]
 	var damage: float = item.weapon_damage()*float(profile["power"])*(1.0+float(actor.call("_stat","melee_power_pct"))/100.0)
 	var hits: int=0
 	for other in actor.get_tree().get_nodes_in_group("enemies"):
-		if not is_instance_valid(other) or other.is_queued_for_deletion() or not other is Node2D or not other.has_method("hit"):
+		if not GEOMETRY.is_hittable(other):
 			continue
 		var point: Vector2=(other as Node2D).global_position
 		if not physical_contact(point-actor.global_position,axis,float(profile["range"]),float(profile["dot"])) or not GROUND.clear_path(actor,actor.global_position,point):
@@ -52,7 +53,7 @@ static func is_channel(id: String) -> bool:
 	return CHANNELS.has(id)
 
 static func parry_contact_v289(offset: Vector2,axis: Vector2) -> bool:
-	return offset.length_squared()>4.0 and offset.length_squared()<=220.0*220.0 and not axis.is_zero_approx() and offset.normalized().dot(axis.normalized())>=0.60
+	return GEOMETRY.cone_contact(offset,axis,220.0,4.0,0.60)
 
 static func cooldown(id: String) -> float:
 	if id=="seraph_descent":
