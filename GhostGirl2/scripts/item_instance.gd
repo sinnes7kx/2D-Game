@@ -306,9 +306,19 @@ func apply_cosmetic_uid(uid: String) -> void:
 		rare_visual_mod = 5
 
 # V1.53: complete-spectrum, per-look gradients. Never change the combat seed.
+# Independent ultra-rare appearance roll (1/65536); no additional saved field.
+func has_six_white_glow() -> bool:
+	if get_slot() not in ["sword", "wand"]:
+		return false
+	var identity: String = cosmetic_uid.to_lower() if COSMETIC_RNG.is_valid_uid(cosmetic_uid) else "legacy-%d" % visual_seed()
+	var digest: PackedByteArray = ("ghost-girl-six-white-v1:" + identity).sha256_buffer()
+	return digest[0] == 0 and digest[1] == 0
+
 func glow_gradient_colors() -> Array[Color]:
 	if rainbow_skin:
 		return [Color("ff426d"), Color("ffce55"), Color("79ff9e"), Color("4cdefe"), Color("9b70ff"), Color("ff75d9")]
+	if has_six_white_glow():
+		return [Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE]
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel(), gradient_version)
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
@@ -327,12 +337,12 @@ func bow_art_style() -> String:
 	return "thornrose"
 
 func bow_limb_gradient_colors() -> Array[Color]:
-	if rainbow_skin:
+	if rainbow_skin or has_six_white_glow():
 		return glow_gradient_colors()
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel(), gradient_version)
 
 func bow_string_gradient_colors() -> Array[Color]:
-	if rainbow_skin:
+	if rainbow_skin or has_six_white_glow():
 		return glow_gradient_colors()
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string:" + effect_palette_channel(), gradient_version)
 
@@ -507,6 +517,7 @@ func collector_appearance() -> Dictionary:
 	var mythic: bool = visual_signature() == 4
 	look["prism"] = mythic or rainbow_skin
 	look["rainbow"] = rainbow_skin
+	look["six_white"] = has_six_white_glow() and not rainbow_skin
 	if mythic or rainbow_skin:
 		look["prism_colors"] = glow_gradient_colors()
 		look["palette_curve"] = 0
@@ -523,8 +534,7 @@ func collector_appearance() -> Dictionary:
 func has_rare_seeded_appearance() -> bool:
 	if get_slot() not in ["sword", "wand"]:
 		return false
-	var natural: Dictionary = COLLECTOR_LOOK.roll(cosmetic_uid, visual_seed())
-	return maxi(int(natural.get("material", 0)), int(natural.get("particle_tier", 0))) >= 4 or genuine_visual_signature() >= 4
+	return has_six_white_glow() or genuine_visual_signature() == 4
 
 func collector_material_label() -> String:
 	return "Mythic" if visual_signature() == 4 and get_slot() in ["sword", "wand"] else ""
@@ -587,13 +597,6 @@ func details(advanced: bool = false) -> String:
 				lines.append(collector_material_label())
 		if get_slot() == "sword":
 			lines.append("Light attack %.2fs · %.1f stamina" % [light_swing_duration(), light_stamina_cost()])
-		if get_slot() in ["sword", "wand"]:
-			var fx: Dictionary = effect_rolls()
-			lines.append("Aura: " + GhostWeaponFXLibrary.motif_name(int(fx["motif"])))
-			lines.append("Trail: " + GhostWeaponFXLibrary.trail_name(int(fx["trail"])))
-			lines.append("Impact: " + GhostWeaponFXLibrary.impact_name(get_slot(), int(fx["impact"])))
-			if get_slot() == "wand":
-				lines.append("Spell: " + GhostWeaponFXLibrary.spell_form_name(int(fx["form"])))
 	return "\n".join(lines)
 
 func stamp_origin(room_id: String) -> void:
