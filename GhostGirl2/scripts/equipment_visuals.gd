@@ -18,13 +18,9 @@ var wand_surface: ShaderMaterial
 
 # v1.62: three equipment-layer wand silhouettes, not changes to Ghost Girl art.
 # Selection is cosmetic-UID-derived through visual_seed(), stable in saved looks.
-const WAND_POSE_ATLASES = [
-	preload("res://assets/equipment/wands_v163/crystal_rose_poses_v163.png"),
-	preload("res://assets/equipment/wands_v163/moonlit_censer_poses_v163.png"),
-	preload("res://assets/equipment/wands_v163/thorn_crescent_poses_v163.png")
-]
+const WAND_POSE_ATLASES = WAND_ANCHORS_V216.POSE_ATLASES
 const WAND_POSE_GUIDES_PATH: String = "res://resources/wand_pose_guides_v163.json"
-const WAND_FRAME_SIZE: Vector2 = Vector2(176, 176)
+const WAND_FRAME_SIZE: Vector2 = WAND_ANCHORS_V216.CELL
 var wand_pose_rows: Dictionary = {}
 var last_wand_animation: String = ""
 var last_wand_frame: int = -1
@@ -254,7 +250,7 @@ func _process(delta: float) -> void:
 	wand_visual.hide()
 	var wand_item: GhostItemInstance = inventory.get_equipped("wand")
 	if wand_item != null and WAND_ANCHORS_V216.is_wand_pose(str(player_art.animation)):
-		var visual_index: int = posmod(wand_item.visual_seed(), WAND_POSE_ATLASES.size())
+		var visual_index: int = WAND_ANCHORS_V216.atlas_index(wand_item.visual_seed())
 		if visual_index != last_wand_sprite_index or wand_visual.texture == null:
 			last_wand_sprite_index = visual_index
 			wand_visual.texture = WAND_POSE_ATLASES[visual_index]
