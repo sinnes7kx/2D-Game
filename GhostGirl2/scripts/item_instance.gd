@@ -327,9 +327,13 @@ func bow_art_style() -> String:
 	return "thornrose"
 
 func bow_limb_gradient_colors() -> Array[Color]:
+	if rainbow_skin:
+		return glow_gradient_colors()
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-limbs:" + effect_palette_channel(), gradient_version)
 
 func bow_string_gradient_colors() -> Array[Color]:
+	if rainbow_skin:
+		return glow_gradient_colors()
 	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), "bow-string:" + effect_palette_channel(), gradient_version)
 
 func mythic_layer_variant() -> int:
@@ -660,9 +664,11 @@ func effect_palette_channel() -> String:
 	if OS.is_debug_build() and debug_collector_tier >= 0:
 		tier = debug_collector_tier
 		particles = debug_collector_tier
-	return "effect:%d:%d:%d:%d:%d" % [signature, tier, particles, mythic_layer_variant() if signature == 4 else 0, int(rainbow_skin)]
+	return "effect:%d:%d:%d:%d" % [signature, tier, particles, mythic_layer_variant() if signature == 4 else 0]
 
 func effect_palette_motion() -> Dictionary:
 	var motion: Dictionary = COSMETIC_RNG.animation_profile(cosmetic_uid, visual_seed(), effect_palette_channel())
 	motion["color_mode"] = 2 if rainbow_skin or visual_signature() == 4 else 0
+	motion["prism"] = rainbow_skin or visual_signature() == 4
+	motion["rainbow"] = rainbow_skin
 	return motion
