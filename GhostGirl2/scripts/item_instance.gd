@@ -306,20 +306,31 @@ func apply_cosmetic_uid(uid: String) -> void:
 		rare_visual_mod = 5
 
 # V1.53: complete-spectrum, per-look gradients. Never change the combat seed.
-# Independent ultra-rare appearance roll (1/65536); no additional saved field.
-func has_six_white_glow() -> bool:
+# Six independent white chances, each 1/8; six white is 1/262144.
+# This cosmetic-only roll is derived from the existing saved identity.
+func white_stop_mask() -> int:
 	if get_slot() not in ["sword", "wand"]:
-		return false
+		return 0
 	var identity: String = cosmetic_uid.to_lower() if COSMETIC_RNG.is_valid_uid(cosmetic_uid) else "legacy-%d" % visual_seed()
 	var digest: PackedByteArray = ("ghost-girl-six-white-v1:" + identity).sha256_buffer()
-	return digest[0] == 0 and digest[1] == 0
+	var mask: int = 0
+	for i in range(6):
+		if int(digest[i]) % 8 == 0:
+			mask |= 1 << i
+	return mask
+
+func has_six_white_glow() -> bool:
+	return white_stop_mask() == 63
 
 func glow_gradient_colors() -> Array[Color]:
 	if rainbow_skin:
 		return [Color("ff426d"), Color("ffce55"), Color("79ff9e"), Color("4cdefe"), Color("9b70ff"), Color("ff75d9")]
-	if has_six_white_glow():
-		return [Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE]
-	return COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel(), gradient_version)
+	var base: Array[Color] = COSMETIC_RNG.gradient_for_channel(cosmetic_uid, visual_seed(), effect_palette_channel(), gradient_version)
+	var mask: int = white_stop_mask()
+	var colors: Array[Color] = []
+	for i in range(6):
+		colors.append(Color.WHITE if (mask & (1 << i)) != 0 else COSMETIC_RNG.sample_palette(base, float(i)/5.0))
+	return colors
 
 # Bow limbs and bowstring have *different* independent three-stop gradients.
 # Saving/restoring the cosmetic UID reproduces both without new schema fields.
