@@ -1,4 +1,5 @@
 extends Node2D
+const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 const CHOICES_V216 = preload("res://scripts/visual_choices_v216.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
@@ -250,39 +251,18 @@ func _axial_span() -> PackedVector2Array:
 		if wand_span.size() == 2:
 			return wand_span
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 34.0)])
-	if style == "dual_sword":
-		var crossed: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
-		if crossed != null and crossed.has_method("get_blade_spans"):
-			var sword_spans: Array = crossed.call("get_blade_spans", animation, body.frame)
-			if sword_spans.size() == 2:
-				var first_sword: PackedVector2Array = sword_spans[0]
-				if first_sword.size() == 2:
-					return first_sword
-				var second_sword: PackedVector2Array = sword_spans[1]
-				if second_sword.size() == 2:
-					return second_sword
-		# The paired rig is authoritative even when both wrists are hidden.
-		return empty
-	if style == "dual_dagger":
-		var paired: Node = player.get_node_or_null("Ghost/DualDaggersV173") if player != null else null
-		if paired != null and paired.has_method("get_blade_spans"):
-			var spans: Array = paired.call("get_blade_spans", animation, body.frame)
-			if spans.size() == 2:
-				var first: PackedVector2Array = spans[0]
-				if first.size() == 2:
-					return first
-				var second: PackedVector2Array = spans[1]
-				if second.size() == 2:
-					return second
-		if not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation).is_empty():
+	if style in ["dual_sword","dual_dagger"]:
+		var paired: Array = RENDER.paired_spans(body,style,animation,body.frame)
+		var first: PackedVector2Array = RENDER.first_visible(paired)
+		if first.size()==2:
+			return first
+		if style=="dual_sword" or not diagonal.diagonal_name(animation).is_empty() or paired.size()==2:
 			return empty
-		return PackedVector2Array([grip, _fallback_tip(grip, face, 50.0)])
+		return PackedVector2Array([grip,_fallback_tip(grip,face,50.0)])
 	if style == "twinblade":
-		var physical: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
-		if physical != null:
-			var span: Variant = physical.call("get_weapon_span", animation, body.frame)
-			if span is PackedVector2Array and span.size() == 2:
-				return span
+		var span: PackedVector2Array = RENDER.single_span(body,animation,body.frame)
+		if span.size()==2:
+			return span
 	if style in ["maul", "twinblade"]:
 		if diagonal_carry:
 			return empty # Heavy rig owns its edge; no cardinal fallback.
@@ -296,10 +276,10 @@ func _axial_span() -> PackedVector2Array:
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 66.0 if style == "maul" else 73.0)])
 	if style in ["dagger", "spear"]:
 		# v1.72.2: glow follows exactly the weapon geometry being rendered.
-		var pose_node: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
+		var pose_node: Node = body.get_node_or_null("WeaponPoseV172")
 		if pose_node != null and pose_node.has_method("get_weapon_span"):
-			var authored: Variant = pose_node.call("get_weapon_span", animation, pose_frame)
-			if authored is PackedVector2Array and authored.size() == 2:
+			var authored: PackedVector2Array = RENDER.single_span(body,animation,pose_frame)
+			if authored.size() == 2:
 				return authored
 			if item.uses_forge_dagger() or (style in ["spear", "dagger"] and (animation.begins_with("attack_") or not preload("res://scripts/ghost_diagonal_art_v247.gd").diagonal_name(animation).is_empty())):
 				return empty # Occluded physical grip: no detached fallback light.
@@ -315,11 +295,7 @@ func _axial_span() -> PackedVector2Array:
 		return PackedVector2Array([grip, _fallback_tip(grip, face, 54.0 if style == "dagger" else 82.0)])
 	if style == "blade":
 		if item.uses_modular_single_sword() or diagonal_carry:
-			var rig: Node = player.get_node_or_null("Ghost/WeaponPoseV172") if player != null else null
-			if rig != null:
-				var shared: PackedVector2Array = rig.call("get_weapon_span", animation, body.frame)
-				return shared
-			return empty
+			return RENDER.single_span(body,animation,body.frame)
 		# Authored coordinates when available; safe idle blade otherwise.
 		var blade: PackedVector2Array = _blade_span(animation, face, body.frame)
 		var tracked: PackedVector2Array = PackedVector2Array()
@@ -520,26 +496,30 @@ func _draw() -> void:
 	if not collector_look.is_empty():
 		intensity *= float(collector_look.get("glow_strength", 1.0))
 		intensity *= 0.91 + 0.09 * sin(elapsed * float(collector_look.get("glow_speed", 0.8)) * TAU)
-		if style not in ["dual_sword", "dual_dagger"]:
+		if style not in ["dual_sword", "dual_dagger"] and not RENDER.owns_straight_core(body,item,animation):
 			_draw_v177_collector_finish(grip, tip, style, intensity)
 	# Explicit owner-selected glow always produces a small visible metal/glass
 	# highlight even if this weapon lacks an authored prestige animation.
 	# Paired/twin blades and heavy rigs retain their own precise edge paths.
 	var seeded_special: bool = GhostWeaponFXLibrary.tier(item.quality) >= 2 or item.visual_signature() > 0
-	if (item.glow_level_override > 0 or (item.glow_level_override < 0 and seeded_special)) and style not in ["dual_sword", "dual_dagger", "twinblade"]:
+	var shared_core: bool = RENDER.owns_straight_core(body,item,animation)
+	if not shared_core and (item.glow_level_override > 0 or (item.glow_level_override < 0 and seeded_special)) and style not in ["dual_sword", "dual_dagger", "twinblade"]:
 		_draw_v216_visible_fallback(grip, tip, intensity)
 	if style == "dual_sword":
-		# Glow is applied to BOTH physical sword blades, never across the grips.
-		var paired_swords: Node = player.get_node_or_null("Ghost/DualSwordsV174") if player != null else null
-		if paired_swords != null and paired_swords.has_method("get_blade_spans"):
-			var twin_swords: Array = paired_swords.call("get_blade_spans", animation, body.frame)
-			_draw_v174_dual_sword_fx(twin_swords, intensity, attacking)
+		_draw_v174_dual_sword_fx(RENDER.paired_spans(body,style,animation,body.frame),intensity,attacking,shared_core)
 		return
 	if style == "dual_dagger":
-		var paired_rig: Node = player.get_node_or_null("Ghost/DualDaggersV173") if player != null else null
-		if paired_rig != null and paired_rig.has_method("get_blade_spans"):
-			var both: Array = paired_rig.call("get_blade_spans", animation, body.frame)
-			_draw_v173_dual_dagger_fx(both, intensity, attacking)
+		_draw_v173_dual_dagger_fx(RENDER.paired_spans(body,style,animation,body.frame),intensity,attacking,shared_core)
+		return
+	if shared_core:
+		# The physical blade layer now draws the same core light as the Lens.
+		# Retain the rare secondary ornaments, but not a second base halo.
+		_draw_ambient_fireflies(grip,tip,tangent,normal,minf(intensity,1.5))
+		_draw_socketed_jewel_echo(grip,tip,normal)
+		if visual_signature_level>0:
+			_draw_signature(grip,tip,tangent,normal,attacking,minf(intensity,1.6))
+		_draw_v172_named_weapon_fx(grip,tip,tangent,normal,attacking,minf(intensity,1.55))
+		_draw_v1723_mythic_sheen(grip,tip,tangent,normal,style,attacking)
 		return
 	var narrow: bool = style == "bow"
 	var wand: bool = item.get_slot() == "wand"
@@ -721,7 +701,7 @@ func _v175_mythic_signature(a: Vector2, b: Vector2, style: String, index: int, a
 		draw_line(star - normal * extent, star + normal * extent, Color(1.0, 0.99, 1.0, 0.42 * power * sparkle_time), 1.1, true)
 		draw_line(star - tangent * extent * 0.70, star + tangent * extent * 0.70, Color(bright.r, bright.g, bright.b, 0.34 * power * sparkle_time), 1.05, true)
 
-func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) -> void:
+func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool, shared_core: bool=false) -> void:
 	# Two independent moving metal edge masks, each tied to its own authored
 	# grip-to-point span. The original handle/guard is never treated as emissive.
 	if item == null or blades.size() != 2:
@@ -738,29 +718,34 @@ func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) 
 		var grip: Vector2 = span[0]
 		var tip: Vector2 = span[1]
 		# Start on the lower steel, past the dark hilt and crossguard.
-		var blade_root: Vector2 = grip.lerp(tip, 0.25)
+		var geometry: Dictionary = RENDER.straight_geometry("dual_sword",span,hand_index)
+		if geometry.is_empty():
+			continue
+		var blade_root: Vector2 = geometry["root"]
+		tip=geometry["tip"]
 		var blade_axis: Vector2 = tip - blade_root
 		if blade_axis.length_squared() < 64.0:
 			continue
 		var blade_dir: Vector2 = blade_axis.normalized()
 		var blade_normal: Vector2 = Vector2(-blade_dir.y, blade_dir.x)
 		var hand_phase: float = float(hand_index) * 0.38
-		# More luminous in Mythic but still following the cutting edge.
-		for section_i in range(16):
-			var u: float = float(section_i) / 15.0
-			var at: Vector2 = blade_root.lerp(tip, u)
-			var taper: float = maxf(0.14, sin((0.11 + u * 0.87) * PI))
-			var chroma: float = fposmod(u * 0.59 + elapsed * (0.095 if mythic else 0.014) + seed_phase + hand_phase, 1.0)
-			var ink: Color = _gradient_at(chroma)
-			var brightness: float = (0.115 if mythic else 0.065) * power * pulse * taper
-			draw_circle(at, (7.4 if mythic else 3.6) * taper, Color(ink.r, ink.g, ink.b, brightness))
-			draw_circle(at, 2.5 * taper, Color(ink.r, ink.g, ink.b, brightness * 1.85))
 		var shine: Color = _gradient_at(fposmod(0.67 + seed_phase + elapsed * 0.11 + hand_phase, 1.0))
-		var edge_offset: float = -1.3 if hand_index == 0 else 1.3
-		draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.25) * power * pulse), 1.45, true)
-		_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)
-		var colors: Array[Color] = effect_palette
-		ANOMALOUS.draw_edge(self, PackedVector2Array([blade_root, tip]), colors, collector_look, elapsed, intensity)
+		if not shared_core:
+			# More luminous in Mythic but still following the cutting edge.
+			for section_i in range(16):
+				var u: float = float(section_i) / 15.0
+				var at: Vector2 = blade_root.lerp(tip, u)
+				var taper: float = maxf(0.14, sin((0.11 + u * 0.87) * PI))
+				var chroma: float = fposmod(u * 0.59 + elapsed * (0.095 if mythic else 0.014) + seed_phase + hand_phase, 1.0)
+				var ink: Color = _gradient_at(chroma)
+				var brightness: float = (0.115 if mythic else 0.065) * power * pulse * taper
+				draw_circle(at, (7.4 if mythic else 3.6) * taper, Color(ink.r, ink.g, ink.b, brightness))
+				draw_circle(at, 2.5 * taper, Color(ink.r, ink.g, ink.b, brightness * 1.85))
+			var edge_offset: float = -1.3 if hand_index == 0 else 1.3
+			draw_line(blade_root + blade_normal * edge_offset, tip, Color(shine.r, shine.g, shine.b, (0.49 if mythic else 0.25) * power * pulse), 1.45, true)
+			_v175_visible_edge(blade_root, tip, intensity, float(hand_index) * 0.32)
+			var colors: Array[Color] = effect_palette
+			ANOMALOUS.draw_edge(self, PackedVector2Array([blade_root, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
 		_v175_mythic_signature(blade_root, tip, "dual_sword", hand_index, attacking)
@@ -790,7 +775,7 @@ func _draw_v174_dual_sword_fx(blades: Array, intensity: float, attacking: bool) 
 			_:
 				draw_line(tip - blade_normal * 3.1, tip + blade_normal * 3.1, Color(shine.r, shine.g, shine.b, 0.39 * power), 1.0, true)
 
-func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool) -> void:
+func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool, shared_core: bool=false) -> void:
 	# Two separate blade-only gradients, one per hand, taken from the SAME
 	# frame-authored geometry as the visible swords. No handle bloom, no new hits.
 	if item == null or blades.size() != 2:
@@ -806,26 +791,31 @@ func _draw_v173_dual_dagger_fx(blades: Array, intensity: float, attacking: bool)
 			continue
 		var grip: Vector2 = span[0]
 		var tip: Vector2 = span[1]
-		var a: Vector2 = grip.lerp(tip, 0.39)
+		var geometry: Dictionary = RENDER.straight_geometry("dual_dagger",span,hand_index)
+		if geometry.is_empty():
+			continue
+		var a: Vector2 = geometry["root"]
+		tip=geometry["tip"]
 		var axis: Vector2 = tip - a
 		if axis.length_squared() < 24.0:
 			continue
 		var blade_normal: Vector2 = Vector2(-axis.y, axis.x).normalized()
 		var hand_phase: float = float(hand_index) * 0.27
-		for stripe_i in range(10):
-			var u: float = float(stripe_i) / 9.0
-			var at: Vector2 = a.lerp(tip, u)
-			var hue: float = fposmod(u * 0.48 + elapsed * (0.085 if mythic else 0.023) + seed_phase + hand_phase, 1.0)
-			var color: Color = _gradient_at(hue)
-			var taper: float = maxf(0.18, sin((0.10 + u * 0.87) * PI))
-			var alpha: float = (0.13 if mythic else 0.055) * power * taper * pulse
-			draw_circle(at, (5.4 if mythic else 2.7) * taper, Color(color.r, color.g, color.b, alpha))
-			draw_circle(at, 1.6 * taper, Color(color.r, color.g, color.b, alpha * 2.2))
 		var shine: Color = _gradient_at(fposmod(0.73 + seed_phase + elapsed * 0.09 + hand_phase, 1.0))
-		draw_line(a - blade_normal * 1.1, tip, Color(shine.r, shine.g, shine.b, (0.45 if mythic else 0.14) * power * pulse), 1.35, true)
-		_v175_visible_edge(a, tip, intensity, float(hand_index) * 0.31)
-		var colors: Array[Color] = effect_palette
-		ANOMALOUS.draw_edge(self, PackedVector2Array([a, tip]), colors, collector_look, elapsed, intensity)
+		if not shared_core:
+			for stripe_i in range(10):
+				var u: float = float(stripe_i) / 9.0
+				var at: Vector2 = a.lerp(tip, u)
+				var hue: float = fposmod(u * 0.48 + elapsed * (0.085 if mythic else 0.023) + seed_phase + hand_phase, 1.0)
+				var color: Color = _gradient_at(hue)
+				var taper: float = maxf(0.18, sin((0.10 + u * 0.87) * PI))
+				var alpha: float = (0.13 if mythic else 0.055) * power * taper * pulse
+				draw_circle(at, (5.4 if mythic else 2.7) * taper, Color(color.r, color.g, color.b, alpha))
+				draw_circle(at, 1.6 * taper, Color(color.r, color.g, color.b, alpha * 2.2))
+			draw_line(a - blade_normal * 1.1, tip, Color(shine.r, shine.g, shine.b, (0.45 if mythic else 0.14) * power * pulse), 1.35, true)
+			_v175_visible_edge(a, tip, intensity, float(hand_index) * 0.31)
+			var colors: Array[Color] = effect_palette
+			ANOMALOUS.draw_edge(self, PackedVector2Array([a, tip]), colors, collector_look, elapsed, intensity)
 		if not mythic:
 			continue
 		_v175_mythic_signature(a, tip, "dual_dagger", hand_index, attacking)
