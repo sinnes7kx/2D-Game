@@ -685,9 +685,15 @@ static func guard_clip(idle_prefix: String, eight: String, cardinal: String, fra
 	return ""
 
 # Physics clock controls the pose even during an early confirmed parry.
-static func guard_frame(age: float, remaining: float) -> int:
+static func guard_frame(age: float, remaining: float, confirmed: bool = false) -> int:
 	if remaining<=0.0:
 		return 7
+	# A confirmed early contact must visibly catch the weapon in the guard.
+	# Only the presentation changes: the existing recovery timer is unchanged.
+	if confirmed:
+		if remaining>=0.10:
+			return 4
+		return clampi(5+floori((0.10-remaining)/0.033333),5,7)
 	if remaining<0.12:
 		return clampi(5+floori((0.12-remaining)/0.04),5,7)
 	return clampi(floori(age/0.035),0,4)
@@ -821,3 +827,7 @@ static func missing_authored_guards(frames: SpriteFrames) -> PackedStringArray:
 			if frames==null or not frames.has_animation(clip) or not bool(frames.get_meta("authored_combat_"+clip,false)):
 				missing.append(clip)
 	return missing
+
+# An explicitly guided pose may deliberately hide either hand.
+static func has_guided_pose(clip: String) -> bool:
+	return _authored_guides.has(clip)

@@ -2,6 +2,7 @@ extends SubViewportContainer
 ## The actual player scene and its existing equipped renderers in an isolated
 ## 2D viewport. No gameplay processing, collisions, camera or save operations.
 const PLAYER = preload("res://scenes/player.tscn")
+const PLAYBACK = preload("res://scripts/animation/directional_playback.gd")
 class PreviewWorld extends Node:
 	var inventory: Node
 
@@ -92,7 +93,10 @@ func refresh() -> void:
 		clip = "idle_" + cardinal
 	clip = str(actor.call("_resolve_skin_clip", clip))
 	if body.sprite_frames.has_animation(clip) and (str(body.animation) != clip or not body.is_playing()):
-		body.play(clip)
+		if str(body.animation)==clip:
+			body.play(clip)
+		else:
+			PLAYBACK.play_locomotion(body,clip)
 	# All visual layers share the live equipped item references, including
 	# temporary debug overrides. Preview never calls equip, reroll or save.
 

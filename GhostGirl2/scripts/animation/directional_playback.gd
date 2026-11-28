@@ -49,7 +49,7 @@ static func retarget_request(current: String,cardinal: String) -> String:
 static func play_locomotion(body: AnimatedSprite2D,clip: String) -> void:
 	if body==null or not has_clip(body.sprite_frames,clip) or str(body.animation)==clip:
 		return
-	var phase: float = MOTION.phase_of(body) if MOTION.same_walk_family(str(body.animation),clip) else -1.0
+	var phase: float = MOTION.phase_of(body) if MOTION.same_locomotion_family(str(body.animation),clip) else -1.0
 	body.play(clip)
 	if phase>=0.0:
 		MOTION.seek_phase(body,phase)

@@ -126,8 +126,11 @@ static func rendered_span(body: AnimatedSprite2D, face: String) -> PackedVector2
 	if points.size() != 2:
 		return points
 	var grip: Vector2 = points[0]
-	var wrist: Vector2 = preload("res://scripts/ghost_diagonal_art_v247.gd").wrist(animation_name, body.frame)
+	var art = preload("res://scripts/ghost_diagonal_art_v247.gd")
+	var wrist: Vector2 = art.wrist(animation_name, body.frame)
 	if wrist == Vector2.INF:
+		if art.is_guard_clip(animation_name) and art.has_guided_pose(animation_name):
+			return PackedVector2Array() # Occluded authored hand: no detached wand light.
 		wrist = target_grip(face,animation_name,frame)
 	return transformed_span(points,wrist,pose_rotation_v294(body,points))
 

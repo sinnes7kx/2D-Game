@@ -138,6 +138,15 @@ static func same_walk_family(a: String, b: String) -> bool:
 		return false
 	return _walk_family(a) == _walk_family(b)
 
+static func same_locomotion_family(a: String,b: String) -> bool:
+	if same_walk_family(a,b):
+		return true
+	var logical_a: String = a
+	var logical_b: String = b
+	var idle_a: bool = logical_a.begins_with("idle_") or logical_a.contains("_idle_")
+	var idle_b: bool = logical_b.begins_with("idle_") or logical_b.contains("_idle_")
+	return idle_a and idle_b and _walk_family(logical_a)==_walk_family(logical_b)
+
 static func _walk_family(name: String) -> String:
 	for suffix in ["front_left", "front_right", "back_left", "back_right", "front", "back", "left", "right"]:
 		if name.ends_with("_" + suffix):

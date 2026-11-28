@@ -295,7 +295,12 @@ func _process(delta: float) -> void:
 		var behind: bool = facing == "back" and not diagonal_wrist
 		wand_visual.show_behind_parent = behind
 		wand_visual.z_index = -2 if behind else 6
-		wand_held_light.call("set_pose",wand_item,WAND_ANCHORS_V216.rendered_span(player_art,facing),behind,delta)
+		var visible_span: PackedVector2Array = WAND_ANCHORS_V216.rendered_span(player_art,facing)
+		if visible_span.size()==2:
+			wand_held_light.call("set_pose",wand_item,visible_span,behind,delta)
+		else:
+			wand_visual.hide()
+			wand_held_light.hide()
 	else:
 		wand_held_light.hide()
 	var ethereal_visible: bool = dress_ethereal_alpha < 1.0 and ETHEREAL_FX.intensity > 0.0
