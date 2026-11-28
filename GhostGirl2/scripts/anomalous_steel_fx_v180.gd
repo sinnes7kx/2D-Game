@@ -60,6 +60,8 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 	var protected_top: bool = bool(look.get("prism", false))
 	if protected_top:
 		power = minf(2.4, power * (1.85 if bool(look.get("rainbow", false)) else 1.50))
+	elif bool(look.get("six_white", false)):
+		power = minf(2.0, power * 1.55)
 	if power <= 0.0:
 		return
 	for i in range(path.size() - 1):
@@ -112,7 +114,7 @@ static func draw_edge(canvas: Node2D, path: PackedVector2Array, colors: Array[Co
 
 	else:
 		_draw_tier_detail(canvas,path,colors,look,time,power,tier)
-	if protected_top:
+	if protected_top or bool(look.get("six_white", false)):
 		for k in range(3):
 			var u: float = fposmod(time * 0.19 + float(k) * 0.31, 1.0)
 			var p: Vector2 = point_on_path(path, u)
