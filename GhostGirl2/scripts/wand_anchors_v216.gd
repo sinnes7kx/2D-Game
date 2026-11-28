@@ -6,6 +6,25 @@ const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const HAND = preload("res://scripts/dagger_thrust_v186.gd")
 const SAMPLES = preload("res://scripts/walk_inbetweens_v223.gd")
 const VISUAL_SCALE: float = 1.20
+const CELL: Vector2 = Vector2(176,176)
+const POSE_ATLASES = [
+	preload("res://assets/equipment/wands_v163/crystal_rose_poses_v163.png"),
+	preload("res://assets/equipment/wands_v163/moonlit_censer_poses_v163.png"),
+	preload("res://assets/equipment/wands_v163/thorn_crescent_poses_v163.png")
+]
+
+static func atlas_index(seed: int) -> int:
+	return posmod(seed,POSE_ATLASES.size())
+
+static func preview_texture(seed: int) -> AtlasTexture:
+	var row: Dictionary=rows().get("wand_idle_front",{})
+	if row.is_empty():
+		return null
+	var atlas: AtlasTexture=AtlasTexture.new()
+	atlas.atlas=POSE_ATLASES[atlas_index(seed)]
+	atlas.region=Rect2(Vector2(0,float(row.get("row",0)))*CELL,CELL)
+	atlas.filter_clip=true
+	return atlas
 static var _rows: Dictionary = {}
 
 static func rows() -> Dictionary:
