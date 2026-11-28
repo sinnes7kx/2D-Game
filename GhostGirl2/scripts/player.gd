@@ -3,6 +3,7 @@ extends CharacterBody2D
 ## New gesture frames (hook_front / back / left / right) contain the ornate
 ## rose hook at her hand, with slight reach/lean animation during casting.
 
+const MELEE_RULES = preload("res://scripts/combat/melee_rules.gd")
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
@@ -1448,7 +1449,7 @@ func _begin_parry() -> void:
 	world.ui.set_stamina(stamina,MAX_STAMINA)
 
 static func parry_result(age: float, heading: Vector2, offset: Vector2) -> int:
-	if age < 0.0 or age > PARRY_WINDOW or offset.length_squared() <= 1.0 or heading.is_zero_approx() or heading.normalized().dot(offset.normalized()) < 0.50:
+	if age < 0.0 or age > PARRY_WINDOW or not MELEE_RULES.frontal_contact(offset,heading,1.0,-1.0,0.50):
 		return 0
 	return 2 if age >= PARRY_PERFECT_START and age <= PARRY_PERFECT_END else 1
 
@@ -2447,64 +2448,11 @@ func _advance_attack(delta: float) -> void:
 
 func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = false, second_edge: bool = false) -> void:
 	var sword: GhostItemInstance = world.inventory.get_equipped("sword") if world.inventory != null else null
-	var reach: float = (174.0 if heavy_attack else 144.0) if sword != null else (128.0 if heavy_attack else 106.0)
-	var power: float = 34.0 if heavy_attack else [16.0, 19.0, 24.0][combo_step]
-	var attack_arc: float = 0.12 if heavy_attack else 0.32
-	var poise_bonus: float = 1.0
-	match active_attack_style:
-		"scythe":
-			reach = 216.0 if heavy_attack else 184.0
-			power *= 1.06 if heavy_attack else 0.95
-			attack_arc = -0.05 if heavy_attack else 0.12
-			poise_bonus = 1.12
-		"halberd":
-			reach = 242.0 if heavy_attack else 206.0
-			power *= 1.28 if heavy_attack else 1.08
-			attack_arc = 0.34 if heavy_attack else 0.48
-			poise_bonus = 1.35
-		"dagger":
-			reach = 143.0 if heavy_attack else 112.0
-			power *= 0.90 if heavy_attack else 0.77
-			# Dagger strikes have a narrow forward hit cone, not a sweep.
-			attack_arc = 0.08 if heavy_attack else 0.10
-			poise_bonus = 0.70
-		"dual_dagger":
-			reach = 153.0 if heavy_attack else 122.0
-			power *= 0.96 if heavy_attack else 0.80
-			attack_arc = 0.14 if heavy_attack else 0.15
-			poise_bonus = 0.73
-		"dual_sword":
-			reach = 199.0 if heavy_attack else 165.0
-			power *= 1.18 if heavy_attack else 0.97
-			attack_arc = 0.08 if heavy_attack else 0.12
-			poise_bonus = 0.96
-		"spear":
-			reach = 252.0 if heavy_attack else 213.0
-			power *= 1.18 if heavy_attack else 0.96
-			attack_arc = 0.64 if heavy_attack else 0.71
-			poise_bonus = 1.12
-		"rapier":
-			reach = 214.0 if heavy_attack else 176.0
-			power *= 1.10 if heavy_attack else 0.94
-			attack_arc = 0.86 if heavy_attack else 0.91
-			poise_bonus = 0.85
-		"axe":
-			reach = 208.0 if heavy_attack else 172.0
-			power *= 1.37 if heavy_attack else 1.09
-			attack_arc = -0.02 if heavy_attack else 0.15
-			poise_bonus = 1.52
-		"maul":
-			# Slow and committed, with a broad impact and exceptional stagger.
-			reach = 211.0 if heavy_attack else 173.0
-			power *= 1.45 if heavy_attack else 1.13
-			attack_arc = 0.04 if heavy_attack else 0.23
-			poise_bonus = 1.65
-		"twinblade":
-			# Each committed heavy spin has two separately timed physical cuts.
-			reach = 206.0 if heavy_attack else 168.0
-			power *= 1.05 if heavy_attack else 0.87
-			attack_arc = -0.10 if heavy_attack else 0.01
-			poise_bonus = 0.85
+	var profile: Vector4 = MELEE_RULES.base_profile(active_attack_style,heavy_attack,sword!=null,combo_step)
+	var reach: float = profile.x
+	var power: float = profile.y
+	var attack_arc: float = profile.z
+	var poise_bonus: float = profile.w
 	if sword != null:
 		if active_attack_style in ["axe","rapier"]:
 			var tuning: Dictionary = FORGE_TACTICS_V286.tuning(str(sword.definition.item_id))
