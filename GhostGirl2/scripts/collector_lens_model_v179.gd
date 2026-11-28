@@ -1,4 +1,6 @@
 extends Node2D
+const WAND = preload("res://scripts/wand_anchors_v216.gd")
+const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
 var last_fx_revision: int = -1
 const ANOMALOUS = preload("res://scripts/anomalous_steel_fx_v180.gd")
@@ -12,6 +14,7 @@ const BOW_POSE = preload("res://scripts/bow_palette_overlay_v139.gd")
 var painted_preview: Sprite2D
 var bow_painted_mask: Sprite2D
 var bow_body_glow: Sprite2D
+var wand_preview_span: PackedVector2Array=PackedVector2Array()
 var scythe_glow: Node2D
 var glow_preview_override: int = -1
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
@@ -90,7 +93,7 @@ func _blade(a: Vector2, b: Vector2, width: float, hand: int) -> void:
 func is_modular() -> bool:
 	if item == null or item.definition == null:
 		return false
-	return item.uses_forge_bow() or item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul", "axe", "rapier"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
+	return item.uses_forge_bow() or item.uses_modular_single_sword() or item.weapon_style() in ["crossbow", "twinblade", "dual_sword", "dual_dagger", "dagger", "scythe", "halberd", "maul", "axe", "rapier", "spear"] or str(item.definition.item_id) in ["nocturne_stiletto_v171", "moonwarden_spear_v169", "briarwake_trident_v171"]
 
 func _draw() -> void:
 	segments.clear()
@@ -111,35 +114,32 @@ func _draw() -> void:
 	var style: String = item.weapon_style()
 	match style:
 		"axe", "rapier":
-			var strength: float = CHOICES_V216.effect_scale(item)*FX_LEVEL.intensity*0.80 if glow_enabled else 0.0
+			var strength: float = RENDER.melee_model_glow(item,glow_enabled)
 			MODELS_V283.draw_melee(self,str(item.definition.item_id),Vector2(0,30),Vector2(0,-38),item.weapon_base_color(),strength,gradients,look,elapsed,false,item.weapon_gradient_color())
 		"bow":
-			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, FX_LEVEL.intensity * CHOICES_V216.effect_scale(item) if glow_enabled and CHOICES_V216.bow_body_visible(item) else 0.0)
+			var light: Vector3 = RENDER.bow_light(item,glow_enabled)
+			FORGE_V238.draw_bow(self, PackedVector2Array([Vector2.ZERO, Vector2.RIGHT * 32.0]), str(item.definition.item_id), profiles[0], item.bow_limb_gradient_colors(), item.bow_string_gradient_colors(), 0.0, light.x,light.y,light.z>0.0)
 		"dagger":
-			if item.uses_forge_dagger():
-				FORGE_V238.draw_dagger(self, PackedVector2Array([Vector2(0, 14), Vector2(0, -40)]), profiles[0])
-				segments.append(PackedVector2Array([Vector2(0, 6), Vector2(0, -40)]))
-			else:
-				_grip(Vector2(0, 20), Vector2(0, 5), 3.2, 0)
-				_blade(Vector2(0, 5), Vector2(0, -49), 3.2, 0)
+			_draw_straight("forge_dagger" if item.uses_forge_dagger() else "dagger",0)
 		"crossbow":
 			var base: String = str(item.definition.item_id)
 			var fx: Dictionary = look if glow_enabled and CHOICES_V216.effect_scale(item) > 0.0 else {}
 			if base == "blackthorn_crossbow_v236":
 				for x in [-20.0, 20.0]:
-					CROSSBOW_V236.draw_weapon(self, Vector2(x, 12), Vector2(x, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed)
+					CROSSBOW_V236.draw_weapon(self, Vector2(x, 12), Vector2(x, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed,RENDER.effect_scale(item,glow_enabled))
 			else:
-				CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed)
+				CROSSBOW_V236.draw_weapon(self, Vector2(0, 12), Vector2(0, -20), profiles[0], true, base, 0.0, fx, gradients, elapsed,RENDER.effect_scale(item,glow_enabled))
 		"halberd", "maul":
-			var p: Dictionary = profiles[0].duplicate()
-			p["heavy_head_span"] = float(look.get("heavy_head_span", 1.0))
-			p["heavy_head_flare"] = float(look.get("heavy_head_flare", 1.0))
-			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0, str(item.definition.item_id))
+			var p: Dictionary = RENDER.heavy_profile(profiles[0],look)
+			HEAVY.draw_heavy(self, Vector2(0, 27), Vector2(0, -55 if style == "halberd" else -27), p, look, gradients, elapsed, style, str(item.definition.item_id) == "ashglass_warmaul_v170", 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0, str(item.definition.item_id),RENDER.effect_scale(item,glow_enabled))
 		"scythe":
-			var p: Dictionary = profiles[0].duplicate()
-			p["scythe_span"] = float(look.get("scythe_span", 1.0))
-			p["scythe_curve"] = float(look.get("scythe_curve", 0.7))
-			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0)
+			if str(item.definition.item_id)=="seraph_reaper_v292":
+				if is_instance_valid(scythe_glow):
+					scythe_glow.call("clear_pose")
+				MODELS_V283.draw_melee(self,"seraph_reaper_v292",Vector2(-12,20),Vector2(-12,-48),item.weapon_base_color(),RENDER.melee_model_glow(item,glow_enabled),gradients,look,elapsed,false,item.weapon_gradient_color())
+				return
+			var p: Dictionary = RENDER.heavy_profile(profiles[0],look)
+			SCYTHE.draw_scythe(self, Vector2(-12, 20), Vector2(-12, -56), p, look, gradients, elapsed, 1.0, glow_enabled and CHOICES_V216.effect_scale(item) > 0.0,RENDER.effect_scale(item,glow_enabled))
 			if is_instance_valid(scythe_glow):
 				if glow_enabled:
 					scythe_glow.call("set_pose", item, Vector2(-12, 20), Vector2(-12, -56), p, 1.0, glow_preview_override)
@@ -152,22 +152,13 @@ func _draw() -> void:
 			for span in spans:
 				_blade(span[0], span[1], width, 0)
 		"dual_sword", "dual_dagger":
-			var dagger: bool = style == "dual_dagger"
 			for hand in range(2):
-				var x: float = -17.0 if hand == 0 else 17.0
-				var a: Vector2 = Vector2(x, 9)
-				var tip: Vector2 = Vector2(x, -41 if dagger else -53)
-				_grip(Vector2(x, 25), a, 3.5 if dagger else 5.1, hand)
-				_blade(a, tip, 3.1 if dagger else (5.2 if hand == 0 else 4.8), hand)
+				_draw_straight(style,hand)
 		"spear":
-			if str(item.definition.item_id) == "briarwake_trident_v171":
-				_draw_trident()
-			else:
-				preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-29),3.8,profiles[0])
-				_blade(Vector2(0, -29), Vector2(0, -53), 4.5, 0)
+			var trident: bool=str(item.definition.item_id)=="briarwake_trident_v171"
+			segments.append_array(RENDER.draw_polearm(self,PackedVector2Array([Vector2(0,27),Vector2(0,-53)]),trident,profiles[0],elapsed))
 		"blade":
-			_grip(Vector2(0, 22), Vector2(0, 0), 3.0, 0)
-			_blade(Vector2(0, 0), Vector2(0, -50), 4.2, 0)
+			_draw_straight("blade",0)
 		"trident":
 			_draw_trident()
 		_:
@@ -180,19 +171,23 @@ func _draw() -> void:
 		_draw_light()
 		# Weapon signatures are drawn along the same edge as equipped art.
 
+func _draw_straight(style: String,hand: int) -> void:
+	var geometry: Dictionary=RENDER.straight_geometry(style,RENDER.preview_span(style,hand),hand)
+	RENDER.draw_straight(self,geometry,profiles[hand],elapsed)
+	segments.append_array(RENDER.edge_paths(geometry,profiles[hand]))
+
 func _draw_trident() -> void:
-	preload("res://scripts/forged_polearm_v255.gd").draw_haft(self,Vector2(0,55),Vector2(0,33),Vector2(0,-36),4.5,profiles[0])
-	for side in [-1.0, 1.0]:
-		preload("res://scripts/forged_polearm_v255.gd").draw_fork(self,Vector2(0,-36),Vector2(side*8,-36),Vector2.UP,profiles[0])
-		_blade(Vector2(side * 8, -36), Vector2(side * 7, -51), 1.8, 0)
-	_blade(Vector2(0, -36), Vector2(0, -53), 2.6, 0)
+	segments.append_array(RENDER.draw_polearm(self,PackedVector2Array([Vector2(0,27),Vector2(0,-53)]),true,profiles[0],elapsed))
 
 func _draw_light() -> void:
-	ANOMALOUS.draw_blade_light(self, segments, gradients, look, elapsed, CHOICES_V216.effect_scale(item))
+	RENDER.draw_light(self,segments,gradients,look,elapsed,RENDER.effect_scale(item,glow_enabled))
 
 # Existing icon artwork remains intact. These display-only effects use its
 # saved colors and signatures; they do not pretend to be an equipped rig.
 func _draw_artwork_effects() -> void:
+	if item.get_slot()=="wand" and wand_preview_span.size()==2:
+		RENDER.draw_wand_head(self,wand_preview_span,gradients,look,elapsed,RENDER.effect_scale(item,glow_enabled))
+		return
 	if gradients.size() < 3:
 		return
 	var tier: int = int(look.get("particle_tier", 0))
@@ -296,6 +291,7 @@ func _actual_bow_preview() -> bool:
 	return true
 
 func _update_painted_preview() -> void:
+	wand_preview_span=PackedVector2Array()
 	if is_instance_valid(bow_painted_mask):
 		bow_painted_mask.hide()
 	if is_instance_valid(bow_body_glow):
@@ -311,6 +307,8 @@ func _update_painted_preview() -> void:
 		add_child(painted_preview)
 	if item.weapon_style() == "bow" and _actual_bow_preview():
 		return
+	if item.get_slot()=="wand" and _actual_wand_preview():
+		return
 	# Legacy icon remains an explicit fallback for missing optional artwork,
 	# and for wands, whose full directional artwork is a separate workflow.
 	painted_preview.texture = item.definition.icon
@@ -323,3 +321,26 @@ func _update_painted_preview() -> void:
 	painted_preview.material = mat
 	painted_preview.self_modulate.a = item.weapon_opacity()
 	painted_preview.show()
+
+# Preview the same seeded painted wand atlas, with the same material and
+# centered physical grip/tip rather than an unrelated inventory icon.
+func _actual_wand_preview() -> bool:
+	var texture: AtlasTexture=WAND.preview_texture(item.visual_seed())
+	var points: PackedVector2Array=WAND.span("wand_idle_front",0,"front")
+	if texture==null or points.size()!=2:
+		return false
+	var scale_factor: float=WAND.VISUAL_SCALE
+	var center: Vector2=(points[0]+points[1])*0.5
+	painted_preview.texture=texture
+	painted_preview.position=-center*scale_factor
+	painted_preview.scale=Vector2.ONE*scale_factor
+	painted_preview.rotation=0.0
+	painted_preview.z_index=-2
+	painted_preview.centered=true
+	var mat: ShaderMaterial=ShaderMaterial.new()
+	PAINTED_SURFACE.configure(mat,look,WAND.CELL,false,[],true)
+	painted_preview.material=mat
+	painted_preview.self_modulate.a=item.weapon_opacity()*0.98
+	painted_preview.show()
+	wand_preview_span=PackedVector2Array([(points[0]-center)*scale_factor,(points[1]-center)*scale_factor])
+	return true

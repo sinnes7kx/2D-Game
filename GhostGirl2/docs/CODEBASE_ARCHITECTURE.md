@@ -11,7 +11,7 @@
 | Combat geometry | scripts/combat_geometry.gd | Pure direction/range tests, target eligibility, explicit collision queries |
 | Weapon techniques | unique_specials_v261.gd, relic_arsenal_v277.gd, relic_mechanics_v288.gd, relic_ground_v288.gd | Base-specific skills, cooldowns and contact application |
 | Animation | scripts/animation/directional_playback.gd, ghost_diagonal_art_v247.gd, ghost_animation_library.gd, gentle_weapon_motion_v191.gd | Shared clip routing and timed playback, body atlases, weighted phase, wrist anchors |
-| Weapon presentation | v172_weapon_pose.gd, weapon_models_v283.gd, scythe_art_v190.gd, heavy_weapon_art_v192.gd | Physical weapon geometry and attachments |
+| Weapon presentation | scripts/animation/weapon_render_contract.gd, v172_weapon_pose.gd, weapon_models_v283.gd, scythe_art_v190.gd, heavy_weapon_art_v192.gd | Physical weapon geometry and attachments |
 | Visual FX | weapon_prestige_fx.gd, anomalous_steel_fx_v180.gd, collector_lens_model_v179.gd | Seeded effects; reuse physical pose and shared edge renderers |
 | Item identity | item_instance.gd, item_generator.gd, item data resources | Immutable birth identity, stats and reproducible cosmetic identity |
 | Collection | inventory_panel.gd, collection_vault_v181.gd, sanctum_exhibition_v182.gd | Inventory, ownership transfers, inspection and display |
@@ -41,7 +41,7 @@ Versioned filenames are historical identifiers, not a reason to duplicate a work
 ## Incremental extraction queue
 
 - First pass: shared combat geometry, with existing public wrappers preserved.
-- Directional playback extracted. Next: consolidate physical weapon attachment and remaining duplicated inspection/equipped FX code.
+- Directional playback and shared straight-blade rendering extracted. Polearm heads, heavy shape/strength and wand atlas/core now shared. Next: finish baked weapon and secondary ornament parity and test real rendering.
 - Later: separate player action-state transitions and world/save responsibilities once regression coverage allows it. No full rewrite or mass relocation of resources.
 
 The existing codebase is intentionally retained; these are ownership boundaries for future maintenance, not a claim that every domain is already fully decoupled.

@@ -10,6 +10,8 @@ const HEAD_COSMETICS_V202 = preload("res://scripts/head_cosmetics_v202.gd")
 const WAND_ANCHORS_V216 = preload("res://scripts/wand_anchors_v216.gd")
 var wand_surface_key: String = ""
 var wand_surface: ShaderMaterial
+var wand_held_light: Node2D
+const WAND_LIGHT=preload("res://scripts/animation/wand_held_light.gd")
 @onready var player_art: AnimatedSprite2D = get_parent().get_node("Ghost") as AnimatedSprite2D
 @onready var wings: Sprite2D = $Wings
 @onready var pendant: Sprite2D = $Trinket
@@ -18,13 +20,9 @@ var wand_surface: ShaderMaterial
 
 # v1.62: three equipment-layer wand silhouettes, not changes to Ghost Girl art.
 # Selection is cosmetic-UID-derived through visual_seed(), stable in saved looks.
-const WAND_POSE_ATLASES = [
-	preload("res://assets/equipment/wands_v163/crystal_rose_poses_v163.png"),
-	preload("res://assets/equipment/wands_v163/moonlit_censer_poses_v163.png"),
-	preload("res://assets/equipment/wands_v163/thorn_crescent_poses_v163.png")
-]
+const WAND_POSE_ATLASES = WAND_ANCHORS_V216.POSE_ATLASES
 const WAND_POSE_GUIDES_PATH: String = "res://resources/wand_pose_guides_v163.json"
-const WAND_FRAME_SIZE: Vector2 = Vector2(176, 176)
+const WAND_FRAME_SIZE: Vector2 = WAND_ANCHORS_V216.CELL
 var wand_pose_rows: Dictionary = {}
 var last_wand_animation: String = ""
 var last_wand_frame: int = -1
@@ -134,6 +132,10 @@ func _apply_wand_pose() -> void:
 
 func _ready() -> void:
 	_load_wand_pose_rows()
+	wand_held_light=WAND_LIGHT.new()
+	wand_held_light.name="WandHeldLight"
+	player_art.add_child(wand_held_light)
+	wand_held_light.hide()
 	if player_art.material != null:
 		player_art.material = player_art.material.duplicate(true)
 	wings.hide()
@@ -224,6 +226,8 @@ func refresh() -> void:
 func _process(delta: float) -> void:
 	aura_time += delta
 	if inventory == null:
+		if is_instance_valid(wand_held_light):
+			wand_held_light.hide()
 		return
 	var dress_now: GhostItemInstance = inventory.get_equipped("dress")
 	if dress_now != last_dress or (dress_now != null and dress_now.palette_index != last_dress_palette):
@@ -254,7 +258,7 @@ func _process(delta: float) -> void:
 	wand_visual.hide()
 	var wand_item: GhostItemInstance = inventory.get_equipped("wand")
 	if wand_item != null and WAND_ANCHORS_V216.is_wand_pose(str(player_art.animation)):
-		var visual_index: int = posmod(wand_item.visual_seed(), WAND_POSE_ATLASES.size())
+		var visual_index: int = WAND_ANCHORS_V216.atlas_index(wand_item.visual_seed())
 		if visual_index != last_wand_sprite_index or wand_visual.texture == null:
 			last_wand_sprite_index = visual_index
 			wand_visual.texture = WAND_POSE_ATLASES[visual_index]
@@ -291,6 +295,9 @@ func _process(delta: float) -> void:
 		var behind: bool = facing == "back" and not diagonal_wrist
 		wand_visual.show_behind_parent = behind
 		wand_visual.z_index = -2 if behind else 6
+		wand_held_light.call("set_pose",wand_item,WAND_ANCHORS_V216.rendered_span(player_art,facing),behind,delta)
+	else:
+		wand_held_light.hide()
 	var ethereal_visible: bool = dress_ethereal_alpha < 1.0 and ETHEREAL_FX.intensity > 0.0
 	if dress_now != null or dress_aura_enabled or accessories_glow or wand_item != null or not ambient_particle_sources.is_empty() or ethereal_visible or ethereal_was_visible != ethereal_visible:
 		queue_redraw()

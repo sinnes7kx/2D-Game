@@ -1,4 +1,6 @@
 extends Node2D
+const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
+var render_phase: float = 0.0
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 const FX_LEVEL = preload("res://scripts/fx_intensity_v1924.gd")
@@ -18,25 +20,19 @@ func _ready() -> void:
 	set_process(true)
 
 func _process(_delta: float) -> void:
+	render_phase+=_delta
 	if rig == null or body == null:
 		return
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_name: String = str(body.animation)
 	var active: bool = bool(rig.call("is_active", animation_name))
-	if active and (animation_name.begins_with("attack_") or GENTLE.modular_idle(animation_name) or MODULAR.surface_is_animated(self, body, blade_index)):
+	if active and (RENDER.light_redraw(self,body) or animation_name.begins_with("attack_") or GENTLE.modular_idle(animation_name) or MODULAR.surface_is_animated(self, body, blade_index)):
 		queue_redraw()
 	if animation_name != last_animation or body.frame != last_frame or active != last_active:
 		last_animation = animation_name
 		last_frame = body.frame
 		last_active = active
-		var back: bool = animation_name.ends_with("back")
-		var left: bool = animation_name.ends_with("left")
-		var right: bool = animation_name.ends_with("right")
-		# Far hand goes behind her dress when side-facing.
-		z_index = -2 if back or (left and blade_index == 1) or (right and blade_index == 0) else 6
-		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
-		if not diagonal.diagonal_name(animation_name).is_empty():
-			z_index = 6 if blade_index==diagonal.near_hand(animation_name) else -2
+		z_index=RENDER.paired_layer(animation_name,blade_index)
 
 		queue_redraw()
 
@@ -62,29 +58,9 @@ func _draw() -> void:
 	var blade_tip: Vector2 = point + tangent * 2.0
 	var look: Dictionary = MODULAR.equipped_profile(self, body, blade_index)
 	if not look.is_empty():
-		MODULAR.draw_grip(self, grip - tangent * 9.0, blade_root, 5.1, look)
-		var steel_width: float = 6.6 if blade_index == 0 else 6.1
-		MODULAR.draw_blade(self, blade_root, blade_tip, steel_width, look)
-		# World-size visibility: thin, seeded metal edges + restrained halo.
-		# Draw on the actual blade silhouette so the longer sword never has a
-		# floating glow or a duplicate solid weapon image.
-		var near_edge: PackedVector2Array = MODULAR.edge_points(blade_root, blade_tip, steel_width, look, -1.0)
-		var far_edge: PackedVector2Array = MODULAR.edge_points(blade_root, blade_tip, steel_width, look, 1.0)
-		var trim: Color = look["accent"]
-		# Explicit Glow Off affects the extra aura, not the steel grind line.
-		var actor: Node = body.get_parent()
-		var level: Node = actor.get("world") as Node if actor != null else null
-		var equipment: Node = level.get("inventory") as Node if level != null else null
-		var owned: GhostItemInstance = equipment.get_equipped("sword") if equipment != null else null
-		var lit: bool = owned == null or owned.glow_level_override != 0
-		var aura: float = FX_LEVEL.alpha(0.12 if int(look.get("material", 0)) >= 3 else 0.045) if lit else 0.0
-		if aura > 0.0:
-			var halo: Color = Color(trim.r, trim.g, trim.b, aura)
-			draw_polyline(near_edge, halo, 3.4, true)
-			draw_polyline(far_edge, halo, 2.9, true)
-		var glint: Color = look["edge"]
-		glint.a = 0.68
-		draw_polyline(near_edge, glint, 1.30, true)
+		var geometry: Dictionary=RENDER.straight_geometry("dual_sword",span,blade_index)
+		RENDER.draw_straight(self,geometry,look,render_phase)
+		RENDER.draw_owned_light(self,body,geometry,look,render_phase)
 		return
 	var wrap: Color = Color("655266") if blade_index == 0 else Color("754c5e")
 	var metal: Color = Color("74738c") if blade_index == 0 else Color("682e49")

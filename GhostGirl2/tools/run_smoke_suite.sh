@@ -11,6 +11,7 @@ fi
 quick_tests=(
   combat_foundation_smoke.gd
   directional_playback_smoke.gd
+  weapon_render_contract_smoke.gd
   v186_animation_smoke.gd
   v1801_twinblade_inspect_smoke.gd
   v208_vault_filters_smoke.gd

@@ -1,4 +1,6 @@
 extends Node2D
+const RENDER = preload("res://scripts/animation/weapon_render_contract.gd")
+var render_phase: float = 0.0
 const GENTLE = preload("res://scripts/gentle_weapon_motion_v191.gd")
 const MODULAR = preload("res://scripts/modular_weapon_art_v178.gd")
 ## v1.73 per-hand drawing over Ghost Girl's approved unchanged 2D body.
@@ -16,25 +18,19 @@ func _ready() -> void:
 	set_process(true)
 
 func _process(_delta: float) -> void:
+	render_phase+=_delta
 	if rig == null or body == null:
 		return
 	MODULAR.apply_equipped_opacity(self, body)
 	var animation_name: String = str(body.animation)
 	var active: bool = bool(rig.call("is_active", animation_name))
-	if active and (animation_name.begins_with("attack_") or GENTLE.modular_idle(animation_name) or MODULAR.surface_is_animated(self, body, blade_index)):
+	if active and (RENDER.light_redraw(self,body) or animation_name.begins_with("attack_") or GENTLE.modular_idle(animation_name) or MODULAR.surface_is_animated(self, body, blade_index)):
 		queue_redraw()
 	if animation_name != last_animation or body.frame != last_frame or active != last_active:
 		last_animation = animation_name
 		last_frame = body.frame
 		last_active = active
-		var back: bool = animation_name.ends_with("back")
-		var left: bool = animation_name.ends_with("left")
-		var right: bool = animation_name.ends_with("right")
-		# The far hand tucks behind her dress when viewed from the side.
-		z_index = -2 if back or (left and blade_index == 1) or (right and blade_index == 0) else 6
-		var diagonal = preload("res://scripts/ghost_diagonal_art_v247.gd")
-		if not diagonal.diagonal_name(animation_name).is_empty():
-			z_index = 6 if blade_index==diagonal.near_hand(animation_name) else -2
+		z_index=RENDER.paired_layer(animation_name,blade_index)
 
 		queue_redraw()
 
@@ -58,8 +54,9 @@ func _draw() -> void:
 	var steel: Vector2 = grip + tangent * 12.0
 	var look: Dictionary = MODULAR.equipped_profile(self, body, blade_index)
 	if not look.is_empty():
-		MODULAR.draw_grip(self, grip - tangent * 8.0, steel, 3.5, look)
-		MODULAR.draw_blade(self, steel, point, 3.1, look)
+		var geometry: Dictionary=RENDER.straight_geometry("dual_dagger",span,blade_index)
+		RENDER.draw_straight(self,geometry,look,render_phase)
+		RENDER.draw_owned_light(self,body,geometry,look,render_phase)
 		return
 	var steel_tone: Color = Color("3c384d") if blade_index == 0 else Color("403047")
 	var edge: Color = Color("c7c3de") if blade_index == 0 else Color("e5aec5")
