@@ -3,7 +3,9 @@ extends CharacterBody2D
 ## New gesture frames (hook_front / back / left / right) contain the ornate
 ## rose hook at her hand, with slight reach/lean animation during casting.
 
+const COMBAT_GEOMETRY = preload("res://scripts/combat_geometry.gd")
 const MELEE_RULES = preload("res://scripts/combat/melee_rules.gd")
+const GROUNDED = preload("res://scripts/combat/grounded_motion.gd")
 const BOW_ARROW_SCENE: PackedScene = preload("res://scenes/bow_arrow_v126.tscn")
 const BOW_RELEASE_FX: Script = preload("res://scripts/bow_release_v127.gd")
 const CROSSBOW_V236 = preload("res://scripts/crossbow_v236.gd")
@@ -44,11 +46,11 @@ const RIPOSTE_SFX: AudioStream = preload("res://assets/audio/riposte_chime_v113.
 const COMBAT_RESPONSE_V157: Script = preload("res://scripts/combat_response_v157.gd")
 const DODGE_SFX: AudioStream = preload("res://assets/audio/dodge_wisp.wav")
 const HOOK_SFX: AudioStream = preload("res://assets/audio/hook_chime.wav")
-const WALK_SPEED: float = 175.0
-const SPRINT_SPEED: float = 246.0
-const MOVE_ACCELERATION: float = 1700.0
-const MOVE_BRAKE: float = 2700.0
-const TURN_ACCELERATION: float = 1900.0
+const WALK_SPEED: float = GROUNDED.WALK_SPEED
+const SPRINT_SPEED: float = GROUNDED.SPRINT_SPEED
+const MOVE_ACCELERATION: float = GROUNDED.MOVE_ACCELERATION
+const MOVE_BRAKE: float = GROUNDED.MOVE_BRAKE
+const TURN_ACCELERATION: float = GROUNDED.TURN_ACCELERATION
 const SPRINT_STAMINA_PER_SECOND: float = 9.0
 const BASE_ART_POS: Vector2 = Vector2(0.0, -57.0)
 const BASE_ART_SCALE: float = 0.52
@@ -73,7 +75,7 @@ const MAX_DEW: int = 3
 const HEAL_WINDUP: float = 0.63
 const LOCK_RANGE: float = 620.0
 const INPUT_BUFFER: float = 0.38
-const CHARGE_WALK_FACTOR: float = 0.45
+const CHARGE_WALK_FACTOR: float = GROUNDED.CHARGE_WALK_FACTOR
 const PARRY_WINDOW: float = 0.32
 const PARRY_PERFECT_START: float = 0.04
 const PARRY_PERFECT_END: float = 0.15
@@ -643,13 +645,8 @@ func _physics_process(delta: float) -> void:
 	var desired_speed: float = (SPRINT_SPEED if sprinting else WALK_SPEED) * (1.0 + speed_bonus / 100.0)
 	# Shallow moor water impedes grounded movement; Moonfall's temporary ice
 	# restores normal footing. Jumping, dodging and the rose hook are unaffected.
-	for water in get_tree().get_nodes_in_group("water_body"):
-		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
-			desired_speed *= float(water.call("movement_multiplier_at", global_position))
-	var target_velocity: Vector2 = direction.normalized() * desired_speed if moving else Vector2.ZERO
-	var turn: bool = moving and velocity.length_squared() > 50.0 and velocity.normalized().dot(direction.normalized()) < 0.22
-	var responsiveness: float = TURN_ACCELERATION if turn else (MOVE_ACCELERATION if moving else MOVE_BRAKE)
-	velocity = velocity.move_toward(target_velocity, responsiveness * delta)
+	desired_speed = GROUNDED.terrain_speed(self,desired_speed)
+	velocity = GROUNDED.walking_velocity(velocity,direction,desired_speed,delta)
 	if sprinting:
 		stamina = maxf(0.0, stamina - SPRINT_STAMINA_PER_SECOND * delta)
 		stamina_recovery_left = maxf(stamina_recovery_left, 0.25)
@@ -1449,7 +1446,7 @@ func _begin_parry() -> void:
 	world.ui.set_stamina(stamina,MAX_STAMINA)
 
 static func parry_result(age: float, heading: Vector2, offset: Vector2) -> int:
-	if age < 0.0 or age > PARRY_WINDOW or not MELEE_RULES.frontal_contact(offset,heading,1.0,-1.0,0.50):
+	if age < 0.0 or age > PARRY_WINDOW or not COMBAT_GEOMETRY.facing_contact(offset, heading, 1.0, 0.50):
 		return 0
 	return 2 if age >= PARRY_PERFECT_START and age <= PARRY_PERFECT_END else 1
 
@@ -1770,10 +1767,8 @@ func _advance_relic_channel_v288(delta: float) -> void:
 	var direction: Vector2 = _movement_input()
 	var moving: bool = direction.length_squared()>0.01
 	var speed: float = WALK_SPEED*float(profile["move"])*(1.0+_stat("move_speed_pct")/100.0)
-	for water in get_tree().get_nodes_in_group("water_body"):
-		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
-			speed*=float(water.call("movement_multiplier_at",global_position))
-	velocity=velocity.move_toward(direction.normalized()*speed if moving else Vector2.ZERO,MOVE_ACCELERATION*delta)
+	speed=GROUNDED.terrain_speed(self,speed)
+	velocity=GROUNDED.channel_velocity(velocity,direction,speed,delta)
 	if moving:
 		set_facing(direction)
 	# Cycle approved cardinal poses instead of rotating the whole sprite upside down.
@@ -1988,17 +1983,13 @@ func _begin_bow_shot(charged: bool, airborne: bool) -> void:
 # sprinting or resetting the held animation. The actual released strike
 # continues to use its original committed movement.
 static func charge_target_velocity(direction: Vector2, walk_speed: float) -> Vector2:
-	return direction.limit_length(1.0)*maxf(0.0,walk_speed)*CHARGE_WALK_FACTOR
+	return GROUNDED.charge_target(direction,walk_speed)
 
 func _charge_walk(delta: float) -> void:
 	var direction: Vector2 = _movement_input()
 	var speed: float = WALK_SPEED*(1.0+_stat("move_speed_pct")/100.0)
-	for water in get_tree().get_nodes_in_group("water_body"):
-		if is_instance_valid(water) and water.has_method("movement_multiplier_at"):
-			speed*=float(water.call("movement_multiplier_at",global_position))
-	var target: Vector2 = charge_target_velocity(direction,speed)
-	velocity=velocity.move_toward(target,(MOVE_ACCELERATION if direction.length_squared()>0.01 else MOVE_BRAKE)*delta)
-	velocity=velocity.limit_length(maxf(0.0,speed)*CHARGE_WALK_FACTOR)
+	speed=GROUNDED.terrain_speed(self,speed)
+	velocity=GROUNDED.charge_velocity(velocity,direction,speed,delta)
 
 func _refresh_melee_charge_aim() -> void:
 	var aim: Vector2 = _combat_aim_direction().normalized()
@@ -2495,7 +2486,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 	var finisher_shown: bool = false
 	var struck_world: bool = false
 	for candidate in get_tree().get_nodes_in_group("enemies"):
-		if not is_instance_valid(candidate) or not candidate is Node2D or candidate.is_queued_for_deletion() or not candidate.has_method("hit"):
+		if not COMBAT_GEOMETRY.is_hittable(candidate):
 			continue
 		var delta_to: Vector2 = candidate.global_position - global_position
 		if delta_to.length() > reach or delta_to.length_squared() < 20.0:
@@ -2504,10 +2495,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 			continue
 		if active_attack_style=="rapier" and not FORGE_TACTICS_V286.thrust_contact(delta_to,attack_direction,reach,heavy_attack):
 			continue
-		var ray: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position + Vector2(0, -18), candidate.global_position + Vector2(0, -18))
-		ray.collision_mask = 2
-		ray.exclude = [get_rid()]
-		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+		if not COMBAT_GEOMETRY.obstruction(self, global_position + Vector2(0, -18), candidate.global_position + Vector2(0, -18), COMBAT_GEOMETRY.WORLD_MASK).is_empty():
 			continue
 		candidate.call("hit", power, poise_bonus * (0.65 if twin_edge else 1.0) * (1.0 + _stat("poise_power_pct") / 100.0))
 		if sword != null and sword.active_weapon_mod(world.room == "lanternhaven") == "frostbite" and is_instance_valid(candidate) and not candidate.is_queued_for_deletion() and candidate.has_method("apply_frost_slow"):
@@ -2555,10 +2543,7 @@ func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = fal
 				continue
 			# Stone walls must still block hits through geometry. The breakable
 			# object itself is the acceptable first hit on this physics ray.
-			var probe: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(global_position + Vector2(0.0, -12.0), object.global_position + Vector2(0.0, -12.0))
-			probe.collision_mask = 2
-			probe.exclude = [get_rid()]
-			var obstruction: Dictionary = get_world_2d().direct_space_state.intersect_ray(probe)
+			var obstruction: Dictionary = COMBAT_GEOMETRY.obstruction(self, global_position + Vector2(0.0, -12.0), object.global_position + Vector2(0.0, -12.0), COMBAT_GEOMETRY.WORLD_MASK)
 			if not obstruction.is_empty() and obstruction.get("collider") != object:
 				continue
 			object.call("receive_damage", power * (0.90 if jump_attack_active else 0.80), global_position)
