@@ -115,7 +115,7 @@ static func draw_owned_paths(canvas: Node2D,body: AnimatedSprite2D,paths: Array[
 	var item: GhostItemInstance = equipped(body)
 	if item==null or effect_scale(item)<=0.0 or FX.intensity<=0.0:
 		return
-	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(),item.cosmetic_uid,item.visual_seed(),item.gradient_version,item.origin_room,item.regional_rank,item.debug_collector_tier,item.debug_color_mode,item.debug_glow_motif,item.debug_surface_mode,item.effect_palette_channel()]
+	var key: String = "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [item.get_instance_id(),item.cosmetic_uid,item.visual_seed(),item.gradient_version,item.origin_room,item.regional_rank,item.debug_collector_tier,item.debug_color_mode,item.debug_glow_motif,item.debug_surface_mode,item.effect_palette_channel(),item.visual_signature(),item.mythic_layer_variant()]
 	if canvas.get_meta("shared_edge_key","")!=key:
 		canvas.set_meta("shared_edge_key",key)
 		canvas.set_meta("shared_edge_look",item.collector_appearance())
