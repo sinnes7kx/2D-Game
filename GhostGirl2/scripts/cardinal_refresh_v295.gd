@@ -1,59 +1,48 @@
 extends RefCounted
-## Candidate cardinal idle/walk art. Isolated names protect existing baked
-## weapon bodies, original diagonal art, and old saves. No gameplay changes.
-const ATLAS: String = "res://assets/ghost/skins/ghost_cardinal_refresh_candidate.png"
-const PREFIX: String = "cardinal_refresh_"
+## Conservative render-only restoration of ORIGINAL cardinal poses.
+## No substitute atlases, source image edits, new wrist coordinates or saves.
+## The diagonal art is never processed by this pass.
 const FACES: Array[String] = ["front","back","left","right"]
-const CELL: Vector2i = Vector2i(256,220)
-const ROWS: Array[String] = ["idle_front","idle_back","idle_left","idle_right","walk_front","walk_back","walk_left","walk_right"]
+const DIAGONALS: Array[String] = ["front_right","front_left","back_left","back_right"]
+const STRENGTH: float = 0.65
+const MATERIAL_PATH: String = "res://assets/equipment/dress_palette.gdshader"
 
-static func install(frames: SpriteFrames) -> bool:
-	if frames==null or not ResourceLoader.exists(ATLAS,"Texture2D"):
+static func supports(name: String) -> bool:
+	if name.begins_with("rose_nocturne_") or name.begins_with("cardinal_refresh_"):
 		return false
-	return install_sheet(frames,load(ATLAS) as Texture2D)
-
-static func install_sheet(frames: SpriteFrames,sheet: Texture2D) -> bool:
-	if frames==null or sheet==null or sheet.get_width()!=2048 or sheet.get_height()!=1760:
-		return false
-	# All rows must have timing sources. Do not mix partial refreshes with
-	# original cardinals, or touch the approved diagonal frames.
-	var times: Array[float] = []
-	for name in ROWS:
-		if not frames.has_animation(name) or frames.get_frame_count(name)==0:
+	for face in DIAGONALS:
+		if name.ends_with("_"+face):
 			return false
-		var duration: float = 0.0
-		for i in range(frames.get_frame_count(name)):
-			duration+=frames.get_frame_duration(name,i)/maxf(0.001,frames.get_animation_speed(name))
-		if duration<=0.0:
-			return false
-		times.append(duration)
-	for row in range(8):
-		var clip: String = PREFIX+ROWS[row]
-		if frames.has_animation(clip):
-			frames.remove_animation(clip)
-		frames.add_animation(clip)
-		if frames.has_method("set_animation_loop_mode"):
-			frames.call("set_animation_loop_mode",clip,1)
-		else:
-			frames.call("set_animation_loop",clip,true)
-		frames.set_animation_speed(clip,8.0/times[row])
-		for col in range(8):
-			var cell: AtlasTexture = AtlasTexture.new()
-			cell.atlas=sheet
-			cell.region=Rect2(col*CELL.x,row*CELL.y,CELL.x,CELL.y)
-			cell.filter_clip=true
-			frames.add_frame(clip,cell)
-	return true
+	for face in FACES:
+		if name.ends_with("_"+face):
+			return true
+	return false
 
-static func resolve(requested: String,eight: String,armed: bool,frames: SpriteFrames) -> String:
-	# Baked or modular weapon art must keep its matching wrist guides until
-	# the new equipped body art is calibrated, including rear occlusion.
-	if armed or frames==null or eight not in FACES:
-		return requested
-	if requested not in ROWS or not requested.ends_with("_"+eight):
-		return requested
-	var candidate: String = PREFIX+requested
-	return candidate if frames.has_animation(candidate) and frames.get_frame_count(candidate)==8 else requested
+static func strength_for(name: String, size: Vector2, centered: bool, offset: Vector2, flipped: bool) -> float:
+	return STRENGTH if supports(name) and size==Vector2(256,220) and centered and offset==Vector2.ZERO and not flipped else 0.0
 
-static func logical_name(clip: String) -> String:
-	return clip.trim_prefix(PREFIX)
+static func apply(body: AnimatedSprite2D) -> void:
+	if not is_instance_valid(body) or not body.material is ShaderMaterial:
+		return
+	var material: ShaderMaterial = body.material as ShaderMaterial
+	if material.shader==null or material.shader.resource_path!=MATERIAL_PATH:
+		return
+	var strength: float = 0.0
+	var frames: SpriteFrames = body.sprite_frames
+	var clip: String = str(body.animation)
+	if frames!=null and frames.has_animation(clip) and body.frame<frames.get_frame_count(clip):
+		var tile: Texture2D = frames.get_frame_texture(clip,body.frame)
+		if tile!=null:
+			strength=strength_for(clip,tile.get_size(),body.centered,body.offset,body.flip_h or body.flip_v)
+	if float(material.get_shader_parameter("cardinal_finish"))!=strength:
+		material.set_shader_parameter("cardinal_finish",strength)
+
+static func attach(body: AnimatedSprite2D) -> void:
+	if not is_instance_valid(body):
+		return
+	# Signals also run on the equipment-preview actor, which has no gameplay
+	# process. Existing scene-local material and other uniforms stay intact.
+	var refresh: Callable = func(): apply(body)
+	body.animation_changed.connect(refresh)
+	body.frame_changed.connect(refresh)
+	apply(body)
