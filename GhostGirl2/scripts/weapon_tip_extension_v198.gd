@@ -57,6 +57,8 @@ func _draw() -> void:
     if item == null or item.definition == null:
         return
     var name: String = str(body.animation)
+    if preload("res://scripts/cardinal_paired_carry_v296.gd").applies(body,name):
+        return # The separate full model owns the whole blade now.
     var ident: String = str(item.definition.item_id)
     var dagger: bool = ident in ["roseglass_dagger_v169", "nocturne_stiletto_v171"] and (name.begins_with("dagger_idle_") or name.begins_with("dagger_walk_") or name.begins_with("nocturne_dagger_idle_") or name.begins_with("nocturne_dagger_walk_"))
     var trident: bool = ident == "briarwake_trident_v171" and (name.begins_with("briarwake_spear_idle_") or name.begins_with("briarwake_spear_walk_"))
