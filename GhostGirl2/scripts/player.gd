@@ -322,6 +322,7 @@ func _ready() -> void:
 		SKIN_V246.install(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install(body_art.sprite_frames)
 		DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
+		DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
 		GENTLE.prepare_timing(body_art.sprite_frames)
 		body_art.play("idle_front")
 		_update_hand()
@@ -335,6 +336,7 @@ func _ready() -> void:
 	if not DIAGONAL_ART_V247.install(body_art.sprite_frames):
 		push_warning(DIAGONAL_ART_V247.diagnostic()+" Cardinal fallback remains active.")
 	DIAGONAL_ART_V247.install_guards(body_art.sprite_frames)
+	DIAGONAL_ART_V247.install_authored_combat(body_art.sprite_frames)
 	GENTLE.prepare_timing(body_art.sprite_frames)
 	collision_mask |= JUMPABLE_BARRIER_MASK
 	add_to_group("ghost_girl_player")
