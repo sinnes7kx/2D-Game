@@ -83,7 +83,7 @@ static func contours(head: Vector2, axis: Vector2, profile: Dictionary, side: fl
 		inside.append(center - tangent * thickness * 0.65)
 	return [outside, inside]
 
-static func draw_scythe(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictionary, look: Dictionary, colors: Array[Color], phase: float, side: float, glow: bool) -> void:
+static func draw_scythe(canvas: Node2D, grip: Vector2, head: Vector2, p: Dictionary, look: Dictionary, colors: Array[Color], phase: float, side: float, glow: bool, glow_scale: float = 1.0) -> void:
 	if p.is_empty() or grip.distance_squared_to(head) < 16.0:
 		return
 	var axis: Vector2 = (head - grip).normalized()
@@ -121,18 +121,18 @@ static func draw_scythe(canvas: Node2D, grip: Vector2, head: Vector2, p: Diction
 	canvas.draw_polyline(inner, Color(p["edge"]).lerp(p["metal"],0.32), 0.65, true)
 	canvas.draw_line(head - axis * 3.5, head + axis * 3.5, Color(p["shade"]), 3.0, true)
 	canvas.draw_line(head - axis * 2.5, head + axis * 2.5, trim.lerp(p["metal"],0.55), 0.85, true)
-	if glow and FX_LEVEL.intensity > 0.0:
+	if glow and glow_scale>0.0 and FX_LEVEL.intensity > 0.0:
 		# Rose Reaper and Veilkeeper's Reaper: the actual curved cutting edge
 		# remains readable even for seeded black / charcoal gradients.
 		# This is emitted light only; do not recolor the metal or entire shaft.
 		var rim: Color = reaper_edge_tint(colors, look, phase)
-		var power: float = minf(FX_LEVEL.intensity, 2.0) * (0.90 + 0.10 * sin(phase * 1.65))
+		var power: float = minf(FX_LEVEL.intensity, 2.0) * glow_scale * (0.90 + 0.10 * sin(phase * 1.65))
 		canvas.draw_polyline(inner, Color(rim.r, rim.g, rim.b, 0.13 * power), 5.4, true)
 		canvas.draw_polyline(inner, Color(rim.r, rim.g, rim.b, 0.34 * power), 2.25, true)
 		canvas.draw_polyline(inner, Color(rim.r, rim.g, rim.b, 0.72 * power), 0.95, true)
 		canvas.draw_polyline(outer, Color(rim.r, rim.g, rim.b, 0.22 * power), 1.35, true)
 		canvas.draw_circle(inner[inner.size() - 1], 2.5, Color(rim.r, rim.g, rim.b, 0.25 * power))
-		FX.draw_edge(canvas, inner, colors, look, phase, 1.20)
+		FX.draw_edge(canvas, inner, colors, look, phase, 1.20*glow_scale)
 
 static func reaper_edge_tint(colors: Array[Color], look: Dictionary, phase: float) -> Color:
 	# At low material brightness, scythe light still reads as silver-rose
