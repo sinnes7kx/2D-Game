@@ -828,51 +828,6 @@ static func missing_authored_guards(frames: SpriteFrames) -> PackedStringArray:
 				missing.append(clip)
 	return missing
 
-# Preview-quality candidate artwork is opt-in by installing the companion PNG.
-# The separate marker keeps the approved authored-art audit honest.
-const CARDINAL_GUARD_ATLAS: String = "res://assets/ghost/skins/ghost_cardinal_combat_candidate.png"
-const CARDINAL_GUARD_GUIDES: String = "res://resources/cardinal_guard_candidate_guides.json"
-const CARDINAL_GUARD_FACES: Array[String] = ["front","back","left","right"]
-
-static func install_candidate_cardinal_guards(frames: SpriteFrames) -> int:
-	if frames==null or not ResourceLoader.exists(CARDINAL_GUARD_ATLAS,"Texture2D") or not FileAccess.file_exists(CARDINAL_GUARD_GUIDES):
-		return 0
-	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(CARDINAL_GUARD_GUIDES))
-	if not raw is Dictionary or raw.get("version")!=1 or not raw.get("rows") is Array:
-		return 0
-	var sheet: Texture2D = load(CARDINAL_GUARD_ATLAS) as Texture2D
-	return install_candidate_guard_rows(frames,sheet,raw["rows"])
-
-static func install_candidate_guard_rows(frames: SpriteFrames,sheet: Texture2D,records: Array) -> int:
-	if frames==null or not _valid_dimensions(sheet) or records.size()!=4:
-		return 0
-	var indexed: Dictionary = {}
-	# Require all four cardinal records before touching any existing clip.
-	for record in records:
-		if not record is Dictionary or not _valid_authored_guides(record):
-			return 0
-		var face: String = str(record.get("face",""))
-		var row: Variant = record.get("row",-1)
-		if face not in CARDINAL_GUARD_FACES or indexed.has(face) or not (row is float or row is int) or float(row)!=float(CARDINAL_GUARD_FACES.find(face)):
-			return 0
-		var near_samples: Array = record["left" if int(record["near_hand"])==0 else "right"]
-		if near_samples[3].is_empty() or near_samples[4].is_empty():
-			return 0 # Peak guard must have a visible lead hand.
-		indexed[face]=record
-	var families: Array[String] = [""]
-	families.append_array(WEAPON_PREFIXES)
-	var count: int = 0
-	for face in CARDINAL_GUARD_FACES:
-		var record: Dictionary = indexed[face]
-		for family in families:
-			var clip: String = family+"parry_"+face
-			if not frames.has_animation(clip) or bool(frames.get_meta("authored_combat_"+clip,false)):
-				continue
-			if install_authored_row(frames,sheet,int(record["row"]),clip,record):
-				frames.set_meta("authored_combat_"+clip,false)
-				frames.set_meta("candidate_guard_"+clip,true)
-				count+=1
-	return count
-
+# An explicitly guided pose may deliberately hide either hand.
 static func has_guided_pose(clip: String) -> bool:
 	return _authored_guides.has(clip)
