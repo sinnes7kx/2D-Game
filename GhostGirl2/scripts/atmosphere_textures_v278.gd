@@ -2,6 +2,7 @@ extends RefCounted
 ## Shared generated soft falloffs: no external textures or per-light allocations.
 static var _light: GradientTexture2D
 static var _shadow: GradientTexture2D
+static var _dust: GradientTexture2D
 
 static func light() -> GradientTexture2D:
 	if _light==null:
@@ -12,6 +13,12 @@ static func shadow() -> GradientTexture2D:
 	if _shadow==null:
 		_shadow=_make(PackedFloat32Array([0.0,0.28,0.58,0.82,1.0]),PackedColorArray([Color(1,1,1,1),Color(1,1,1,0.94),Color(1,1,1,0.52),Color(1,1,1,0.12),Color(1,1,1,0)]),64)
 	return _shadow
+
+# Shared soft particulate texture, not a screen blur or an added light.
+static func dust() -> GradientTexture2D:
+	if _dust==null:
+		_dust=_make(PackedFloat32Array([0.0,0.22,0.50,0.76,1.0]),PackedColorArray([Color(1,1,1,0.92),Color(1,1,1,0.70),Color(1,1,1,0.34),Color(1,1,1,0.08),Color(1,1,1,0)]),64)
+	return _dust
 
 static func _make(offsets: PackedFloat32Array, colors: PackedColorArray, resolution: int) -> GradientTexture2D:
 	var gradient: Gradient = Gradient.new()
