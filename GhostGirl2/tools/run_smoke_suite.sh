@@ -9,6 +9,7 @@ if [[ "$mode" != preflight && "$mode" != quick && "$mode" != full ]]; then
   exit 2
 fi
 quick_tests=(
+  combat_foundation_smoke.gd
   v186_animation_smoke.gd
   v1801_twinblade_inspect_smoke.gd
   v208_vault_filters_smoke.gd
@@ -88,6 +89,23 @@ full_tests=(
   v202_headgear_migration_smoke.gd
   v202_fletcher_range_smoke.gd
   v202_living_world_puzzles_smoke.gd
+  v275_diagonal_bow_smoke.gd
+  v276_charged_throw_smoke.gd
+  v277_relic_arsenal_smoke.gd
+  v278_atmosphere_smoke.gd
+  v279_colosseum_smoke.gd
+  v280_boss_mastery_smoke.gd
+  v281_champions_smoke.gd
+  v282_familiar_relic_smoke.gd
+  v283_weapon_forge_smoke.gd
+  v284_inventory_grid_smoke.gd
+  v286_duelists_smoke.gd
+  v287_painted_relic_smoke.gd
+  v288_true_relics_smoke.gd
+  v290_rose_atmosphere_smoke.gd
+  v291_cozy_relics_smoke.gd
+  v292_seraph_garden_smoke.gd
+  v294_seraph_seed_diagonal_smoke.gd
 )
 # Compare the explicit ordered test lists with every tracked smoke script.
 # Fail before importing Godot if a future test is omitted or listed twice.
