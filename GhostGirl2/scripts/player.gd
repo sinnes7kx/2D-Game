@@ -2448,11 +2448,11 @@ func _advance_attack(delta: float) -> void:
 
 func _strike_nearby_enemies(power_multiplier: float = 1.0, twin_edge: bool = false, second_edge: bool = false) -> void:
 	var sword: GhostItemInstance = world.inventory.get_equipped("sword") if world.inventory != null else null
-	var profile: Vector4 = MELEE_RULES.base_profile(active_attack_style,heavy_attack,sword!=null,combo_step)
-	var reach: float = profile.x
-	var power: float = profile.y
-	var attack_arc: float = profile.z
-	var poise_bonus: float = profile.w
+	var profile = MELEE_RULES.base_profile(active_attack_style,heavy_attack,sword!=null,combo_step)
+	var reach: float = profile.reach
+	var power: float = profile.power
+	var attack_arc: float = profile.arc
+	var poise_bonus: float = profile.poise
 	if sword != null:
 		if active_attack_style in ["axe","rapier"]:
 			var tuning: Dictionary = FORGE_TACTICS_V286.tuning(str(sword.definition.item_id))
